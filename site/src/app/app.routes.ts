@@ -11,4 +11,9 @@ export const routes: Routes = [
     title: 'Copa Overwatch - Dúvidas frequêntes',
     loadComponent: () => import('./features/faq/faq.component').then(m=>m.FaqComponent)
   },
+  {
+    path: 'regras',
+    title: 'Copa Overwatch - Regras',
+    loadComponent: () => import('./features/regras/regras.component').then(m=>m.RegrasComponent)
+  },
 ];
