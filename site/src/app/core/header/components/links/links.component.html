@@ -1,0 +1,25 @@
+@if (mobile()) {
+  <a
+    [routerLink]="item().link"
+    class="inline-block relative no-underline text-slate-600 font-bold uppercase tracking-widest text-[0.9rem] py-6.25 px-5 transition-colors duration-300 ease-[ease]
+      hover:text-[#f06314]
+      after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-full after:h-0 after:bg-[#f06314] after:[transition-property:all] after:duration-300 after:ease-[ease]
+      hover:after:h-2.5"
+    routerLinkActive="text-[#f06314] after:h-2.5"
+    [routerLinkActiveOptions]="item().exact ? rlaExact : rlaSubset"
+  >
+    {{ item().label }}
+  </a>
+} @else {
+  <a
+    [routerLink]="item().link"
+    class="inline-block relative no-underline text-slate-600 font-bold uppercase tracking-widest text-[0.9rem] py-6.25 px-5 transition-colors duration-300 ease-[ease]
+      hover:text-[#f06314]
+      after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-full after:h-0 after:bg-[#f06314] after:[transition-property:all] after:duration-300 after:ease-[ease]
+      hover:after:h-1"
+    routerLinkActive="text-[#f06314] after:h-1"
+    [routerLinkActiveOptions]="item().exact ? rlaExact : rlaSubset"
+  >
+    {{ item().label }}
+  </a>
+}

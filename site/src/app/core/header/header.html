@@ -1,0 +1,53 @@
+<header>
+  <nav aria-label="Navegação principal" class="p-0 bg-white/98 backdrop-blur-[10px]
+             border-b-2 border-[#f06314] shadow-[0_2px_8px_rgba(0,0,0,0.06)]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center">
+        <!-- Brand -->
+        <a class="py-4 inline-flex items-center gap-3 font-extrabold uppercase tracking-[0.15em]
+                   text-slate-900 no-underline
+                   focus:outline-none focus-visible:ring-2 focus-visible:ring-[#f06314] focus-visible:ring-offset-2"
+          [routerLink]="brandLink()" (click)="closeMobile()">
+          <svg class="w-10 h-10" viewBox="0 0 100 100" fill="none" aria-hidden="true" focusable="false">
+            <circle cx="50" cy="50" r="45" stroke="#f06314" stroke-width="4"></circle>
+            <circle cx="50" cy="50" r="20" fill="#f06314"></circle>
+          </svg>
+
+          <span class="text-[#f06314]">{{ brandHighlight() }}</span>
+          <span>{{ brandText() }}</span>
+        </a>
+
+        <!-- Desktop -->
+        <div class="hidden md:flex items-center gap-1">
+          @for (item of navItems(); track item.link) {
+            <app-links [item]="item"></app-links>
+          }
+        </div>
+
+        <!-- Mobile button -->
+        <button type="button" class="md:hidden p-2 rounded text-slate-700
+                   focus:outline-none focus-visible:ring-2 focus-visible:ring-[#f06314] focus-visible:ring-offset-2"
+          (click)="toggleMobile()" [attr.aria-expanded]="mobileOpen()" [attr.aria-controls]="mobileMenuId">
+          <span class="sr-only">
+            @if (mobileOpen()) { Fechar menu } @else { Abrir menu }
+          </span>
+
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Mobile -->
+      @if (mobileOpen()) {
+      <div class="md:hidden pb-4" [id]="mobileMenuId">
+        <div class="pt-2">
+          @for (item of navItems(); track item.link) {
+            <app-links [item]="item" [mobile]="true"></app-links>
+          }
+        </div>
+      </div>
+      }
+    </div>
+  </nav>
+</header>

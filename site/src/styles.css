@@ -1,0 +1,40 @@
+/* You can add global styles to this file, and also import other style files */
+@import "tailwindcss";
+
+:root {
+  /* Cores principais Overwatch - Laranja Oficial */
+  --ow-orange: #f06314;
+  --ow-orange-dark: #d14e0a;
+  --ow-orange-light: #ff8547;
+  --ow-blue: #00c3ff;
+  --ow-blue-dark: #0099cc;
+
+  /* Tons de cinza para tema claro (baseado na referência) */
+  --ow-white: #ffffff;
+  --ow-gray-50: #f8f9fa;
+  --ow-gray-100: #f1f3f4;
+  --ow-gray-200: #e8eaed;
+  --ow-gray-300: #dadce0;
+  --ow-gray-400: #9aa0a6;
+  --ow-gray-500: #5f6368;
+  --ow-gray-600: #3c4043;
+  --ow-gray-700: #202124;
+  --ow-gray-800: #1a1a1a;
+  --ow-gray-900: #111111;
+
+  /* Cores de destaque */
+  --ow-red: #ea4335;
+  --ow-green: #34a853;
+  --ow-yellow: #fbbc04;
+
+  /* Gradientes */
+  --gradient-hero: linear-gradient(135deg, #f8f9fa 0%, #ffffff 50%, #f1f3f4 100%);
+  --gradient-orange: linear-gradient(135deg, #f06314 0%, #d14e0a 100%);
+  --gradient-blue: linear-gradient(135deg, #00c3ff 0%, #0099cc 100%);
+
+  /* Sombras sutis para tema claro */
+  --shadow-orange: 0 4px 20px rgba(240, 99, 20, 0.25);
+  --shadow-blue: 0 4px 20px rgba(0, 195, 255, 0.25);
+  --shadow-card: 0 2px 12px rgba(0, 0, 0, 0.08);
+  --shadow-card-hover: 0 8px 24px rgba(0, 0, 0, 0.12);
+}

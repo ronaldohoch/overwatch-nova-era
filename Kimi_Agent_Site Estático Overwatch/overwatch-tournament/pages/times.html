@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Times - Overwatch Championship</title>
+  <meta name="description" content="Conheça os times participantes do torneio de Overwatch">
+  
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Tailwind Config -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'ow-orange': '#f06314',
+            'ow-orange-dark': '#d14e0a',
+            'ow-blue': '#00c3ff',
+            'ow-gray-50': '#f8f9fa',
+            'ow-gray-100': '#f1f3f4',
+            'ow-gray-200': '#e8eaed',
+            'ow-gray-500': '#5f6368',
+            'ow-gray-700': '#202124',
+            'ow-gray-900': '#111111',
+          },
+          fontFamily: {
+            sans: ['Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+  
+  <!-- CSS Customizado -->
+  <link rel="stylesheet" href="../css/overwatch-theme.css">
+</head>
+<body>
+  <!-- NAVEGAÇÃO -->
+  <nav class="ow-navbar">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center">
+        <a href="../index.html" class="ow-navbar-brand py-4">
+          <svg class="w-10 h-10" viewBox="0 0 100 100" fill="none">
+            <circle cx="50" cy="50" r="45" stroke="#f06314" stroke-width="4"/>
+            <circle cx="50" cy="50" r="20" fill="#f06314"/>
+          </svg>
+          <span>OVERWATCH</span> CHAMPIONSHIP
+        </a>
+        
+        <div class="hidden md:flex items-center">
+          <a href="../index.html" class="ow-nav-link">Início</a>
+          <a href="torneio.html" class="ow-nav-link">Torneio</a>
+          <a href="times.html" class="ow-nav-link active">Times</a>
+          <a href="agenda.html" class="ow-nav-link">Agenda</a>
+          <a href="regras.html" class="ow-nav-link">Regras</a>
+        </div>
+        
+        <button id="mobile-menu-btn" class="md:hidden text-ow-gray-700 p-2">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+        </button>
+      </div>
+      
+      <div id="mobile-menu" class="md:hidden hidden ow-navbar-collapse">
+        <a href="../index.html" class="ow-nav-link block">Início</a>
+        <a href="torneio.html" class="ow-nav-link block">Torneio</a>
+        <a href="times.html" class="ow-nav-link active block">Times</a>
+        <a href="agenda.html" class="ow-nav-link block">Agenda</a>
+        <a href="regras.html" class="ow-nav-link block">Regras</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HEADER -->
+  <section class="pt-32 pb-16 bg-ow-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <div class="ow-hero-badge mb-4">Temporada 2025</div>
+      <h1 class="ow-title">TIMES <span class="text-ow-orange">PARTICIPANTES</span></h1>
+      <p class="text-ow-gray-500 mt-4 max-w-2xl mx-auto">
+        Conheça os 16 times elite que estão competindo pelo título supremo.
+        Cada equipe traz os melhores jogadores da comunidade.
+      </p>
+    </div>
+  </section>
+
+  <!-- FILTROS -->
+  <section class="py-6 bg-ow-dark border-b border-ow-dark-tertiary">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-wrap justify-center gap-4">
+        <button class="ow-btn ow-btn-primary text-sm py-2 px-6" onclick="filterTeams('all')">Todos</button>
+        <button class="ow-btn ow-btn-secondary text-sm py-2 px-6" onclick="filterTeams('quarter')">Quartas</button>
+        <button class="ow-btn ow-btn-secondary text-sm py-2 px-6" onclick="filterTeams('eliminated')">Eliminados</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- TIMES GRID -->
+  <section class="ow-section ow-section-alt">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="teams-grid">
+        
+        <!-- Team 1: Thunder Hawks -->
+        <div class="ow-team-card team-card" data-status="quarter">
+          <div class="p-6">
+            <div class="flex items-center gap-4 mb-4">
+              <div class="ow-team-logo flex-shrink-0">⚡</div>
+              <div>
+                <h3 class="text-lg font-black uppercase">Thunder Hawks</h3>
+                <span class="ow-badge ow-badge-orange text-xs">Rank #1</span>
+              </div>
+            </div>
+            <div class="text-sm text-gray-500 mb-4">
+              <span class="text-ow-orange font-bold">12V</span> - <span class="text-red-500">0D</span>
+            </div>
+            <div class="space-y-2">
+              <div class="flex items-center gap-2 text-sm">
+                <span class="ow-role-icon ow-role-tank">T</span>
+                <span>ThunderTank</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm">
+                <span class="ow-role-icon ow-role-damage">D</span>
+                <span>StormDPS</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm">
+                <span class="ow-role-icon ow-role-damage">D</span>
+                <span>Lightning</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm">
+                <span class="ow-role-icon ow-role-support">S</span>
+                <span>HealerPro</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm">
+                <span class="ow-role-icon ow-role-support">S</span>
+                <span>ShieldSup</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Team 2: Dragon Squad -->
+        <div class="ow-team-card team-card" data-status="quarter">
+          <div class="p-6">
+            <div class="flex items-center gap-4 mb-4">
+              <div class="ow-team-logo flex-shrink-0">🐉</div>
+              <div>
+                <h3 class="text-lg font-black uppercase">Dragon Squad</h3>
+                <span class="ow-badge ow-badge-orange text-xs">Rank #2</span>
+              </div>
+            </div>
+            <div class="text-sm text-gray-500 mb-4">
+              <span class="text-ow-orange font-bold">11V</span> - <span class="text-red-500">1D</span>
+            </div>
+            <div class="space-y-2">
+              <div class="flex items-center gap-2 text-sm">
+                <span class="ow-role-icon ow-role-tank">T</span>
+                <span>DragonKing</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm">
+                <span class="ow-role-icon ow-role-damage">D</span>
+                <span>FireBreath</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm">
+                <span class="ow-role-icon ow-role-damage">D</span>
+                <span>ClawStrike</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm">
+                <span class="ow-role-icon ow-role-support">S</span>
+                <span>DragonHeal</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm">
+                <span class="ow-role-icon ow-role-support">S</span>
+                <span>WingGuard</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Team 3: Frost Giants -->
+        <div class="ow-team-card team-card" data-status="quarter">
+          <div class="p-6">
+            <div class="flex items-center gap-4 mb-4">
+              <div class="ow-team-logo flex-shrink-0">❄️</div>
+              <div>
+                <h3 class="text-lg font-black uppercase">Frost Giants</h3>
+                <span class="ow-badge ow-badge-orange text-xs">Rank #3</span>
+              </div>
+            </div>
+            <div class="text-sm text-gray-500 mb-4">
+              <span class="text-ow-orange font-bold">10V</span> - <span class="text-red-500">2D</span>
+            </div>
+            <div class="space-y-2">
+              <div class="flex items-center gap-2 text-sm">
+                <span class="ow-role-icon ow-role-tank">T</span>
+                <span>IceWall</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm">
+                <span class="ow-role-icon ow-role-damage">D</span>
+                <span>FrostArrow</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm">
+                <span class="ow-role-icon ow-role-damage">D</span>
+                <span>Blizzard</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm">
+                <span class="ow-role-icon ow-role-support">S</span>
+                <span>IceHeal</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm">
+                <span class="ow-role-icon ow-role-support">S</span>
+                <span>SnowShield</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Team 4: Blaze Legion -->
+        <div class="ow-team-card team-card" data-status="quarter">
+          <div class="p-6">
+            <div class="flex items-center gap-4 mb-4">
+              <div class="ow-team-logo flex-shrink-0">🔥</div>
+              <div>
+                <h3 class="text-lg font-black uppercase">Blaze Legion</h3>
+                <span class="ow-badge ow-badge-orange text-xs">Rank #4</span>
+              </div>
+            </div>
+            <div class="text-sm text-gray-500 mb-4">
+              <span class="text-ow-orange font-bold">9V</span> - <span class="text-red-500">3D</span>
+            </div>
+            <div class="space-y-2">
+              <div class="flex items-center gap-2 text-sm">
+                <span class="ow-role-icon ow-role-tank">T</span>
+                <span>Inferno</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm">
+                <span class="ow-role-icon ow-role-damage">D</span>
+                <span>FireStorm</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm">
+                <span class="ow-role-icon ow-role-damage">D</span>
+                <span>Ember</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm">
+                <span class="ow-role-icon ow-role-support">S</span>
+                <span>FlameHeal</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm">
+                <span class="ow-role-icon ow-role-support">S</span>
+                <span>Phoenix</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Team 5: Nova Elite -->
+        <div class="ow-team-card team-card" data-status="eliminated">
+          <div class="p-6 opacity-60">
+            <div class="flex items-center gap-4 mb-4">
+              <div class="ow-team-logo flex-shrink-0">🌟</div>
+              <div>
+                <h3 class="text-lg font-black uppercase">Nova Elite</h3>
+                <span class="ow-badge ow-badge-blue text-xs">Eliminado</span>
+              </div>
+            </div>
+            <div class="text-sm text-gray-500 mb-4">
+              <span class="text-ow-orange font-bold">8V</span> - <span class="text-red-500">4D</span>
+            </div>
+            <div class="space-y-2">
+              <div class="flex items-center gap-2 text-sm">
+                <span class="ow-role-icon ow-role-tank">T</span>
+                <span>StarShield</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm">
+                <span class="ow-role-icon ow-role-damage">D</span>
+                <span>NovaShot</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm">
+                <span class="ow-role-icon ow-role-damage">D</span>
+                <span>Cosmic</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm">
+                <span class="ow-role-icon ow-role-support">S</span>
+                <span>StarHeal</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm">
+                <span class="ow-role-icon ow-role-support">S</span>
+                <span>Nebula</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Team 6: Precision -->
+        <div class="ow-team-card team-card" data-status="eliminated">
+          <div class="p-6 opacity-60">
+            <div class="flex items-center gap-4 mb-4">
+              <div class="ow-team-logo flex-shrink-0">🎯</div>
+              <div>
+                <h3 class="text-lg font-black uppercase">Precision</h3>
+                <span class="ow-badge ow-badge-blue text-xs">Eliminado</span>
+              </div>
+            </div>
+            <div class="text-sm text-gray-500 mb-4">
+              <span class="text-ow-orange font-bold">7V</span> - <span class="text-red-500">5D</span>
+            </div>
+            <div class="space-y-2">
+              <div class="flex items-center gap-2 text-sm">
+                <span class="ow-role-icon ow-role-tank">T</span>
+                <span>Bullseye</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm">
+                <span class="ow-role-icon ow-role-damage">D</span>
+                <span>SnipeMaster</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm">
+                <span class="ow-role-icon ow-role-damage">D</span>
+                <span>DeadEye</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm">
+                <span class="ow-role-icon ow-role-support">S</span>
+                <span>FocusHeal</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm">
+                <span class="ow-role-icon ow-role-support">S</span>
+                <span>Scope</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Team 7: Rocket Squad -->
+        <div class="ow-team-card team-card" data-status="eliminated">
+          <div class="p-6 opacity-60">
+            <div class="flex items-center gap-4 mb-4">
+              <div class="ow-team-logo flex-shrink-0">🚀</div>
+              <div>
+                <h3 class="text-lg font-black uppercase">Rocket Squad</h3>
+                <span class="ow-badge ow-badge-blue text-xs">Eliminado</span>
+              </div>
+            </div>
+            <div class="text-sm text-gray-500 mb-4">
+              <span class="text-ow-orange font-bold">6V</span> - <span class="text-red-500">6D</span>
+            </div>
+            <div class="space-y-2">
+              <div class="flex items-center gap-2 text-sm">
+                <span class="ow-role-icon ow-role-tank">T</span>
+                <span>RocketMan</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm">
+                <span class="ow-role-icon ow-role-damage">D</span>
+                <span>LaunchPad</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm">
+                <span class="ow-role-icon ow-role-damage">D</span>
+                <span>Boost</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm">
+                <span class="ow-role-icon ow-role-support">S</span>
+                <span>Fuel</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm">
+                <span class="ow-role-icon ow-role-support">S</span>
+                <span>Orbit</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Team 8: Iron Guard -->
+        <div class="ow-team-card team-card" data-status="quarter">
+          <div class="p-6">
+            <div class="flex items-center gap-4 mb-4">
+              <div class="ow-team-logo flex-shrink-0">🛡️</div>
+              <div>
+                <h3 class="text-lg font-black uppercase">Iron Guard</h3>
+                <span class="ow-badge ow-badge-orange text-xs">Rank #5</span>
+              </div>
+            </div>
+            <div class="text-sm text-gray-500 mb-4">
+              <span class="text-ow-orange font-bold">8V</span> - <span class="text-red-500">4D</span>
+            </div>
+            <div class="space-y-2">
+              <div class="flex items-center gap-2 text-sm">
+                <span class="ow-role-icon ow-role-tank">T</span>
+                <span>IronWall</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm">
+                <span class="ow-role-icon ow-role-damage">D</span>
+                <span>SteelShot</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm">
+                <span class="ow-role-icon ow-role-damage">D</span>
+                <span>MetalStorm</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm">
+                <span class="ow-role-icon ow-role-support">S</span>
+                <span>Forge</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm">
+                <span class="ow-role-icon ow-role-support">S</span>
+                <span>Armor</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Mais times eliminados -->
+        <!-- Team 9: Shadow Clan -->
+        <div class="ow-team-card team-card" data-status="eliminated">
+          <div class="p-6 opacity-60">
+            <div class="flex items-center gap-4 mb-4">
+              <div class="ow-team-logo flex-shrink-0">💀</div>
+              <div>
+                <h3 class="text-lg font-black uppercase">Shadow Clan</h3>
+                <span class="ow-badge ow-badge-blue text-xs">Eliminado</span>
+              </div>
+            </div>
+            <div class="text-sm text-gray-500 mb-4">
+              <span class="text-ow-orange font-bold">5V</span> - <span class="text-red-500">7D</span>
+            </div>
+            <div class="space-y-2">
+              <div class="flex items-center gap-2 text-sm">
+                <span class="ow-role-icon ow-role-tank">T</span>
+                <span>Darkness</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm">
+                <span class="ow-role-icon ow-role-damage">D</span>
+                <span>Shadow</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm">
+                <span class="ow-role-icon ow-role-damage">D</span>
+                <span>Nightmare</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm">
+                <span class="ow-role-icon ow-role-support">S</span>
+                <span>Ghost</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm">
+                <span class="ow-role-icon ow-role-support">S</span>
+                <span>Phantom</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Team 10: Storm Riders -->
+        <div class="ow-team-card team-card" data-status="eliminated">
+          <div class="p-6 opacity-60">
+            <div class="flex items-center gap-4 mb-4">
+              <div class="ow-team-logo flex-shrink-0">🌪️</div>
+              <div>
+                <h3 class="text-lg font-black uppercase">Storm Riders</h3>
+                <span class="ow-badge ow-badge-blue text-xs">Eliminado</span>
+              </div>
+            </div>
+            <div class="text-sm text-gray-500 mb-4">
+              <span class="text-ow-orange font-bold">4V</span> - <span class="text-red-500">8D</span>
+            </div>
+            <div class="space-y-2">
+              <div class="flex items-center gap-2 text-sm">
+                <span class="ow-role-icon ow-role-tank">T</span>
+                <span>Typhoon</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm">
+                <span class="ow-role-icon ow-role-damage">D</span>
+                <span>Cyclone</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm">
+                <span class="ow-role-icon ow-role-damage">D</span>
+                <span>Hurricane</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm">
+                <span class="ow-role-icon ow-role-support">S</span>
+                <span>Rain</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm">
+                <span class="ow-role-icon ow-role-support">S</span>
+                <span>Cloud</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Team 11: Warriors -->
+        <div class="ow-team-card team-card" data-status="eliminated">
+          <div class="p-6 opacity-60">
+            <div class="flex items-center gap-4 mb-4">
+              <div class="ow-team-logo flex-shrink-0">⚔️</div>
+              <div>
+                <h3 class="text-lg font-black uppercase">Warriors</h3>
+                <span class="ow-badge ow-badge-blue text-xs">Eliminado</span>
+              </div>
+            </div>
+            <div class="text-sm text-gray-500 mb-4">
+              <span class="text-ow-orange font-bold">3V</span> - <span class="text-red-500">9D</span>
+            </div>
+            <div class="space-y-2">
+              <div class="flex items-center gap-2 text-sm">
+                <span class="ow-role-icon ow-role-tank">T</span>
+                <span>Spartan</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm">
+                <span class="ow-role-icon ow-role-damage">D</span>
+                <span>Gladiator</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm">
+                <span class="ow-role-icon ow-role-damage">D</span>
+                <span>Samurai</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm">
+                <span class="ow-role-icon ow-role-support">S</span>
+                <span>Monk</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm">
+                <span class="ow-role-icon ow-role-support">S</span>
+                <span>Paladin</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Team 12: Beast Mode -->
+        <div class="ow-team-card team-card" data-status="eliminated">
+          <div class="p-6 opacity-60">
+            <div class="flex items-center gap-4 mb-4">
+              <div class="ow-team-logo flex-shrink-0">🦁</div>
+              <div>
+                <h3 class="text-lg font-black uppercase">Beast Mode</h3>
+                <span class="ow-badge ow-badge-blue text-xs">Eliminado</span>
+              </div>
+            </div>
+            <div class="text-sm text-gray-500 mb-4">
+              <span class="text-ow-orange font-bold">3V</span> - <span class="text-red-500">9D</span>
+            </div>
+            <div class="space-y-2">
+              <div class="flex items-center gap-2 text-sm">
+                <span class="ow-role-icon ow-role-tank">T</span>
+                <span>Gorilla</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm">
+                <span class="ow-role-icon ow-role-damage">D</span>
+                <span>Wolf</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm">
+                <span class="ow-role-icon ow-role-damage">D</span>
+                <span>Tiger</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm">
+                <span class="ow-role-icon ow-role-support">S</span>
+                <span>Eagle</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm">
+                <span class="ow-role-icon ow-role-support">S</span>
+                <span>Bear</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+  </section>
+
+  <!-- RANKING -->
+  <section class="ow-section">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="ow-section-title text-center">Classificação <span class="text-ow-orange">Geral</span></h2>
+      
+      <div class="mt-12 space-y-3">
+        <div class="flex items-center gap-4 p-4 bg-ow-dark-secondary border-l-4 border-ow-orange">
+          <div class="text-2xl font-black text-ow-orange w-12">#1</div>
+          <div class="flex-1">
+            <div class="font-bold uppercase">⚡ Thunder Hawks</div>
+            <div class="text-sm text-gray-500">12V - 0D • 100% WR</div>
+          </div>
+          <div class="text-ow-orange font-black">36 pts</div>
+        </div>
+        
+        <div class="flex items-center gap-4 p-4 bg-ow-dark-secondary border-l-4 border-ow-orange">
+          <div class="text-2xl font-black text-ow-orange w-12">#2</div>
+          <div class="flex-1">
+            <div class="font-bold uppercase">🐉 Dragon Squad</div>
+            <div class="text-sm text-gray-500">11V - 1D • 92% WR</div>
+          </div>
+          <div class="text-ow-orange font-black">33 pts</div>
+        </div>
+        
+        <div class="flex items-center gap-4 p-4 bg-ow-dark-secondary border-l-4 border-ow-orange">
+          <div class="text-2xl font-black text-ow-orange w-12">#3</div>
+          <div class="flex-1">
+            <div class="font-bold uppercase">❄️ Frost Giants</div>
+            <div class="text-sm text-gray-500">10V - 2D • 83% WR</div>
+          </div>
+          <div class="text-ow-orange font-black">30 pts</div>
+        </div>
+        
+        <div class="flex items-center gap-4 p-4 bg-ow-dark-secondary border-l-4 border-gray-600">
+          <div class="text-2xl font-black text-gray-500 w-12">#4</div>
+          <div class="flex-1">
+            <div class="font-bold uppercase">🔥 Blaze Legion</div>
+            <div class="text-sm text-gray-500">9V - 3D • 75% WR</div>
+          </div>
+          <div class="text-gray-500 font-black">27 pts</div>
+        </div>
+        
+        <div class="flex items-center gap-4 p-4 bg-ow-dark-secondary border-l-4 border-gray-600">
+          <div class="text-2xl font-black text-gray-500 w-12">#5</div>
+          <div class="flex-1">
+            <div class="font-bold uppercase">🛡️ Iron Guard</div>
+            <div class="text-sm text-gray-500">8V - 4D • 67% WR</div>
+          </div>
+          <div class="text-gray-500 font-black">24 pts</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="ow-footer">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid md:grid-cols-4 gap-8 mb-10">
+        <div class="md:col-span-2">
+          <div class="ow-footer-brand">
+            <span>OVERWATCH</span> CHAMPIONSHIP
+          </div>
+          <p class="text-gray-500 mb-6 max-w-md">
+            O maior torneio competitivo de Overwatch 2 da comunidade.
+          </p>
+          <div class="ow-footer-social">
+            <a href="#" class="ow-social-link">X</a>
+            <a href="#" class="ow-social-link">D</a>
+            <a href="#" class="ow-social-link">Y</a>
+            <a href="#" class="ow-social-link">T</a>
+          </div>
+        </div>
+        
+        <div>
+          <h4 class="text-lg font-bold uppercase tracking-wider mb-4 text-ow-orange">Links</h4>
+          <ul class="ow-footer-links">
+            <li><a href="../index.html">Início</a></li>
+            <li><a href="torneio.html">Torneio</a></li>
+            <li><a href="times.html">Times</a></li>
+            <li><a href="agenda.html">Agenda</a></li>
+            <li><a href="regras.html">Regras</a></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h4 class="text-lg font-bold uppercase tracking-wider mb-4 text-ow-orange">Recursos</h4>
+          <ul class="ow-footer-links">
+            <li><a href="https://overwatch.blizzard.com" target="_blank">Site Oficial</a></li>
+            <li><a href="https://esports.overwatch.com" target="_blank">OW Esports</a></li>
+            <li><a href="https://blizzard.gamespress.com/overwatch" target="_blank">Press Kit</a></li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="ow-footer-legal">
+        <strong>AVISO LEGAL IMPORTANTE</strong>
+        <p>
+          Este é um projeto não oficial criado por fãs. 
+          Overwatch, Overwatch 2 e Blizzard Entertainment são marcas registradas da Blizzard Entertainment, Inc. 
+          Este projeto não é afiliado, endossado ou aprovado pela Blizzard Entertainment.
+        </p>
+        <p class="mt-4">
+          &copy; 2025 Overwatch Championship Tournament. Todos os direitos reservados.
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Mobile Menu Toggle
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    
+    mobileMenuBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+    
+    // Filter Teams
+    function filterTeams(filter) {
+      const cards = document.querySelectorAll('.team-card');
+      const buttons = document.querySelectorAll('.ow-btn');
+      
+      // Update button styles
+      buttons.forEach(btn => {
+        btn.classList.remove('ow-btn-primary');
+        btn.classList.add('ow-btn-secondary');
+      });
+      event.target.classList.remove('ow-btn-secondary');
+      event.target.classList.add('ow-btn-primary');
+      
+      // Filter cards
+      cards.forEach(card => {
+        if (filter === 'all') {
+          card.style.display = 'block';
+        } else if (filter === 'quarter') {
+          card.style.display = card.dataset.status === 'quarter' ? 'block' : 'none';
+        } else if (filter === 'eliminated') {
+          card.style.display = card.dataset.status === 'eliminated' ? 'block' : 'none';
+        }
+      });
+    }
+  </script>
+</body>
+</html>

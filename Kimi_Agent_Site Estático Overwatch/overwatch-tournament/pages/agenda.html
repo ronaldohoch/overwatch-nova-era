@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agenda - Overwatch Championship</title>
+  <meta name="description" content="Agenda completa do torneio de Overwatch">
+  
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Tailwind Config -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'ow-orange': '#f06314',
+            'ow-orange-dark': '#d14e0a',
+            'ow-blue': '#00c3ff',
+            'ow-gray-50': '#f8f9fa',
+            'ow-gray-100': '#f1f3f4',
+            'ow-gray-200': '#e8eaed',
+            'ow-gray-500': '#5f6368',
+            'ow-gray-700': '#202124',
+            'ow-gray-900': '#111111',
+          },
+          fontFamily: {
+            sans: ['Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+  
+  <!-- CSS Customizado -->
+  <link rel="stylesheet" href="../css/overwatch-theme.css">
+</head>
+<body>
+  <!-- NAVEGAÇÃO -->
+  <nav class="ow-navbar">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center">
+        <a href="../index.html" class="ow-navbar-brand py-4">
+          <svg class="w-10 h-10" viewBox="0 0 100 100" fill="none">
+            <circle cx="50" cy="50" r="45" stroke="#f06314" stroke-width="4"/>
+            <circle cx="50" cy="50" r="20" fill="#f06314"/>
+          </svg>
+          <span>OVERWATCH</span> CHAMPIONSHIP
+        </a>
+        
+        <div class="hidden md:flex items-center">
+          <a href="../index.html" class="ow-nav-link">Início</a>
+          <a href="torneio.html" class="ow-nav-link">Torneio</a>
+          <a href="times.html" class="ow-nav-link">Times</a>
+          <a href="agenda.html" class="ow-nav-link active">Agenda</a>
+          <a href="regras.html" class="ow-nav-link">Regras</a>
+        </div>
+        
+        <button id="mobile-menu-btn" class="md:hidden text-ow-gray-700 p-2">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+        </button>
+      </div>
+      
+      <div id="mobile-menu" class="md:hidden hidden ow-navbar-collapse">
+        <a href="../index.html" class="ow-nav-link block">Início</a>
+        <a href="torneio.html" class="ow-nav-link block">Torneio</a>
+        <a href="times.html" class="ow-nav-link block">Times</a>
+        <a href="agenda.html" class="ow-nav-link active block">Agenda</a>
+        <a href="regras.html" class="ow-nav-link block">Regras</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HEADER -->
+  <section class="pt-32 pb-16 bg-ow-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <div class="ow-hero-badge mb-4">Temporada 2025</div>
+      <h1 class="ow-title">AGENDA DO <span class="text-ow-orange">TORNEIO</span></h1>
+      <p class="text-ow-gray-500 mt-4 max-w-2xl mx-auto">
+        Acompanhe todas as partidas, horários e resultados do campeonato.
+        Não perca nenhum momento da ação!
+      </p>
+    </div>
+  </section>
+
+  <!-- PRÓXIMA PARTIDA -->
+  <section class="py-12 bg-white">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="text-2xl font-black uppercase tracking-wider text-center mb-8">
+        <span class="text-ow-orange">Próxima</span> Partida
+      </h2>
+      
+      <div class="ow-card p-8 text-center border-ow-orange" style="border-width: 3px;">
+        <div class="flex justify-center items-center gap-8 mb-6">
+          <div class="text-center">
+            <div class="text-6xl mb-2">🔥</div>
+            <div class="text-xl font-black uppercase">Blaze Legion</div>
+          </div>
+          <div class="text-4xl font-black text-ow-orange">VS</div>
+          <div class="text-center">
+            <div class="text-6xl mb-2">🛡️</div>
+            <div class="text-xl font-black uppercase">Iron Guard</div>
+          </div>
+        </div>
+        <div class="text-lg text-gray-400 mb-2">Quartas de Final • Melhor de 3</div>
+        <div class="text-2xl font-black text-ow-orange mb-6">HOJE • 20:00 BRT</div>
+        <button class="ow-btn ow-btn-primary">Assistir Ao Vivo</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- AGENDA COMPLETA -->
+  <section class="ow-section ow-section-alt">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="ow-section-title text-center">Partidas <span class="text-ow-orange">Programadas</span></h2>
+      
+      <!-- FEVEREIRO -->
+      <div class="mb-12">
+        <h3 class="text-xl font-black uppercase tracking-wider text-ow-orange mb-6 border-b border-ow-dark-tertiary pb-2">
+          Fevereiro 2025
+        </h3>
+        
+        <!-- Partida 1 -->
+        <div class="ow-schedule-item">
+          <div class="text-center md:text-left">
+            <div class="ow-schedule-time">20:00</div>
+            <div class="ow-schedule-date">23 Fev • Dom</div>
+          </div>
+          <div class="ow-schedule-match">
+            <div class="ow-schedule-teams">🔥 Blaze Legion vs 🛡️ Iron Guard</div>
+            <div class="ow-schedule-stage">Quartas de Final • MD3</div>
+          </div>
+          <span class="ow-schedule-status ow-status-upcoming">Em Breve</span>
+        </div>
+        
+        <!-- Partida 2 -->
+        <div class="ow-schedule-item">
+          <div class="text-center md:text-left">
+            <div class="ow-schedule-time">20:00</div>
+            <div class="ow-schedule-date">27 Fev • Qui</div>
+          </div>
+          <div class="ow-schedule-match">
+            <div class="ow-schedule-teams">⚡ Thunder Hawks vs 🐉 Dragon Squad</div>
+            <div class="ow-schedule-stage">Semi Final • MD5</div>
+          </div>
+          <span class="ow-schedule-status ow-status-upcoming">Em Breve</span>
+        </div>
+        
+        <!-- Partida 3 -->
+        <div class="ow-schedule-item">
+          <div class="text-center md:text-left">
+            <div class="ow-schedule-time">20:00</div>
+            <div class="ow-schedule-date">28 Fev • Sex</div>
+          </div>
+          <div class="ow-schedule-match">
+            <div class="ow-schedule-teams">❄️ Frost Giants vs TBD</div>
+            <div class="ow-schedule-stage">Semi Final • MD5</div>
+          </div>
+          <span class="ow-schedule-status ow-status-upcoming">Em Breve</span>
+        </div>
+      </div>
+      
+      <!-- MARÇO -->
+      <div class="mb-12">
+        <h3 class="text-xl font-black uppercase tracking-wider text-ow-orange mb-6 border-b border-ow-dark-tertiary pb-2">
+          Março 2025
+        </h3>
+        
+        <!-- Partida 4 -->
+        <div class="ow-schedule-item">
+          <div class="text-center md:text-left">
+            <div class="ow-schedule-time">20:00</div>
+            <div class="ow-schedule-date">04 Mar • Ter</div>
+          </div>
+          <div class="ow-schedule-match">
+            <div class="ow-schedule-teams">TBD vs TBD</div>
+            <div class="ow-schedule-stage">Disputa 3º Lugar • MD5</div>
+          </div>
+          <span class="ow-schedule-status ow-status-upcoming">Em Breve</span>
+        </div>
+        
+        <!-- Partida 5 - FINAL -->
+        <div class="ow-schedule-item border-ow-orange" style="border: 2px solid #f99e1a;">
+          <div class="text-center md:text-left">
+            <div class="ow-schedule-time text-ow-orange">21:00</div>
+            <div class="ow-schedule-date">05 Mar • Qua</div>
+          </div>
+          <div class="ow-schedule-match">
+            <div class="ow-schedule-teams text-ow-orange">🏆 GRANDE FINAL 🏆</div>
+            <div class="ow-schedule-stage">Final do Torneio • MD7</div>
+          </div>
+          <span class="ow-schedule-status ow-status-upcoming">Em Breve</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESULTADOS RECENTES -->
+  <section class="ow-section">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="ow-section-title text-center">Resultados <span class="text-ow-orange">Recentes</span></h2>
+      
+      <div class="space-y-4 mt-12">
+        <!-- Resultado 1 -->
+        <div class="ow-schedule-item opacity-70">
+          <div class="text-center md:text-left">
+            <div class="ow-schedule-time text-gray-500">20:00</div>
+            <div class="ow-schedule-date">22 Fev • Sáb</div>
+          </div>
+          <div class="ow-schedule-match">
+            <div class="ow-schedule-teams">❄️ Frost Giants <span class="text-ow-orange">2</span> - <span class="text-red-500">1</span> 🚀 Rocket Squad</div>
+            <div class="ow-schedule-stage">Quartas de Final • MD3</div>
+          </div>
+          <span class="ow-schedule-status ow-status-finished">Finalizado</span>
+        </div>
+        
+        <!-- Resultado 2 -->
+        <div class="ow-schedule-item opacity-70">
+          <div class="text-center md:text-left">
+            <div class="ow-schedule-time text-gray-500">20:00</div>
+            <div class="ow-schedule-date">21 Fev • Sex</div>
+          </div>
+          <div class="ow-schedule-match">
+            <div class="ow-schedule-teams">🐉 Dragon Squad <span class="text-ow-orange">2</span> - <span class="text-red-500">1</span> 🌟 Nova Elite</div>
+            <div class="ow-schedule-stage">Quartas de Final • MD3</div>
+          </div>
+          <span class="ow-schedule-status ow-status-finished">Finalizado</span>
+        </div>
+        
+        <!-- Resultado 3 -->
+        <div class="ow-schedule-item opacity-70">
+          <div class="text-center md:text-left">
+            <div class="ow-schedule-time text-gray-500">20:00</div>
+            <div class="ow-schedule-date">20 Fev • Qui</div>
+          </div>
+          <div class="ow-schedule-match">
+            <div class="ow-schedule-teams">⚡ Thunder Hawks <span class="text-ow-orange">2</span> - <span class="text-red-500">0</span> 🎯 Precision</div>
+            <div class="ow-schedule-stage">Quartas de Final • MD3</div>
+          </div>
+          <span class="ow-schedule-status ow-status-finished">Finalizado</span>
+        </div>
+        
+        <!-- Resultado 4 -->
+        <div class="ow-schedule-item opacity-70">
+          <div class="text-center md:text-left">
+            <div class="ow-schedule-time text-gray-500">20:00</div>
+            <div class="ow-schedule-date">18 Fev • Ter</div>
+          </div>
+          <div class="ow-schedule-match">
+            <div class="ow-schedule-teams">🔥 Blaze Legion <span class="text-ow-orange">2</span> - <span class="text-red-500">0</span> ⚡ Voltage</div>
+            <div class="ow-schedule-stage">Oitavas de Final • MD3</div>
+          </div>
+          <span class="ow-schedule-status ow-status-finished">Finalizado</span>
+        </div>
+        
+        <!-- Resultado 5 -->
+        <div class="ow-schedule-item opacity-70">
+          <div class="text-center md:text-left">
+            <div class="ow-schedule-time text-gray-500">20:00</div>
+            <div class="ow-schedule-date">18 Fev • Ter</div>
+          </div>
+          <div class="ow-schedule-match">
+            <div class="ow-schedule-teams">🛡️ Iron Guard <span class="text-ow-orange">2</span> - <span class="text-red-500">1</span> 🌊 Tsunami</div>
+            <div class="ow-schedule-stage">Oitavas de Final • MD3</div>
+          </div>
+          <span class="ow-schedule-status ow-status-finished">Finalizado</span>
+        </div>
+      </div>
+      
+      <div class="text-center mt-10">
+        <a href="torneio.html" class="ow-btn ow-btn-secondary">Ver Bracket Completo</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CALENDARIO MENSAL -->
+  <section class="ow-section ow-section-alt">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="ow-section-title text-center">Calendário <span class="text-ow-orange">Mensal</span></h2>
+      
+      <div class="grid grid-cols-7 gap-2 mt-12 text-center">
+        <div class="text-ow-orange font-bold uppercase text-sm py-2">Dom</div>
+        <div class="text-ow-orange font-bold uppercase text-sm py-2">Seg</div>
+        <div class="text-ow-orange font-bold uppercase text-sm py-2">Ter</div>
+        <div class="text-ow-orange font-bold uppercase text-sm py-2">Qua</div>
+        <div class="text-ow-orange font-bold uppercase text-sm py-2">Qui</div>
+        <div class="text-ow-orange font-bold uppercase text-sm py-2">Sex</div>
+        <div class="text-ow-orange font-bold uppercase text-sm py-2">Sáb</div>
+        
+        <!-- Week 1 -->
+        <div class="bg-ow-dark-tertiary p-2 min-h-[80px] text-gray-600">26</div>
+        <div class="bg-ow-dark-tertiary p-2 min-h-[80px] text-gray-600">27</div>
+        <div class="bg-ow-dark-tertiary p-2 min-h-[80px] text-gray-600">28</div>
+        <div class="bg-ow-dark-tertiary p-2 min-h-[80px] text-gray-600">29</div>
+        <div class="bg-ow-dark-tertiary p-2 min-h-[80px] text-gray-600">30</div>
+        <div class="bg-ow-dark-tertiary p-2 min-h-[80px] text-gray-600">31</div>
+        <div class="bg-ow-dark-secondary p-2 min-h-[80px]">1</div>
+        
+        <!-- Week 2 -->
+        <div class="bg-ow-dark-secondary p-2 min-h-[80px]">2</div>
+        <div class="bg-ow-dark-secondary p-2 min-h-[80px]">3</div>
+        <div class="bg-ow-dark-secondary p-2 min-h-[80px]">4</div>
+        <div class="bg-ow-dark-secondary p-2 min-h-[80px]">5</div>
+        <div class="bg-ow-dark-secondary p-2 min-h-[80px]">6</div>
+        <div class="bg-ow-dark-secondary p-2 min-h-[80px]">7</div>
+        <div class="bg-ow-dark-secondary p-2 min-h-[80px]">8</div>
+        
+        <!-- Week 3 -->
+        <div class="bg-ow-dark-secondary p-2 min-h-[80px]">9</div>
+        <div class="bg-ow-dark-secondary p-2 min-h-[80px]">10</div>
+        <div class="bg-ow-dark-secondary p-2 min-h-[80px]">11</div>
+        <div class="bg-ow-dark-secondary p-2 min-h-[80px]">12</div>
+        <div class="bg-ow-dark-secondary p-2 min-h-[80px]">13</div>
+        <div class="bg-ow-dark-secondary p-2 min-h-[80px]">14</div>
+        <div class="bg-ow-dark-secondary p-2 min-h-[80px]">15</div>
+        
+        <!-- Week 4 - COM PARTIDAS -->
+        <div class="bg-ow-dark-secondary p-2 min-h-[80px] border border-green-600">16
+          <div class="text-xs text-green-500 mt-1">Oitavas</div>
+        </div>
+        <div class="bg-ow-dark-secondary p-2 min-h-[80px] border border-green-600">17
+          <div class="text-xs text-green-500 mt-1">Oitavas</div>
+        </div>
+        <div class="bg-ow-dark-secondary p-2 min-h-[80px] border border-green-600">18
+          <div class="text-xs text-green-500 mt-1">Oitavas</div>
+        </div>
+        <div class="bg-ow-dark-secondary p-2 min-h-[80px] border border-green-600">19
+          <div class="text-xs text-green-500 mt-1">Oitavas</div>
+        </div>
+        <div class="bg-ow-dark-secondary p-2 min-h-[80px] border border-ow-orange">20
+          <div class="text-xs text-ow-orange mt-1">Quartas</div>
+        </div>
+        <div class="bg-ow-dark-secondary p-2 min-h-[80px] border border-ow-orange">21
+          <div class="text-xs text-ow-orange mt-1">Quartas</div>
+        </div>
+        <div class="bg-ow-dark-secondary p-2 min-h-[80px] border border-ow-orange">22
+          <div class="text-xs text-ow-orange mt-1">Quartas</div>
+        </div>
+        
+        <!-- Week 5 -->
+        <div class="bg-ow-dark-secondary p-2 min-h-[80px] border border-ow-orange">23
+          <div class="text-xs text-ow-orange mt-1">Quartas</div>
+        </div>
+        <div class="bg-ow-dark-secondary p-2 min-h-[80px]">24</div>
+        <div class="bg-ow-dark-secondary p-2 min-h-[80px]">25</div>
+        <div class="bg-ow-dark-secondary p-2 min-h-[80px] border border-ow-blue">27
+          <div class="text-xs text-ow-blue mt-1">Semi</div>
+        </div>
+        <div class="bg-ow-dark-secondary p-2 min-h-[80px] border border-ow-blue">28
+          <div class="text-xs text-ow-blue mt-1">Semi</div>
+        </div>
+        <div class="bg-ow-dark-tertiary p-2 min-h-[80px] text-gray-600">1</div>
+      </div>
+      
+      <div class="flex flex-wrap justify-center gap-6 mt-6 text-sm">
+        <div class="flex items-center gap-2">
+          <div class="w-4 h-4 border border-green-600"></div>
+          <span class="text-gray-400">Oitavas</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <div class="w-4 h-4 border border-ow-orange"></div>
+          <span class="text-gray-400">Quartas</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <div class="w-4 h-4 border border-ow-blue"></div>
+          <span class="text-gray-400">Semi</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="ow-footer">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid md:grid-cols-4 gap-8 mb-10">
+        <div class="md:col-span-2">
+          <div class="ow-footer-brand">
+            <span>OVERWATCH</span> CHAMPIONSHIP
+          </div>
+          <p class="text-gray-500 mb-6 max-w-md">
+            O maior torneio competitivo de Overwatch 2 da comunidade.
+          </p>
+          <div class="ow-footer-social">
+            <a href="#" class="ow-social-link">X</a>
+            <a href="#" class="ow-social-link">D</a>
+            <a href="#" class="ow-social-link">Y</a>
+            <a href="#" class="ow-social-link">T</a>
+          </div>
+        </div>
+        
+        <div>
+          <h4 class="text-lg font-bold uppercase tracking-wider mb-4 text-ow-orange">Links</h4>
+          <ul class="ow-footer-links">
+            <li><a href="../index.html">Início</a></li>
+            <li><a href="torneio.html">Torneio</a></li>
+            <li><a href="times.html">Times</a></li>
+            <li><a href="agenda.html">Agenda</a></li>
+            <li><a href="regras.html">Regras</a></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h4 class="text-lg font-bold uppercase tracking-wider mb-4 text-ow-orange">Recursos</h4>
+          <ul class="ow-footer-links">
+            <li><a href="https://overwatch.blizzard.com" target="_blank">Site Oficial</a></li>
+            <li><a href="https://esports.overwatch.com" target="_blank">OW Esports</a></li>
+            <li><a href="https://blizzard.gamespress.com/overwatch" target="_blank">Press Kit</a></li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="ow-footer-legal">
+        <strong>AVISO LEGAL IMPORTANTE</strong>
+        <p>
+          Este é um projeto não oficial criado por fãs. 
+          Overwatch, Overwatch 2 e Blizzard Entertainment são marcas registradas da Blizzard Entertainment, Inc. 
+          Este projeto não é afiliado, endossado ou aprovado pela Blizzard Entertainment.
+        </p>
+        <p class="mt-4">
+          &copy; 2025 Overwatch Championship Tournament. Todos os direitos reservados.
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Mobile Menu Toggle
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    
+    mobileMenuBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+  </script>
+</body>
+</html>

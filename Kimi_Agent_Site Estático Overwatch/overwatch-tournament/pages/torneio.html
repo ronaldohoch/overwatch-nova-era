@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Torneio - Overwatch Championship</title>
+  <meta name="description" content="Bracket completo do torneio de Overwatch">
+  
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Tailwind Config -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'ow-orange': '#f06314',
+            'ow-orange-dark': '#d14e0a',
+            'ow-blue': '#00c3ff',
+            'ow-gray-50': '#f8f9fa',
+            'ow-gray-100': '#f1f3f4',
+            'ow-gray-200': '#e8eaed',
+            'ow-gray-500': '#5f6368',
+            'ow-gray-700': '#202124',
+            'ow-gray-900': '#111111',
+          },
+          fontFamily: {
+            sans: ['Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+  
+  <!-- CSS Customizado -->
+  <link rel="stylesheet" href="../css/overwatch-theme.css">
+</head>
+<body>
+  <!-- NAVEGAÇÃO -->
+  <nav class="ow-navbar">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center">
+        <a href="../index.html" class="ow-navbar-brand py-4">
+          <svg class="w-10 h-10" viewBox="0 0 100 100" fill="none">
+            <circle cx="50" cy="50" r="45" stroke="#f06314" stroke-width="4"/>
+            <circle cx="50" cy="50" r="20" fill="#f06314"/>
+          </svg>
+          <span>OVERWATCH</span> CHAMPIONSHIP
+        </a>
+        
+        <div class="hidden md:flex items-center">
+          <a href="../index.html" class="ow-nav-link">Início</a>
+          <a href="torneio.html" class="ow-nav-link active">Torneio</a>
+          <a href="times.html" class="ow-nav-link">Times</a>
+          <a href="agenda.html" class="ow-nav-link">Agenda</a>
+          <a href="regras.html" class="ow-nav-link">Regras</a>
+        </div>
+        
+        <button id="mobile-menu-btn" class="md:hidden text-ow-gray-700 p-2">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+        </button>
+      </div>
+      
+      <div id="mobile-menu" class="md:hidden hidden ow-navbar-collapse">
+        <a href="../index.html" class="ow-nav-link block">Início</a>
+        <a href="torneio.html" class="ow-nav-link active block">Torneio</a>
+        <a href="times.html" class="ow-nav-link block">Times</a>
+        <a href="agenda.html" class="ow-nav-link block">Agenda</a>
+        <a href="regras.html" class="ow-nav-link block">Regras</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HEADER -->
+  <section class="pt-32 pb-16 bg-ow-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <div class="ow-hero-badge mb-4">Temporada 2025</div>
+      <h1 class="ow-title">BRACKET DO <span class="text-ow-orange">TORNEIO</span></h1>
+      <p class="text-ow-gray-500 mt-4 max-w-2xl mx-auto">
+        Acompanhe todas as partidas do torneio em tempo real. 
+        16 times competindo em eliminação simples até a grande final.
+      </p>
+    </div>
+  </section>
+
+  <!-- BRACKET SECTION -->
+  <section class="ow-section ow-section-alt overflow-x-auto">
+    <div class="min-w-[1200px] px-4 py-8">
+      <div class="flex justify-center gap-8">
+        
+        <!-- OITAVAS DE FINAL -->
+        <div class="ow-bracket-round">
+          <h3 class="ow-bracket-title">Oitavas de Final</h3>
+          
+          <div class="ow-match">
+            <div class="ow-match-header">
+              <span>MD3 • 15 Fev</span>
+              <span>FINALIZADO</span>
+            </div>
+            <div class="ow-match-team winner">
+              <span class="ow-team-name">⚡ Thunder Hawks</span>
+              <span class="ow-team-score">2</span>
+            </div>
+            <div class="ow-match-team">
+              <span class="ow-team-name">🌪️ Storm Riders</span>
+              <span class="ow-team-score">0</span>
+            </div>
+          </div>
+          
+          <div class="ow-match">
+            <div class="ow-match-header">
+              <span>MD3 • 15 Fev</span>
+              <span>FINALIZADO</span>
+            </div>
+            <div class="ow-match-team winner">
+              <span class="ow-team-name">🎯 Precision</span>
+              <span class="ow-team-score">2</span>
+            </div>
+            <div class="ow-match-team">
+              <span class="ow-team-name">💀 Shadow Clan</span>
+              <span class="ow-team-score">1</span>
+            </div>
+          </div>
+          
+          <div class="ow-match">
+            <div class="ow-match-header">
+              <span>MD3 • 16 Fev</span>
+              <span>FINALIZADO</span>
+            </div>
+            <div class="ow-match-team winner">
+              <span class="ow-team-name">🐉 Dragon Squad</span>
+              <span class="ow-team-score">2</span>
+            </div>
+            <div class="ow-match-team">
+              <span class="ow-team-name">⚔️ Warriors</span>
+              <span class="ow-team-score">0</span>
+            </div>
+          </div>
+          
+          <div class="ow-match">
+            <div class="ow-match-header">
+              <span>MD3 • 16 Fev</span>
+              <span>FINALIZADO</span>
+            </div>
+            <div class="ow-match-team winner">
+              <span class="ow-team-name">🌟 Nova Elite</span>
+              <span class="ow-team-score">2</span>
+            </div>
+            <div class="ow-match-team">
+              <span class="ow-team-name">🦁 Beast Mode</span>
+              <span class="ow-team-score">1</span>
+            </div>
+          </div>
+          
+          <div class="ow-match">
+            <div class="ow-match-header">
+              <span>MD3 • 17 Fev</span>
+              <span>FINALIZADO</span>
+            </div>
+            <div class="ow-match-team winner">
+              <span class="ow-team-name">❄️ Frost Giants</span>
+              <span class="ow-team-score">2</span>
+            </div>
+            <div class="ow-match-team">
+              <span class="ow-team-name">🔮 Mystic Force</span>
+              <span class="ow-team-score">0</span>
+            </div>
+          </div>
+          
+          <div class="ow-match">
+            <div class="ow-match-header">
+              <span>MD3 • 17 Fev</span>
+              <span>FINALIZADO</span>
+            </div>
+            <div class="ow-match-team winner">
+              <span class="ow-team-name">🚀 Rocket Squad</span>
+              <span class="ow-team-score">2</span>
+            </div>
+            <div class="ow-match-team">
+              <span class="ow-team-name">🌙 Night Owls</span>
+              <span class="ow-team-score">1</span>
+            </div>
+          </div>
+          
+          <div class="ow-match">
+            <div class="ow-match-header">
+              <span>MD3 • 18 Fev</span>
+              <span>FINALIZADO</span>
+            </div>
+            <div class="ow-match-team winner">
+              <span class="ow-team-name">🔥 Blaze Legion</span>
+              <span class="ow-team-score">2</span>
+            </div>
+            <div class="ow-match-team">
+              <span class="ow-team-name">⚡ Voltage</span>
+              <span class="ow-team-score">0</span>
+            </div>
+          </div>
+          
+          <div class="ow-match">
+            <div class="ow-match-header">
+              <span>MD3 • 18 Fev</span>
+              <span>FINALIZADO</span>
+            </div>
+            <div class="ow-match-team winner">
+              <span class="ow-team-name">🛡️ Iron Guard</span>
+              <span class="ow-team-score">2</span>
+            </div>
+            <div class="ow-match-team">
+              <span class="ow-team-name">🌊 Tsunami</span>
+              <span class="ow-team-score">1</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- QUARTAS DE FINAL -->
+        <div class="ow-bracket-round">
+          <h3 class="ow-bracket-title">Quartas de Final</h3>
+          
+          <div class="ow-match">
+            <div class="ow-match-header">
+              <span>MD3 • 20 Fev</span>
+              <span>FINALIZADO</span>
+            </div>
+            <div class="ow-match-team winner">
+              <span class="ow-team-name">⚡ Thunder Hawks</span>
+              <span class="ow-team-score">2</span>
+            </div>
+            <div class="ow-match-team">
+              <span class="ow-team-name">🎯 Precision</span>
+              <span class="ow-team-score">0</span>
+            </div>
+          </div>
+          
+          <div class="ow-match">
+            <div class="ow-match-header">
+              <span>MD3 • 21 Fev</span>
+              <span>FINALIZADO</span>
+            </div>
+            <div class="ow-match-team winner">
+              <span class="ow-team-name">🐉 Dragon Squad</span>
+              <span class="ow-team-score">2</span>
+            </div>
+            <div class="ow-match-team">
+              <span class="ow-team-name">🌟 Nova Elite</span>
+              <span class="ow-team-score">1</span>
+            </div>
+          </div>
+          
+          <div class="ow-match">
+            <div class="ow-match-header">
+              <span>MD3 • 22 Fev</span>
+              <span>AO VIVO</span>
+            </div>
+            <div class="ow-match-team winner">
+              <span class="ow-team-name">❄️ Frost Giants</span>
+              <span class="ow-team-score">2</span>
+            </div>
+            <div class="ow-match-team">
+              <span class="ow-team-name">🚀 Rocket Squad</span>
+              <span class="ow-team-score">1</span>
+            </div>
+          </div>
+          
+          <div class="ow-match">
+            <div class="ow-match-header">
+              <span>MD3 • 23 Fev</span>
+              <span>HOJE 20:00</span>
+            </div>
+            <div class="ow-match-team">
+              <span class="ow-team-name">🔥 Blaze Legion</span>
+              <span class="ow-team-score">-</span>
+            </div>
+            <div class="ow-match-team">
+              <span class="ow-team-name">🛡️ Iron Guard</span>
+              <span class="ow-team-score">-</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- SEMI FINAIS -->
+        <div class="ow-bracket-round">
+          <h3 class="ow-bracket-title">Semi Finais</h3>
+          
+          <div class="ow-match">
+            <div class="ow-match-header">
+              <span>MD5 • 27 Fev</span>
+              <span>DOM 20:00</span>
+            </div>
+            <div class="ow-match-team">
+              <span class="ow-team-name">⚡ Thunder Hawks</span>
+              <span class="ow-team-score">-</span>
+            </div>
+            <div class="ow-match-team">
+              <span class="ow-team-name">🐉 Dragon Squad</span>
+              <span class="ow-team-score">-</span>
+            </div>
+          </div>
+          
+          <div class="ow-match">
+            <div class="ow-match-header">
+              <span>MD5 • 28 Fev</span>
+              <span>SEG 20:00</span>
+            </div>
+            <div class="ow-match-team">
+              <span class="ow-team-name">❄️ Frost Giants</span>
+              <span class="ow-team-score">-</span>
+            </div>
+            <div class="ow-match-team">
+              <span class="ow-team-name">TBD</span>
+              <span class="ow-team-score">-</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- FINAL -->
+        <div class="ow-bracket-round">
+          <h3 class="ow-bracket-title">Grande Final</h3>
+          
+          <div class="ow-match border-ow-orange" style="border-width: 3px;">
+            <div class="ow-match-header bg-ow-orange text-ow-dark">
+              <span>MD7 • 05 Mar</span>
+              <span>SEX 21:00</span>
+            </div>
+            <div class="ow-match-team">
+              <span class="ow-team-name">TBD</span>
+              <span class="ow-team-score">-</span>
+            </div>
+            <div class="ow-match-team">
+              <span class="ow-team-name">TBD</span>
+              <span class="ow-team-score">-</span>
+            </div>
+          </div>
+          
+          <!-- Disputa 3º Lugar -->
+          <h3 class="ow-bracket-title mt-12">Disputa 3º Lugar</h3>
+          
+          <div class="ow-match">
+            <div class="ow-match-header">
+              <span>MD5 • 04 Mar</span>
+              <span>QUI 20:00</span>
+            </div>
+            <div class="ow-match-team">
+              <span class="ow-team-name">TBD</span>
+              <span class="ow-team-score">-</span>
+            </div>
+            <div class="ow-match-team">
+              <span class="ow-team-name">TBD</span>
+              <span class="ow-team-score">-</span>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+  </section>
+
+  <!-- LEGENDA -->
+  <section class="py-8 bg-ow-dark">
+    <div class="max-w-4xl mx-auto px-4">
+      <div class="flex flex-wrap justify-center gap-6 text-sm">
+        <div class="flex items-center gap-2">
+          <div class="w-4 h-4 bg-ow-orange"></div>
+          <span class="text-gray-400">Vencedor</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <div class="w-4 h-4 border-2 border-ow-orange"></div>
+          <span class="text-gray-400">Final</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-ow-orange font-bold">MD3</span>
+          <span class="text-gray-400">Melhor de 3</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-ow-orange font-bold">MD5</span>
+          <span class="text-gray-400">Melhor de 5</span>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-ow-orange font-bold">MD7</span>
+          <span class="text-gray-400">Melhor de 7</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ESTATÍSTICAS DO TORNEIO -->
+  <section class="ow-section">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="ow-section-title text-center">Estatísticas do <span class="text-ow-orange">Torneio</span></h2>
+      
+      <div class="grid md:grid-cols-3 gap-8 mt-12">
+        <!-- Card 1 -->
+        <div class="ow-card p-6">
+          <h3 class="text-lg font-bold uppercase tracking-wider text-ow-orange mb-4">Partidas Jogadas</h3>
+          <div class="text-5xl font-black mb-2">12</div>
+          <div class="text-gray-500 text-sm">de 31 partidas totais</div>
+          <div class="mt-4 bg-ow-dark-tertiary h-2 rounded-full overflow-hidden">
+            <div class="bg-ow-orange h-full" style="width: 38%"></div>
+          </div>
+        </div>
+        
+        <!-- Card 2 -->
+        <div class="ow-card p-6">
+          <h3 class="text-lg font-bold uppercase tracking-wider text-ow-orange mb-4">Mapas Jogados</h3>
+          <div class="text-5xl font-black mb-2">31</div>
+          <div class="text-gray-500 text-sm">média de 2.6 mapas por partida</div>
+          <div class="mt-4 bg-ow-dark-tertiary h-2 rounded-full overflow-hidden">
+            <div class="bg-ow-blue h-full" style="width: 45%"></div>
+          </div>
+        </div>
+        
+        <!-- Card 3 -->
+        <div class="ow-card p-6">
+          <h3 class="text-lg font-bold uppercase tracking-wider text-ow-orange mb-4">Taxa de 3-0</h3>
+          <div class="text-5xl font-black mb-2">42%</div>
+          <div class="text-gray-500 text-sm">5 partidas terminaram 3-0</div>
+          <div class="mt-4 bg-ow-dark-tertiary h-2 rounded-full overflow-hidden">
+            <div class="bg-ow-orange h-full" style="width: 42%"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="ow-footer">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid md:grid-cols-4 gap-8 mb-10">
+        <div class="md:col-span-2">
+          <div class="ow-footer-brand">
+            <span>OVERWATCH</span> CHAMPIONSHIP
+          </div>
+          <p class="text-gray-500 mb-6 max-w-md">
+            O maior torneio competitivo de Overwatch 2 da comunidade.
+          </p>
+          <div class="ow-footer-social">
+            <a href="#" class="ow-social-link">X</a>
+            <a href="#" class="ow-social-link">D</a>
+            <a href="#" class="ow-social-link">Y</a>
+            <a href="#" class="ow-social-link">T</a>
+          </div>
+        </div>
+        
+        <div>
+          <h4 class="text-lg font-bold uppercase tracking-wider mb-4 text-ow-orange">Links</h4>
+          <ul class="ow-footer-links">
+            <li><a href="../index.html">Início</a></li>
+            <li><a href="torneio.html">Torneio</a></li>
+            <li><a href="times.html">Times</a></li>
+            <li><a href="agenda.html">Agenda</a></li>
+            <li><a href="regras.html">Regras</a></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h4 class="text-lg font-bold uppercase tracking-wider mb-4 text-ow-orange">Recursos</h4>
+          <ul class="ow-footer-links">
+            <li><a href="https://overwatch.blizzard.com" target="_blank">Site Oficial</a></li>
+            <li><a href="https://esports.overwatch.com" target="_blank">OW Esports</a></li>
+            <li><a href="https://blizzard.gamespress.com/overwatch" target="_blank">Press Kit</a></li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="ow-footer-legal">
+        <strong>AVISO LEGAL IMPORTANTE</strong>
+        <p>
+          Este é um projeto não oficial criado por fãs. 
+          Overwatch, Overwatch 2 e Blizzard Entertainment são marcas registradas da Blizzard Entertainment, Inc. 
+          Este projeto não é afiliado, endossado ou aprovado pela Blizzard Entertainment.
+        </p>
+        <p class="mt-4">
+          &copy; 2025 Overwatch Championship Tournament. Todos os direitos reservados.
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Mobile Menu Toggle
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    
+    mobileMenuBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+  </script>
+</body>
+</html>

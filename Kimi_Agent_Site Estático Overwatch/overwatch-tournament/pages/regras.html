@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Regras - Overwatch Championship</title>
+  <meta name="description" content="Regras e regulamento do torneio de Overwatch">
+  
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Tailwind Config -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'ow-orange': '#f06314',
+            'ow-orange-dark': '#d14e0a',
+            'ow-blue': '#00c3ff',
+            'ow-gray-50': '#f8f9fa',
+            'ow-gray-100': '#f1f3f4',
+            'ow-gray-200': '#e8eaed',
+            'ow-gray-500': '#5f6368',
+            'ow-gray-700': '#202124',
+            'ow-gray-900': '#111111',
+          },
+          fontFamily: {
+            sans: ['Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+  
+  <!-- CSS Customizado -->
+  <link rel="stylesheet" href="../css/overwatch-theme.css">
+</head>
+<body>
+  <!-- NAVEGAÇÃO -->
+  <nav class="ow-navbar">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center">
+        <a href="../index.html" class="ow-navbar-brand py-4">
+          <svg class="w-10 h-10" viewBox="0 0 100 100" fill="none">
+            <circle cx="50" cy="50" r="45" stroke="#f06314" stroke-width="4"/>
+            <circle cx="50" cy="50" r="20" fill="#f06314"/>
+          </svg>
+          <span>OVERWATCH</span> CHAMPIONSHIP
+        </a>
+        
+        <div class="hidden md:flex items-center">
+          <a href="../index.html" class="ow-nav-link">Início</a>
+          <a href="torneio.html" class="ow-nav-link">Torneio</a>
+          <a href="times.html" class="ow-nav-link">Times</a>
+          <a href="agenda.html" class="ow-nav-link">Agenda</a>
+          <a href="regras.html" class="ow-nav-link active">Regras</a>
+        </div>
+        
+        <button id="mobile-menu-btn" class="md:hidden text-ow-gray-700 p-2">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+          </svg>
+        </button>
+      </div>
+      
+      <div id="mobile-menu" class="md:hidden hidden ow-navbar-collapse">
+        <a href="../index.html" class="ow-nav-link block">Início</a>
+        <a href="torneio.html" class="ow-nav-link block">Torneio</a>
+        <a href="times.html" class="ow-nav-link block">Times</a>
+        <a href="agenda.html" class="ow-nav-link block">Agenda</a>
+        <a href="regras.html" class="ow-nav-link active block">Regras</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HEADER -->
+  <section class="pt-32 pb-16 bg-ow-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <div class="ow-hero-badge mb-4">Temporada 2025</div>
+      <h1 class="ow-title">REGRAS E <span class="text-ow-orange">REGULAMENTO</span></h1>
+      <p class="text-ow-gray-500 mt-4 max-w-2xl mx-auto">
+        Leia atentamente todas as regras antes de participar do torneio.
+        O não cumprimento pode resultar em desqualificação.
+      </p>
+    </div>
+  </section>
+
+  <!-- MENU RÁPIDO -->
+  <section class="py-6 bg-white border-b border-ow-gray-200 sticky top-[73px] z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-wrap justify-center gap-4 text-sm">
+        <a href="#formato" class="text-ow-orange hover:text-ow-gray-900 transition-colors uppercase font-bold tracking-wider">Formato</a>
+        <a href="#mapas" class="text-ow-orange hover:text-white transition-colors uppercase font-bold tracking-wider">Mapas</a>
+        <a href="#regras-jogo" class="text-ow-orange hover:text-white transition-colors uppercase font-bold tracking-wider">Regras</a>
+        <a href="#conduta" class="text-ow-orange hover:text-white transition-colors uppercase font-bold tracking-wider">Conduta</a>
+        <a href="#premios" class="text-ow-orange hover:text-white transition-colors uppercase font-bold tracking-wider">Prêmios</a>
+        <a href="#contato" class="text-ow-orange hover:text-white transition-colors uppercase font-bold tracking-wider">Contato</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTEÚDO -->
+  <section class="ow-section ow-section-alt">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <!-- FORMATO DO TORNEIO -->
+      <div id="formato" class="mb-16">
+        <h2 class="text-2xl font-black uppercase tracking-wider text-ow-orange mb-6 flex items-center gap-3">
+          <span class="w-8 h-8 bg-ow-orange text-ow-dark flex items-center justify-center text-sm">01</span>
+          Formato do Torneio
+        </h2>
+        
+        <div class="ow-card p-6 mb-6">
+          <h3 class="text-lg font-bold uppercase mb-4">Eliminação Simples</h3>
+          <p class="text-gray-400 mb-4">
+            O torneio segue o formato de eliminação simples (single elimination), onde o perdedor de cada partida é eliminado do campeonato.
+          </p>
+          <ul class="space-y-2 text-gray-400">
+            <li class="flex items-start gap-2">
+              <span class="text-ow-orange">▸</span>
+              <span><strong class="text-white">16 times</strong> participantes</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-ow-orange">▸</span>
+              <span><strong class="text-white">Oitavas de Final:</strong> Melhor de 3 (MD3)</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-ow-orange">▸</span>
+              <span><strong class="text-white">Quartas de Final:</strong> Melhor de 3 (MD3)</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-ow-orange">▸</span>
+              <span><strong class="text-white">Semi Finais:</strong> Melhor de 5 (MD5)</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-ow-orange">▸</span>
+              <span><strong class="text-white">Final:</strong> Melhor de 7 (MD7)</span>
+            </li>
+          </ul>
+        </div>
+        
+        <div class="grid md:grid-cols-2 gap-6">
+          <div class="ow-card p-6">
+            <h3 class="text-lg font-bold uppercase mb-4 text-ow-blue">Melhor de 3 (MD3)</h3>
+            <p class="text-gray-400 text-sm">
+              A primeira equipe a vencer 2 mapas ganha a partida. 
+              Máximo de 3 mapas jogados.
+            </p>
+          </div>
+          <div class="ow-card p-6">
+            <h3 class="text-lg font-bold uppercase mb-4 text-ow-blue">Melhor de 5 (MD5)</h3>
+            <p class="text-gray-400 text-sm">
+              A primeira equipe a vencer 3 mapas ganha a partida.
+              Máximo de 5 mapas jogados.
+            </p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- MAPAS -->
+      <div id="mapas" class="mb-16">
+        <h2 class="text-2xl font-black uppercase tracking-wider text-ow-orange mb-6 flex items-center gap-3">
+          <span class="w-8 h-8 bg-ow-orange text-ow-dark flex items-center justify-center text-sm">02</span>
+          Mapas e Modos
+        </h2>
+        
+        <div class="grid md:grid-cols-2 gap-6">
+          <!-- Escort -->
+          <div class="ow-card p-6">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-10 h-10 bg-blue-600 rounded flex items-center justify-center text-lg">🚚</div>
+              <h3 class="text-lg font-bold uppercase">Escort (Carga)</h3>
+            </div>
+            <ul class="space-y-1 text-gray-400 text-sm">
+              <li>• Dorado</li>
+              <li>• Havana</li>
+              <li>• Junkertown</li>
+              <li>• Rialto</li>
+              <li>• Route 66</li>
+              <li>• Shambali Monastery</li>
+            </ul>
+          </div>
+          
+          <!-- Hybrid -->
+          <div class="ow-card p-6">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-10 h-10 bg-purple-600 rounded flex items-center justify-center text-lg">⚡</div>
+              <h3 class="text-lg font-bold uppercase">Hybrid (Híbrido)</h3>
+            </div>
+            <ul class="space-y-1 text-gray-400 text-sm">
+              <li>• Blizzard World</li>
+              <li>• Eichenwalde</li>
+              <li>• Hollywood</li>
+              <li>• King's Row</li>
+              <li>• Midtown</li>
+              <li>• Numbani</li>
+            </ul>
+          </div>
+          
+          <!-- Control -->
+          <div class="ow-card p-6">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-10 h-10 bg-green-600 rounded flex items-center justify-center text-lg">🎯</div>
+              <h3 class="text-lg font-bold uppercase">Control (Controle)</h3>
+            </div>
+            <ul class="space-y-1 text-gray-400 text-sm">
+              <li>• Busan</li>
+              <li>• Ilios</li>
+              <li>• Lijiang Tower</li>
+              <li>• Nepal</li>
+              <li>• Oasis</li>
+              <li>• Samoa</li>
+            </ul>
+          </div>
+          
+          <!-- Push -->
+          <div class="ow-card p-6">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-10 h-10 bg-orange-600 rounded flex items-center justify-center text-lg">🤖</div>
+              <h3 class="text-lg font-bold uppercase">Push (Empurrão)</h3>
+            </div>
+            <ul class="space-y-1 text-gray-400 text-sm">
+              <li>• Colosseo</li>
+              <li>• Esperança</li>
+              <li>• New Queen Street</li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="ow-card p-6 mt-6">
+          <h3 class="text-lg font-bold uppercase mb-4">Rotação de Mapas</h3>
+          <p class="text-gray-400 mb-4">
+            A rotação de mapas segue a ordem oficial da Overwatch League:
+          </p>
+          <div class="flex flex-wrap gap-3">
+            <span class="ow-badge ow-badge-orange">1. Control</span>
+            <span class="ow-badge ow-badge-blue">2. Hybrid</span>
+            <span class="ow-badge ow-badge-orange">3. Push</span>
+            <span class="ow-badge ow-badge-blue">4. Escort</span>
+            <span class="ow-badge ow-badge-orange">5. Control (Desempate)</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- REGRAS DE JOGO -->
+      <div id="regras-jogo" class="mb-16">
+        <h2 class="text-2xl font-black uppercase tracking-wider text-ow-orange mb-6 flex items-center gap-3">
+          <span class="w-8 h-8 bg-ow-orange text-ow-dark flex items-center justify-center text-sm">03</span>
+          Regras de Jogo
+        </h2>
+        
+        <div class="space-y-6">
+          <div class="ow-card p-6">
+            <h3 class="text-lg font-bold uppercase mb-4">Composição de Times</h3>
+            <ul class="space-y-2 text-gray-400">
+              <li class="flex items-start gap-2">
+                <span class="text-ow-orange">▸</span>
+                <span>Cada time deve ter <strong class="text-white">exatamente 5 jogadores</strong></span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-ow-orange">▸</span>
+                <span>É permitido ter <strong class="text-white">até 2 reservas</strong></span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-ow-orange">▸</span>
+                <span>Substituições só são permitidas <strong class="text-white">entre mapas</strong></span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-ow-orange">▸</span>
+                <span>Todos os jogadores devem ter <strong class="text-white">conta nível 100+</strong></span>
+              </li>
+            </ul>
+          </div>
+          
+          <div class="ow-card p-6">
+            <h3 class="text-lg font-bold uppercase mb-4">Restrições de Heróis</h3>
+            <ul class="space-y-2 text-gray-400">
+              <li class="flex items-start gap-2">
+                <span class="text-ow-orange">▸</span>
+                <span>Sistema de <strong class="text-white">1 herói por time</strong> (sem repetição)</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-ow-orange">▸</span>
+                <span>Novos heróis podem ser <strong class="text-white">banidos</strong> nas primeiras semanas</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-ow-orange">▸</span>
+                <span>Heróis desabilitados por bugs são <strong class="text-white">automaticamente banidos</strong></span>
+              </li>
+            </ul>
+          </div>
+          
+          <div class="ow-card p-6">
+            <h3 class="text-lg font-bold uppercase mb-4">Pausas e Técnicos</h3>
+            <ul class="space-y-2 text-gray-400">
+              <li class="flex items-start gap-2">
+                <span class="text-ow-orange">▸</span>
+                <span>Cada time tem direito a <strong class="text-white">2 pausas técnicas</strong> por mapa</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-ow-orange">▸</span>
+                <span>Pausa máxima de <strong class="text-white">5 minutos</strong></span>
+              </li>
+              <li class="flex items-start gap-2">
+                <span class="text-ow-orange">▸</span>
+                <span>Problemas de conexão devem ser <strong class="text-white">reportados imediatamente</strong></span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      
+      <!-- CONDUTA -->
+      <div id="conduta" class="mb-16">
+        <h2 class="text-2xl font-black uppercase tracking-wider text-ow-orange mb-6 flex items-center gap-3">
+          <span class="w-8 h-8 bg-ow-orange text-ow-dark flex items-center justify-center text-sm">04</span>
+          Código de Conduta
+        </h2>
+        
+        <div class="ow-card p-6 border-red-500" style="border-color: #ef4444;">
+          <h3 class="text-lg font-bold uppercase mb-4 text-red-500">Proibido - Resulta em Desqualificação</h3>
+          <ul class="space-y-2 text-gray-400">
+            <li class="flex items-start gap-2">
+              <span class="text-red-500">✖</span>
+              <span>Uso de <strong class="text-white">cheats, hacks ou qualquer software de terceiros</strong></span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-red-500">✖</span>
+              <span><strong class="text-white">Comportamento tóxico</strong> incluindo insultos, discriminação ou assédio</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-red-500">✖</span>
+              <span><strong class="text-white">Stream sniping</strong> ou qualquer forma de espionagem</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-red-500">✖</span>
+              <span><strong class="text-white">Fixação de partidas</strong> (match fixing)</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-red-500">✖</span>
+              <span>Uso de <strong class="text-white">contas compartilhadas</strong> (account sharing)</span>
+            </li>
+          </ul>
+        </div>
+        
+        <div class="ow-card p-6 mt-6">
+          <h3 class="text-lg font-bold uppercase mb-4 text-ow-green">Obrigatório</h3>
+          <ul class="space-y-2 text-gray-400">
+            <li class="flex items-start gap-2">
+              <span class="text-green-500">✔</span>
+              <span><strong class="text-white">Respeito</strong> com todos os jogadores e staff</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-green-500">✔</span>
+              <span><strong class="text-white">Pontualidade</strong> - estar online 15 min antes</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-green-500">✔</span>
+              <span><strong class="text-white">Comunicação</strong> clara com adversários e admins</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span class="text-green-500">✔</span>
+              <span><strong class="text-white">Fair play</strong> em todas as situações</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+      
+      <!-- PRÊMIOS -->
+      <div id="premios" class="mb-16">
+        <h2 class="text-2xl font-black uppercase tracking-wider text-ow-orange mb-6 flex items-center gap-3">
+          <span class="w-8 h-8 bg-ow-orange text-ow-dark flex items-center justify-center text-sm">05</span>
+          Distribuição de Prêmios
+        </h2>
+        
+        <div class="ow-card p-6">
+          <table class="w-full text-left">
+            <thead>
+              <tr class="border-b border-ow-dark-tertiary">
+                <th class="pb-4 uppercase tracking-wider">Colocação</th>
+                <th class="pb-4 uppercase tracking-wider text-right">Prêmio</th>
+              </tr>
+            </thead>
+            <tbody class="text-gray-400">
+              <tr class="border-b border-ow-dark-tertiary">
+                <td class="py-4 flex items-center gap-2">
+                  <span class="text-2xl">🥇</span>
+                  <span class="text-white font-bold">1º Lugar</span>
+                </td>
+                <td class="py-4 text-right text-ow-orange font-black text-xl">R$ 7.000</td>
+              </tr>
+              <tr class="border-b border-ow-dark-tertiary">
+                <td class="py-4 flex items-center gap-2">
+                  <span class="text-2xl">🥈</span>
+                  <span class="text-white font-bold">2º Lugar</span>
+                </td>
+                <td class="py-4 text-right text-ow-blue font-black text-xl">R$ 3.000</td>
+              </tr>
+              <tr class="border-b border-ow-dark-tertiary">
+                <td class="py-4 flex items-center gap-2">
+                  <span class="text-2xl">🥉</span>
+                  <span class="text-white font-bold">3º Lugar</span>
+                </td>
+                <td class="py-4 text-right text-ow-blue font-black text-xl">R$ 1.500</td>
+              </tr>
+              <tr>
+                <td class="py-4 flex items-center gap-2">
+                  <span class="text-2xl">🏅</span>
+                  <span class="text-white font-bold">4º Lugar</span>
+                </td>
+                <td class="py-4 text-right text-gray-500 font-bold">R$ 500</td>
+              </tr>
+            </tbody>
+          </table>
+          
+          <div class="mt-6 pt-6 border-t border-ow-dark-tertiary">
+            <p class="text-sm text-gray-500">
+              <strong class="text-white">Nota:</strong> Os prêmios serão pagos via transferência bancária em até 30 dias após a final do torneio. 
+              É necessário apresentar documentação válida para recebimento.
+            </p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- CONTATO -->
+      <div id="contato" class="mb-16">
+        <h2 class="text-2xl font-black uppercase tracking-wider text-ow-orange mb-6 flex items-center gap-3">
+          <span class="w-8 h-8 bg-ow-orange text-ow-dark flex items-center justify-center text-sm">06</span>
+          Contato e Suporte
+        </h2>
+        
+        <div class="grid md:grid-cols-2 gap-6">
+          <div class="ow-card p-6">
+            <h3 class="text-lg font-bold uppercase mb-4">Discord Oficial</h3>
+            <p class="text-gray-400 mb-4">
+              Entre no nosso servidor do Discord para suporte em tempo real, 
+              anúncios e interação com a comunidade.
+            </p>
+            <a href="#" class="ow-btn ow-btn-blue text-sm py-2 px-4">discord.gg/overwatch-tournament</a>
+          </div>
+          
+          <div class="ow-card p-6">
+            <h3 class="text-lg font-bold uppercase mb-4">Email de Contato</h3>
+            <p class="text-gray-400 mb-4">
+              Para questões administrativas, inscrições e reportar problemas, 
+              envie um email para nossa equipe.
+            </p>
+            <a href="mailto:contato@overwatch-tournament.demo" class="ow-btn ow-btn-secondary text-sm py-2 px-4">contato@overwatch-tournament.demo</a>
+          </div>
+        </div>
+        
+        <div class="ow-card p-6 mt-6">
+          <h3 class="text-lg font-bold uppercase mb-4">Staff do Torneio</h3>
+          <div class="grid md:grid-cols-3 gap-4">
+            <div class="text-center p-4 bg-ow-dark rounded">
+              <div class="text-ow-orange font-bold uppercase mb-1">Administrador</div>
+              <div class="text-white">TournamentMaster</div>
+            </div>
+            <div class="text-center p-4 bg-ow-dark rounded">
+              <div class="text-ow-orange font-bold uppercase mb-1">Head Referee</div>
+              <div class="text-white">RefereePro</div>
+            </div>
+            <div class="text-center p-4 bg-ow-dark rounded">
+              <div class="text-ow-orange font-bold uppercase mb-1">Suporte Técnico</div>
+              <div class="text-white">TechSupport</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- ATUALIZAÇÕES -->
+      <div class="ow-card p-6 border-ow-orange" style="border-width: 2px;">
+        <h3 class="text-lg font-bold uppercase mb-4 text-ow-orange">Última Atualização</h3>
+        <p class="text-gray-400">
+          Este regulamento foi atualizado em <strong class="text-white">15 de Fevereiro de 2025</strong>.
+          As regras podem ser modificadas a qualquer momento para garantir a integridade do torneio.
+          É responsabilidade de cada participante manter-se atualizado.
+        </p>
+      </div>
+      
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="ow-footer">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid md:grid-cols-4 gap-8 mb-10">
+        <div class="md:col-span-2">
+          <div class="ow-footer-brand">
+            <span>OVERWATCH</span> CHAMPIONSHIP
+          </div>
+          <p class="text-gray-500 mb-6 max-w-md">
+            O maior torneio competitivo de Overwatch 2 da comunidade.
+          </p>
+          <div class="ow-footer-social">
+            <a href="#" class="ow-social-link">X</a>
+            <a href="#" class="ow-social-link">D</a>
+            <a href="#" class="ow-social-link">Y</a>
+            <a href="#" class="ow-social-link">T</a>
+          </div>
+        </div>
+        
+        <div>
+          <h4 class="text-lg font-bold uppercase tracking-wider mb-4 text-ow-orange">Links</h4>
+          <ul class="ow-footer-links">
+            <li><a href="../index.html">Início</a></li>
+            <li><a href="torneio.html">Torneio</a></li>
+            <li><a href="times.html">Times</a></li>
+            <li><a href="agenda.html">Agenda</a></li>
+            <li><a href="regras.html">Regras</a></li>
+          </ul>
+        </div>
+        
+        <div>
+          <h4 class="text-lg font-bold uppercase tracking-wider mb-4 text-ow-orange">Recursos</h4>
+          <ul class="ow-footer-links">
+            <li><a href="https://overwatch.blizzard.com" target="_blank">Site Oficial</a></li>
+            <li><a href="https://esports.overwatch.com" target="_blank">OW Esports</a></li>
+            <li><a href="https://blizzard.gamespress.com/overwatch" target="_blank">Press Kit</a></li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="ow-footer-legal">
+        <strong>AVISO LEGAL IMPORTANTE</strong>
+        <p>
+          Este é um projeto não oficial criado por fãs. 
+          Overwatch, Overwatch 2 e Blizzard Entertainment são marcas registradas da Blizzard Entertainment, Inc. 
+          Este projeto não é afiliado, endossado ou aprovado pela Blizzard Entertainment.
+        </p>
+        <p class="mt-4">
+          &copy; 2025 Overwatch Championship Tournament. Todos os direitos reservados.
+        </p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Mobile Menu Toggle
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    
+    mobileMenuBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+    
+    // Smooth scroll para links de âncora
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          const offset = 150;
+          const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - offset;
+          window.scrollTo({ top: targetPosition, behavior: 'smooth' });
+        }
+      });
+    });
+  </script>
+</body>
+</html>

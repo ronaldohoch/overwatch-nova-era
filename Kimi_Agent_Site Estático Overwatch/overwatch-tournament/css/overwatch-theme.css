@@ -1,0 +1,762 @@
+/* ============================================
+   OVERWATCH TOURNAMENT - DESIGN SYSTEM
+   Tema Claro - Inspirado no visual oficial
+   ============================================ */
+
+/* --- VARIÁVEIS --- */
+:root {
+  /* Cores principais Overwatch - Laranja Oficial */
+  --ow-orange: #f06314;
+  --ow-orange-dark: #d14e0a;
+  --ow-orange-light: #ff8547;
+  --ow-blue: #00c3ff;
+  --ow-blue-dark: #0099cc;
+  
+  /* Tons de cinza para tema claro (baseado na referência) */
+  --ow-white: #ffffff;
+  --ow-gray-50: #f8f9fa;
+  --ow-gray-100: #f1f3f4;
+  --ow-gray-200: #e8eaed;
+  --ow-gray-300: #dadce0;
+  --ow-gray-400: #9aa0a6;
+  --ow-gray-500: #5f6368;
+  --ow-gray-600: #3c4043;
+  --ow-gray-700: #202124;
+  --ow-gray-800: #1a1a1a;
+  --ow-gray-900: #111111;
+  
+  /* Cores de destaque */
+  --ow-red: #ea4335;
+  --ow-green: #34a853;
+  --ow-yellow: #fbbc04;
+  
+  /* Gradientes */
+  --gradient-hero: linear-gradient(135deg, #f8f9fa 0%, #ffffff 50%, #f1f3f4 100%);
+  --gradient-orange: linear-gradient(135deg, #f06314 0%, #d14e0a 100%);
+  --gradient-blue: linear-gradient(135deg, #00c3ff 0%, #0099cc 100%);
+  
+  /* Sombras sutis para tema claro */
+  --shadow-orange: 0 4px 20px rgba(240, 99, 20, 0.25);
+  --shadow-blue: 0 4px 20px rgba(0, 195, 255, 0.25);
+  --shadow-card: 0 2px 12px rgba(0, 0, 0, 0.08);
+  --shadow-card-hover: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+/* --- RESET & BASE --- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+  background-color: var(--ow-white);
+  color: var(--ow-gray-700);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* --- TIPOGRAFIA --- */
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  line-height: 1.2;
+  color: var(--ow-gray-900);
+}
+
+.ow-title {
+  font-size: 3.5rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ow-gray-900);
+  position: relative;
+  display: inline-block;
+}
+
+.ow-title::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: var(--gradient-orange);
+  clip-path: polygon(0 0, 100% 0, 95% 100%, 5% 100%);
+}
+
+.ow-subtitle {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--ow-orange);
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+}
+
+.ow-section-title {
+  font-size: 2.5rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  position: relative;
+  padding-bottom: 15px;
+  margin-bottom: 30px;
+  color: var(--ow-gray-900);
+}
+
+.ow-section-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 4px;
+  background: var(--ow-orange);
+  clip-path: polygon(10% 0, 90% 0, 100% 100%, 0% 100%);
+}
+
+/* --- BOTÕES --- */
+.ow-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 40px;
+  font-size: 1rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%);
+  overflow: hidden;
+}
+
+.ow-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  transition: left 0.5s ease;
+}
+
+.ow-btn:hover::before {
+  left: 100%;
+}
+
+.ow-btn-primary {
+  background: var(--gradient-orange);
+  color: var(--ow-white);
+}
+
+.ow-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-orange);
+}
+
+.ow-btn-secondary {
+  background: transparent;
+  color: var(--ow-gray-700);
+  border: 2px solid var(--ow-orange);
+}
+
+.ow-btn-secondary:hover {
+  background: var(--ow-orange);
+  color: var(--ow-white);
+  transform: translateY(-2px);
+}
+
+.ow-btn-blue {
+  background: var(--gradient-blue);
+  color: var(--ow-white);
+}
+
+.ow-btn-blue:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-blue);
+}
+
+/* --- CARDS --- */
+.ow-card {
+  background: var(--ow-white);
+  border: 1px solid var(--ow-gray-200);
+  clip-path: polygon(5% 0, 100% 0, 100% 95%, 95% 100%, 0 100%, 0 5%);
+  transition: all 0.3s ease;
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+}
+
+.ow-card:hover {
+  border-color: var(--ow-orange);
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-5px);
+}
+
+.ow-card-header {
+  background: var(--ow-gray-50);
+  padding: 20px;
+  border-bottom: 2px solid var(--ow-orange);
+}
+
+.ow-card-body {
+  padding: 25px;
+}
+
+.ow-card-footer {
+  padding: 15px 25px;
+  background: var(--ow-gray-50);
+  border-top: 1px solid var(--ow-gray-200);
+}
+
+/* --- NAVBAR --- */
+.ow-navbar {
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(10px);
+  border-bottom: 2px solid var(--ow-orange);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  padding: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.ow-navbar-brand {
+  font-size: 1.5rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ow-gray-900);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ow-navbar-brand span {
+  color: var(--ow-orange);
+}
+
+.ow-nav-link {
+  color: var(--ow-gray-600);
+  text-decoration: none;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.9rem;
+  padding: 25px 20px;
+  position: relative;
+  transition: color 0.3s ease;
+  display: inline-block;
+}
+
+.ow-nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 3px;
+  background: var(--ow-orange);
+  transition: width 0.3s ease;
+}
+
+.ow-nav-link:hover,
+.ow-nav-link.active {
+  color: var(--ow-orange);
+}
+
+.ow-nav-link:hover::after,
+.ow-nav-link.active::after {
+  width: 100%;
+}
+
+/* --- HERO SECTION --- */
+.ow-hero {
+  min-height: 100vh;
+  background: var(--gradient-hero);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding-top: 80px;
+}
+
+.ow-hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(240, 99, 20, 0.06) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(0, 195, 255, 0.06) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.ow-hero-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 40px;
+}
+
+.ow-hero-badge {
+  display: inline-block;
+  background: var(--gradient-orange);
+  color: var(--ow-white);
+  padding: 8px 25px;
+  font-weight: 800;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%);
+  margin-bottom: 30px;
+}
+
+/* --- SEÇÕES --- */
+.ow-section {
+  padding: 100px 0;
+  position: relative;
+}
+
+.ow-section-alt {
+  background: var(--ow-gray-50);
+}
+
+.ow-section-divider {
+  height: 4px;
+  background: linear-gradient(90deg, transparent, var(--ow-orange), transparent);
+  margin: 0;
+}
+
+/* --- BRACKET / TORNEIO --- */
+.ow-bracket {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  flex-wrap: wrap;
+  padding: 40px 0;
+}
+
+.ow-bracket-round {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  justify-content: center;
+}
+
+.ow-bracket-title {
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--ow-orange);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 20px;
+}
+
+.ow-match {
+  background: var(--ow-white);
+  border: 1px solid var(--ow-gray-200);
+  clip-path: polygon(5% 0, 100% 0, 100% 95%, 95% 100%, 0 100%, 0 5%);
+  min-width: 280px;
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+}
+
+.ow-match-header {
+  background: var(--ow-gray-100);
+  padding: 10px 15px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--ow-gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  display: flex;
+  justify-content: space-between;
+}
+
+.ow-match-team {
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--ow-gray-100);
+  transition: background 0.3s ease;
+}
+
+.ow-match-team:last-child {
+  border-bottom: none;
+}
+
+.ow-match-team:hover {
+  background: rgba(240, 99, 20, 0.04);
+}
+
+.ow-match-team.winner {
+  background: rgba(240, 99, 20, 0.08);
+  border-left: 4px solid var(--ow-orange);
+}
+
+.ow-team-name {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--ow-gray-700);
+}
+
+.ow-team-score {
+  font-weight: 900;
+  font-size: 1.3rem;
+  color: var(--ow-orange);
+}
+
+.ow-match-team.winner .ow-team-score {
+  color: var(--ow-green);
+}
+
+/* --- TIMES / JOGADORES --- */
+.ow-team-card {
+  background: var(--ow-white);
+  border: 1px solid var(--ow-gray-200);
+  clip-path: polygon(5% 0, 100% 0, 100% 95%, 95% 100%, 0 100%, 0 5%);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-card);
+}
+
+.ow-team-card:hover {
+  border-color: var(--ow-orange);
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-5px);
+}
+
+.ow-team-logo {
+  width: 80px;
+  height: 80px;
+  background: var(--ow-gray-100);
+  clip-path: polygon(20% 0, 100% 0, 100% 80%, 80% 100%, 0 100%, 0 20%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  font-weight: 900;
+  color: var(--ow-orange);
+  margin: 0 auto 20px;
+}
+
+.ow-player-avatar {
+  width: 60px;
+  height: 60px;
+  background: var(--ow-gray-100);
+  border: 2px solid var(--ow-orange);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: var(--ow-orange);
+  overflow: hidden;
+}
+
+.ow-role-icon {
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 0.7rem;
+  font-weight: 800;
+  margin-right: 8px;
+}
+
+.ow-role-tank { background: var(--ow-blue); color: var(--ow-white); }
+.ow-role-damage { background: var(--ow-red); color: var(--ow-white); }
+.ow-role-support { background: var(--ow-green); color: var(--ow-white); }
+
+/* --- AGENDA --- */
+.ow-schedule-item {
+  display: flex;
+  align-items: center;
+  padding: 25px;
+  background: var(--ow-white);
+  border-left: 4px solid var(--ow-orange);
+  margin-bottom: 15px;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-card);
+}
+
+.ow-schedule-item:hover {
+  background: var(--ow-gray-50);
+  transform: translateX(10px);
+  box-shadow: var(--shadow-card-hover);
+}
+
+.ow-schedule-time {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: var(--ow-orange);
+  min-width: 120px;
+}
+
+.ow-schedule-date {
+  font-size: 0.85rem;
+  color: var(--ow-gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.ow-schedule-match {
+  flex: 1;
+  padding: 0 30px;
+}
+
+.ow-schedule-teams {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--ow-gray-700);
+}
+
+.ow-schedule-stage {
+  font-size: 0.85rem;
+  color: var(--ow-gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.ow-schedule-status {
+  padding: 8px 20px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%);
+}
+
+.ow-status-live {
+  background: var(--ow-red);
+  color: var(--ow-white);
+  animation: pulse 1.5s infinite;
+}
+
+.ow-status-upcoming {
+  background: var(--ow-blue);
+  color: var(--ow-white);
+}
+
+.ow-status-finished {
+  background: var(--ow-gray-400);
+  color: var(--ow-white);
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+/* --- FOOTER --- */
+.ow-footer {
+  background: var(--ow-gray-50);
+  border-top: 4px solid var(--ow-orange);
+  padding: 60px 0 30px;
+}
+
+.ow-footer-brand {
+  font-size: 1.8rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 20px;
+  color: var(--ow-gray-900);
+}
+
+.ow-footer-brand span {
+  color: var(--ow-orange);
+}
+
+.ow-footer-links {
+  list-style: none;
+  padding: 0;
+}
+
+.ow-footer-links li {
+  margin-bottom: 10px;
+}
+
+.ow-footer-links a {
+  color: var(--ow-gray-500);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s ease;
+}
+
+.ow-footer-links a:hover {
+  color: var(--ow-orange);
+}
+
+.ow-footer-social {
+  display: flex;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.ow-social-link {
+  width: 45px;
+  height: 45px;
+  background: var(--ow-white);
+  border: 2px solid var(--ow-gray-200);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ow-gray-600);
+  text-decoration: none;
+  font-weight: 700;
+  transition: all 0.3s ease;
+  clip-path: polygon(20% 0, 100% 0, 100% 80%, 80% 100%, 0 100%, 0 20%);
+}
+
+.ow-social-link:hover {
+  background: var(--ow-orange);
+  border-color: var(--ow-orange);
+  color: var(--ow-white);
+}
+
+.ow-footer-legal {
+  margin-top: 40px;
+  padding-top: 30px;
+  border-top: 1px solid var(--ow-gray-200);
+  text-align: center;
+  color: var(--ow-gray-500);
+  font-size: 0.85rem;
+}
+
+.ow-footer-legal strong {
+  color: var(--ow-orange);
+  display: block;
+  margin-bottom: 10px;
+}
+
+/* --- UTILITÁRIOS --- */
+.ow-text-orange { color: var(--ow-orange); }
+.ow-text-blue { color: var(--ow-blue); }
+.ow-text-gray { color: var(--ow-gray-500); }
+.ow-bg-dark { background-color: var(--ow-gray-50); }
+.ow-bg-dark-secondary { background-color: var(--ow-gray-100); }
+
+.ow-divider {
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--ow-orange), transparent);
+  margin: 30px 0;
+}
+
+.ow-badge {
+  display: inline-block;
+  padding: 5px 15px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  clip-path: polygon(10% 0, 100% 0, 90% 100%, 0% 100%);
+}
+
+.ow-badge-orange {
+  background: var(--ow-orange);
+  color: var(--ow-white);
+}
+
+.ow-badge-blue {
+  background: var(--ow-blue);
+  color: var(--ow-white);
+}
+
+/* --- ANIMAÇÕES --- */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ow-animate {
+  animation: fadeInUp 0.6s ease forwards;
+}
+
+/* --- RESPONSIVO --- */
+@media (max-width: 768px) {
+  .ow-title {
+    font-size: 2rem;
+  }
+  
+  .ow-section-title {
+    font-size: 1.8rem;
+  }
+  
+  .ow-hero {
+    min-height: auto;
+    padding: 120px 20px 60px;
+  }
+  
+  .ow-navbar-collapse {
+    background: var(--ow-white);
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .ow-nav-link {
+    padding: 15px 0;
+    display: block;
+  }
+  
+  .ow-bracket {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .ow-schedule-item {
+    flex-direction: column;
+    text-align: center;
+    gap: 15px;
+  }
+  
+  .ow-schedule-match {
+    padding: 0;
+  }
+}
+
+/* --- SCROLLBAR CUSTOMIZADA --- */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--ow-gray-100);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--ow-orange);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--ow-orange-dark);
+}
