@@ -27,6 +27,7 @@ export class Header {
     // { label: 'Times', link: '/times' },
     // { label: 'Agenda', link: '/agenda' },
     { label: 'Regras', link: '/regras' },
+    { label: 'Minha conta', link: '/login' },
   ];
 
   readonly navItems = computed(() => this.items() ?? this.defaults);
