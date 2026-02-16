@@ -1,97 +1,176 @@
-<section class="mt-10 grid grid-cols-1 gap-4 md:gap-16 md:grid-cols-2">
-  <div class="flex flex-col justify-between gap-6">
-    <div class="space-y-2">
-      <h1 class="text-4xl font-black leading-tight text-(--ow-gray-900) lg:text-5xl">
-        Crie sua conta
-      </h1>
-      <p class="text-(--ow-gray-500)">
-        Cadastre-se para participar dos torneios e acompanhar suas partidas.
-      </p>
+@if(!isLogin()){
+  <section class="mt-10 grid grid-cols-1 gap-4 md:gap-16 md:grid-cols-2">
+    <div class="flex flex-col justify-between gap-6">
+      <div class="space-y-2">
+        <h1 class="text-4xl font-black leading-tight text-(--ow-gray-900) lg:text-5xl">
+          Crie sua conta
+        </h1>
+        <p class="text-(--ow-gray-500)">
+          Cadastre-se para participar dos torneios e acompanhar suas partidas.
+        </p>
+        <p>
+          <ow-btn type="button" (click)="toggleLogin()"
+            ariaLabel="Criar conta" variant="secondary">
+            Fazer login?
+          </ow-btn>
+        </p>
+      </div>
     </div>
-  </div>
 
-  <form
-    class="space-y-5 rounded-xl p-6"
-    novalidate
-    (submit)="onSubmit($event)"
-  >
-    <div class="space-y-1.5">
-      <label for="displayName" class="text-sm font-semibold text-(--ow-gray-700)">Display name</label>
-      <input
-        id="displayName"
-        type="text"
-        autocomplete="name"
-        placeholder="Seu nome no campeonato"
-        class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
-        [value]="form().displayName"
-        (input)="updateField('displayName', $any($event.target).value)"
-        (blur)="markTouched('displayName')"
-      />
-      @if (fieldError('displayName'); as error) {
-        <p class="text-sm font-medium text-red-600">{{ error }}</p>
+    <form
+      class="space-y-5 rounded-xl p-6"
+      novalidate
+      (submit)="onSubmit($event)"
+    >
+      <div class="space-y-1.5">
+        <label for="displayName" class="text-sm font-semibold text-(--ow-gray-700)">Display name</label>
+        <input
+          id="displayName"
+          type="text"
+          autocomplete="name"
+          placeholder="Seu nome no campeonato"
+          class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
+          [value]="form().displayName"
+          (input)="updateField('displayName', $any($event.target).value)"
+          (blur)="markTouched('displayName')"
+        />
+        @if (fieldError('displayName'); as error) {
+          <p class="text-sm font-medium text-red-600">{{ error }}</p>
+        }
+      </div>
+
+      <div class="space-y-1.5">
+        <label for="email" class="text-sm font-semibold text-(--ow-gray-700)">Email</label>
+        <input
+          id="email"
+          type="email"
+          autocomplete="email"
+          placeholder="voce@email.com"
+          class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
+          [value]="form().email"
+          (input)="updateField('email', $any($event.target).value)"
+          (blur)="markTouched('email')"
+        />
+        @if (fieldError('email'); as error) {
+          <p class="text-sm font-medium text-red-600">{{ error }}</p>
+        }
+      </div>
+
+      <div class="space-y-1.5">
+        <label for="password" class="text-sm font-semibold text-(--ow-gray-700)">Password</label>
+        <input
+          id="password"
+          type="password"
+          autocomplete="new-password"
+          placeholder="Minimo de 8 caracteres"
+          class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
+          [value]="form().password"
+          (input)="updateField('password', $any($event.target).value)"
+          (blur)="markTouched('password')"
+        />
+        @if (fieldError('password'); as error) {
+          <p class="text-sm font-medium text-red-600">{{ error }}</p>
+        }
+      </div>
+
+      <div class="space-y-1.5">
+        <label for="battletag" class="text-sm font-semibold text-(--ow-gray-700)">BattleTag</label>
+        <input
+          id="battletag"
+          type="text"
+          autocomplete="off"
+          placeholder="Jogador#1234"
+          class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
+          [value]="form().battletag"
+          (input)="updateField('battletag', $any($event.target).value)"
+          (blur)="markTouched('battletag')"
+        />
+        @if (fieldError('battletag'); as error) {
+          <p class="text-sm font-medium text-red-600">{{ error }}</p>
+        }
+      </div>
+
+      <div class="space-y-1.5 flex flex-row-reverse">
+        <ow-btn [disabled]="!canSubmit()"
+          ariaLabel="Criar conta" type="submit">
+          Criar conta
+        </ow-btn>
+      </div>
+
+      @if (submitMessage(); as message) {
+        <p class="text-sm font-medium text-green-700">{{ message }}</p>
       }
+    </form>
+  </section>
+}@else {
+  <section class="mt-10 grid grid-cols-1 gap-4 md:gap-16 md:grid-cols-2">
+    <div class="flex flex-col justify-between gap-6">
+      <div class="space-y-2">
+        <h1 class="text-4xl font-black leading-tight text-(--ow-gray-900) lg:text-5xl">
+          Entrar em sua conta
+        </h1>
+        <p class="text-(--ow-gray-500)">
+
+        </p>
+        <p>
+          <ow-btn type="button" (click)="toggleLogin()"
+            ariaLabel="Criar conta" variant="secondary">
+            Criar conta?
+          </ow-btn>
+        </p>
+      </div>
     </div>
 
-    <div class="space-y-1.5">
-      <label for="email" class="text-sm font-semibold text-(--ow-gray-700)">Email</label>
-      <input
-        id="email"
-        type="email"
-        autocomplete="email"
-        placeholder="voce@email.com"
-        class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
-        [value]="form().email"
-        (input)="updateField('email', $any($event.target).value)"
-        (blur)="markTouched('email')"
-      />
-      @if (fieldError('email'); as error) {
-        <p class="text-sm font-medium text-red-600">{{ error }}</p>
+    <form
+      class="space-y-5 rounded-xl p-6"
+      novalidate
+      (submit)="onSubmit($event)"
+    >
+      <div class="space-y-1.5">
+        <label for="email" class="text-sm font-semibold text-(--ow-gray-700)">Email</label>
+        <input
+          id="email"
+          type="email"
+          autocomplete="email"
+          placeholder="voce@email.com"
+          class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
+          [value]="form().email"
+          (input)="updateField('email', $any($event.target).value)"
+          (blur)="markTouched('email')"
+        />
+        @if (fieldError('email'); as error) {
+          <p class="text-sm font-medium text-red-600">{{ error }}</p>
+        }
+      </div>
+
+      <div class="space-y-1.5">
+        <label for="password" class="text-sm font-semibold text-(--ow-gray-700)">Password</label>
+        <input
+          id="password"
+          type="password"
+          autocomplete="new-password"
+          placeholder="Minimo de 8 caracteres"
+          class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
+          [value]="form().password"
+          (input)="updateField('password', $any($event.target).value)"
+          (blur)="markTouched('password')"
+        />
+        @if (fieldError('password'); as error) {
+          <p class="text-sm font-medium text-red-600">{{ error }}</p>
+        }
+      </div>
+
+      <div class="space-y-1.5 flex flex-row-reverse">
+        <ow-btn [disabled]="!canSubmit()"
+          ariaLabel="Criar conta" type="submit">
+          Entrar
+        </ow-btn>
+      </div>
+
+      @if (submitMessage(); as message) {
+        <p class="text-sm font-medium text-green-700">{{ message }}</p>
       }
-    </div>
+    </form>
+  </section>
+}
 
-    <div class="space-y-1.5">
-      <label for="password" class="text-sm font-semibold text-(--ow-gray-700)">Password</label>
-      <input
-        id="password"
-        type="password"
-        autocomplete="new-password"
-        placeholder="Minimo de 8 caracteres"
-        class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
-        [value]="form().password"
-        (input)="updateField('password', $any($event.target).value)"
-        (blur)="markTouched('password')"
-      />
-      @if (fieldError('password'); as error) {
-        <p class="text-sm font-medium text-red-600">{{ error }}</p>
-      }
-    </div>
-
-    <div class="space-y-1.5">
-      <label for="battletag" class="text-sm font-semibold text-(--ow-gray-700)">BattleTag</label>
-      <input
-        id="battletag"
-        type="text"
-        autocomplete="off"
-        placeholder="Jogador#1234"
-        class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
-        [value]="form().battletag"
-        (input)="updateField('battletag', $any($event.target).value)"
-        (blur)="markTouched('battletag')"
-      />
-      @if (fieldError('battletag'); as error) {
-        <p class="text-sm font-medium text-red-600">{{ error }}</p>
-      }
-    </div>
-
-    <div class="space-y-1.5 flex flex-row-reverse">
-      <ow-btn [disabled]="!canSubmit()"
-        ariaLabel="Criar conta" type="submit">
-        Criar conta
-      </ow-btn>
-    </div>
-
-    @if (submitMessage(); as message) {
-      <p class="text-sm font-medium text-green-700">{{ message }}</p>
-    }
-  </form>
-</section>

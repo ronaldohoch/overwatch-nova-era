@@ -43,6 +43,12 @@ export class LoginComponent {
   );
   readonly canSubmit = computed(() => !this.hasErrors());
 
+  isLogin = signal<boolean>(false)
+
+  toggleLogin(){
+    this.isLogin.update(val=>!val)
+  }
+
   updateField(field: SignupField, value: string): void {
     this.form.update((current) => ({ ...current, [field]: value }));
   }
