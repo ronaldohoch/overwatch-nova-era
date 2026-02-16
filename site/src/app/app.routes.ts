@@ -1,9 +1,14 @@
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
-    {
-      path: '',
-      title: 'Copa Overwatch - Nova Era',
-      loadComponent: () => import('./features/pagina-inicial/pagina-inicial').then(m=>m.PaginaInicial)
-    },
+  {
+    path: '',
+    title: 'Copa Overwatch - Nova Era',
+    loadComponent: () => import('./features/pagina-inicial/pagina-inicial').then(m=>m.PaginaInicial)
+  },
+  {
+    path: 'duvidas-frequentes',
+    title: 'Copa Overwatch - Dúvidas frequêntes',
+    loadComponent: () => import('./features/faq/faq.component').then(m=>m.FaqComponent)
+  },
 ];
