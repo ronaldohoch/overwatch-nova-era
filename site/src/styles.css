@@ -38,3 +38,21 @@
   --shadow-card: 0 2px 12px rgba(0, 0, 0, 0.08);
   --shadow-card-hover: 0 8px 24px rgba(0, 0, 0, 0.12);
 }
+
+/* --- SCROLLBAR CUSTOMIZADA --- */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--ow-gray-100);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--ow-orange);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--ow-orange-dark);
+}
