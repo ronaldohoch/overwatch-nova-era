@@ -1,0 +1,33 @@
+<div class="group border-b border-black/10">
+  <button type="button"
+    class="w-full cursor-pointer text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--ow-orange) focus-visible:ring-offset-2 focus-visible:ring-offset-white"
+    [attr.id]="buttonId" [attr.aria-expanded]="isOpen()" [attr.aria-controls]="panelId" (click)="onToggle()">
+    <div [class]="headerClass()">
+      <span [class]="questionClass()">{{ question() }}</span>
+
+      <div [class]="iconClass()" aria-hidden="true">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 32 32">
+          <g clip-path="url(#plus_svg__a)">
+            <path fill="currentColor" fill-rule="evenodd"
+              d="M13.333 9.778A1.78 1.78 0 0 1 15.111 8h1.778a1.78 1.78 0 0 1 1.778 1.778v3.555h3.555A1.78 1.78 0 0 1 24 15.111v1.778a1.78 1.78 0 0 1-1.778 1.778h-3.555v3.555A1.78 1.78 0 0 1 16.889 24H15.11a1.78 1.78 0 0 1-1.778-1.778v-3.555H9.778A1.78 1.78 0 0 1 8 16.889V15.11a1.78 1.78 0 0 1 1.778-1.778h3.555z"
+              clip-rule="evenodd"></path>
+          </g>
+          <defs>
+            <clipPath id="plus_svg__a">
+              <path fill="#fff" d="M0 0h32v32H0z"></path>
+            </clipPath>
+          </defs>
+        </svg>
+      </div>
+    </div>
+  </button>
+
+  <div [id]="panelId" role="region" [attr.aria-labelledby]="buttonId" [attr.aria-hidden]="!isOpen()"
+    [class]="panelClass()">
+    <div class="min-h-0 config-d-s">
+      <div class="p-4 text-black child-link:font-bold child-link:text-ow-primary">
+        {{ answer() }}
+      </div>
+    </div>
+  </div>
+</div>
