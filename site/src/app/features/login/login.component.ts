@@ -1,7 +1,10 @@
 import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
 import { ButtonsComponent } from '../../shared/buttons/buttons';
 
-type SignupField = 'displayName' | 'email' | 'password' | 'battletag';
+const SIGNUP_FIELDS = ['displayName', 'email', 'password', 'battletag'] as const;
+const LOGIN_FIELDS = ['email', 'password'] as const;
+
+type SignupField = (typeof SIGNUP_FIELDS)[number];
 
 type SignupFormValue = Readonly<{
   displayName: string;
@@ -36,17 +39,26 @@ export class LoginComponent {
 
   readonly submitted = signal(false);
   readonly submitMessage = signal<string | null>(null);
+  readonly isLogin = signal(false);
 
-  readonly errors = computed<SignupErrors>(() => this.validate(this.form()));
-  readonly hasErrors = computed(() =>
-    Object.values(this.errors()).some((messages) => messages.length > 0),
+  readonly activeFields = computed<readonly SignupField[]>(() =>
+    this.isLogin() ? LOGIN_FIELDS : SIGNUP_FIELDS,
   );
+
+  readonly errors = computed<SignupErrors>(() =>
+    this.validate(this.form(), this.isLogin()),
+  );
+
+  readonly hasErrors = computed(() =>
+    this.activeFields().some((field) => this.errors()[field].length > 0),
+  );
+
   readonly canSubmit = computed(() => !this.hasErrors());
 
-  isLogin = signal<boolean>(false)
-
-  toggleLogin(){
-    this.isLogin.update(val=>!val)
+  toggleLogin(): void {
+    this.isLogin.update((value) => !value);
+    this.submitted.set(false);
+    this.submitMessage.set(null);
   }
 
   updateField(field: SignupField, value: string): void {
@@ -65,30 +77,40 @@ export class LoginComponent {
     return firstError ?? null;
   }
 
-  onSubmit(event: Event): void {
+  onCreate(event: Event): void {
     event.preventDefault();
     this.submitted.set(true);
     this.submitMessage.set(null);
 
     if (!this.canSubmit()) return;
 
-    this.submitMessage.set('Cadastro preenchido com sucesso. Integração com API pendente.');
+    this.submitMessage.set('Cadastro preenchido com sucesso. Integracao com API pendente.');
   }
 
-  private validate(value: SignupFormValue): SignupErrors {
+  onLogin(event: Event): void {
+    event.preventDefault();
+    this.submitted.set(true);
+    this.submitMessage.set(null);
+
+    if (!this.canSubmit()) return;
+
+    this.submitMessage.set('Login preenchido com sucesso. Integracao com API pendente.');
+  }
+
+  private validate(value: SignupFormValue, loginMode: boolean): SignupErrors {
     const displayNameErrors: string[] = [];
     const emailErrors: string[] = [];
     const passwordErrors: string[] = [];
     const battletagErrors: string[] = [];
 
-    if (!value.displayName.trim()) {
-      displayNameErrors.push('Informe o nome de exibição.');
+    if (!loginMode && !value.displayName.trim()) {
+      displayNameErrors.push('Informe o nome de exibicao.');
     }
 
     if (!value.email.trim()) {
       emailErrors.push('Informe o email.');
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.email)) {
-      emailErrors.push('Informe um email válido.');
+      emailErrors.push('Informe um email valido.');
     }
 
     if (!value.password) {
@@ -97,10 +119,12 @@ export class LoginComponent {
       passwordErrors.push('A senha deve ter ao menos 8 caracteres.');
     }
 
-    if (!value.battletag.trim()) {
-      battletagErrors.push('Informe a BattleTag.');
-    } else if (!/^[A-Za-z0-9_]{3,16}#[0-9]{4,6}$/.test(value.battletag)) {
-      battletagErrors.push('Use o formato Nome#1234.');
+    if (!loginMode) {
+      if (!value.battletag.trim()) {
+        battletagErrors.push('Informe a BattleTag.');
+      } else if (!/^[A-Za-z0-9_]{3,16}#[0-9]{4,6}$/.test(value.battletag)) {
+        battletagErrors.push('Use o formato Nome#1234.');
+      }
     }
 
     return {
@@ -110,5 +134,4 @@ export class LoginComponent {
       battletag: battletagErrors,
     };
   }
-
 }
