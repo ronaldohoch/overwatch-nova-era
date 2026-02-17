@@ -17,6 +17,11 @@ export const routes: Routes = [
     loadComponent: () => import('./features/regras/regras.component').then(m=>m.RegrasComponent)
   },
   {
+    path: 'torneio',
+    title: 'Copa Overwatch - Chaveamento',
+    loadComponent: () => import('./features/torneio/torneio.component').then(m=>m.TorneioComponent)
+  },
+  {
     path: 'login',
     title: 'Copa Overwatch - Login',
     loadComponent: () => import('./features/login/login.component').then(m=>m.LoginComponent)
