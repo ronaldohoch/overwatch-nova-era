@@ -1,0 +1,17 @@
+<div
+  class=" overflow-hidden border border-(--ow-gray-200) bg-(--ow-white)"
+>
+  <div
+    class="flex flex-col items-center justify-between bg-(--ow-gray-100) px-3.75 py-2.5
+           text-[0.75rem] font-bold uppercase tracking-widest text-(--ow-gray-500)"
+  >
+    <span>{{match().format}} • {{match().data}}</span>
+    <span [class]="statusClass()">
+      {{ statusText() }}
+    </span>
+  </div>
+
+  <!-- team (winner) -->
+  <app-torneio-team id="TeamA" [isWinner]="match().winner==='A'" [teamName]="match().teamA.title" [teamScore]="match().score.teamA"></app-torneio-team>
+  <app-torneio-team id="TeamB" [isWinner]="match().winner==='B'" [teamName]="match().teamB.title" [teamScore]="match().score.teamB"></app-torneio-team>
+</div>
