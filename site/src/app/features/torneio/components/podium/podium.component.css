@@ -1,13 +1,72 @@
-@keyframes podiumBounce {
-  0% { bottom: 100%; height: 45px; }
-  50% { height: 50px; }
-  100% { bottom: 107%; height: 50px; }
+.ow-section {
+  padding: 100px 0;
+  position: relative;
 }
 
-.podium-bounce {
-  animation: podiumBounce 0.25s infinite alternate;
+.ow-section-title {
+  font-size: 2.5rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  position: relative;
+  padding-bottom: 15px;
+  margin-bottom: 30px;
+  color: var(--ow-gray-900);
 }
 
-.podium-delay-0 { animation-delay: 0s; }
-.podium-delay-300 { animation-delay: 0.3s; }
-.podium-delay-700 { animation-delay: 0.7s; }
+.ow-section-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 4px;
+  background: var(--ow-orange);
+  clip-path: polygon(10% 0, 90% 0, 100% 100%, 0% 100%);
+}
+
+/* --- CARDS --- */
+.ow-card {
+  background: var(--ow-white);
+  border: 1px solid var(--ow-gray-200);
+  clip-path: polygon(5% 0, 100% 0, 100% 95%, 95% 100%, 0 100%, 0 5%);
+  transition: all 0.3s ease;
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+}
+
+.ow-card:hover {
+  border-color: var(--ow-orange);
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-5px);
+}
+.ow-card-winner:hover{
+  transform:scale(.95);
+}
+
+.ow-card-header {
+  background: var(--ow-gray-50);
+  padding: 20px;
+  border-bottom: 2px solid var(--ow-orange);
+}
+
+.ow-card-body {
+  padding: 25px;
+}
+
+.ow-card-footer {
+  padding: 15px 25px;
+  background: var(--ow-gray-50);
+  border-top: 1px solid var(--ow-gray-200);
+}
+
+.border-ow-orange{
+  border-color:#f06314;
+}
+
+@media (max-width: 768px) {
+  .ow-section-title {
+    font-size: 1.8rem;
+  }
+}

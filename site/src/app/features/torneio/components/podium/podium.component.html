@@ -1,19 +1,48 @@
-<!--
-  Obrigado moço: https://codepen.io/seanDars/pen/ExMpOyR
--->
-<div class="flex h-64 items-end justify-center">
-  <!-- SILVER -->
-  <div class="relative ml-1.75 w-25 h-32.5 rounded-[10px] bg-gray-500">
-    <div class="absolute left-1/2 -translate-x-1/2 bottom-full w-17.5 h-12.5 rounded-[5px] bg-zinc-300 podium-bounce podium-delay-0 flex items-center justify-center">Time 8</div>
+<!-- PRÊMIO SECTION -->
+<section class="ow-section w-full">
+  <div class="text-center mb-16">
+    <h2 class="ow-section-title">Pool de <span class="text-ow-orange">Prêmios</span></h2>
+    <p class="text-ow-gray-500 max-w-2xl mx-auto">
+      Recompensas incríveis para os melhores competidores do torneio
+    </p>
   </div>
 
-  <!-- GOLD -->
-  <div class="relative ml-1.75 w-25 h-40 rounded-[10px] bg-gray-500">
-    <div class="absolute left-1/2 -translate-x-1/2 bottom-full w-17.5 h-12.5 rounded-[5px] bg-yellow-400 podium-bounce podium-delay-300 flex items-center justify-center">Time 6</div>
-  </div>
+  <div class="grid md:grid-cols-3 gap-8 w-full">
+    <!-- 2º Lugar -->
+    <div class="ow-card text-center p-8 order-2 md:order-1">
+      <div class="text-6xl mb-4">🥈</div>
+      <h3 class="text-2xl font-black uppercase tracking-wider mb-2">2º Lugar</h3>
+      <div class="text-4xl font-black text-ow-blue mb-4">R$ 3.000</div>
+      <ul class="text-ow-gray-500 text-sm space-y-2">
+        <li>Skins Exclusivas</li>
+        <li>Troféu de Prata</li>
+        <li>Medalhas da Equipe</li>
+      </ul>
+    </div>
 
-  <!-- BRONZE -->
-  <div class="relative ml-1.75 w-25 h-25 rounded-[10px] bg-gray-500">
-    <div class="absolute left-1/2 -translate-x-1/2 bottom-full w-17.5 h-12.5 rounded-[5px] bg-amber-700 podium-bounce podium-delay-700 flex items-center justify-center">Time 3</div>
+    <!-- 1º Lugar -->
+    <div class="ow-card ow-card-winner text-center p-8 border-ow-orange order-1 md:order-2 transform md:scale-110">
+      <div class="text-6xl mb-4">🏆</div>
+      <h3 class="text-2xl font-black uppercase tracking-wider mb-2 text-ow-orange">1º Lugar</h3>
+      <div class="text-5xl font-black text-ow-orange mb-4">R$ 7.000</div>
+      <ul class="text-ow-gray-500 text-sm space-y-2">
+        <li>Skins Lendárias Exclusivas</li>
+        <li>Troféu de Ouro</li>
+        <li>Medalhas de Ouro</li>
+        <li>Vaga no Torneio Internacional</li>
+      </ul>
+    </div>
+
+    <!-- 3º Lugar -->
+    <div class="ow-card text-center p-8 order-3">
+      <div class="text-6xl mb-4">🥉</div>
+      <h3 class="text-2xl font-black uppercase tracking-wider mb-2">3º Lugar</h3>
+      <div class="text-4xl font-black text-ow-blue mb-4">R$ 1.500</div>
+      <ul class="text-ow-gray-500 text-sm space-y-2">
+        <li>Skins Especiais</li>
+        <li>Troféu de Bronze</li>
+        <li>Medalhas da Equipe</li>
+      </ul>
+    </div>
   </div>
-</div>
+</section>
