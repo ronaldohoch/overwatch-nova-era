@@ -91,14 +91,24 @@
       </div>
 
       <div class="space-y-1.5 flex flex-row-reverse">
-        <ow-btn [disabled]="!canSubmit()"
+        <ow-btn [disabled]="!canSubmit() || loginPending()"
           ariaLabel="Criar conta" type="submit">
-          Criar conta
+          @if (loginPending()) {
+            Criando...
+          } @else {
+            Criar conta
+          }
         </ow-btn>
       </div>
 
       @if (submitMessage(); as message) {
-        <p class="text-sm font-medium text-green-700">{{ message }}</p>
+        <p
+          class="text-sm font-medium"
+          [class.text-green-700]="submitStatus() === 'success'"
+          [class.text-red-600]="submitStatus() === 'error'"
+        >
+          {{ message }}
+        </p>
       }
     </form>
   </section>
@@ -161,16 +171,25 @@
       </div>
 
       <div class="space-y-1.5 flex flex-row-reverse">
-        <ow-btn [disabled]="!canSubmit()"
+        <ow-btn [disabled]="!canSubmit() || loginPending()"
           ariaLabel="Criar conta" type="submit">
-          Entrar
+          @if (loginPending()) {
+            Entrando...
+          } @else {
+            Entrar
+          }
         </ow-btn>
       </div>
 
       @if (submitMessage(); as message) {
-        <p class="text-sm font-medium text-green-700">{{ message }}</p>
+        <p
+          class="text-sm font-medium"
+          [class.text-green-700]="submitStatus() === 'success'"
+          [class.text-red-600]="submitStatus() === 'error'"
+        >
+          {{ message }}
+        </p>
       }
     </form>
   </section>
 }
-

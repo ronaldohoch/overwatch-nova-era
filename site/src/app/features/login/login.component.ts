@@ -1,4 +1,6 @@
-import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { AuthService } from '../../core/auth/auth.service';
 import { ButtonsComponent } from '../../shared/buttons/buttons';
 
 const SIGNUP_FIELDS = ['displayName', 'email', 'password', 'battletag'] as const;
@@ -14,6 +16,7 @@ type SignupFormValue = Readonly<{
 }>;
 
 type SignupErrors = Readonly<Record<SignupField, string[]>>;
+type SubmitStatus = 'success' | 'error';
 
 @Component({
   selector: 'app-login',
@@ -23,6 +26,8 @@ type SignupErrors = Readonly<Record<SignupField, string[]>>;
   styleUrl: './login.component.css',
 })
 export class LoginComponent {
+  readonly auth = inject(AuthService);
+
   readonly form = signal<SignupFormValue>({
     displayName: '',
     email: '',
@@ -39,6 +44,8 @@ export class LoginComponent {
 
   readonly submitted = signal(false);
   readonly submitMessage = signal<string | null>(null);
+  readonly submitStatus = signal<SubmitStatus | null>(null);
+  readonly loginPending = signal(false);
   readonly isLogin = signal(false);
 
   readonly activeFields = computed<readonly SignupField[]>(() =>
@@ -59,6 +66,7 @@ export class LoginComponent {
     this.isLogin.update((value) => !value);
     this.submitted.set(false);
     this.submitMessage.set(null);
+    this.submitStatus.set(null);
   }
 
   updateField(field: SignupField, value: string): void {
@@ -77,24 +85,58 @@ export class LoginComponent {
     return firstError ?? null;
   }
 
-  onCreate(event: Event): void {
+  async onCreate(event: Event): Promise<void> {
     event.preventDefault();
     this.submitted.set(true);
     this.submitMessage.set(null);
+    this.submitStatus.set(null);
 
     if (!this.canSubmit()) return;
 
-    this.submitMessage.set('Cadastro preenchido com sucesso. Integracao com API pendente.');
+    this.loginPending.set(true);
+
+    try {
+      await this.auth.create({
+        displayName: this.form().displayName,
+        email: this.form().email,
+        password: this.form().password,
+        battletag: this.form().battletag,
+      });
+
+      this.submitMessage.set('Cadastro realizado com sucesso.');
+      this.submitStatus.set('success');
+    } catch (error: unknown) {
+      this.submitMessage.set(this.resolveCreateError(error));
+      this.submitStatus.set('error');
+    } finally {
+      this.loginPending.set(false);
+    }
   }
 
-  onLogin(event: Event): void {
+  async onLogin(event: Event): Promise<void> {
     event.preventDefault();
     this.submitted.set(true);
     this.submitMessage.set(null);
+    this.submitStatus.set(null);
 
     if (!this.canSubmit()) return;
 
-    this.submitMessage.set('Login preenchido com sucesso. Integracao com API pendente.');
+    this.loginPending.set(true);
+
+    try {
+      await this.auth.login({
+        email: this.form().email,
+        password: this.form().password,
+      });
+
+      this.submitMessage.set('Login realizado com sucesso.');
+      this.submitStatus.set('success');
+    } catch (error: unknown) {
+      this.submitMessage.set(this.resolveLoginError(error));
+      this.submitStatus.set('error');
+    } finally {
+      this.loginPending.set(false);
+    }
   }
 
   private validate(value: SignupFormValue, loginMode: boolean): SignupErrors {
@@ -133,5 +175,35 @@ export class LoginComponent {
       password: passwordErrors,
       battletag: battletagErrors,
     };
+  }
+
+  private resolveLoginError(error: unknown): string {
+    if (error instanceof HttpErrorResponse) {
+      const backendMessage =
+        typeof error.error?.error === 'string' ? error.error.error : null;
+
+      if (backendMessage) return backendMessage;
+    }
+
+    if (error instanceof Error && error.message.trim()) {
+      return error.message;
+    }
+
+    return 'Nao foi possivel realizar o login.';
+  }
+
+  private resolveCreateError(error: unknown): string {
+    if (error instanceof HttpErrorResponse) {
+      const backendMessage =
+        typeof error.error?.error === 'string' ? error.error.error : null;
+
+      if (backendMessage) return backendMessage;
+    }
+
+    if (error instanceof Error && error.message.trim()) {
+      return error.message;
+    }
+
+    return 'Nao foi possivel realizar o cadastro.';
   }
 }
