@@ -4,16 +4,16 @@
   "main": "index.js",
   "scripts": {
     "lint": "eslint --ext .js,.ts .",
-    "build": "tsc",
-    "build:watch": "tsc --watch",
+    "build": "cd functions && tsc",
+    "build:watch": "cd functions && tsc --watch",
     "serve": "npm run build && firebase emulators:start --only functions",
     "shell": "npm run build && firebase functions:shell",
     "start": "npm run shell",
-    "deploy": "tsc && firebase deploy --only functions",
+    "deploy": "cd functions && tsc && firebase deploy --only functions",
     "logs": "firebase functions:log",
-    "emulator":"start npm run emulator:tsc && start npm run emulator:all",
-    "emulator:tsc":"tsc --watch",
-    "emulator:all":"firebase emulators:start --import ./emulator-data --export-on-exit ./emulator-data --inspect-functions"
+    "emulator": "start npm run emulator:tsc && start npm run emulator:all",
+    "emulator:tsc": "tsc --watch",
+    "emulator:all": "firebase emulators:start --import ./emulator-data --export-on-exit ./emulator-data --inspect-functions"
   },
   "keywords": [],
   "author": "",
@@ -35,6 +35,6 @@
     "eslint-config-google": "^0.14.0",
     "eslint-plugin-import": "^2.25.4",
     "firebase-functions-test": "^3.1.0",
-    "typescript": "^4.9.0"
+    "typescript": "^5.9.3"
   }
 }
