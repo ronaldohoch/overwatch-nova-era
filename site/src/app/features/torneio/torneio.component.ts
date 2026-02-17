@@ -238,7 +238,7 @@ winnersBracketFinals = signal<Tournament>( {
   ],
   matches: [
     {
-      format: MatchFormat.MD3,
+      format: MatchFormat.MD7,
       data: '01 Mar',
       teamA: { title: 'Time 1', members: [] },
       teamB: { title: 'Time 8', members: [] },
@@ -259,7 +259,7 @@ losersBracketFinals = signal<Tournament>( {
   ],
   matches: [
     {
-      format: MatchFormat.MD3,
+      format: MatchFormat.MD7,
       data: '01 Mar',
       teamA: { title: 'Time 3', members: [] },
       teamB: { title: 'Time 6', members: [] },
