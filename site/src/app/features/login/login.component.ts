@@ -136,6 +136,7 @@ export class LoginComponent {
         email: this.signupForm().email,
         password: this.signupForm().password,
         battletag: this.signupForm().battletag,
+        whatsapp: this.signupForm().whatsapp,
       });
 
       this.signupMessage.set('Cadastro realizado com sucesso.');

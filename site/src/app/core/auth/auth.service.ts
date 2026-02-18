@@ -25,6 +25,18 @@ export type CreateData = Readonly<{
   email: string;
   password: string;
   battletag: string;
+  whatsapp: string;
+}>;
+
+export type UpdateCurrentUserData = Readonly<{
+  displayName: string;
+  email: string;
+  whatsapp: string;
+}>;
+
+export type ChangeCurrentUserPasswordData = Readonly<{
+  currentPassword: string;
+  newPassword: string;
 }>;
 
 type LoginApiResponse = Readonly<Record<string, unknown>> & {
@@ -89,6 +101,7 @@ export class AuthService {
         displayName: credentials.displayName.trim(),
         email: credentials.email.trim(),
         battletag: credentials.battletag.trim(),
+        whatsapp: credentials.whatsapp.trim(),
         password: credentials.password,
       }),
     );
@@ -105,6 +118,46 @@ export class AuthService {
 
     this.setSession(session);
     return session;
+  }
+
+  async updateCurrentUser(data: UpdateCurrentUserData): Promise<AuthSession> {
+    if (!this.token()) {
+      throw new Error('Sessao invalida. Faca login novamente.');
+    }
+
+    const response = await firstValueFrom(
+      this.http.put<LoginApiResponse>(`${this.authApiBaseUrl}/me`, {
+        displayName: data.displayName.trim(),
+        email: data.email.trim(),
+        whatsapp: data.whatsapp.trim(),
+      }),
+    );
+
+    if (!response.token || typeof response.token !== 'string') {
+      throw new Error('Resposta de atualizacao invalida.');
+    }
+
+    const { token, ...userData } = response;
+    const session: AuthSession = {
+      token,
+      user: userData,
+    };
+
+    this.setSession(session);
+    return session;
+  }
+
+  async changeCurrentUserPassword(data: ChangeCurrentUserPasswordData): Promise<void> {
+    if (!this.token()) {
+      throw new Error('Sessao invalida. Faca login novamente.');
+    }
+
+    await firstValueFrom(
+      this.http.put(`${this.authApiBaseUrl}/me/password`, {
+        currentPassword: data.currentPassword,
+        newPassword: data.newPassword,
+      }),
+    );
   }
 
   logout(): void {

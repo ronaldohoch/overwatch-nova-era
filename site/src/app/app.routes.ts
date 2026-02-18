@@ -34,7 +34,8 @@ export const routes: Routes = [
     data: {
       access: USER_ROLES,
     },
-    loadComponent: () => import('./features/watchpoint/watchpoint.component').then(m=>m.WatchpointComponent)
+    // loadComponent: () => import('./features/watchpoint/watchpoint.component').then(m=>m.WatchpointComponent)
+    loadChildren: ()=> import('./features/watchpoint/routes')
   },
   {
     path: 'login',
