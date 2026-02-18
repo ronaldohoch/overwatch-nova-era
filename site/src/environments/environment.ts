@@ -1,5 +1,6 @@
 export const environment = {
   production: true,
-  apiURL:'http://127.0.0.1:5001/copa-nova-era-overwatch/us-central1',
-  apiURLAuth: 'https://auth-hfjclii3ia-uc.a.run.app',
+  apiURL:'https://southamerica-east1-copa-nova-era-overwatch.cloudfunctions.net',
+  apiURLAuth: 'https://auth-hfjclii3ia-rj.a.run.app',
+  apiURLTorneios: 'https://torneios-hfjclii3ia-rj.a.run.app',
 };

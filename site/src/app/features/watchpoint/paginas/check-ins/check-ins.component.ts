@@ -30,7 +30,7 @@ type RawRecord = Readonly<Record<string, unknown>>;
 export class CheckInsComponent {
   private readonly http = inject(HttpClient);
   readonly auth = inject(AuthService);
-  private readonly torneiosApiUrl = `${environment.apiURL}/torneios`;
+  private readonly torneiosApiUrl = `${environment.apiURLTorneios}`;
 
   readonly loadingTournaments = signal(false);
   readonly tournaments = signal<readonly TournamentListItem[]>([]);

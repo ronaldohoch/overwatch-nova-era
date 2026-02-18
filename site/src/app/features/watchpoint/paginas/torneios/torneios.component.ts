@@ -64,7 +64,7 @@ export class TorneiosComponent {
   private readonly http = inject(HttpClient);
   readonly auth = inject(AuthService);
 
-  private readonly torneiosApiUrl = `${environment.apiURL}/torneios`;
+  private readonly torneiosApiUrl = `${environment.apiURLTorneios}`;
 
   readonly form = signal<TournamentFormValue>({
     name: '',
