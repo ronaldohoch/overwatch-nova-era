@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
+import { type UserRole } from '../auth/user-role';
 import { LinksComponent } from './components/links/links.component';
 import { ButtonsComponent } from '../../shared/buttons/buttons';
 
@@ -10,11 +11,46 @@ export type OwNavItem = Readonly<{
   exact?: boolean;
 }>;
 
+const DEFAULT_LINKS: readonly OwNavItem[] = [
+    { label: 'Início', link: '/', exact: true },
+    { label: 'Dúvidas frequêntes', link: '/duvidas-frequentes' },
+    // { label: 'Torneio', link: '/torneio' },
+    // { label: 'Times', link: '/times' },
+    // { label: 'Agenda', link: '/agenda' },
+    { label: 'Regras', link: '/regras' },
+];
+
+const MEMBER_LINKS: readonly OwNavItem[] = [
+  { label: 'Dashboard', link: '/watchpoint/dashboard' },
+  { label: 'Meus dados', link: '/watchpoint/dados-do-usuario' },
+  { label: 'Torneio', link: '/torneio' },
+];
+
+const STREAMER_LINKS: readonly OwNavItem[] = [
+  { label: 'Dashboard', link: '/watchpoint/dashboard' },
+  { label: 'Meus dados', link: '/watchpoint/dados-do-usuario' },
+  { label: 'Pick ban', link: '/torneio' },
+];
+
+const ADMIN_LINKS: readonly OwNavItem[] = [
+  { label: 'Dashboard', link: '/watchpoint/dashboard' },
+  { label: 'Meus dados', link: '/watchpoint/dados-do-usuario' },
+  { label: 'Torneios', link: '/watchpoint/torneios' },
+  // { label: 'Gestao do torneio', link: '/torneio' }
+];
+
+const ADMIN_ALL_LINKS = uniqueByLink([
+  ...ADMIN_LINKS,
+  ...STREAMER_LINKS,
+  ...MEMBER_LINKS,
+  // ...DEFAULT_LINKS,
+]);
+
 @Component({
   selector: 'app-header',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterLink, LinksComponent, ButtonsComponent],
-  templateUrl:'./header.html'
+  templateUrl: './header.html',
 })
 export class Header {
   readonly auth = inject(AuthService);
@@ -22,22 +58,17 @@ export class Header {
   readonly brandLink = input<string>('/');
   readonly items = input<readonly OwNavItem[] | null>(null);
 
-  defaultsLinks:OwNavItem[] = [
-    { label: 'Início', link: '/', exact: true },
-    { label: 'Dúvidas frequêntes', link: '/duvidas-frequentes' },
-    // { label: 'Torneio', link: '/torneio' },
-    // { label: 'Times', link: '/times' },
-    // { label: 'Agenda', link: '/agenda' },
-    { label: 'Regras', link: '/regras' },
-  ];
+  readonly defaultsLinks = DEFAULT_LINKS;
 
-  loggedInLinks:OwNavItem[] = [
-    { label: 'Dashboard', link: '/watchpoint' },
-    { label: 'Meus Dados', link: '/watchpoint/meus-dados' },
-    { label: 'Check-in', link: '/watchpoint/check-in' },
-  ];
+  readonly loggedInLinks = computed<readonly OwNavItem[]>(() => {
+    const role = this.auth.userRole();
+    if (role === 'admin') return ADMIN_ALL_LINKS;
+    if (role === 'streamer') return STREAMER_LINKS;
+    return MEMBER_LINKS;
+  });
 
   readonly userDisplayName = computed(() => this.auth.displayName() ?? 'Jogador');
+  readonly userRoleLabel = computed(() => this.resolveRoleLabel(this.auth.userRole()));
   readonly mobileOpen = signal(false);
   readonly mobileMenuId = 'ow-mobile-menu';
 
@@ -54,4 +85,23 @@ export class Header {
     this.closeMobile();
     void this.router.navigateByUrl('/');
   }
+
+  private resolveRoleLabel(role: UserRole | null): string {
+    if (role === 'admin') return 'Admin';
+    if (role === 'streamer') return 'Streamer';
+    return 'Membro';
+  }
+}
+
+function uniqueByLink(items: readonly OwNavItem[]): OwNavItem[] {
+  const seen = new Set<string>();
+  const result: OwNavItem[] = [];
+
+  for (const item of items) {
+    if (seen.has(item.link)) continue;
+    seen.add(item.link);
+    result.push(item);
+  }
+
+  return result;
 }

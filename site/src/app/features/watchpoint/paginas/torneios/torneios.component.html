@@ -1,1 +1,233 @@
-<p>torneios works!</p>
+<div class="space-y-6 rounded-xl border border-(--ow-gray-200) bg-white p-6">
+  <div class="space-y-2">
+    <h1 class="text-4xl font-black leading-tight text-(--ow-gray-900) lg:text-5xl">
+      Cadastrar torneio
+    </h1>
+    <p class="text-(--ow-gray-500)">
+      Crie um torneio seguindo as mesmas regras da API de torneios.
+    </p>
+  </div>
+
+  <form class="space-y-5" novalidate (submit)="onSubmit($event)">
+    <div class="space-y-1.5">
+      <label for="torneio-name" class="text-sm font-semibold text-(--ow-gray-700)">
+        Nome
+      </label>
+      <input
+        id="torneio-name"
+        type="text"
+        placeholder="Ex: Copa Nova Era #3"
+        class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
+        [value]="form().name"
+        (input)="updateField('name', $any($event.target).value)"
+        (blur)="markTouched('name')"
+      />
+      @if (fieldError('name'); as error) {
+        <p class="text-sm font-medium text-red-600">{{ error }}</p>
+      }
+    </div>
+
+    <div class="space-y-1.5">
+      <label for="torneio-description" class="text-sm font-semibold text-(--ow-gray-700)">
+        Descricao (opcional)
+      </label>
+      <textarea
+        id="torneio-description"
+        rows="3"
+        placeholder="Regras curtas, observacoes e formato"
+        class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
+        [value]="form().description"
+        (input)="updateField('description', $any($event.target).value)"
+        (blur)="markTouched('description')"
+      ></textarea>
+      @if (fieldError('description'); as error) {
+        <p class="text-sm font-medium text-red-600">{{ error }}</p>
+      }
+    </div>
+
+    <div class="grid gap-4 md:grid-cols-2">
+      <div class="space-y-1.5">
+        <label for="torneio-mode" class="text-sm font-semibold text-(--ow-gray-700)">
+          Modo de times
+        </label>
+        <select
+          id="torneio-mode"
+          class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
+          [value]="form().teamMode"
+          (change)="updateField('teamMode', $any($event.target).value)"
+          (blur)="markTouched('teamMode')"
+        >
+          <option value="random">random</option>
+          <option value="closed">closed</option>
+        </select>
+        @if (fieldError('teamMode'); as error) {
+          <p class="text-sm font-medium text-red-600">{{ error }}</p>
+        }
+      </div>
+
+      <div class="space-y-1.5">
+        <label for="torneio-maxTeams" class="text-sm font-semibold text-(--ow-gray-700)">
+          Numero maximo de times
+        </label>
+        <input
+          id="torneio-maxTeams"
+          type="number"
+          min="2"
+          step="1"
+          placeholder="8"
+          class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
+          [value]="form().maxTeams"
+          (input)="updateField('maxTeams', $any($event.target).value)"
+          (blur)="markTouched('maxTeams')"
+        />
+        @if (fieldError('maxTeams'); as error) {
+          <p class="text-sm font-medium text-red-600">{{ error }}</p>
+        }
+      </div>
+    </div>
+
+    <div class="grid gap-4 md:grid-cols-2">
+      <div class="space-y-1.5">
+        <label for="torneio-startAt" class="text-sm font-semibold text-(--ow-gray-700)">
+          Inicio do torneio
+        </label>
+        <input
+          id="torneio-startAt"
+          type="datetime-local"
+          class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
+          [value]="form().startAt"
+          (input)="updateField('startAt', $any($event.target).value)"
+          (blur)="markTouched('startAt')"
+        />
+        @if (fieldError('startAt'); as error) {
+          <p class="text-sm font-medium text-red-600">{{ error }}</p>
+        }
+      </div>
+
+      <div class="space-y-1.5">
+        <label for="torneio-checkinDeadlineAt" class="text-sm font-semibold text-(--ow-gray-700)">
+          Fim do check-in
+        </label>
+        <input
+          id="torneio-checkinDeadlineAt"
+          type="datetime-local"
+          class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
+          [value]="form().checkinDeadlineAt"
+          (input)="updateField('checkinDeadlineAt', $any($event.target).value)"
+          (blur)="markTouched('checkinDeadlineAt')"
+        />
+        @if (fieldError('checkinDeadlineAt'); as error) {
+          <p class="text-sm font-medium text-red-600">{{ error }}</p>
+        }
+      </div>
+    </div>
+
+    @if (isRandomMode()) {
+      <div class="space-y-3 rounded-lg border border-(--ow-gray-200) bg-(--ow-gray-100) p-4">
+        <div class="space-y-1">
+          <h2 class="text-xl font-black text-(--ow-gray-900)">Slots por role (random)</h2>
+          <p class="text-sm text-(--ow-gray-600)">
+            A soma de tank + dps + support deve ser 8.
+          </p>
+        </div>
+
+        <div class="grid gap-3 md:grid-cols-3">
+          <div class="space-y-1.5">
+            <label for="torneio-tank" class="text-sm font-semibold text-(--ow-gray-700)">
+              Tank
+            </label>
+            <input
+              id="torneio-tank"
+              type="number"
+              min="0"
+              step="1"
+              class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
+              [value]="form().tank"
+              (input)="updateField('tank', $any($event.target).value)"
+              (blur)="markTouched('tank')"
+            />
+            @if (fieldError('tank'); as error) {
+              <p class="text-sm font-medium text-red-600">{{ error }}</p>
+            }
+          </div>
+
+          <div class="space-y-1.5">
+            <label for="torneio-dps" class="text-sm font-semibold text-(--ow-gray-700)">
+              DPS
+            </label>
+            <input
+              id="torneio-dps"
+              type="number"
+              min="0"
+              step="1"
+              class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
+              [value]="form().dps"
+              (input)="updateField('dps', $any($event.target).value)"
+              (blur)="markTouched('dps')"
+            />
+            @if (fieldError('dps'); as error) {
+              <p class="text-sm font-medium text-red-600">{{ error }}</p>
+            }
+          </div>
+
+          <div class="space-y-1.5">
+            <label for="torneio-support" class="text-sm font-semibold text-(--ow-gray-700)">
+              Support
+            </label>
+            <input
+              id="torneio-support"
+              type="number"
+              min="0"
+              step="1"
+              class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
+              [value]="form().support"
+              (input)="updateField('support', $any($event.target).value)"
+              (blur)="markTouched('support')"
+            />
+            @if (fieldError('support'); as error) {
+              <p class="text-sm font-medium text-red-600">{{ error }}</p>
+            }
+          </div>
+        </div>
+      </div>
+    }
+
+    <div class="flex flex-row-reverse">
+      <ow-btn [disabled]="!canSubmit() || pending()" ariaLabel="Cadastrar torneio" type="submit">
+        @if (pending()) {
+          Cadastrando...
+        } @else {
+          Cadastrar torneio
+        }
+      </ow-btn>
+    </div>
+
+    @if (!auth.isAuthenticated()) {
+      <p class="text-sm font-medium text-red-600">
+        Faca login para criar torneios.
+      </p>
+    }
+
+    @if (auth.isAuthenticated() && !hasAdminPermission()) {
+      <p class="text-sm font-medium text-red-600">
+        Seu usuario nao possui permissao de administrador.
+      </p>
+    }
+
+    @if (message(); as message) {
+      <p
+        class="text-sm font-medium"
+        [class.text-green-700]="status() === 'success'"
+        [class.text-red-600]="status() === 'error'"
+      >
+        {{ message }}
+      </p>
+    }
+
+    @if (createdTournamentId(); as tournamentId) {
+      <p class="text-sm text-(--ow-gray-600)">
+        ID criado: <strong>{{ tournamentId }}</strong>
+      </p>
+    }
+  </form>
+</div>

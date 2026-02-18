@@ -5,22 +5,22 @@ import { USER_ROLES } from './core/auth/user-role';
 export const routes: Routes = [
   {
     path: '',
-    title: 'Copa Overwatch - Nova Era',
+    title: 'Copa Overwatch Nova Era - Primeira Edição',
     loadComponent: () => import('./features/pagina-inicial/pagina-inicial').then(m=>m.PaginaInicial)
   },
   {
     path: 'duvidas-frequentes',
-    title: 'Copa Overwatch - Dúvidas frequêntes',
+    title: 'Copa Overwatch Nova Era - Dúvidas frequêntes',
     loadComponent: () => import('./features/faq/faq.component').then(m=>m.FaqComponent)
   },
   {
     path: 'regras',
-    title: 'Copa Overwatch - Regras',
+    title: 'Copa Overwatch Nova Era - Regras',
     loadComponent: () => import('./features/regras/regras.component').then(m=>m.RegrasComponent)
   },
   {
     path: 'torneio',
-    title: 'Copa Overwatch - Chaveamento',
+    title: 'Copa Overwatch Nova Era - Chaveamento',
     canActivate: [routeAccessGuard],
     data: {
       access: USER_ROLES,
@@ -29,7 +29,7 @@ export const routes: Routes = [
   },
   {
     path: 'watchpoint',
-    title: 'Copa Overwatch - Watchpoint',
+    title: 'Copa Overwatch Nova Era - Watchpoint',
     canActivate: [routeAccessGuard],
     data: {
       access: USER_ROLES,
@@ -39,7 +39,7 @@ export const routes: Routes = [
   },
   {
     path: 'login',
-    title: 'Copa Overwatch - Login',
+    title: 'Copa Overwatch Nova Era - Login',
     loadComponent: () => import('./features/login/login.component').then(m=>m.LoginComponent)
   },
 ];
