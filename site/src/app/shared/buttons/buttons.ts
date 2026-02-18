@@ -6,6 +6,7 @@ import {
   input,
 } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
+import { RouterLink } from '@angular/router';
 
 export type OwBtnVariant =
   | 'primary'
@@ -16,17 +17,29 @@ export type OwBtnVariant =
   | 'secondary-mini'
   | 'blue-mini';
 export type OwBtnType = 'button' | 'submit' | 'reset';
+export type OwBtnRouterLink = string | readonly (string | number)[];
 
 @Component({
   selector: 'ow-btn',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgTemplateOutlet],
+  imports: [NgTemplateOutlet, RouterLink],
   template: `
     <ng-template #projectedContent>
       <ng-content />
     </ng-template>
 
-    @if (isLink()) {
+    @if (hasRouterLink()) {
+      <a
+        [routerLink]="routerLinkAttr()"
+        [attr.aria-disabled]="disabled()"
+        [attr.aria-label]="ariaLabel() ?? null"
+        [attr.tabindex]="disabled() ? -1 : 0"
+        (click)="onAnchorClick($event)"
+        [class]="classes()"
+      >
+        <ng-container [ngTemplateOutlet]="projectedContent" />
+      </a>
+    } @else if (hasHref()) {
       <a
         [attr.href]="hrefAttr()"
         [attr.aria-disabled]="disabled()"
@@ -53,6 +66,9 @@ export class ButtonsComponent {
   /** primary | secondary | blue + versões mini */
   readonly variant = input<OwBtnVariant>('primary');
 
+  /** Se informar routerLink, renderiza <a [routerLink]> (SPA) */
+  readonly routerLink = input<OwBtnRouterLink | undefined>(undefined);
+
   /** Se informar href, renderiza <a> (estilizado como botão) */
   readonly href = input<string | undefined>(undefined);
 
@@ -65,10 +81,49 @@ export class ButtonsComponent {
   /** Para acessibilidade quando o conteúdo não descreve bem (ex: só ícone) */
   readonly ariaLabel = input<string | undefined>(undefined);
 
-  readonly isLink = computed(() => !!this.href());
+  readonly internalRouterLinkFromHref = computed<OwBtnRouterLink | null>(() => {
+    const rawHref = this.href();
+    if (typeof rawHref !== 'string') return null;
+
+    const href = rawHref.trim();
+    if (!href) return null;
+
+    const isExternalLike = /^([a-z][a-z0-9+.-]*:|\/\/|#)/i.test(href);
+    if (isExternalLike) return null;
+    if (!href.startsWith('/')) return null;
+
+    return href;
+  });
+
+  readonly hasRouterLink = computed(() => {
+    const explicitLink = this.routerLink();
+
+    if (Array.isArray(explicitLink) && explicitLink.length > 0) return true;
+    if (typeof explicitLink === 'string' && explicitLink.trim().length > 0) return true;
+
+    return !!this.internalRouterLinkFromHref();
+  });
+
+  readonly hasHref = computed(() => {
+    const rawHref = this.href();
+    return typeof rawHref === 'string' && rawHref.trim().length > 0;
+  });
+
+  readonly isLink = computed(() => this.hasRouterLink() || this.hasHref());
+
+  readonly routerLinkAttr = computed<OwBtnRouterLink | null>(() => {
+    if (!this.hasRouterLink()) return null;
+    if (this.disabled()) return null;
+
+    const explicitLink = this.routerLink();
+    if (Array.isArray(explicitLink) && explicitLink.length > 0) return explicitLink;
+    if (typeof explicitLink === 'string' && explicitLink.trim().length > 0) return explicitLink;
+
+    return this.internalRouterLinkFromHref();
+  });
 
   readonly hrefAttr = computed(() => {
-    if (!this.isLink()) return null;
+    if (!this.hasHref() || this.hasRouterLink()) return null;
     return this.disabled() ? null : (this.href() ?? null);
   });
 

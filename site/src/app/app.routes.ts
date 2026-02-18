@@ -18,15 +18,15 @@ export const routes: Routes = [
     title: 'Copa Overwatch Nova Era - Regras',
     loadComponent: () => import('./features/regras/regras.component').then(m=>m.RegrasComponent)
   },
-  {
-    path: 'torneio',
-    title: 'Copa Overwatch Nova Era - Chaveamento',
-    canActivate: [routeAccessGuard],
-    data: {
-      access: USER_ROLES,
-    },
-    loadComponent: () => import('./features/torneio/torneio.component').then(m=>m.TorneioComponent)
-  },
+  // {
+  //   path: 'torneio',
+  //   title: 'Copa Overwatch Nova Era - Chaveamento',
+  //   canActivate: [routeAccessGuard],
+  //   data: {
+  //     access: USER_ROLES,
+  //   },
+  //   loadComponent: () => import('./features/torneio/torneio.component').then(m=>m.TorneioComponent)
+  // },
   {
     path: 'watchpoint',
     title: 'Copa Overwatch Nova Era - Watchpoint',
