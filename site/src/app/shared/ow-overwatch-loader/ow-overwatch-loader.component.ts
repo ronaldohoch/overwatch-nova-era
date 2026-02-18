@@ -1,3 +1,8 @@
+/**
+ * Obrigado Steve Schrab
+ * https://codepen.io/megasmack/pen/BKEZVz
+ */
+
 import { ChangeDetectionStrategy, Component, booleanAttribute, input } from '@angular/core';
 
 @Component({
