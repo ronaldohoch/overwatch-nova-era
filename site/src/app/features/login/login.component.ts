@@ -1,5 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../core/auth/auth.service';
 import { ButtonsComponent } from '../../shared/buttons/buttons';
 
@@ -35,6 +36,8 @@ type SubmitStatus = 'success' | 'error';
 })
 export class LoginComponent {
   readonly auth = inject(AuthService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
 
   readonly signupForm = signal<SignupFormValue>({
     displayName: '',
@@ -137,6 +140,7 @@ export class LoginComponent {
 
       this.signupMessage.set('Cadastro realizado com sucesso.');
       this.signupStatus.set('success');
+      await this.navigateAfterAuthentication();
     } catch (error: unknown) {
       this.signupMessage.set(this.resolveCreateError(error));
       this.signupStatus.set('error');
@@ -163,6 +167,7 @@ export class LoginComponent {
 
       this.loginMessage.set('Login realizado com sucesso.');
       this.loginStatus.set('success');
+      await this.navigateAfterAuthentication();
     } catch (error: unknown) {
       this.loginMessage.set(this.resolveLoginError(error));
       this.loginStatus.set('error');
@@ -263,5 +268,19 @@ export class LoginComponent {
     }
 
     return 'Nao foi possivel realizar o cadastro.';
+  }
+
+  private async navigateAfterAuthentication(): Promise<void> {
+    const redirect = this.route.snapshot.queryParamMap.get('redirect');
+    if (!redirect || !this.isSafeInternalPath(redirect)) {
+      await this.router.navigateByUrl('/');
+      return;
+    }
+
+    await this.router.navigateByUrl(redirect);
+  }
+
+  private isSafeInternalPath(path: string): boolean {
+    return path.startsWith('/') && !path.startsWith('//');
   }
 }

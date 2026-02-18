@@ -3,8 +3,12 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, PLATFORM_ID, computed, inject, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { AUTH_API_BASE_URL, AUTH_STORAGE_KEY } from './auth.tokens';
+import { isUserRole, type UserRole } from './user-role';
 
-export type AuthUser = Readonly<Record<string, unknown>>;
+export type AuthUser = Readonly<{
+  role?: string;
+}> &
+  Readonly<Record<string, unknown>>;
 
 export type AuthSession = Readonly<{
   token: string;
@@ -40,6 +44,10 @@ export class AuthService {
   readonly user = computed(() => this.sessionState()?.user ?? null);
   readonly token = computed(() => this.sessionState()?.token ?? null);
   readonly isAuthenticated = computed(() => !!this.sessionState()?.token);
+  readonly userRole = computed<UserRole | null>(() => {
+    const role = this.user()?.role;
+    return isUserRole(role) ? role : null;
+  });
   readonly displayName = computed(() => {
     const user = this.user();
     if (!user) return null;

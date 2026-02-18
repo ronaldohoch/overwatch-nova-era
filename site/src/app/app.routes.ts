@@ -1,4 +1,6 @@
 import { Routes } from '@angular/router';
+import { routeAccessGuard } from './core/auth/route-access.guard';
+import { USER_ROLES } from './core/auth/user-role';
 
 export const routes: Routes = [
   {
@@ -19,6 +21,10 @@ export const routes: Routes = [
   {
     path: 'torneio',
     title: 'Copa Overwatch - Chaveamento',
+    canActivate: [routeAccessGuard],
+    data: {
+      access: USER_ROLES,
+    },
     loadComponent: () => import('./features/torneio/torneio.component').then(m=>m.TorneioComponent)
   },
   {
