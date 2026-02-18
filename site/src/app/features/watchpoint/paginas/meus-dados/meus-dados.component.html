@@ -1,0 +1,193 @@
+<div class="space-y-8">
+  <div class="space-y-6 rounded-xl border border-(--ow-gray-200) bg-white p-6">
+    <div class="space-y-2">
+      <h1 class="text-4xl font-black leading-tight text-(--ow-gray-900) lg:text-5xl">
+        Meus dados
+      </h1>
+      <p class="text-(--ow-gray-500)">
+        Atualize as informacoes da sua conta.
+      </p>
+    </div>
+
+    <form class="space-y-5" novalidate (submit)="onUpdate($event)">
+      <div class="space-y-1.5">
+        <label for="profile-displayName" class="text-sm font-semibold text-(--ow-gray-700)">
+          Nome
+        </label>
+        <input
+          id="profile-displayName"
+          type="text"
+          autocomplete="name"
+          placeholder="Seu nome no campeonato"
+          class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
+          [value]="profileForm().displayName"
+          (input)="updateProfileField('displayName', $any($event.target).value)"
+          (blur)="markProfileTouched('displayName')"
+        />
+        @if (profileFieldError('displayName'); as error) {
+          <p class="text-sm font-medium text-red-600">{{ error }}</p>
+        }
+      </div>
+
+      <div class="space-y-1.5">
+        <label for="profile-email" class="text-sm font-semibold text-(--ow-gray-700)">E-mail</label>
+        <input
+          id="profile-email"
+          type="email"
+          autocomplete="email"
+          placeholder="Seu melhor e-mail"
+          class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
+          [value]="profileForm().email"
+          (input)="updateProfileField('email', $any($event.target).value)"
+          (blur)="markProfileTouched('email')"
+        />
+        @if (profileFieldError('email'); as error) {
+          <p class="text-sm font-medium text-red-600">{{ error }}</p>
+        }
+      </div>
+
+      <div class="space-y-1.5">
+        <label class="text-sm font-semibold text-(--ow-gray-700)">
+          BattleTag
+        </label>
+        <div
+          class="w-full rounded-md border border-(--ow-gray-300) bg-(--ow-gray-100) px-3 py-2.5 text-(--ow-gray-700)"
+        >
+          {{ readonlyBattletag() || '-' }}
+        </div>
+        <p class="text-xs text-(--ow-gray-500)">
+          A BattleTag nao pode ser alterada pelo proprio usuario.
+        </p>
+      </div>
+
+      <div class="space-y-1.5">
+        <label for="profile-whatsapp" class="text-sm font-semibold text-(--ow-gray-700)">
+          Whatsapp
+        </label>
+        <input
+          id="profile-whatsapp"
+          type="text"
+          autocomplete="off"
+          placeholder="51999999999"
+          class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
+          [value]="profileForm().whatsapp"
+          (input)="updateProfileField('whatsapp', $any($event.target).value)"
+          (blur)="markProfileTouched('whatsapp')"
+        />
+        @if (profileFieldError('whatsapp'); as error) {
+          <p class="text-sm font-medium text-red-600">{{ error }}</p>
+        }
+      </div>
+
+      <div class="flex flex-row-reverse">
+        <ow-btn [disabled]="!canSubmitProfile() || profilePending()" ariaLabel="Salvar meus dados" type="submit">
+          @if (profilePending()) {
+            Salvando...
+          } @else {
+            Salvar alteracoes
+          }
+        </ow-btn>
+      </div>
+
+      @if (profileMessage(); as message) {
+        <p
+          class="text-sm font-medium"
+          [class.text-green-700]="profileStatus() === 'success'"
+          [class.text-red-600]="profileStatus() === 'error'"
+        >
+          {{ message }}
+        </p>
+      }
+    </form>
+  </div>
+
+  <div class="space-y-6 rounded-xl border border-(--ow-gray-200) bg-white p-6">
+    <div class="space-y-2">
+      <h2 class="text-3xl font-black leading-tight text-(--ow-gray-900) lg:text-4xl">
+        Trocar senha
+      </h2>
+      <p class="text-(--ow-gray-500)">
+        Informe sua senha atual e defina uma nova senha.
+      </p>
+    </div>
+
+    <form class="space-y-5" novalidate (submit)="onChangePassword($event)">
+      <div class="space-y-1.5">
+        <label for="password-current" class="text-sm font-semibold text-(--ow-gray-700)">
+          Senha atual
+        </label>
+        <input
+          id="password-current"
+          type="password"
+          autocomplete="current-password"
+          placeholder="Sua senha atual"
+          class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
+          [value]="passwordForm().currentPassword"
+          (input)="updatePasswordField('currentPassword', $any($event.target).value)"
+          (blur)="markPasswordTouched('currentPassword')"
+        />
+        @if (passwordFieldError('currentPassword'); as error) {
+          <p class="text-sm font-medium text-red-600">{{ error }}</p>
+        }
+      </div>
+
+      <div class="space-y-1.5">
+        <label for="password-new" class="text-sm font-semibold text-(--ow-gray-700)">
+          Nova senha
+        </label>
+        <input
+          id="password-new"
+          type="password"
+          autocomplete="new-password"
+          placeholder="Minimo de 8 caracteres"
+          class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
+          [value]="passwordForm().newPassword"
+          (input)="updatePasswordField('newPassword', $any($event.target).value)"
+          (blur)="markPasswordTouched('newPassword')"
+        />
+        @if (passwordFieldError('newPassword'); as error) {
+          <p class="text-sm font-medium text-red-600">{{ error }}</p>
+        }
+      </div>
+
+      <div class="space-y-1.5">
+        <label for="password-confirm" class="text-sm font-semibold text-(--ow-gray-700)">
+          Confirmar nova senha
+        </label>
+        <input
+          id="password-confirm"
+          type="password"
+          autocomplete="new-password"
+          placeholder="Repita a nova senha"
+          class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
+          [value]="passwordForm().confirmPassword"
+          (input)="updatePasswordField('confirmPassword', $any($event.target).value)"
+          (blur)="markPasswordTouched('confirmPassword')"
+        />
+        @if (passwordFieldError('confirmPassword'); as error) {
+          <p class="text-sm font-medium text-red-600">{{ error }}</p>
+        }
+      </div>
+
+      <div class="flex flex-row-reverse">
+        <ow-btn [disabled]="!canSubmitPassword() || passwordPending()" ariaLabel="Trocar senha" type="submit">
+          @if (passwordPending()) {
+            Alterando...
+          } @else {
+            Trocar senha
+          }
+        </ow-btn>
+      </div>
+
+      @if (passwordMessage(); as message) {
+        <p
+          class="text-sm font-medium"
+          [class.text-green-700]="passwordStatus() === 'success'"
+          [class.text-red-600]="passwordStatus() === 'error'"
+        >
+          {{ message }}
+        </p>
+      }
+    </form>
+  </div>
+</div>

@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
-import { OwOverwatchLoaderComponent } from '../../shared/ow-overwatch-loader/ow-overwatch-loader.component';
+import { RouterModule } from "@angular/router";
 
 @Component({
   selector: 'app-watchpoint',
-  imports: [OwOverwatchLoaderComponent],
+  imports: [RouterModule],
   templateUrl: './watchpoint.component.html',
   styleUrl: './watchpoint.component.css',
 })

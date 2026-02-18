@@ -1,12 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { signal } from '@angular/core';
-import { AuthService } from '../../core/auth/auth.service';
+import { AuthService } from '../../../../core/auth/auth.service';
 
-import { WatchpointComponent } from './watchpoint.component';
+import { MeusDadosComponent } from './meus-dados.component';
 
-describe('WatchpointComponent', () => {
-  let component: WatchpointComponent;
-  let fixture: ComponentFixture<WatchpointComponent>;
+describe('MeusDadosComponent', () => {
+  let component: MeusDadosComponent;
+  let fixture: ComponentFixture<MeusDadosComponent>;
 
   const authServiceMock = {
     user: signal({
@@ -24,7 +24,7 @@ describe('WatchpointComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [WatchpointComponent],
+      imports: [MeusDadosComponent],
       providers: [
         {
           provide: AuthService,
@@ -34,7 +34,7 @@ describe('WatchpointComponent', () => {
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(WatchpointComponent);
+    fixture = TestBed.createComponent(MeusDadosComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

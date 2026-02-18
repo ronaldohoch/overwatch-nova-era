@@ -19,25 +19,25 @@ export type OwNavItem = Readonly<{
 export class Header {
   readonly auth = inject(AuthService);
   private readonly router = inject(Router);
-
   readonly brandLink = input<string>('/');
-  readonly brandHighlight = input<string>('OVERWATCH');
-  readonly brandText = input<string>('CHAMPIONSHIP');
-
   readonly items = input<readonly OwNavItem[] | null>(null);
 
-  private readonly defaults: readonly OwNavItem[] = [
+  defaultsLinks:OwNavItem[] = [
     { label: 'Início', link: '/', exact: true },
-    // { label: 'Dúvidas frequêntes', link: '/duvidas-frequentes' },
+    { label: 'Dúvidas frequêntes', link: '/duvidas-frequentes' },
     // { label: 'Torneio', link: '/torneio' },
     // { label: 'Times', link: '/times' },
     // { label: 'Agenda', link: '/agenda' },
     { label: 'Regras', link: '/regras' },
   ];
 
-  readonly navItems = computed(() => this.items() ?? this.defaults);
-  readonly userDisplayName = computed(() => this.auth.displayName() ?? 'Jogador');
+  loggedInLinks:OwNavItem[] = [
+    { label: 'Dashboard', link: '/watchpoint' },
+    { label: 'Meus Dados', link: '/watchpoint/meus-dados' },
+    { label: 'Check-in', link: '/watchpoint/check-in' },
+  ];
 
+  readonly userDisplayName = computed(() => this.auth.displayName() ?? 'Jogador');
   readonly mobileOpen = signal(false);
   readonly mobileMenuId = 'ow-mobile-menu';
 
