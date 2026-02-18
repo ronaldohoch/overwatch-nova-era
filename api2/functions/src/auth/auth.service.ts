@@ -204,6 +204,15 @@ export class AuthService {
     return { ...publicUser, token: this.createToken(publicUser) };
   }
 
+  async listUsers(): Promise<PublicUser[]> {
+    const snapshot = await firestore
+      .collection(USERS_COLLECTION)
+      .orderBy('createdAt', 'desc')
+      .get();
+
+    return snapshot.docs.map((doc) => this.toPublicUser(doc.id, doc.data() as Partial<StoredUser>));
+  }
+
   private validateSignupInput(payload: User): void {
     this.validateCommonUserFields({
       displayName: payload.displayName,

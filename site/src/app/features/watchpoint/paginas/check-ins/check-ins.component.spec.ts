@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 
 import { CheckInsComponent } from './check-ins.component';
 
@@ -8,7 +9,8 @@ describe('CheckInsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [CheckInsComponent]
+      imports: [CheckInsComponent],
+      providers: [provideHttpClientTesting()],
     })
     .compileComponents();
 

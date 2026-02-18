@@ -9,6 +9,7 @@ import { TournamentStatus } from './dto/set-status.dto';
 type TeamMode = 'random' | 'closed';
 
 type RoleSlots = { tank: number; dps: number; support: number };
+type CheckinRoleFilter = Role | 'all';
 
 const ROSTER_MAX_PER_TEAM = 8;
 
@@ -271,25 +272,8 @@ export class TorneiosService {
       const pSnap = await tx.get(pRef);
       const existing = pSnap.exists ? (pSnap.data() as any) : null;
 
-      // troca de role (idempotente)
       if (existing?.checkedIn) {
-        const oldRole: Role = existing.role;
-        if (oldRole === role) return;
-
-        if (usedRole >= roleCap) throw new Error(`Limite de ${role} atingido`);
-
-        tx.update(pRef, {
-          role,
-          updatedAt: FieldValue.serverTimestamp(),
-        });
-
-        tx.update(tRef, {
-          [`counters.checkedInByRole.${oldRole}`]: FieldValue.increment(-1),
-          [`counters.checkedInByRole.${role}`]: FieldValue.increment(1),
-          updatedAt: FieldValue.serverTimestamp(),
-        });
-
-        return;
+        throw new Error('Voce ja realizou check-in neste torneio.');
       }
 
       // novo check-in
@@ -326,6 +310,46 @@ export class TorneiosService {
 
     const participant = await pRef.get();
     return { id: participant.id, ...participant.data() };
+  }
+
+  async listRandomCheckins(tournamentId: string, roleFilter: CheckinRoleFilter = 'all') {
+    const tournamentRef = this.torneiosCollection.doc(tournamentId);
+    const tournamentSnapshot = await tournamentRef.get();
+
+    if (!tournamentSnapshot.exists) {
+      throw new Error('Torneio nao encontrado.');
+    }
+
+    const tournament = tournamentSnapshot.data() as { teamMode?: string } | undefined;
+    if (tournament?.teamMode !== 'random') {
+      throw new Error('Listagem por role disponivel apenas para torneios random.');
+    }
+
+    const participantsSnapshot = await this
+      .participantsCol(tournamentId)
+      .where('checkedIn', '==', true)
+      .get();
+
+    const participants = participantsSnapshot.docs.map(
+      (doc) =>
+        ({
+          id: doc.id,
+          ...(doc.data() as Record<string, unknown>),
+        }) as { id: string } & Record<string, unknown>,
+    );
+
+    const result = participants
+      .filter((participant) => {
+        if (roleFilter === 'all') return true;
+        return String(participant['role'] ?? '').toLowerCase() === roleFilter;
+      })
+      .sort((a, b) => {
+        const aTime = new Date(String(a['checkedInAt'] ?? '')).getTime();
+        const bTime = new Date(String(b['checkedInAt'] ?? '')).getTime();
+        return Number.isFinite(bTime) && Number.isFinite(aTime) ? bTime - aTime : 0;
+      });
+
+    return result;
   }
 
   // ---------- CLOSED: criar time + check-in do time ----------

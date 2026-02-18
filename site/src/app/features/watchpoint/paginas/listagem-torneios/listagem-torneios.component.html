@@ -1,11 +1,16 @@
 <div class="my-16">
-  <div class="py-2">
-    <h1 class="text-4xl font-black leading-tight text-(--ow-gray-900) lg:text-5xl">
-      Lista de torneios
-    </h1>
-    <p class="text-(--ow-gray-500)">
-      Todos os torneios cadastrados
-    </p>
+  <div class="flex justify-between">
+    <div class="py-2">
+      <h1 class="text-4xl font-black leading-tight text-(--ow-gray-900) lg:text-5xl">
+        Lista de torneios
+      </h1>
+      <p class="text-(--ow-gray-500)">
+        Todos os torneios cadastrados
+      </p>
+    </div>
+    <div class="py-2">
+      <ow-btn variant="primary-mini" href="/watchpoint//novo-torneio">Novo Torneio</ow-btn>
+    </div>
   </div>
   <div class="py-2">
 
@@ -20,7 +25,7 @@
       <div owScheduleActions class="flex gap-4">
         <ow-btn variant="secondary-mini">Detalhes</ow-btn>
         <!-- <ow-btn variant="blue-mini">Assistir</ow-btn> -->
-        <ow-btn variant="blue-mini">Ver Check-ins</ow-btn>
+        <ow-btn variant="blue-mini" [href]="'/watchpoint/check-in-by-tournament'">Ver Check-ins</ow-btn>
       </div>
     </ow-schedule-item>
   </div>

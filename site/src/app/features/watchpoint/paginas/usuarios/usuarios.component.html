@@ -1,1 +1,62 @@
-<p>usuarios works!</p>
+<div class="my-16 space-y-4">
+  <div class="flex flex-wrap items-end justify-between gap-4">
+    <div class="space-y-1">
+      <h1 class="text-4xl font-black leading-tight text-(--ow-gray-900) lg:text-5xl">
+        Usuarios cadastrados
+      </h1>
+      <p class="text-(--ow-gray-500)">
+        Esta pagina e exclusiva para administradores.
+      </p>
+    </div>
+
+    <ow-btn variant="secondary-mini" [disabled]="loading()" (click)="loadUsers()">
+      @if (loading()) {
+        Atualizando...
+      } @else {
+        Atualizar lista
+      }
+    </ow-btn>
+  </div>
+
+  @if (errorMessage(); as errorMessage) {
+    <p class="text-sm font-medium text-red-600">
+      {{ errorMessage }}
+    </p>
+  }
+
+  @if (loading()) {
+    <p class="text-sm font-medium text-(--ow-gray-600)">
+      Carregando usuarios...
+    </p>
+  }
+
+  @if (!loading() && !errorMessage() && users().length === 0) {
+    <p class="text-sm font-medium text-(--ow-gray-600)">
+      Nenhum usuario cadastrado.
+    </p>
+  }
+
+  @if (!loading() && users().length > 0) {
+    <p class="text-sm font-medium text-(--ow-gray-600)">
+      {{ userCountLabel() }}
+    </p>
+
+    <div class="space-y-3">
+      @for (user of users(); track user.id) {
+        <ow-schedule-item
+          [time]="user.battletag"
+          [dateLabel]="user.email"
+          [teamsLabel]="user.displayName"
+          [stageLabel]="user.createdAtLabel"
+          [status]="user.status"
+          [statusLabel]="user.roleLabel"
+        >
+          <div owScheduleActions class="flex flex-col gap-1 text-xs md:items-end">
+            <span class="font-semibold text-(--ow-gray-700)">WhatsApp: {{ user.whatsapp }}</span>
+            <span class="text-(--ow-gray-500)">ID: {{ user.id }}</span>
+          </div>
+        </ow-schedule-item>
+      }
+    </div>
+  }
+</div>

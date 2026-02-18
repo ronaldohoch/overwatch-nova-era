@@ -5,6 +5,7 @@ import {
   computed,
   input,
 } from '@angular/core';
+import { NgTemplateOutlet } from '@angular/common';
 
 export type OwBtnVariant =
   | 'primary'
@@ -19,7 +20,12 @@ export type OwBtnType = 'button' | 'submit' | 'reset';
 @Component({
   selector: 'ow-btn',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [NgTemplateOutlet],
   template: `
+    <ng-template #projectedContent>
+      <ng-content />
+    </ng-template>
+
     @if (isLink()) {
       <a
         [attr.href]="hrefAttr()"
@@ -29,7 +35,7 @@ export type OwBtnType = 'button' | 'submit' | 'reset';
         (click)="onAnchorClick($event)"
         [class]="classes()"
       >
-        <ng-content />
+        <ng-container [ngTemplateOutlet]="projectedContent" />
       </a>
     } @else {
       <button
@@ -38,7 +44,7 @@ export type OwBtnType = 'button' | 'submit' | 'reset';
         [attr.aria-label]="ariaLabel() ?? null"
         [class]="classes()"
       >
-        <ng-content />
+        <ng-container [ngTemplateOutlet]="projectedContent" />
       </button>
     }
   `,

@@ -23,12 +23,15 @@ const DEFAULT_LINKS: readonly OwNavItem[] = [
 const MEMBER_LINKS: readonly OwNavItem[] = [
   { label: 'Dashboard', link: '/watchpoint/dashboard' },
   { label: 'Meus dados', link: '/watchpoint/dados-do-usuario' },
+  { label: 'Check-ins', link: '/watchpoint/check-ins' },
   { label: 'Torneio', link: '/torneio' },
 ];
 
 const STREAMER_LINKS: readonly OwNavItem[] = [
   { label: 'Dashboard', link: '/watchpoint/dashboard' },
   { label: 'Meus dados', link: '/watchpoint/dados-do-usuario' },
+  { label: 'Check-ins', link: '/watchpoint/check-ins' },
+  { label: 'Check-ins torneio', link: '/watchpoint/check-in-by-tournament' },
   { label: 'Pick ban', link: '/torneio' },
 ];
 
@@ -36,6 +39,7 @@ const ADMIN_LINKS: readonly OwNavItem[] = [
   { label: 'Dashboard', link: '/watchpoint/dashboard' },
   { label: 'Meus dados', link: '/watchpoint/dados-do-usuario' },
   { label: 'Torneios', link: '/watchpoint/torneios' },
+  { label: 'Usuarios', link: '/watchpoint/usuarios' },
   // { label: 'Gestao do torneio', link: '/torneio' }
 ];
 
@@ -65,6 +69,10 @@ export class Header {
     if (role === 'admin') return ADMIN_ALL_LINKS;
     if (role === 'streamer') return STREAMER_LINKS;
     return MEMBER_LINKS;
+  });
+  readonly compactLoggedLinks = computed(() => {
+    const role = this.auth.userRole();
+    return role === 'admin' || role === 'streamer';
   });
 
   readonly userDisplayName = computed(() => this.auth.displayName() ?? 'Jogador');

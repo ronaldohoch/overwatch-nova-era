@@ -1,4 +1,5 @@
-import { Routes } from "@angular/router";
+import { Routes } from '@angular/router';
+import { routeAccessGuard } from '../../core/auth/route-access.guard';
 
 export default [
   {
@@ -30,6 +31,34 @@ export default [
         path: 'torneios',
         title: 'Copa Overwatch Nova Era - Torneios',
         loadComponent: () => import('./paginas/listagem-torneios/listagem-torneios.component').then((m) => m.ListagemTorneiosComponent),
+      },
+      {
+        path: 'check-ins',
+        title: 'Copa Overwatch Nova Era - Check-ins',
+        loadComponent: () =>
+          import('./paginas/check-ins/check-ins.component').then((m) => m.CheckInsComponent),
+      },
+      {
+        path: 'check-in-by-tournament',
+        title: 'Copa Overwatch Nova Era - Check-ins por Torneio',
+        canActivate: [routeAccessGuard],
+        data: {
+          access: ['streamer', 'admin'],
+        },
+        loadComponent: () =>
+          import('./paginas/check-in-by-tournament/check-in-by-tournament.component').then(
+            (m) => m.CheckInByTournamentComponent,
+          ),
+      },
+      {
+        path: 'usuarios',
+        title: 'Copa Overwatch Nova Era - Usuarios',
+        canActivate: [routeAccessGuard],
+        data: {
+          access: 'admin',
+        },
+        loadComponent: () =>
+          import('./paginas/usuarios/usuarios.component').then((m) => m.UsuariosComponent),
       },
     ]
   },

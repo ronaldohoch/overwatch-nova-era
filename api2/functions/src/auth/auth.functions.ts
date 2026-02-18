@@ -2,6 +2,9 @@ import express from 'express';
 import { onRequest } from 'firebase-functions/v2/https';
 import { authSvc, verifyToken } from './auth.service';
 import { setupExpressApp } from '../_config/setup';
+import { authMiddleware } from '../_middlewares/auth';
+import { rolesMiddleware } from '../_middlewares/roles';
+import { UserRole } from '../_enums/role.enum';
 
 const app = setupExpressApp();
 const allowedOrigins = [
@@ -82,6 +85,28 @@ app.post('/login', async (req: express.Request, res: express.Response) => {
     res.status(401).json({ error: err.message || 'Unauthorized' });
   }
 });
+
+app.get(
+  '/users',
+  authMiddleware,
+  rolesMiddleware([UserRole.ADMIN]),
+  async (req: express.Request, res: express.Response) => {
+    const user = (req as express.Request & { user?: Record<string, unknown> }).user;
+    const role = typeof user?.['role'] === 'string' ? user.role.trim().toLowerCase() : '';
+
+    if (role !== UserRole.ADMIN) {
+      res.status(403).json({ error: 'Access denied' });
+      return;
+    }
+
+    try {
+      const users = await authSvc.listUsers();
+      res.status(200).json(users);
+    } catch (err: any) {
+      res.status(500).json({ error: err.message || 'Erro ao listar usuarios.' });
+    }
+  },
+);
 
 function readAuthenticatedUserId(req: express.Request): string | null {
   const headerValue = req.header('authorization');

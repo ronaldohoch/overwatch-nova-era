@@ -1,1 +1,93 @@
-<p>check-ins works!</p>
+<div class="my-16">
+  <div class="space-y-2">
+    <h1 class="text-4xl font-black leading-tight text-(--ow-gray-900) lg:text-5xl">
+      Check-in de jogador
+    </h1>
+    <p class="text-(--ow-gray-500)">
+      Escolha o torneio e a role para confirmar sua participacao.
+    </p>
+  </div>
+
+  <div class="flex flex-wrap items-center gap-3">
+    <ow-btn variant="secondary-mini" [disabled]="loadingTournaments()" (click)="loadTournaments()">
+      @if (loadingTournaments()) {
+        Atualizando...
+      } @else {
+        Atualizar torneios
+      }
+    </ow-btn>
+  </div>
+
+  @if (!auth.isAuthenticated()) {
+    <p class="text-sm font-medium text-red-600">
+      Faca login para realizar check-in.
+    </p>
+  }
+
+  @if (loadingTournaments()) {
+    <p class="text-sm font-medium text-(--ow-gray-600)">Carregando torneios...</p>
+  }
+
+  @if (!loadingTournaments() && auth.isAuthenticated() && tournamentOptions().length === 0) {
+    <p class="text-sm font-medium text-(--ow-gray-600)">
+      Nenhum torneio encontrado.
+    </p>
+  }
+
+  @if (auth.isAuthenticated() && tournamentOptions().length > 0) {
+    <form class="space-y-4" novalidate (submit)="onSubmit($event)">
+      <div class="space-y-1.5">
+        <label for="checkin-torneio" class="text-sm font-semibold text-(--ow-gray-700)">
+          Torneio
+        </label>
+        <select
+          id="checkin-torneio"
+          class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
+          [value]="selectedTournamentId()"
+          (change)="onTournamentChange($any($event.target).value)"
+        >
+          <option value="">Selecione um torneio</option>
+          @for (tournament of tournamentOptions(); track tournament.id) {
+            <option [value]="tournament.id">{{ formatTournamentLabel(tournament) }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="space-y-1.5">
+        <label for="checkin-role" class="text-sm font-semibold text-(--ow-gray-700)">
+          Role
+        </label>
+        <select
+          id="checkin-role"
+          class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
+          [value]="selectedRole()"
+          (change)="onRoleChange($any($event.target).value)"
+        >
+          @for (role of availableRoles; track role) {
+            <option [value]="role">{{ role }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="flex justify-end">
+        <ow-btn [disabled]="!canSubmit() || submitting()" ariaLabel="Confirmar check-in" type="submit">
+          @if (submitting()) {
+            Enviando...
+          } @else {
+            Confirmar check-in
+          }
+        </ow-btn>
+      </div>
+    </form>
+  }
+
+  @if (message(); as message) {
+    <p
+      class="text-sm font-medium"
+      [class.text-green-700]="status() === 'success'"
+      [class.text-red-600]="status() === 'error'"
+    >
+      {{ message }}
+    </p>
+  }
+</div>

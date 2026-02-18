@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
 
-import { UsuariosComponent } from './usuarios.component';
+import { CheckInByTournamentComponent } from './check-in-by-tournament.component';
 
-describe('UsuariosComponent', () => {
-  let component: UsuariosComponent;
-  let fixture: ComponentFixture<UsuariosComponent>;
+describe('CheckInByTournamentComponent', () => {
+  let component: CheckInByTournamentComponent;
+  let fixture: ComponentFixture<CheckInByTournamentComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [UsuariosComponent],
+      imports: [CheckInByTournamentComponent],
       providers: [provideHttpClientTesting()],
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(UsuariosComponent);
+    fixture = TestBed.createComponent(CheckInByTournamentComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -12,6 +12,19 @@ function getUid(req: any) {
   return req?.user?.uid || req?.user?.sub || null;
 }
 
+function getRole(req: any): string {
+  const value = req?.user?.role;
+  return typeof value === 'string' ? value.trim().toLowerCase() : '';
+}
+
+function readRoleFilter(raw: unknown): 'all' | 'tank' | 'dps' | 'support' {
+  if (typeof raw !== 'string') return 'all';
+
+  const value = raw.trim().toLowerCase();
+  if (value === 'tank' || value === 'dps' || value === 'support') return value;
+  return 'all';
+}
+
 // CRUD
 app.post('/', authMiddleware, rolesMiddleware([UserRole.ADMIN]), async (req, res) => {
   try {
@@ -43,6 +56,28 @@ app.get('/:id', async (req, res) => {
     res.status(404).json({ statusCode: 404, message: error?.message || 'Não encontrado' });
   }
 });
+
+// RANDOM: listar check-ins por torneio (streamer/admin)
+app.get(
+  '/:id/checkins',
+  authMiddleware,
+  rolesMiddleware([UserRole.ADMIN, UserRole.STREAMER]),
+  async (req, res) => {
+    try {
+      const role = getRole(req);
+      if (role !== UserRole.ADMIN && role !== UserRole.STREAMER) {
+        return res.status(403).json({ statusCode: 403, message: 'Access denied' });
+      }
+
+      const roleFilter = readRoleFilter(req.query?.role);
+      const checkins = await torneiosSvc.listRandomCheckins(req.params.id, roleFilter);
+      return res.status(200).json(checkins);
+    } catch (error: any) {
+      logger.error(`Erro ao buscar check-ins do torneio ${req.params.id}:`, error);
+      return res.status(400).json({ statusCode: 400, message: error?.message || 'Bad request' });
+    }
+  },
+);
 
 app.patch('/:id', authMiddleware, rolesMiddleware([UserRole.ADMIN]), async (req, res) => {
   try {
