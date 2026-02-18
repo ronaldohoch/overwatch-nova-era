@@ -40,9 +40,17 @@ export class AuthService {
   readonly user = computed(() => this.sessionState()?.user ?? null);
   readonly token = computed(() => this.sessionState()?.token ?? null);
   readonly isAuthenticated = computed(() => !!this.sessionState()?.token);
+  readonly displayName = computed(() => {
+    const user = this.user();
+    if (!user) return null;
+
+    const value = user['displayName'];
+    return typeof value === 'string' && value.trim() ? value : null;
+  });
 
   constructor() {
     this.restoreSession();
+    this.syncSessionAcrossTabs();
   }
 
   async login(credentials: LoginCredentials): Promise<AuthSession> {
@@ -127,6 +135,10 @@ export class AuthService {
       if (typeof parsed.token !== 'string' || !parsed.user || typeof parsed.user !== 'object') {
         return null;
       }
+      if (this.isExpiredToken(parsed.token)) {
+        this.removePersistedSession();
+        return null;
+      }
 
       return {
         token: parsed.token,
@@ -145,6 +157,37 @@ export class AuthService {
       localStorage.removeItem(AUTH_STORAGE_KEY);
     } catch {
       // no-op: storage may be blocked by browser settings
+    }
+  }
+
+  private syncSessionAcrossTabs(): void {
+    if (!this.browser) return;
+
+    window.addEventListener('storage', (event: StorageEvent) => {
+      if (event.key !== AUTH_STORAGE_KEY) return;
+
+      this.restoreSession();
+    });
+  }
+
+  private isExpiredToken(token: string): boolean {
+    const payloadSegment = token.split('.')[1];
+    if (!payloadSegment) return false;
+
+    try {
+      const base64 = payloadSegment.replace(/-/g, '+').replace(/_/g, '/');
+      const normalizedBase64 = base64.padEnd(Math.ceil(base64.length / 4) * 4, '=');
+      const payloadJson = atob(normalizedBase64);
+      const payload = JSON.parse(payloadJson) as Record<string, unknown>;
+      const exp = payload['exp'];
+
+      if (typeof exp !== 'number' || !Number.isFinite(exp)) {
+        return false;
+      }
+
+      return Date.now() >= exp * 1000;
+    } catch {
+      return false;
     }
   }
 }

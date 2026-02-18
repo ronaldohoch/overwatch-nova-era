@@ -1,6 +1,8 @@
-import { ChangeDetectionStrategy, Component, computed, input, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
+import { AuthService } from '../auth/auth.service';
 import { LinksComponent } from './components/links/links.component';
+import { ButtonsComponent } from '../../shared/buttons/buttons';
 
 export type OwNavItem = Readonly<{
   label: string;
@@ -11,10 +13,13 @@ export type OwNavItem = Readonly<{
 @Component({
   selector: 'app-header',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, LinksComponent],
+  imports: [RouterLink, LinksComponent, ButtonsComponent],
   templateUrl:'./header.html'
 })
 export class Header {
+  readonly auth = inject(AuthService);
+  private readonly router = inject(Router);
+
   readonly brandLink = input<string>('/');
   readonly brandHighlight = input<string>('OVERWATCH');
   readonly brandText = input<string>('CHAMPIONSHIP');
@@ -28,10 +33,10 @@ export class Header {
     // { label: 'Times', link: '/times' },
     // { label: 'Agenda', link: '/agenda' },
     { label: 'Regras', link: '/regras' },
-    { label: 'Minha conta', link: '/login' },
   ];
 
   readonly navItems = computed(() => this.items() ?? this.defaults);
+  readonly userDisplayName = computed(() => this.auth.displayName() ?? 'Jogador');
 
   readonly mobileOpen = signal(false);
   readonly mobileMenuId = 'ow-mobile-menu';
@@ -42,5 +47,11 @@ export class Header {
 
   closeMobile(): void {
     this.mobileOpen.set(false);
+  }
+
+  logout(): void {
+    this.auth.logout();
+    this.closeMobile();
+    void this.router.navigateByUrl('/');
   }
 }
