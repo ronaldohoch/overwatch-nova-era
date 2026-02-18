@@ -2,6 +2,7 @@ import express from 'express';
 import { onRequest } from 'firebase-functions/v2/https';
 import { authSvc, verifyToken } from './auth.service';
 import { setupExpressApp } from '../_config/setup';
+import { resolveErrorMessage, resolveErrorStatus } from '../_config/errors';
 import { authMiddleware } from '../_middlewares/auth';
 import { rolesMiddleware } from '../_middlewares/roles';
 import { UserRole } from '../_enums/role.enum';
@@ -27,8 +28,10 @@ app.post('/signup', async (req: express.Request, res: express.Response) => {
     });
 
     res.status(201).json(result);
-  } catch (err: any) {
-    res.status(400).json({ error: err.message || 'Bad request' });
+  } catch (err: unknown) {
+    res
+      .status(resolveErrorStatus(err, 400))
+      .json({ error: resolveErrorMessage(err, 'Bad request') });
   }
 });
 
@@ -49,8 +52,10 @@ app.put('/me', async (req: express.Request, res: express.Response) => {
     });
 
     res.status(200).json(result);
-  } catch (err: any) {
-    res.status(400).json({ error: err.message || 'Bad request' });
+  } catch (err: unknown) {
+    res
+      .status(resolveErrorStatus(err, 400))
+      .json({ error: resolveErrorMessage(err, 'Bad request') });
   }
 });
 
@@ -70,8 +75,10 @@ app.put('/me/password', async (req: express.Request, res: express.Response) => {
     });
 
     res.status(204).send();
-  } catch (err: any) {
-    res.status(400).json({ error: err.message || 'Bad request' });
+  } catch (err: unknown) {
+    res
+      .status(resolveErrorStatus(err, 400))
+      .json({ error: resolveErrorMessage(err, 'Bad request') });
   }
 });
 
@@ -81,8 +88,10 @@ app.post('/login', async (req: express.Request, res: express.Response) => {
   try {
     const result = await authSvc.signIn(email, password);
     res.status(200).json(result);
-  } catch (err: any) {
-    res.status(401).json({ error: err.message || 'Unauthorized' });
+  } catch (err: unknown) {
+    res
+      .status(resolveErrorStatus(err, 401))
+      .json({ error: resolveErrorMessage(err, 'Unauthorized') });
   }
 });
 
@@ -102,8 +111,10 @@ app.get(
     try {
       const users = await authSvc.listUsers();
       res.status(200).json(users);
-    } catch (err: any) {
-      res.status(500).json({ error: err.message || 'Erro ao listar usuarios.' });
+    } catch (err: unknown) {
+      res
+        .status(resolveErrorStatus(err, 500))
+        .json({ error: resolveErrorMessage(err, 'Erro ao listar usuarios.') });
     }
   },
 );

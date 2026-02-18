@@ -1,5 +1,6 @@
 import { onRequest } from 'firebase-functions/v2/https';
 import * as logger from 'firebase-functions/logger';
+import { resolveErrorMessage, resolveErrorStatus } from '../_config/errors';
 import { setupExpressApp } from '../_config/setup';
 import { authMiddleware } from '../_middlewares/auth';
 import { rolesMiddleware } from '../_middlewares/roles';
@@ -25,15 +26,23 @@ function readRoleFilter(raw: unknown): 'all' | 'tank' | 'dps' | 'support' {
   return 'all';
 }
 
+function sendError(res: any, error: unknown, fallbackStatus: number, fallbackMessage: string) {
+  const statusCode = resolveErrorStatus(error, fallbackStatus);
+  res.status(statusCode).json({
+    statusCode,
+    message: resolveErrorMessage(error, fallbackMessage),
+  });
+}
+
 // CRUD
 app.post('/', authMiddleware, rolesMiddleware([UserRole.ADMIN]), async (req, res) => {
   try {
     const uid = getUid(req);
     const newTournament = await torneiosSvc.create(req.body, uid);
     res.status(201).json(newTournament);
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error('Erro ao criar torneio:', error);
-    res.status(400).json({ statusCode: 400, message: error?.message || 'Bad request' });
+    sendError(res, error, 400, 'Bad request');
   }
 });
 
@@ -41,9 +50,9 @@ app.get('/', async (req, res) => {
   try {
     const tournaments = await torneiosSvc.findAll();
     res.status(200).json(tournaments);
-  } catch (error) {
+  } catch (error: unknown) {
     logger.error('Erro ao buscar torneios:', error);
-    res.status(500).json({ statusCode: 500, message: 'Erro ao buscar torneios.' });
+    sendError(res, error, 500, 'Erro ao buscar torneios.');
   }
 });
 
@@ -51,9 +60,9 @@ app.get('/:id', async (req, res) => {
   try {
     const tournament = await torneiosSvc.findOne(req.params.id);
     res.status(200).json(tournament);
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error(`Erro ao buscar torneio ${req.params.id}:`, error);
-    res.status(404).json({ statusCode: 404, message: error?.message || 'Não encontrado' });
+    sendError(res, error, 404, 'Nao encontrado');
   }
 });
 
@@ -72,9 +81,10 @@ app.get(
       const roleFilter = readRoleFilter(req.query?.role);
       const checkins = await torneiosSvc.listRandomCheckins(req.params.id, roleFilter);
       return res.status(200).json(checkins);
-    } catch (error: any) {
+    } catch (error: unknown) {
       logger.error(`Erro ao buscar check-ins do torneio ${req.params.id}:`, error);
-      return res.status(400).json({ statusCode: 400, message: error?.message || 'Bad request' });
+      sendError(res, error, 400, 'Bad request');
+      return;
     }
   },
 );
@@ -83,9 +93,9 @@ app.patch('/:id', authMiddleware, rolesMiddleware([UserRole.ADMIN]), async (req,
   try {
     const updated = await torneiosSvc.update(req.params.id, req.body);
     res.status(200).json(updated);
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error(`Erro ao atualizar torneio ${req.params.id}:`, error);
-    res.status(400).json({ statusCode: 400, message: error?.message || 'Bad request' });
+    sendError(res, error, 400, 'Bad request');
   }
 });
 
@@ -93,9 +103,9 @@ app.delete('/:id', authMiddleware, rolesMiddleware([UserRole.ADMIN]), async (req
   try {
     await torneiosSvc.remove(req.params.id);
     res.status(204).send();
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error(`Erro ao remover torneio ${req.params.id}:`, error);
-    res.status(404).json({ statusCode: 404, message: error?.message || 'Não encontrado' });
+    sendError(res, error, 404, 'Nao encontrado');
   }
 });
 
@@ -104,9 +114,9 @@ app.post('/:id/status', authMiddleware, rolesMiddleware([UserRole.ADMIN]), async
   try {
     const updated = await torneiosSvc.setStatus(req.params.id, req.body?.status);
     res.status(200).json(updated);
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error(`Erro ao alterar status do torneio ${req.params.id}:`, error);
-    res.status(400).json({ statusCode: 400, message: error?.message || 'Bad request' });
+    sendError(res, error, 400, 'Bad request');
   }
 });
 
@@ -119,9 +129,9 @@ app.post('/:id/checkin', authMiddleware, async (req, res) => {
     const result = await torneiosSvc.checkinRandom(req.params.id, uid, req.body);
     res.status(200).json(result);
     return;
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error(`Erro no check-in do torneio ${req.params.id}:`, error);
-    res.status(400).json({ statusCode: 400, message: error?.message || 'Bad request' });
+    sendError(res, error, 400, 'Bad request');
     return;
   }
 });
@@ -135,9 +145,9 @@ app.post('/:id/teams', authMiddleware, async (req, res) => {
     const team = await torneiosSvc.createClosedTeam(req.params.id, uid, req.body);
     res.status(201).json(team);
     return;
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error(`Erro ao criar time no torneio ${req.params.id}:`, error);
-    res.status(400).json({ statusCode: 400, message: error?.message || 'Bad request' });
+    sendError(res, error, 400, 'Bad request');
     return;
   }
 });
@@ -151,9 +161,9 @@ app.post('/:id/teams/:teamId/checkin', authMiddleware, async (req, res) => {
     const team = await torneiosSvc.checkinClosedTeam(req.params.id, req.params.teamId, uid);
     res.status(200).json(team);
     return;
-  } catch (error: any) {
+  } catch (error: unknown) {
     logger.error(`Erro ao fazer check-in do time ${req.params.teamId}:`, error);
-    res.status(400).json({ statusCode: 400, message: error?.message || 'Bad request' });
+    sendError(res, error, 400, 'Bad request');
     return;
   }
 });
@@ -168,9 +178,9 @@ app.post(
       const uid = getUid(req);
       const result = await torneiosSvc.lockAndDrawRandomTeams(req.params.id, uid);
       res.status(200).json(result);
-    } catch (error: any) {
+    } catch (error: unknown) {
       logger.error(`Erro no lock-and-draw do torneio ${req.params.id}:`, error);
-      res.status(400).json({ statusCode: 400, message: error?.message || 'Bad request' });
+      sendError(res, error, 400, 'Bad request');
     }
   },
 );
