@@ -22,9 +22,14 @@ export default [
         loadComponent: () => import('./paginas/meus-dados/meus-dados.component').then((m) => m.MeusDadosComponent),
       },
       {
+        path: 'novo-torneio',
+        title: 'Copa Overwatch Nova Era - Novo Torneio',
+        loadComponent: () => import('./paginas/torneios/torneios.component').then((m) => m.TorneiosComponent),
+      },
+      {
         path: 'torneios',
         title: 'Copa Overwatch Nova Era - Torneios',
-        loadComponent: () => import('./paginas/torneios/torneios.component').then((m) => m.TorneiosComponent),
+        loadComponent: () => import('./paginas/listagem-torneios/listagem-torneios.component').then((m) => m.ListagemTorneiosComponent),
       },
     ]
   },

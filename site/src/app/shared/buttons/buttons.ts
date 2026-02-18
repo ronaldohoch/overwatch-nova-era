@@ -6,7 +6,14 @@ import {
   input,
 } from '@angular/core';
 
-export type OwBtnVariant = 'primary' | 'secondary' | 'blue';
+export type OwBtnVariant =
+  | 'primary'
+  | 'secondary'
+  | 'blue'
+  | 'primary-mini'
+  | 'secondaty-mini'
+  | 'secondary-mini'
+  | 'blue-mini';
 export type OwBtnType = 'button' | 'submit' | 'reset';
 
 @Component({
@@ -37,7 +44,7 @@ export type OwBtnType = 'button' | 'submit' | 'reset';
   `,
 })
 export class ButtonsComponent {
-  /** primary | secondary | blue (as 3 variações do .ow-btn do tema) */
+  /** primary | secondary | blue + versões mini */
   readonly variant = input<OwBtnVariant>('primary');
 
   /** Se informar href, renderiza <a> (estilizado como botão) */
@@ -101,6 +108,14 @@ export class ButtonsComponent {
       'hover:shadow-[0_4px_20px_rgba(240,99,20,0.25)]',
     ].join(' '),
 
+    'primary-mini': [
+      'bg-[linear-gradient(135deg,#f06314_0%,#d14e0a_100%)]',
+      'text-white',
+      'hover:-translate-y-0.5',
+      'hover:shadow-[0_4px_20px_rgba(240,99,20,0.25)]',
+      '!py-2.5 !px-6 !text-sm !tracking-[0.12em]',
+    ].join(' '),
+
     secondary: [
       'bg-transparent',
       'text-[#202124]',
@@ -109,11 +124,37 @@ export class ButtonsComponent {
       'hover:-translate-y-0.5',
     ].join(' '),
 
+    'secondary-mini': [
+      'bg-transparent',
+      'text-[#202124]',
+      'border-2 border-[#f06314]',
+      'hover:bg-[#f06314] hover:text-white',
+      'hover:-translate-y-0.5',
+      '!py-2.5 !px-6 !text-sm !tracking-[0.12em]',
+    ].join(' '),
+
+    'secondaty-mini': [
+      'bg-transparent',
+      'text-[#202124]',
+      'border-2 border-[#f06314]',
+      'hover:bg-[#f06314] hover:text-white',
+      'hover:-translate-y-0.5',
+      '!py-2.5 !px-6 !text-sm !tracking-[0.12em]',
+    ].join(' '),
+
     blue: [
       'bg-[linear-gradient(135deg,#00c3ff_0%,#0099cc_100%)]',
       'text-white',
       'hover:-translate-y-0.5',
       'hover:shadow-[0_4px_20px_rgba(0,195,255,0.25)]',
+    ].join(' '),
+
+    'blue-mini': [
+      'bg-[linear-gradient(135deg,#00c3ff_0%,#0099cc_100%)]',
+      'text-white',
+      'hover:-translate-y-0.5',
+      'hover:shadow-[0_4px_20px_rgba(0,195,255,0.25)]',
+      '!py-2.5 !px-6 !text-sm !tracking-[0.12em]',
     ].join(' '),
   };
 
