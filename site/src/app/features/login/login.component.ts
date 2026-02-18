@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { AuthService } from '../../core/auth/auth.service';
 import { ButtonsComponent } from '../../shared/buttons/buttons';
 
-const SIGNUP_FIELDS = ['displayName', 'email', 'password', 'battletag'] as const;
+const SIGNUP_FIELDS = ['displayName', 'email', 'password', 'battletag', 'whatsapp'] as const;
 const LOGIN_FIELDS = ['email', 'password'] as const;
 
 type SignupField = (typeof SIGNUP_FIELDS)[number];
@@ -14,6 +14,7 @@ type SignupFormValue = Readonly<{
   email: string;
   password: string;
   battletag: string;
+  whatsapp: string;
 }>;
 
 type LoginFormValue = Readonly<{
@@ -40,6 +41,7 @@ export class LoginComponent {
     email: '',
     password: '',
     battletag: '',
+    whatsapp: '',
   });
 
   readonly loginForm = signal<LoginFormValue>({
@@ -52,6 +54,7 @@ export class LoginComponent {
     email: false,
     password: false,
     battletag: false,
+    whatsapp: false,
   });
 
   readonly loginTouched = signal<Record<LoginField, boolean>>({
@@ -173,6 +176,7 @@ export class LoginComponent {
     const emailErrors: string[] = [];
     const passwordErrors: string[] = [];
     const battletagErrors: string[] = [];
+    const whatsappErrors: string[] = [];
 
     if (!value.displayName.trim()) {
       displayNameErrors.push('Informe o nome de exibicao.');
@@ -196,11 +200,16 @@ export class LoginComponent {
       battletagErrors.push('Use o formato Nome#1234.');
     }
 
+    if (!value.whatsapp.trim()) {
+      whatsappErrors.push('Informe seu whatsapp.');
+    }
+
     return {
       displayName: displayNameErrors,
       email: emailErrors,
       password: passwordErrors,
       battletag: battletagErrors,
+      whatsapp: whatsappErrors,
     };
   }
 

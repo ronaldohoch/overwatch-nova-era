@@ -37,8 +37,9 @@ export class AuthService {
     const email = (payload.email ?? '').trim().toLowerCase();
     const password = payload.password ?? '';
     const battletag = payload.battletag?.trim() ?? '';
+    const whatsapp = payload.battletag?.trim() ?? '';
 
-    this.validateSignupInput({ displayName, email, password, battletag });
+    this.validateSignupInput({ displayName, email, password, battletag, whatsapp });
 
     await this.ensureEmailAvailable(email);
     await this.ensureBattletagAvailable(battletag);

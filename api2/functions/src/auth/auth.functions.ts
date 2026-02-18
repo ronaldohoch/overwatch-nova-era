@@ -12,7 +12,7 @@ const allowedOrigins = [
 ];
 
 app.post('/signup', async (req: express.Request, res: express.Response) => {
-  const { displayName, email, battletag, password } = req.body;
+  const { displayName, email, battletag, password, whatsapp } = req.body;
 
   try {
     const result = await authSvc.signUp({
@@ -20,6 +20,7 @@ app.post('/signup', async (req: express.Request, res: express.Response) => {
       email,
       battletag,
       password,
+      whatsapp
     });
 
     res.status(201).json(result);
