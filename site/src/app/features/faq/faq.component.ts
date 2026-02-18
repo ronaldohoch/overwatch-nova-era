@@ -9,37 +9,37 @@ export type OwFaqEntry = Readonly<{
 
 export const faqItems: OwFaqEntry[] = [
   {
-    question: 'What type of tournament is OWCS?',
-    answer: 'OWCS is an open ecosystem Overwatch esports program where the best teams across each region will compete...',
+    question: 'PORQUE TIMES RANDOMIZADOS?',
+    answer: 'A comunidade tá vivendo uma nova fase: tem jogadores novos e gente voltando por causa da atualização, e ao mesmo tempo tem a galera que nunca parou. Pra todo mundo se divertir e querer participar, a Mini Copa vai ser com times formados por sorteio. Assim os novatos/retornando jogam junto com veteranos, aprendem mais rápido, e ainda podem surgir novos squads depois do campeonato.',
   },
   {
-    question: 'Como funciona o check-in?',
-    answer: 'Você faz login, escolhe role (se random teams) e confirma presença.',
+    question: 'EXISTEM RESTRIÇÕES DE IDADE?',
+    answer: 'Todos os jogadores com 17 anos ou mais são elegíveis para competir.',
   },
   {
-    question: 'What type of tournament is OWCS?',
-    answer: 'OWCS is an open ecosystem Overwatch esports program where the best teams across each region will compete...',
+    question: 'EXISTEM RESTRIÇÕES DE PATENTE?',
+    answer: 'Não há restrições de classificação.',
   },
   {
-    question: 'Como funciona o check-in?',
-    answer: 'Você faz login, escolhe role (se random teams) e confirma presença.',
+    question: 'O NOVA ERA É MULTIPLATAFORMA?',
+    answer: 'Sim! Os times serão mistos tanto de ranking quanto de plataforma.',
   },
   {
-    question: 'What type of tournament is OWCS?',
-    answer: 'OWCS is an open ecosystem Overwatch esports program where the best teams across each region will compete...',
+    question: 'ONDE POSSO ENCONTRAR AS REGRAS DA COPA NOVA ERA?',
+    answer: 'No menu do topo, existe uma sessão de regras. Elas são baseadas nas regras oficiais da OWCS',
   },
   {
-    question: 'Como funciona o check-in?',
-    answer: 'Você faz login, escolhe role (se random teams) e confirma presença.',
+    question: 'EXISTEM RECOMPENSAS DE PARTICIPAÇÃO?',
+    answer: 'Estamos avaliando isso ainda.',
   },
   {
-    question: 'What type of tournament is OWCS?',
-    answer: 'OWCS is an open ecosystem Overwatch esports program where the best teams across each region will compete...',
+    question: 'EXISTEM RECOMPENSAS DE AUDIÊNCIA PARA OS COPA NOVA ERA?',
+    answer: 'Somos um evento independente criado pela comunidade em parceria com @Overdog, @Overbee e @mano_xand, então não temos recompensas de audiência, Blizzard, nota a gente 🫣',
   },
   {
-    question: 'Como funciona o check-in?',
-    answer: 'Você faz login, escolhe role (se random teams) e confirma presença.',
-  },
+    question: 'PRECISO PARTICIPAR DA COMUNIDADE OVERWATCH_BR DA OVERDOG?',
+    answer: 'Todos são bem vindos, mas você não precisa participar, apesar de que sentiremos sua falta.',
+  }
 ];
 
 @Component({
