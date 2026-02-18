@@ -7,6 +7,7 @@ import { UserRole } from '../_enums/role.enum';
 
 const USERS_COLLECTION = 'users';
 const BCRYPT_SALT_ROUNDS = 10;
+const DEFAULT_ROLE = UserRole.COMPETIDOR;
 
 type PublicUser = Readonly<{
   id: string;
@@ -53,7 +54,7 @@ export class AuthService {
       password: passwordHash,
       battletag,
       battletagLower: battletag.toLowerCase(),
-      role: UserRole.USER,
+      role: DEFAULT_ROLE,
       createdAt: now,
       updatedAt: now,
     };
@@ -159,10 +160,18 @@ export class AuthService {
       displayName: raw.displayName ?? '',
       email: raw.email ?? '',
       battletag: raw.battletag ?? '',
-      role: UserRole.USER,
+      role: this.readStoredRole(raw.role),
       createdAt: raw.createdAt ?? '',
       updatedAt: raw.updatedAt ?? '',
     };
+  }
+
+  private readStoredRole(role: unknown): UserRole {
+    if (role === UserRole.ADMIN || role === UserRole.STREAMER || role === UserRole.COMPETIDOR) {
+      return role;
+    }
+
+    return DEFAULT_ROLE;
   }
 
   private createToken(user: PublicUser): string {
