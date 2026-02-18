@@ -23,7 +23,7 @@ export class Header {
 
   private readonly defaults: readonly OwNavItem[] = [
     { label: 'Início', link: '/', exact: true },
-    { label: 'Dúvidas frequêntes', link: '/duvidas-frequentes' },
+    // { label: 'Dúvidas frequêntes', link: '/duvidas-frequentes' },
     { label: 'Torneio', link: '/torneio' },
     // { label: 'Times', link: '/times' },
     // { label: 'Agenda', link: '/agenda' },

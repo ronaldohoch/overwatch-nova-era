@@ -7,6 +7,7 @@ const SIGNUP_FIELDS = ['displayName', 'email', 'password', 'battletag'] as const
 const LOGIN_FIELDS = ['email', 'password'] as const;
 
 type SignupField = (typeof SIGNUP_FIELDS)[number];
+type LoginField = (typeof LOGIN_FIELDS)[number];
 
 type SignupFormValue = Readonly<{
   displayName: string;
@@ -15,7 +16,13 @@ type SignupFormValue = Readonly<{
   battletag: string;
 }>;
 
+type LoginFormValue = Readonly<{
+  email: string;
+  password: string;
+}>;
+
 type SignupErrors = Readonly<Record<SignupField, string[]>>;
+type LoginErrors = Readonly<Record<LoginField, string[]>>;
 type SubmitStatus = 'success' | 'error';
 
 @Component({
@@ -28,124 +35,146 @@ type SubmitStatus = 'success' | 'error';
 export class LoginComponent {
   readonly auth = inject(AuthService);
 
-  readonly form = signal<SignupFormValue>({
+  readonly signupForm = signal<SignupFormValue>({
     displayName: '',
     email: '',
     password: '',
     battletag: '',
   });
 
-  readonly touched = signal<Record<SignupField, boolean>>({
+  readonly loginForm = signal<LoginFormValue>({
+    email: '',
+    password: '',
+  });
+
+  readonly signupTouched = signal<Record<SignupField, boolean>>({
     displayName: false,
     email: false,
     password: false,
     battletag: false,
   });
 
-  readonly submitted = signal(false);
-  readonly submitMessage = signal<string | null>(null);
-  readonly submitStatus = signal<SubmitStatus | null>(null);
+  readonly loginTouched = signal<Record<LoginField, boolean>>({
+    email: false,
+    password: false,
+  });
+
+  readonly signupSubmitted = signal(false);
+  readonly loginSubmitted = signal(false);
+  readonly signupMessage = signal<string | null>(null);
+  readonly loginMessage = signal<string | null>(null);
+  readonly signupStatus = signal<SubmitStatus | null>(null);
+  readonly loginStatus = signal<SubmitStatus | null>(null);
+  readonly signupPending = signal(false);
   readonly loginPending = signal(false);
-  readonly isLogin = signal(false);
 
-  readonly activeFields = computed<readonly SignupField[]>(() =>
-    this.isLogin() ? LOGIN_FIELDS : SIGNUP_FIELDS,
+  readonly signupErrors = computed<SignupErrors>(() => this.validateSignup(this.signupForm()));
+  readonly loginErrors = computed<LoginErrors>(() => this.validateLogin(this.loginForm()));
+
+  readonly signupHasErrors = computed(() =>
+    SIGNUP_FIELDS.some((field) => this.signupErrors()[field].length > 0),
   );
 
-  readonly errors = computed<SignupErrors>(() =>
-    this.validate(this.form(), this.isLogin()),
+  readonly loginHasErrors = computed(() =>
+    LOGIN_FIELDS.some((field) => this.loginErrors()[field].length > 0),
   );
 
-  readonly hasErrors = computed(() =>
-    this.activeFields().some((field) => this.errors()[field].length > 0),
-  );
+  readonly canSubmitSignup = computed(() => !this.signupHasErrors());
+  readonly canSubmitLogin = computed(() => !this.loginHasErrors());
 
-  readonly canSubmit = computed(() => !this.hasErrors());
-
-  toggleLogin(): void {
-    this.isLogin.update((value) => !value);
-    this.submitted.set(false);
-    this.submitMessage.set(null);
-    this.submitStatus.set(null);
+  updateSignupField(field: SignupField, value: string): void {
+    this.signupForm.update((current) => ({ ...current, [field]: value }));
   }
 
-  updateField(field: SignupField, value: string): void {
-    this.form.update((current) => ({ ...current, [field]: value }));
+  updateLoginField(field: LoginField, value: string): void {
+    this.loginForm.update((current) => ({ ...current, [field]: value }));
   }
 
-  markTouched(field: SignupField): void {
-    this.touched.update((current) => ({ ...current, [field]: true }));
+  markSignupTouched(field: SignupField): void {
+    this.signupTouched.update((current) => ({ ...current, [field]: true }));
   }
 
-  fieldError(field: SignupField): string | null {
-    const show = this.submitted() || this.touched()[field];
+  markLoginTouched(field: LoginField): void {
+    this.loginTouched.update((current) => ({ ...current, [field]: true }));
+  }
+
+  signupFieldError(field: SignupField): string | null {
+    const show = this.signupSubmitted() || this.signupTouched()[field];
     if (!show) return null;
 
-    const [firstError] = this.errors()[field];
+    const [firstError] = this.signupErrors()[field];
+    return firstError ?? null;
+  }
+
+  loginFieldError(field: LoginField): string | null {
+    const show = this.loginSubmitted() || this.loginTouched()[field];
+    if (!show) return null;
+
+    const [firstError] = this.loginErrors()[field];
     return firstError ?? null;
   }
 
   async onCreate(event: Event): Promise<void> {
     event.preventDefault();
-    this.submitted.set(true);
-    this.submitMessage.set(null);
-    this.submitStatus.set(null);
+    this.signupSubmitted.set(true);
+    this.signupMessage.set(null);
+    this.signupStatus.set(null);
 
-    if (!this.canSubmit()) return;
+    if (!this.canSubmitSignup()) return;
 
-    this.loginPending.set(true);
+    this.signupPending.set(true);
 
     try {
       await this.auth.create({
-        displayName: this.form().displayName,
-        email: this.form().email,
-        password: this.form().password,
-        battletag: this.form().battletag,
+        displayName: this.signupForm().displayName,
+        email: this.signupForm().email,
+        password: this.signupForm().password,
+        battletag: this.signupForm().battletag,
       });
 
-      this.submitMessage.set('Cadastro realizado com sucesso.');
-      this.submitStatus.set('success');
+      this.signupMessage.set('Cadastro realizado com sucesso.');
+      this.signupStatus.set('success');
     } catch (error: unknown) {
-      this.submitMessage.set(this.resolveCreateError(error));
-      this.submitStatus.set('error');
+      this.signupMessage.set(this.resolveCreateError(error));
+      this.signupStatus.set('error');
     } finally {
-      this.loginPending.set(false);
+      this.signupPending.set(false);
     }
   }
 
   async onLogin(event: Event): Promise<void> {
     event.preventDefault();
-    this.submitted.set(true);
-    this.submitMessage.set(null);
-    this.submitStatus.set(null);
+    this.loginSubmitted.set(true);
+    this.loginMessage.set(null);
+    this.loginStatus.set(null);
 
-    if (!this.canSubmit()) return;
+    if (!this.canSubmitLogin()) return;
 
     this.loginPending.set(true);
 
     try {
       await this.auth.login({
-        email: this.form().email,
-        password: this.form().password,
+        email: this.loginForm().email,
+        password: this.loginForm().password,
       });
 
-      this.submitMessage.set('Login realizado com sucesso.');
-      this.submitStatus.set('success');
+      this.loginMessage.set('Login realizado com sucesso.');
+      this.loginStatus.set('success');
     } catch (error: unknown) {
-      this.submitMessage.set(this.resolveLoginError(error));
-      this.submitStatus.set('error');
+      this.loginMessage.set(this.resolveLoginError(error));
+      this.loginStatus.set('error');
     } finally {
       this.loginPending.set(false);
     }
   }
 
-  private validate(value: SignupFormValue, loginMode: boolean): SignupErrors {
+  private validateSignup(value: SignupFormValue): SignupErrors {
     const displayNameErrors: string[] = [];
     const emailErrors: string[] = [];
     const passwordErrors: string[] = [];
     const battletagErrors: string[] = [];
 
-    if (!loginMode && !value.displayName.trim()) {
+    if (!value.displayName.trim()) {
       displayNameErrors.push('Informe o nome de exibicao.');
     }
 
@@ -161,12 +190,10 @@ export class LoginComponent {
       passwordErrors.push('A senha deve ter ao menos 8 caracteres.');
     }
 
-    if (!loginMode) {
-      if (!value.battletag.trim()) {
-        battletagErrors.push('Informe a BattleTag.');
-      } else if (!/^[A-Za-z0-9_]{3,16}#[0-9]{4,6}$/.test(value.battletag)) {
-        battletagErrors.push('Use o formato Nome#1234.');
-      }
+    if (!value.battletag.trim()) {
+      battletagErrors.push('Informe a BattleTag.');
+    } else if (!/^[A-Za-z0-9_]{3,16}#[0-9]{4,6}$/.test(value.battletag)) {
+      battletagErrors.push('Use o formato Nome#1234.');
     }
 
     return {
@@ -174,6 +201,28 @@ export class LoginComponent {
       email: emailErrors,
       password: passwordErrors,
       battletag: battletagErrors,
+    };
+  }
+
+  private validateLogin(value: LoginFormValue): LoginErrors {
+    const emailErrors: string[] = [];
+    const passwordErrors: string[] = [];
+
+    if (!value.email.trim()) {
+      emailErrors.push('Informe o email.');
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.email)) {
+      emailErrors.push('Informe um email valido.');
+    }
+
+    if (!value.password) {
+      passwordErrors.push('Informe a senha.');
+    } else if (value.password.length < 8) {
+      passwordErrors.push('A senha deve ter ao menos 8 caracteres.');
+    }
+
+    return {
+      email: emailErrors,
+      password: passwordErrors,
     };
   }
 

@@ -1,99 +1,90 @@
-@if(!isLogin()){
-  <section class="mt-10 grid grid-cols-1 gap-4 md:gap-16 md:grid-cols-2">
-    <div class="flex flex-col justify-between gap-6">
-      <div class="space-y-2">
-        <h1 class="text-4xl font-black leading-tight text-(--ow-gray-900) lg:text-5xl">
-          Crie sua conta
-        </h1>
-        <p class="text-(--ow-gray-500)">
-          Cadastre-se para participar dos torneios e acompanhar suas partidas.
-        </p>
-        <p>
-          <ow-btn type="button" (click)="toggleLogin()"
-            ariaLabel="Criar conta" variant="secondary">
-            Fazer login?
-          </ow-btn>
-        </p>
-      </div>
+<section class="my-16 grid grid-cols-1 gap-8 md:gap-16 md:grid-cols-2">
+  <div class="space-y-6 rounded-xl border border-(--ow-gray-200) bg-white p-6">
+    <div class="space-y-2">
+      <h1 class="text-4xl font-black leading-tight text-(--ow-gray-900) lg:text-5xl">
+        Crie sua conta
+      </h1>
+      <p class="text-(--ow-gray-500)">
+        Cadastre-se para participar dos torneios.
+      </p>
     </div>
 
-    <form
-      class="space-y-5 rounded-xl p-6"
-      novalidate
-      (submit)="onCreate($event)"
-    >
+    <form class="space-y-5" novalidate (submit)="onCreate($event)">
       <div class="space-y-1.5">
-        <label for="displayName" class="text-sm font-semibold text-(--ow-gray-700)">Display name</label>
+        <label for="signup-displayName" class="text-sm font-semibold text-(--ow-gray-700)">
+          Nome
+        </label>
         <input
-          id="displayName"
+          id="signup-displayName"
           type="text"
           autocomplete="name"
           placeholder="Seu nome no campeonato"
           class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
-          [value]="form().displayName"
-          (input)="updateField('displayName', $any($event.target).value)"
-          (blur)="markTouched('displayName')"
+          [value]="signupForm().displayName"
+          (input)="updateSignupField('displayName', $any($event.target).value)"
+          (blur)="markSignupTouched('displayName')"
         />
-        @if (fieldError('displayName'); as error) {
+        @if (signupFieldError('displayName'); as error) {
           <p class="text-sm font-medium text-red-600">{{ error }}</p>
         }
       </div>
 
       <div class="space-y-1.5">
-        <label for="email" class="text-sm font-semibold text-(--ow-gray-700)">Email</label>
+        <label for="signup-email" class="text-sm font-semibold text-(--ow-gray-700)">E-mail</label>
         <input
-          id="email"
+          id="signup-email"
           type="email"
           autocomplete="email"
-          placeholder="voce@email.com"
+          placeholder="Seu melhor e-mail"
           class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
-          [value]="form().email"
-          (input)="updateField('email', $any($event.target).value)"
-          (blur)="markTouched('email')"
+          [value]="signupForm().email"
+          (input)="updateSignupField('email', $any($event.target).value)"
+          (blur)="markSignupTouched('email')"
         />
-        @if (fieldError('email'); as error) {
+        @if (signupFieldError('email'); as error) {
           <p class="text-sm font-medium text-red-600">{{ error }}</p>
         }
       </div>
 
       <div class="space-y-1.5">
-        <label for="password" class="text-sm font-semibold text-(--ow-gray-700)">Password</label>
+        <label for="signup-password" class="text-sm font-semibold text-(--ow-gray-700)">Senha</label>
         <input
-          id="password"
+          id="signup-password"
           type="password"
           autocomplete="new-password"
           placeholder="Minimo de 8 caracteres"
           class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
-          [value]="form().password"
-          (input)="updateField('password', $any($event.target).value)"
-          (blur)="markTouched('password')"
+          [value]="signupForm().password"
+          (input)="updateSignupField('password', $any($event.target).value)"
+          (blur)="markSignupTouched('password')"
         />
-        @if (fieldError('password'); as error) {
+        @if (signupFieldError('password'); as error) {
           <p class="text-sm font-medium text-red-600">{{ error }}</p>
         }
       </div>
 
       <div class="space-y-1.5">
-        <label for="battletag" class="text-sm font-semibold text-(--ow-gray-700)">BattleTag</label>
+        <label for="signup-battletag" class="text-sm font-semibold text-(--ow-gray-700)">
+          BattleTag
+        </label>
         <input
-          id="battletag"
+          id="signup-battletag"
           type="text"
           autocomplete="off"
           placeholder="Jogador#1234"
           class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
-          [value]="form().battletag"
-          (input)="updateField('battletag', $any($event.target).value)"
-          (blur)="markTouched('battletag')"
+          [value]="signupForm().battletag"
+          (input)="updateSignupField('battletag', $any($event.target).value)"
+          (blur)="markSignupTouched('battletag')"
         />
-        @if (fieldError('battletag'); as error) {
+        @if (signupFieldError('battletag'); as error) {
           <p class="text-sm font-medium text-red-600">{{ error }}</p>
         }
       </div>
 
-      <div class="space-y-1.5 flex flex-row-reverse">
-        <ow-btn [disabled]="!canSubmit() || loginPending()"
-          ariaLabel="Criar conta" type="submit">
-          @if (loginPending()) {
+      <div class="flex flex-row-reverse">
+        <ow-btn [disabled]="!canSubmitSignup() || signupPending()" ariaLabel="Criar conta" type="submit">
+          @if (signupPending()) {
             Criando...
           } @else {
             Criar conta
@@ -101,78 +92,65 @@
         </ow-btn>
       </div>
 
-      @if (submitMessage(); as message) {
+      @if (signupMessage(); as message) {
         <p
           class="text-sm font-medium"
-          [class.text-green-700]="submitStatus() === 'success'"
-          [class.text-red-600]="submitStatus() === 'error'"
+          [class.text-green-700]="signupStatus() === 'success'"
+          [class.text-red-600]="signupStatus() === 'error'"
         >
           {{ message }}
         </p>
       }
     </form>
-  </section>
-}@else {
-  <section class="mt-10 grid grid-cols-1 gap-4 md:gap-16 md:grid-cols-2">
-    <div class="flex flex-col justify-between gap-6">
-      <div class="space-y-2">
-        <h1 class="text-4xl font-black leading-tight text-(--ow-gray-900) lg:text-5xl">
-          Entrar em sua conta
-        </h1>
-        <p class="text-(--ow-gray-500)">
+  </div>
 
-        </p>
-        <p>
-          <ow-btn type="button" (click)="toggleLogin()"
-            ariaLabel="Criar conta" variant="secondary">
-            Criar conta?
-          </ow-btn>
-        </p>
-      </div>
+  <div class="space-y-6 rounded-xl border border-(--ow-gray-200) bg-white p-6">
+    <div class="space-y-2">
+      <h1 class="text-4xl font-black leading-tight text-(--ow-gray-900) lg:text-5xl">
+        Entrar em sua conta
+      </h1>
+      <p class="text-(--ow-gray-500)">
+        Use seu email e senha para acessar sua conta.
+      </p>
     </div>
 
-    <form
-      class="space-y-5 rounded-xl p-6"
-      novalidate
-      (submit)="onLogin($event)"
-    >
+    <form class="space-y-5" novalidate (submit)="onLogin($event)">
       <div class="space-y-1.5">
-        <label for="email" class="text-sm font-semibold text-(--ow-gray-700)">Email</label>
+        <label for="login-email" class="text-sm font-semibold text-(--ow-gray-700)">Email</label>
         <input
-          id="email"
+          id="login-email"
           type="email"
           autocomplete="email"
           placeholder="voce@email.com"
           class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
-          [value]="form().email"
-          (input)="updateField('email', $any($event.target).value)"
-          (blur)="markTouched('email')"
+          [value]="loginForm().email"
+          (input)="updateLoginField('email', $any($event.target).value)"
+          (blur)="markLoginTouched('email')"
         />
-        @if (fieldError('email'); as error) {
+        @if (loginFieldError('email'); as error) {
           <p class="text-sm font-medium text-red-600">{{ error }}</p>
         }
       </div>
 
       <div class="space-y-1.5">
-        <label for="password" class="text-sm font-semibold text-(--ow-gray-700)">Password</label>
+        <label for="login-password" class="text-sm font-semibold text-(--ow-gray-700)">Password</label>
         <input
-          id="password"
+          id="login-password"
           type="password"
-          autocomplete="new-password"
+          autocomplete="current-password"
           placeholder="Minimo de 8 caracteres"
           class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
-          [value]="form().password"
-          (input)="updateField('password', $any($event.target).value)"
-          (blur)="markTouched('password')"
+          [value]="loginForm().password"
+          (input)="updateLoginField('password', $any($event.target).value)"
+          (blur)="markLoginTouched('password')"
         />
-        @if (fieldError('password'); as error) {
+        @if (loginFieldError('password'); as error) {
           <p class="text-sm font-medium text-red-600">{{ error }}</p>
         }
       </div>
 
-      <div class="space-y-1.5 flex flex-row-reverse">
-        <ow-btn [disabled]="!canSubmit() || loginPending()"
-          ariaLabel="Criar conta" type="submit">
+      <div class="flex flex-row-reverse">
+        <ow-btn [disabled]="!canSubmitLogin() || loginPending()" ariaLabel="Entrar na conta" type="submit">
           @if (loginPending()) {
             Entrando...
           } @else {
@@ -181,15 +159,15 @@
         </ow-btn>
       </div>
 
-      @if (submitMessage(); as message) {
+      @if (loginMessage(); as message) {
         <p
           class="text-sm font-medium"
-          [class.text-green-700]="submitStatus() === 'success'"
-          [class.text-red-600]="submitStatus() === 'error'"
+          [class.text-green-700]="loginStatus() === 'success'"
+          [class.text-red-600]="loginStatus() === 'error'"
         >
           {{ message }}
         </p>
       }
     </form>
-  </section>
-}
+  </div>
+</section>
