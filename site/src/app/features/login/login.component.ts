@@ -273,7 +273,7 @@ export class LoginComponent {
   private async navigateAfterAuthentication(): Promise<void> {
     const redirect = this.route.snapshot.queryParamMap.get('redirect');
     if (!redirect || !this.isSafeInternalPath(redirect)) {
-      await this.router.navigateByUrl('/');
+      await this.router.navigateByUrl('/watchpoint');
       return;
     }
 

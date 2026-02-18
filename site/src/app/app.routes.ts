@@ -28,6 +28,15 @@ export const routes: Routes = [
     loadComponent: () => import('./features/torneio/torneio.component').then(m=>m.TorneioComponent)
   },
   {
+    path: 'watchpoint',
+    title: 'Copa Overwatch - Watchpoint',
+    canActivate: [routeAccessGuard],
+    data: {
+      access: USER_ROLES,
+    },
+    loadComponent: () => import('./features/watchpoint/watchpoint.component').then(m=>m.WatchpointComponent)
+  },
+  {
     path: 'login',
     title: 'Copa Overwatch - Login',
     loadComponent: () => import('./features/login/login.component').then(m=>m.LoginComponent)
