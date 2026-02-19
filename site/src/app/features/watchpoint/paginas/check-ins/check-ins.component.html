@@ -16,7 +16,67 @@
         Atualizar torneios
       }
     </ow-btn>
+    <ow-btn variant="secondary-mini" [disabled]="loadingRoleAvailability()" (click)="loadRoleAvailability()">
+      @if (loadingRoleAvailability()) {
+        Atualizando disponibilidade...
+      } @else {
+        Atualizar disponibilidade por role
+      }
+    </ow-btn>
   </div>
+
+  <section class="space-y-3 rounded-xl border border-(--ow-gray-300) bg-white/80 p-4">
+    <div class="space-y-1">
+      <h2 class="text-lg font-black text-(--ow-gray-900)">Disponibilidade por role</h2>
+      <p class="text-xs text-(--ow-gray-600)">Torneio local: {{ localTournamentId }}</p>
+    </div>
+
+    @if (loadingRoleAvailability()) {
+      <p class="text-sm font-medium text-(--ow-gray-600)">Carregando disponibilidade...</p>
+    }
+
+    @if (roleAvailability(); as availability) {
+      <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <article class="rounded-md border border-(--ow-gray-300) p-3">
+          <p class="text-xs uppercase tracking-wide text-(--ow-gray-600)">Total geral</p>
+          <p class="text-sm font-semibold text-(--ow-gray-900)">
+            {{ availability.totals.available }} disponiveis de {{ availability.totals.total }}
+          </p>
+          <p class="text-xs text-(--ow-gray-600)">Check-ins: {{ availability.totals.checkedIn }}</p>
+        </article>
+
+        <article class="rounded-md border border-(--ow-gray-300) p-3">
+          <p class="text-xs uppercase tracking-wide text-(--ow-gray-600)">Tank</p>
+          <p class="text-sm font-semibold text-(--ow-gray-900)">
+            {{ availability.roles.tank.available }} disponiveis de {{ availability.roles.tank.total }}
+          </p>
+          <p class="text-xs text-(--ow-gray-600)">Check-ins: {{ availability.roles.tank.checkedIn }}</p>
+        </article>
+
+        <article class="rounded-md border border-(--ow-gray-300) p-3">
+          <p class="text-xs uppercase tracking-wide text-(--ow-gray-600)">DPS</p>
+          <p class="text-sm font-semibold text-(--ow-gray-900)">
+            {{ availability.roles.dps.available }} disponiveis de {{ availability.roles.dps.total }}
+          </p>
+          <p class="text-xs text-(--ow-gray-600)">Check-ins: {{ availability.roles.dps.checkedIn }}</p>
+        </article>
+
+        <article class="rounded-md border border-(--ow-gray-300) p-3">
+          <p class="text-xs uppercase tracking-wide text-(--ow-gray-600)">Support</p>
+          <p class="text-sm font-semibold text-(--ow-gray-900)">
+            {{ availability.roles.support.available }} disponiveis de {{ availability.roles.support.total }}
+          </p>
+          <p class="text-xs text-(--ow-gray-600)">Check-ins: {{ availability.roles.support.checkedIn }}</p>
+        </article>
+      </div>
+    }
+
+    @if (roleAvailabilityError(); as errorMessage) {
+      <p class="text-sm font-medium text-red-600">
+        {{ errorMessage }}
+      </p>
+    }
+  </section>
 
   @if (!auth.isAuthenticated()) {
     <p class="text-sm font-medium text-red-600">

@@ -26,11 +26,11 @@ export const faqItems: OwFaqEntry[] = [
   },
   {
     question: 'ONDE POSSO ENCONTRAR AS REGRAS DA COPA NOVA ERA?',
-    answer: 'No menu do topo, existe uma sessão de regras. Elas são baseadas nas regras oficiais da OWCS',
+    answer: 'No menu do topo, existe uma sessão de regras. Elas são baseadas nas regras oficiais da OWCS.',
   },
   {
     question: 'EXISTEM RECOMPENSAS DE PARTICIPAÇÃO?',
-    answer: 'Estamos avaliando isso ainda.',
+    answer: '500 moedas de ouro para cada um do time.',
   },
   {
     question: 'EXISTEM RECOMPENSAS DE AUDIÊNCIA PARA OS COPA NOVA ERA?',

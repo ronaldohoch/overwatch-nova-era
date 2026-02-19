@@ -7,6 +7,20 @@ import { environment } from '../../../../../environments/environment';
 
 type Role = 'tank' | 'dps' | 'support';
 type SubmitStatus = 'success' | 'error';
+type RoleAvailabilityItem = Readonly<{
+  total: number;
+  checkedIn: number;
+  available: number;
+}>;
+type RoleAvailabilityResponse = Readonly<{
+  tournamentId: string;
+  totals: RoleAvailabilityItem;
+  roles: Readonly<{
+    tank: RoleAvailabilityItem;
+    dps: RoleAvailabilityItem;
+    support: RoleAvailabilityItem;
+  }>;
+}>;
 
 type TournamentListItem = Readonly<{
   id: string;
@@ -19,6 +33,7 @@ type TournamentListItem = Readonly<{
 }>;
 
 type RawRecord = Readonly<Record<string, unknown>>;
+const LOCAL_TOURNAMENT_ID = 'xD3cLnQMNxpv4knH81xV';
 
 @Component({
   selector: 'app-check-ins',
@@ -31,13 +46,17 @@ export class CheckInsComponent {
   private readonly http = inject(HttpClient);
   readonly auth = inject(AuthService);
   private readonly torneiosApiUrl = `${environment.apiURLTorneios}`;
+  readonly localTournamentId = LOCAL_TOURNAMENT_ID;
 
   readonly loadingTournaments = signal(false);
+  readonly loadingRoleAvailability = signal(false);
   readonly tournaments = signal<readonly TournamentListItem[]>([]);
   readonly selectedTournamentId = signal('');
   readonly selectedRole = signal<Role>('tank');
   readonly submitting = signal(false);
   readonly message = signal<string | null>(null);
+  readonly roleAvailability = signal<RoleAvailabilityResponse | null>(null);
+  readonly roleAvailabilityError = signal<string | null>(null);
   readonly status = signal<SubmitStatus | null>(null);
   readonly checkedInTournamentIds = signal<readonly string[]>([]);
 
@@ -57,6 +76,9 @@ export class CheckInsComponent {
 
   constructor() {
     void this.loadTournaments();
+    if (this.auth.isAuthenticated()) {
+      void this.loadRoleAvailability();
+    }
   }
 
   async loadTournaments(): Promise<void> {
@@ -137,6 +159,9 @@ export class CheckInsComponent {
       this.selectedTournamentId.set('');
       this.message.set('Check-in realizado com sucesso.');
       this.status.set('success');
+      if (tournament.id === this.localTournamentId) {
+        void this.loadRoleAvailability();
+      }
     } catch (error: unknown) {
       this.message.set(this.resolveError(error, 'Nao foi possivel realizar o check-in.'));
       this.status.set('error');
@@ -156,6 +181,40 @@ export class CheckInsComponent {
     return `${item.name} | status: ${item.status} | prazo: ${deadline} | ${checkinState}`;
   }
 
+  async loadRoleAvailability(): Promise<void> {
+    this.roleAvailabilityError.set(null);
+
+    if (!this.auth.isAuthenticated()) {
+      this.roleAvailability.set(null);
+      this.roleAvailabilityError.set('Faca login para consultar a disponibilidade por role.');
+      return;
+    }
+
+    this.loadingRoleAvailability.set(true);
+
+    try {
+      const response = await firstValueFrom(
+        this.http.get<unknown>(
+          `${this.torneiosApiUrl}/${this.localTournamentId}/checkins/availability-by-role`,
+        ),
+      );
+      const parsed = this.readRoleAvailabilityResponse(response);
+
+      if (!parsed) {
+        throw new Error('Resposta de disponibilidade por role invalida.');
+      }
+
+      this.roleAvailability.set(parsed);
+    } catch (error: unknown) {
+      this.roleAvailability.set(null);
+      this.roleAvailabilityError.set(
+        this.resolveError(error, 'Nao foi possivel carregar a disponibilidade por role.'),
+      );
+    } finally {
+      this.loadingRoleAvailability.set(false);
+    }
+  }
+
   private readTournaments(value: unknown): readonly RawRecord[] {
     if (Array.isArray(value)) {
       return value.filter((item): item is RawRecord => this.isRecord(item));
@@ -171,6 +230,29 @@ export class CheckInsComponent {
     }
 
     return [];
+  }
+
+  private readRoleAvailabilityResponse(value: unknown): RoleAvailabilityResponse | null {
+    if (!this.isRecord(value)) return null;
+
+    const totals = this.readRoleAvailabilityItem(value['totals']);
+    const roles = value['roles'];
+    if (!totals || !this.isRecord(roles)) return null;
+
+    const tank = this.readRoleAvailabilityItem(roles['tank']);
+    const dps = this.readRoleAvailabilityItem(roles['dps']);
+    const support = this.readRoleAvailabilityItem(roles['support']);
+    if (!tank || !dps || !support) return null;
+
+    return {
+      tournamentId: this.readString(value, 'tournamentId') ?? this.localTournamentId,
+      totals,
+      roles: {
+        tank,
+        dps,
+        support,
+      },
+    };
   }
 
   private toTournamentListItem(value: RawRecord): TournamentListItem {
@@ -241,12 +323,30 @@ export class CheckInsComponent {
     }).format(parsed);
   }
 
+  private readRoleAvailabilityItem(value: unknown): RoleAvailabilityItem | null {
+    if (!this.isRecord(value)) return null;
+
+    const total = this.readNonNegativeInteger(value['total']);
+    const checkedIn = this.readNonNegativeInteger(value['checkedIn']);
+    const available = this.readNonNegativeInteger(value['available']);
+
+    if (total == null || checkedIn == null || available == null) return null;
+
+    return { total, checkedIn, available };
+  }
+
   private readString(value: RawRecord, field: string): string | null {
     const raw = value[field];
     if (typeof raw !== 'string') return null;
 
     const normalized = raw.trim();
     return normalized ? normalized : null;
+  }
+
+  private readNonNegativeInteger(value: unknown): number | null {
+    if (typeof value !== 'number' || !Number.isFinite(value)) return null;
+    if (value < 0) return null;
+    return Math.floor(value);
   }
 
   private isRecord(value: unknown): value is RawRecord {

@@ -10,6 +10,24 @@ type TeamMode = 'random' | 'closed';
 
 type RoleSlots = { tank: number; dps: number; support: number };
 type CheckinRoleFilter = Role | 'all';
+type RoleAvailability = {
+  total: number;
+  checkedIn: number;
+  available: number;
+};
+type RandomCheckinAvailabilityByRole = {
+  tournamentId: string;
+  totals: {
+    total: number;
+    checkedIn: number;
+    available: number;
+  };
+  roles: {
+    tank: RoleAvailability;
+    dps: RoleAvailability;
+    support: RoleAvailability;
+  };
+};
 
 const ROSTER_MAX_PER_TEAM = 8;
 
@@ -43,6 +61,12 @@ export class TorneiosService {
     const r = String(role || '').trim().toLowerCase();
     if (r === 'tank' || r === 'dps' || r === 'support') return r;
     throw new Error(`Role inválida: ${role}`);
+  }
+
+  private toNonNegativeInt(value: unknown): number {
+    const parsed = Number(value);
+    if (!Number.isFinite(parsed) || parsed < 0) return 0;
+    return Math.floor(parsed);
   }
 
   private defaultRoleSlotsPerTeam(): RoleSlots {
@@ -350,6 +374,72 @@ export class TorneiosService {
       });
 
     return result;
+  }
+
+  async getRandomCheckinAvailabilityByRole(tournamentId: string): Promise<RandomCheckinAvailabilityByRole> {
+    const tournamentRef = this.torneiosCollection.doc(tournamentId);
+    const tournamentSnapshot = await tournamentRef.get();
+
+    if (!tournamentSnapshot.exists) {
+      throw new Error('Torneio nao encontrado.');
+    }
+
+    const tournament = (tournamentSnapshot.data() ?? {}) as Record<string, unknown>;
+    if (tournament['teamMode'] !== 'random') {
+      throw new Error('Disponivel apenas para torneios random.');
+    }
+
+    const maxTeams = this.toNonNegativeInt(tournament['maxTeams']);
+    const fallbackRoleCaps = this.computeRoleSlotsTotal(maxTeams, this.defaultRoleSlotsPerTeam());
+    const roleSlotsTotal = (tournament['roleSlotsTotal'] as Record<string, unknown>) ?? {};
+    const counters = (tournament['counters'] as Record<string, unknown>) ?? {};
+    const checkedInByRoleRaw = (counters['checkedInByRole'] as Record<string, unknown>) ?? {};
+
+    const roleCaps: RoleSlots = {
+      tank: this.toNonNegativeInt(roleSlotsTotal['tank'] ?? fallbackRoleCaps.tank),
+      dps: this.toNonNegativeInt(roleSlotsTotal['dps'] ?? fallbackRoleCaps.dps),
+      support: this.toNonNegativeInt(roleSlotsTotal['support'] ?? fallbackRoleCaps.support),
+    };
+
+    const checkedInByRole: RoleSlots = {
+      tank: this.toNonNegativeInt(checkedInByRoleRaw['tank']),
+      dps: this.toNonNegativeInt(checkedInByRoleRaw['dps']),
+      support: this.toNonNegativeInt(checkedInByRoleRaw['support']),
+    };
+
+    const roleTotals = roleCaps.tank + roleCaps.dps + roleCaps.support;
+    const playerSlotsTotal = this.toNonNegativeInt(tournament['playerSlotsTotal']);
+    const normalizedTotal = playerSlotsTotal > 0 ? playerSlotsTotal : roleTotals;
+
+    const totalCheckedInCounter = this.toNonNegativeInt(counters['checkedInPlayers']);
+    const checkedInByRoleSum = checkedInByRole.tank + checkedInByRole.dps + checkedInByRole.support;
+    const normalizedCheckedIn = Math.max(totalCheckedInCounter, checkedInByRoleSum);
+
+    return {
+      tournamentId,
+      totals: {
+        total: normalizedTotal,
+        checkedIn: normalizedCheckedIn,
+        available: Math.max(normalizedTotal - normalizedCheckedIn, 0),
+      },
+      roles: {
+        tank: {
+          total: roleCaps.tank,
+          checkedIn: checkedInByRole.tank,
+          available: Math.max(roleCaps.tank - checkedInByRole.tank, 0),
+        },
+        dps: {
+          total: roleCaps.dps,
+          checkedIn: checkedInByRole.dps,
+          available: Math.max(roleCaps.dps - checkedInByRole.dps, 0),
+        },
+        support: {
+          total: roleCaps.support,
+          checkedIn: checkedInByRole.support,
+          available: Math.max(roleCaps.support - checkedInByRole.support, 0),
+        },
+      },
+    };
   }
 
   // ---------- CLOSED: criar time + check-in do time ----------

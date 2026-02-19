@@ -1,14 +1,50 @@
-<section class="my-16">
+<!-- <section class="my-16">
   <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-
     <ow-random-hero-quote />
 
     <p class="text-xl text-ow-gray-500 mb-8">
-      Pronto para a Ação?
+      Pronto para a Acao?
     </p>
     <div class="flex flex-col sm:flex-row gap-4 justify-center">
       <ow-btn [variant]="'primary'" href="/watchpoint/dados-do-usuario">Editar meus dados</ow-btn>
       <ow-btn [variant]="'secondary'" href="/watchpoint/check-ins">Fazer check-in</ow-btn>
     </div>
+  </div>
+</section> -->
+
+<section class="my-16">
+  <div>
+    <h2
+      class="
+        text-[2.5rem] leading-[1.2] text-center font-extrabold
+        uppercase tracking-[0.08em]
+        text-(--ow-gray-900)
+        relative pb-3.75 mb-7.5
+        after:content-[''] after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2
+        after:w-20 after:h-1
+        after:bg-(--ow-orange)
+        after:[clip-path:polygon(10%_0,90%_0,100%_100%,0%_100%)]
+      "
+    >
+      Vagas do Torneio
+    </h2>
+  </div>
+
+  <div class="mb-16 grid grid-cols-1 gap-8 md:grid-cols-3">
+    @for (card of roleCards(); track card.id) {
+      <div>
+        <ow-stats-card
+          [title]="card.title"
+          [value]="card.value"
+          [subtitle]="card.subtitle"
+          [progress]="card.progress"
+          [ariaLabel]="'Ocupacao de vagas da role ' + card.title"
+        />
+      </div>
+    }
+  </div>
+  <div class="flex flex-col sm:flex-row gap-4 justify-center">
+    <ow-btn [variant]="'primary'" href="/watchpoint/dados-do-usuario">Editar meus dados</ow-btn>
+    <ow-btn [variant]="'secondary'" href="/watchpoint/check-ins">Fazer check-in</ow-btn>
   </div>
 </section>

@@ -89,6 +89,17 @@ app.get(
   },
 );
 
+// RANDOM: disponibilidade de check-ins por role (autenticado)
+app.get('/:id/checkins/availability-by-role', authMiddleware, async (req, res) => {
+  try {
+    const availability = await torneiosSvc.getRandomCheckinAvailabilityByRole(req.params.id);
+    res.status(200).json(availability);
+  } catch (error: unknown) {
+    logger.error(`Erro ao buscar disponibilidade de check-ins por role no torneio ${req.params.id}:`, error);
+    sendError(res, error, 400, 'Bad request');
+  }
+});
+
 app.patch('/:id', authMiddleware, rolesMiddleware([UserRole.ADMIN]), async (req, res) => {
   try {
     const updated = await torneiosSvc.update(req.params.id, req.body);
