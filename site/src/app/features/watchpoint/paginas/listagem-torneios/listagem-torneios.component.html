@@ -1,5 +1,5 @@
 <div class="my-16">
-  <div class="flex justify-between">
+  <div class="flex justify-between gap-4">
     <div class="py-2">
       <h1 class="text-4xl font-black leading-tight text-(--ow-gray-900) lg:text-5xl">
         Lista de torneios
@@ -8,26 +8,54 @@
         Todos os torneios cadastrados
       </p>
     </div>
-    <div class="py-2">
+    <div class="flex items-center gap-3 py-2">
+      <ow-btn variant="secondary-mini" [disabled]="loading()" (click)="loadTournaments()">
+        @if (loading()) {
+          Atualizando...
+        } @else {
+          Atualizar lista
+        }
+      </ow-btn>
       <ow-btn variant="primary-mini" href="/watchpoint/novo-torneio">Novo Torneio</ow-btn>
     </div>
   </div>
+
   <div class="py-2">
+    @if (loading()) {
+      <p class="text-sm font-medium text-(--ow-gray-600)">Carregando torneios...</p>
+    }
 
-    <ow-schedule-item
-      time="20:00"
-      dateLabel="Sábados"
-      teamsLabel="Nova Era Primeira Edição"
-      stageLabel="Quartas de Final • MD3"
-      status="live"
-      statusLabel="Em andamento"
-    >
-      <div owScheduleActions class="flex gap-4">
-        <ow-btn variant="secondary-mini">Detalhes</ow-btn>
-        <!-- <ow-btn variant="blue-mini">Assistir</ow-btn> -->
-        <ow-btn variant="blue-mini" href="/watchpoint/check-in-by-tournament">Ver Check-ins</ow-btn>
-      </div>
-    </ow-schedule-item>
+    @if (!loading() && tournaments().length === 0) {
+      <p class="text-sm font-medium text-(--ow-gray-600)">Nenhum torneio encontrado.</p>
+    }
+
+    @for (tournament of tournaments(); track tournament.trackKey) {
+      <ow-schedule-item
+        [time]="tournament.timeLabel"
+        [dateLabel]="tournament.dateLabel"
+        [teamsLabel]="tournament.name"
+        [stageLabel]="tournament.stageLabel"
+        [status]="tournament.statusVariant"
+        [statusLabel]="tournament.statusLabel"
+      >
+        <div owScheduleActions class="flex gap-4">
+          @if (tournament.id) {
+            <ow-btn
+              variant="secondary-mini"
+              [routerLink]="['/watchpoint/torneios', tournament.id, 'editar']"
+            >
+              Editar
+            </ow-btn>
+          }
+          @if (tournament.teamMode === 'random') {
+            <ow-btn variant="blue-mini" href="/watchpoint/check-in-by-tournament">Ver Check-ins</ow-btn>
+          }
+        </div>
+      </ow-schedule-item>
+    }
+
+    @if (message(); as message) {
+      <p class="text-sm font-medium text-red-600">{{ message }}</p>
+    }
   </div>
-
 </div>

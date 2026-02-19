@@ -27,8 +27,6 @@ type ApiResponse = Readonly<{
   }>;
 }>;
 
-const TOURNAMENT_ID = 'xD3cLnQMNxpv4knH81xV';
-
 @Component({
   selector: 'app-dashboard',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -54,7 +52,7 @@ export class DashboardComponent {
     try {
       const response = await firstValueFrom(
         this.http.get<ApiResponse>(
-          `${this.torneiosApiUrl}/${TOURNAMENT_ID}/checkins/availability-by-role`,
+          `${this.torneiosApiUrl}/${environment.TOURNAMENT_ID}/checkins/availability-by-role`,
         ),
       );
 

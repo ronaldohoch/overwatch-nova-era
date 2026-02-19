@@ -28,6 +28,15 @@ export default [
         loadComponent: () => import('./paginas/torneios/torneios.component').then((m) => m.TorneiosComponent),
       },
       {
+        path: 'torneios/:id/editar',
+        title: 'Copa Overwatch Nova Era - Editar Torneio',
+        canActivate: [routeAccessGuard],
+        data: {
+          access: 'admin',
+        },
+        loadComponent: () => import('./paginas/torneios/torneios.component').then((m) => m.TorneiosComponent),
+      },
+      {
         path: 'torneios',
         title: 'Copa Overwatch Nova Era - Torneios',
         loadComponent: () => import('./paginas/listagem-torneios/listagem-torneios.component').then((m) => m.ListagemTorneiosComponent),

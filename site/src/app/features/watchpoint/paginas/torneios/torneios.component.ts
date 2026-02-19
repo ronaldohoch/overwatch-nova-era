@@ -1,5 +1,6 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { ButtonsComponent } from '../../../../shared/buttons/buttons';
@@ -22,6 +23,7 @@ const TOURNAMENT_FIELDS = [
 type TeamMode = 'random' | 'closed';
 type SubmitStatus = 'success' | 'error';
 type TournamentField = (typeof TOURNAMENT_FIELDS)[number];
+type RawRecord = Readonly<Record<string, unknown>>;
 
 type TournamentFormValue = Readonly<{
   name: string;
@@ -37,7 +39,7 @@ type TournamentFormValue = Readonly<{
 
 type TournamentErrors = Readonly<Record<TournamentField, string[]>>;
 
-type CreateTournamentPayload = Readonly<{
+type SaveTournamentPayload = Readonly<{
   name: string;
   description: string | null;
   teamMode: TeamMode;
@@ -51,7 +53,7 @@ type CreateTournamentPayload = Readonly<{
   }>;
 }>;
 
-type CreateTournamentResponse = Readonly<Record<string, unknown>>;
+type SaveTournamentResponse = Readonly<Record<string, unknown>>;
 
 @Component({
   selector: 'app-torneios',
@@ -62,9 +64,13 @@ type CreateTournamentResponse = Readonly<Record<string, unknown>>;
 })
 export class TorneiosComponent {
   private readonly http = inject(HttpClient);
+  private readonly route = inject(ActivatedRoute);
   readonly auth = inject(AuthService);
 
   private readonly torneiosApiUrl = `${environment.apiURLTorneios}`;
+
+  readonly tournamentId = signal<string | null>(null);
+  readonly loadingTournament = signal(false);
 
   readonly form = signal<TournamentFormValue>({
     name: '',
@@ -96,6 +102,13 @@ export class TorneiosComponent {
   readonly status = signal<SubmitStatus | null>(null);
   readonly createdTournamentId = signal<string | null>(null);
 
+  readonly editing = computed(() => !!this.tournamentId());
+  readonly pageTitle = computed(() => (this.editing() ? 'Editar torneio' : 'Cadastrar torneio'));
+  readonly pageDescription = computed(() =>
+    this.editing()
+      ? 'Edite os dados do torneio selecionado na listagem.'
+      : 'Crie um torneio seguindo as mesmas regras da API de torneios.',
+  );
   readonly isRandomMode = computed(() => this.form().teamMode === 'random');
   readonly errors = computed<TournamentErrors>(() => this.validateForm(this.form()));
   readonly hasErrors = computed(() =>
@@ -108,8 +121,21 @@ export class TorneiosComponent {
     return role === 'admin';
   });
   readonly canSubmit = computed(
-    () => this.auth.isAuthenticated() && this.hasAdminPermission() && !this.hasErrors(),
+    () =>
+      this.auth.isAuthenticated() &&
+      this.hasAdminPermission() &&
+      !this.hasErrors() &&
+      !this.loadingTournament() &&
+      !this.pending(),
   );
+
+  constructor() {
+    const routeTournamentId = this.readRouteTournamentId();
+    if (!routeTournamentId) return;
+
+    this.tournamentId.set(routeTournamentId);
+    void this.loadTournament(routeTournamentId);
+  }
 
   updateField(field: TournamentField, value: string): void {
     this.form.update((current) => ({ ...current, [field]: value }));
@@ -141,7 +167,11 @@ export class TorneiosComponent {
     }
 
     if (!this.hasAdminPermission()) {
-      this.message.set('Apenas administradores podem criar torneios.');
+      this.message.set(
+        this.editing()
+          ? 'Apenas administradores podem editar torneios.'
+          : 'Apenas administradores podem criar torneios.',
+      );
       this.status.set('error');
       return;
     }
@@ -152,21 +182,101 @@ export class TorneiosComponent {
 
     try {
       const payload = this.toPayload(this.form());
-      const response = await firstValueFrom(
-        this.http.post<CreateTournamentResponse>(this.torneiosApiUrl, payload),
-      );
+      const id = this.tournamentId();
 
-      const createdId = this.readString(response, 'id');
-      this.createdTournamentId.set(createdId);
-      this.message.set('Torneio cadastrado com sucesso.');
-      this.status.set('success');
-      this.resetForm();
+      if (id) {
+        await firstValueFrom(
+          this.http.patch<SaveTournamentResponse>(`${this.torneiosApiUrl}/${id}`, payload),
+        );
+
+        this.message.set('Torneio atualizado com sucesso.');
+        this.status.set('success');
+      } else {
+        const response = await firstValueFrom(
+          this.http.post<SaveTournamentResponse>(this.torneiosApiUrl, payload),
+        );
+
+        const createdId = this.readString(response, 'id');
+        this.createdTournamentId.set(createdId);
+        this.message.set('Torneio cadastrado com sucesso.');
+        this.status.set('success');
+        this.resetForm();
+      }
     } catch (error: unknown) {
-      this.message.set(this.resolveError(error, 'Nao foi possivel cadastrar o torneio.'));
+      this.message.set(
+        this.resolveError(
+          error,
+          this.editing()
+            ? 'Nao foi possivel atualizar o torneio.'
+            : 'Nao foi possivel cadastrar o torneio.',
+        ),
+      );
       this.status.set('error');
     } finally {
       this.pending.set(false);
     }
+  }
+
+  private async loadTournament(tournamentId: string): Promise<void> {
+    this.loadingTournament.set(true);
+    this.message.set(null);
+    this.status.set(null);
+
+    try {
+      const response = await firstValueFrom(
+        this.http.get<unknown>(`${this.torneiosApiUrl}/${tournamentId}`),
+      );
+
+      if (!this.isRecord(response)) {
+        throw new Error('Resposta invalida ao carregar torneio.');
+      }
+
+      this.form.set(this.toFormValue(response));
+      this.resetTouchState();
+      this.submitted.set(false);
+    } catch (error: unknown) {
+      this.message.set(this.resolveError(error, 'Nao foi possivel carregar os dados do torneio.'));
+      this.status.set('error');
+    } finally {
+      this.loadingTournament.set(false);
+    }
+  }
+
+  private toFormValue(value: RawRecord): TournamentFormValue {
+    const rawTeamMode = (this.readString(value, 'teamMode') ?? 'random').toLowerCase();
+    const teamMode: TeamMode = rawTeamMode === 'closed' ? 'closed' : 'random';
+    const maxTeams = this.readInteger(value['maxTeams']) ?? 8;
+
+    const roleSlotsRaw = this.readRecord(value['roleSlotsPerTeam']);
+    const tank = this.readInteger(roleSlotsRaw?.['tank']) ?? 2;
+    const dps = this.readInteger(roleSlotsRaw?.['dps']) ?? 3;
+    const support = this.readInteger(roleSlotsRaw?.['support']) ?? 3;
+
+    return {
+      name: this.readString(value, 'name') ?? '',
+      description: this.readString(value, 'description') ?? '',
+      teamMode,
+      maxTeams: String(maxTeams),
+      startAt: this.toDateTimeLocalInput(this.readString(value, 'startAt')),
+      checkinDeadlineAt: this.toDateTimeLocalInput(this.readString(value, 'checkinDeadlineAt')),
+      tank: String(tank),
+      dps: String(dps),
+      support: String(support),
+    };
+  }
+
+  private toDateTimeLocalInput(value: string | null): string {
+    if (!value) return '';
+
+    const parsed = new Date(value);
+    if (Number.isNaN(parsed.getTime())) return '';
+
+    const two = (v: number) => String(v).padStart(2, '0');
+
+    return [
+      `${parsed.getFullYear()}-${two(parsed.getMonth() + 1)}-${two(parsed.getDate())}`,
+      `${two(parsed.getHours())}:${two(parsed.getMinutes())}`,
+    ].join('T');
   }
 
   private resetForm(): void {
@@ -182,6 +292,11 @@ export class TorneiosComponent {
       support: '3',
     });
 
+    this.resetTouchState();
+    this.submitted.set(false);
+  }
+
+  private resetTouchState(): void {
     this.touched.set({
       name: false,
       description: false,
@@ -193,13 +308,11 @@ export class TorneiosComponent {
       dps: false,
       support: false,
     });
-
-    this.submitted.set(false);
   }
 
-  private toPayload(value: TournamentFormValue): CreateTournamentPayload {
+  private toPayload(value: TournamentFormValue): SaveTournamentPayload {
     const maxTeams = Number.parseInt(value.maxTeams, 10);
-    const payloadBase: CreateTournamentPayload = {
+    const payloadBase: SaveTournamentPayload = {
       name: value.name.trim(),
       description: value.description.trim() ? value.description.trim() : null,
       teamMode: value.teamMode,
@@ -324,12 +437,42 @@ export class TorneiosComponent {
     return parsed;
   }
 
-  private readString(value: Readonly<Record<string, unknown>>, field: string): string | null {
+  private readRouteTournamentId(): string | null {
+    const raw = this.route.snapshot.paramMap.get('id');
+    if (typeof raw !== 'string') return null;
+
+    const normalized = raw.trim();
+    return normalized ? normalized : null;
+  }
+
+  private readString(value: RawRecord, field: string): string | null {
     const raw = value[field];
     if (typeof raw !== 'string') return null;
 
     const normalized = raw.trim();
     return normalized ? normalized : null;
+  }
+
+  private readRecord(value: unknown): RawRecord | null {
+    if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
+    return value as RawRecord;
+  }
+
+  private readInteger(value: unknown): number | null {
+    if (typeof value === 'number' && Number.isFinite(value)) {
+      return Math.floor(value);
+    }
+
+    if (typeof value === 'string') {
+      const parsed = Number.parseInt(value.trim(), 10);
+      return Number.isInteger(parsed) ? parsed : null;
+    }
+
+    return null;
+  }
+
+  private isRecord(value: unknown): value is RawRecord {
+    return !!value && typeof value === 'object' && !Array.isArray(value);
   }
 
   private resolveError(error: unknown, fallbackMessage: string): string {
@@ -350,5 +493,4 @@ export class TorneiosComponent {
 
     return fallbackMessage;
   }
-
 }

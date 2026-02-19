@@ -1,35 +1,16 @@
-<!--
-
-Além de draft, os estados de torneio são:
-
-published
-checkin
-locked
-running
-finished
-canceled
-Fluxo permitido hoje:
-
-draft -> published ou canceled
-published -> checkin ou canceled
-checkin -> locked ou canceled
-locked -> running ou canceled
-running -> finished ou canceled
-finished -> (sem transição)
-canceled -> (sem transição)
-
--->
-
-
 <div class="my-16">
   <div class="space-y-2">
     <h1 class="text-4xl font-black leading-tight text-(--ow-gray-900) lg:text-5xl">
-      Cadastrar torneio
+      {{ pageTitle() }}
     </h1>
     <p class="text-(--ow-gray-500)">
-      Crie um torneio seguindo as mesmas regras da API de torneios.
+      {{ pageDescription() }}
     </p>
   </div>
+
+  @if (editing() && loadingTournament()) {
+    <p class="text-sm font-medium text-(--ow-gray-600)">Carregando dados do torneio...</p>
+  }
 
   <form class="space-y-5" novalidate (submit)="onSubmit($event)">
     <div class="space-y-1.5">
@@ -216,18 +197,30 @@ canceled -> (sem transição)
     }
 
     <div class="flex flex-row-reverse">
-      <ow-btn [disabled]="!canSubmit() || pending()" ariaLabel="Cadastrar torneio" type="submit">
+      <ow-btn
+        [disabled]="!canSubmit()"
+        [ariaLabel]="editing() ? 'Salvar alteracoes do torneio' : 'Cadastrar torneio'"
+        type="submit"
+      >
         @if (pending()) {
-          Cadastrando...
+          @if (editing()) {
+            Salvando...
+          } @else {
+            Cadastrando...
+          }
         } @else {
-          Cadastrar torneio
+          @if (editing()) {
+            Salvar alteracoes
+          } @else {
+            Cadastrar torneio
+          }
         }
       </ow-btn>
     </div>
 
     @if (!auth.isAuthenticated()) {
       <p class="text-sm font-medium text-red-600">
-        Faca login para criar torneios.
+        Faca login para salvar torneios.
       </p>
     }
 
@@ -247,7 +240,7 @@ canceled -> (sem transição)
       </p>
     }
 
-    @if (createdTournamentId(); as tournamentId) {
+    @if (!editing() && createdTournamentId(); as tournamentId) {
       <p class="text-sm text-(--ow-gray-600)">
         ID criado: <strong>{{ tournamentId }}</strong>
       </p>

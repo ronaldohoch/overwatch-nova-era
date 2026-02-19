@@ -23,7 +23,7 @@ const DEFAULT_LINKS: readonly OwNavItem[] = [
 const MEMBER_LINKS: readonly OwNavItem[] = [
   { label: 'Dashboard', link: '/watchpoint/dashboard' },
   { label: 'Meus dados', link: '/watchpoint/dados-do-usuario' },
-  { label: 'Check-ins', link: '/watchpoint/check-ins' },
+  { label: 'Check-in', link: '/watchpoint/check-ins' },
   // { label: 'Torneio', link: '/torneio' },
 ];
 
