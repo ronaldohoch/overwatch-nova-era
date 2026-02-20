@@ -202,8 +202,6 @@ export class LoginComponent {
 
     if (!value.battletag.trim()) {
       battletagErrors.push('Informe a BattleTag.');
-    } else if (!/^[A-Za-z0-9_]{3,16}#[0-9]{4,6}$/.test(value.battletag)) {
-      battletagErrors.push('Use o formato Nome#1234.');
     }
 
     if (!value.whatsapp.trim()) {
