@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideRouter } from '@angular/router';
 
 import { CheckInByTournamentComponent } from './check-in-by-tournament.component';
 
@@ -10,7 +11,7 @@ describe('CheckInByTournamentComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [CheckInByTournamentComponent],
-      providers: [provideHttpClientTesting()],
+      providers: [provideHttpClientTesting(), provideRouter([])],
     })
     .compileComponents();
 

@@ -73,6 +73,15 @@ export default [
         loadComponent: () => import('./paginas/ferramentas-de-streamer/ferramentas-de-streamer.component').then((m) => m.FerramentasDeStreamerComponent),
       },
       {
+        path: 'ferramentas-de-streamer/roleta',
+        title: 'Copa Overwatch Nova Era - Ferramentas de streamer',
+        canActivate: [routeAccessGuard],
+        data: {
+          access: ['streamer', 'admin'],
+        },
+        loadComponent: () => import('./paginas/ferramentas-de-streamer/paginas/roleta/roleta.component').then((m) => m.RoletaComponent),
+      },
+      {
         path: 'usuarios',
         title: 'Copa Overwatch Nova Era - Usuarios',
         canActivate: [routeAccessGuard],

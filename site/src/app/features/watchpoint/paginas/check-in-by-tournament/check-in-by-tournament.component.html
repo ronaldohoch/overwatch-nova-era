@@ -24,6 +24,14 @@
         Atualizar check-ins
       }
     </ow-btn>
+
+    <ow-btn
+      variant="primary-mini"
+      [disabled]="!canSendVisibleCheckinsToRoulette()"
+      (click)="sendVisibleCheckinsToRoulette()"
+    >
+      Enviar usuarios visiveis para roleta
+    </ow-btn>
   </div>
 
   @if (!auth.isAuthenticated()) {

@@ -23,15 +23,15 @@ const DEFAULT_LINKS: readonly OwNavItem[] = [
 const MEMBER_LINKS: readonly OwNavItem[] = [
   { label: 'Dashboard', link: '/watchpoint/dashboard' },
   { label: 'Meus dados', link: '/watchpoint/dados-do-usuario' },
-  { label: 'Check-in', link: '/watchpoint/check-ins' },
+  { label: 'Fazer check-in', link: '/watchpoint/check-ins' },
   // { label: 'Torneio', link: '/torneio' },
 ];
 
 const STREAMER_LINKS: readonly OwNavItem[] = [
   { label: 'Dashboard', link: '/watchpoint/dashboard' },
   { label: 'Meus dados', link: '/watchpoint/dados-do-usuario' },
-  { label: 'Check-ins', link: '/watchpoint/check-ins' },
-  { label: 'Fazer check-in', link: '/watchpoint/check-in-by-tournament' },
+  { label: 'Fazer check-in', link: '/watchpoint/check-ins' },
+  { label: 'Check-ins', link: '/watchpoint/check-in-by-tournament' },
   { label: 'Ferramentas', link: '/watchpoint/ferramentas-de-streamer' },
 ];
 

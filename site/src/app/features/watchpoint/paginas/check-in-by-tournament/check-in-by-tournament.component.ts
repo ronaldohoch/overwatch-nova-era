@@ -1,9 +1,16 @@
+import { isPlatformBrowser } from '@angular/common';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, PLATFORM_ID, computed, inject, signal } from '@angular/core';
+import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { ButtonsComponent } from '../../../../shared/buttons/buttons';
 import { environment } from '../../../../../environments/environment';
+import {
+  OW_ROULETTE_ROUTE,
+  OW_ROULETTE_SESSION_STORAGE_KEY,
+  type OwRouletteListItem,
+} from '../ferramentas-de-streamer/paginas/roleta/ow-roulette-session-storage';
 
 type RoleFilter = 'all' | 'tank' | 'dps' | 'support';
 
@@ -35,8 +42,11 @@ type RawRecord = Readonly<Record<string, unknown>>;
 })
 export class CheckInByTournamentComponent {
   private readonly http = inject(HttpClient);
+  private readonly router = inject(Router);
+  private readonly platformId = inject(PLATFORM_ID);
   readonly auth = inject(AuthService);
   private readonly torneiosApiUrl = `${environment.apiURLTorneios}`;
+  private readonly isBrowser = isPlatformBrowser(this.platformId);
 
   readonly loadingTournaments = signal(false);
   readonly loadingCheckins = signal(false);
@@ -60,6 +70,9 @@ export class CheckInByTournamentComponent {
 
   readonly canLoadCheckins = computed(
     () => this.hasPermission() && !!this.selectedTournamentId() && !this.loadingCheckins(),
+  );
+  readonly canSendVisibleCheckinsToRoulette = computed(
+    () => this.hasPermission() && !this.loadingCheckins() && this.checkins().length > 0,
   );
 
   readonly checkinsCountLabel = computed(() => `${this.checkins().length} check-ins encontrados`);
@@ -150,6 +163,25 @@ export class CheckInByTournamentComponent {
     }
   }
 
+  async sendVisibleCheckinsToRoulette(): Promise<void> {
+    if (!this.canSendVisibleCheckinsToRoulette()) return;
+
+    const storage = this.getSessionStorage();
+    if (!storage) {
+      this.setMessage('Nao foi possivel usar a roleta neste ambiente.', true);
+      return;
+    }
+
+    const items = this.checkins().map((checkin, index) => this.toRouletteItem(checkin, index));
+
+    try {
+      storage.setItem(OW_ROULETTE_SESSION_STORAGE_KEY, JSON.stringify(items));
+      await this.router.navigateByUrl(OW_ROULETTE_ROUTE);
+    } catch {
+      this.setMessage('Nao foi possivel enviar os usuarios para a roleta.', true);
+    }
+  }
+
   roleLabel(role: CheckinListItem['role']): string {
     if (role === 'tank') return 'Tank';
     if (role === 'dps') return 'DPS';
@@ -235,6 +267,22 @@ export class CheckInByTournamentComponent {
       checkedInAt: this.readString(value, 'checkedInAt'),
       teamId: this.readString(value, 'teamId'),
     };
+  }
+
+  private toRouletteItem(checkin: CheckinListItem, index: number): OwRouletteListItem {
+    const id = checkin.uid !== '-' ? checkin.uid : checkin.id || `checkin-${index + 1}`;
+    const hasBattleTag = checkin.battletag !== 'Sem BattleTag';
+    const name = hasBattleTag ? `${checkin.displayName} (${checkin.battletag})` : checkin.displayName;
+
+    return { id, name };
+  }
+
+  private getSessionStorage(): Storage | null {
+    if (!this.isBrowser) return null;
+    if (typeof window === 'undefined') return null;
+    if (!('sessionStorage' in window)) return null;
+
+    return window.sessionStorage;
   }
 
   private readString(value: RawRecord, field: string): string | null {
