@@ -25,6 +25,10 @@ export default [
       {
         path: 'novo-torneio',
         title: 'Copa Overwatch Nova Era - Novo Torneio',
+        canActivate: [routeAccessGuard],
+        data: {
+          access: 'admin',
+        },
         loadComponent: () => import('./paginas/torneios/torneios.component').then((m) => m.TorneiosComponent),
       },
       {
