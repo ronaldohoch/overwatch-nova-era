@@ -31,8 +31,8 @@ const STREAMER_LINKS: readonly OwNavItem[] = [
   { label: 'Dashboard', link: '/watchpoint/dashboard' },
   { label: 'Meus dados', link: '/watchpoint/dados-do-usuario' },
   { label: 'Check-ins', link: '/watchpoint/check-ins' },
-  { label: 'Check-ins torneio', link: '/watchpoint/check-in-by-tournament' },
-  // { label: 'Pick ban', link: '/torneio' },
+  { label: 'Fazer check-in', link: '/watchpoint/check-in-by-tournament' },
+  { label: 'Ferramentas', link: '/watchpoint/ferramentas-de-streamer' },
 ];
 
 const ADMIN_LINKS: readonly OwNavItem[] = [
