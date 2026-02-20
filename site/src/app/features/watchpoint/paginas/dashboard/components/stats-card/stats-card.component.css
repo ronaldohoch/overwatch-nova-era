@@ -1,0 +1,33 @@
+.Tanque:before{
+  background-image:url('/imgs/icone-tanque.svg')
+}
+.Dano:before{
+  background-image:url('/imgs/icone-dano.svg')
+}
+.Suporte:before{
+  background-image:url('/imgs/icone-suporte.svg')
+}
+
+.Tanque,
+.Dano,
+.Suporte{
+  overflow: hidden;
+  display: block;
+  position:relative;
+}
+
+.Tanque:before,
+.Dano:before,
+.Suporte:before{
+  content: "";
+  width: 150px;
+  height: 150px;
+  display: block;
+  background-size: contain;
+  position: absolute;
+  z-index: 4;
+  right: -10px;
+  top: -10px;
+  transform: rotate(-20deg);
+  opacity: 0.2;
+}

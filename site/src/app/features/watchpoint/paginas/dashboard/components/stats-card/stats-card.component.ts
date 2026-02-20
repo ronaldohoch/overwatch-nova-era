@@ -3,50 +3,11 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
 @Component({
   selector: 'ow-stats-card',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `
-    <div
-      class="
-        bg-[color:var(--ow-white)]
-        border border-[color:var(--ow-gray-200)]
-        shadow-[var(--shadow-card)]
-        overflow-hidden
-        transition-all duration-300 ease-in-out
-        [clip-path:polygon(5%_0,100%_0,100%_95%,95%_100%,0_100%,0_5%)]
-        hover:border-[color:var(--ow-orange)]
-        hover:shadow-[var(--shadow-card-hover)]
-        hover:-translate-y-[5px]
-        p-6
-      "
-    >
-      <h3 class="text-lg font-bold uppercase tracking-wider text-[color:var(--ow-orange)] mb-4">
-        {{ title() }}
-      </h3>
-
-      <div class="text-5xl font-black mb-2">
-        {{ value() }}
-      </div>
-
-      <div class="text-[color:var(--ow-gray-500)] text-sm">
-        {{ subtitle() }}
-      </div>
-
-      <div
-        class="mt-4 bg-[color:var(--ow-gray-200)] h-2 rounded-full overflow-hidden"
-        role="progressbar"
-        [attr.aria-label]="progressAriaLabel()"
-        [attr.aria-valuemin]="0"
-        [attr.aria-valuemax]="100"
-        [attr.aria-valuenow]="progressPct()"
-      >
-        <div
-          class="bg-[color:var(--ow-orange)] h-full"
-          [style.width.%]="progressPct()"
-        ></div>
-      </div>
-    </div>
-  `,
+  templateUrl:'./stats-card.component.html',
+  styleUrl:'./stats-card.component.css',
 })
 export class StatsCardComponent {
+  customClass = input<string>('');
   title = input.required<string>();
   value = input.required<string | number>();
   subtitle = input.required<string>();

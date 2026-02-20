@@ -1,17 +1,3 @@
-<!-- <section class="my-16">
-  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-    <ow-random-hero-quote />
-
-    <p class="text-xl text-ow-gray-500 mb-8">
-      Pronto para a Acao?
-    </p>
-    <div class="flex flex-col sm:flex-row gap-4 justify-center">
-      <ow-btn [variant]="'primary'" href="/watchpoint/dados-do-usuario">Editar meus dados</ow-btn>
-      <ow-btn [variant]="'secondary'" href="/watchpoint/check-ins">Fazer check-in</ow-btn>
-    </div>
-  </div>
-</section> -->
-
 <section class="my-16">
   <div>
     <h2
@@ -34,8 +20,9 @@
     @for (card of roleCards(); track card.id) {
       <div>
         <ow-stats-card
+          [customClass]="card.title"
           [title]="card.title"
-          [value]="card.value"
+          [value]="card.value+ ' '+'restantes'"
           [subtitle]="card.subtitle"
           [progress]="card.progress"
           [ariaLabel]="'Ocupacao de vagas da role ' + card.title"
@@ -43,8 +30,8 @@
       </div>
     }
   </div>
-  <div class="flex flex-col sm:flex-row gap-4 justify-center">
-    <ow-btn [variant]="'primary'" href="/watchpoint/dados-do-usuario">Editar meus dados</ow-btn>
-    <ow-btn [variant]="'secondary'" href="/watchpoint/check-ins">Fazer check-in</ow-btn>
+  <div class="flex flex-col sm:flex-row gap-4 justify-center pulsate-fwd">
+    <!-- <ow-btn [variant]="'primary'" href="/watchpoint/dados-do-usuario">Editar meus dados</ow-btn> -->
+    <ow-btn [variant]="'primary'" href="/watchpoint/check-ins">Fazer check-in</ow-btn>
   </div>
 </section>

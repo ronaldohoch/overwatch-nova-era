@@ -60,6 +60,15 @@ export default [
           ),
       },
       {
+        path: 'ferramentas-de-streamer',
+        title: 'Copa Overwatch Nova Era - Ferramentas de streamer',
+        canActivate: [routeAccessGuard],
+        data: {
+          access: ['streamer', 'admin'],
+        },
+        loadComponent: () => import('./paginas/ferramentas-de-streamer/ferramentas-de-streamer.component').then((m) => m.FerramentasDeStreamerComponent),
+      },
+      {
         path: 'usuarios',
         title: 'Copa Overwatch Nova Era - Usuarios',
         canActivate: [routeAccessGuard],
