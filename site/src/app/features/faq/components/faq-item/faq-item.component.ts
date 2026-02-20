@@ -12,7 +12,10 @@ let OW_FAQ_ITEM_UID = 0;
 @Component({
   selector: 'faq-item',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl:'./faq-item.component.html'
+  templateUrl:'./faq-item.component.html',
+  host:{
+    'class':'widowmaker-bg'
+  }
 })
 export class FaqItemComponent {
   readonly question = input.required<string>();
@@ -42,7 +45,7 @@ export class FaqItemComponent {
 
   questionClass = computed(() => {
     const base =
-      'pr-4 transition-transform group-hover:translate-x-4 group-hover:text-black text-lg font-bold';
+      'pr-4 transition-transform group-hover:translate-x-4 group-hover:text-black text-lg font-bold pl-4';
     return this.isOpen() ? `${base} translate-x-4 text-black` : base;
   });
 
