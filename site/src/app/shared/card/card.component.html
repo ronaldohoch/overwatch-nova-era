@@ -1,0 +1,13 @@
+<ng-template #projectedCardContent>
+  <ng-content />
+</ng-template>
+
+<article [attr.data-status]="status() ?? null" [class]="classes()">
+  @if (padded()) {
+  <div [class]="contentClasses()">
+    <ng-container [ngTemplateOutlet]="projectedCardContent" />
+  </div>
+  } @else {
+  <ng-container [ngTemplateOutlet]="projectedCardContent" />
+  }
+</article>
