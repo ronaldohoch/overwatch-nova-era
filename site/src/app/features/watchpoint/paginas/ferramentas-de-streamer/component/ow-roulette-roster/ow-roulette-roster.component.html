@@ -1,0 +1,72 @@
+<section class="block">
+  <ow-card>
+    <header class="flex items-start justify-between gap-3">
+
+      <p class="m-0 text-[0.7rem] font-bold tracking-[0.12em] uppercase">
+        Lista de Participantes
+      </p>
+      <p
+        class="inline-flex items-center justify-center text-sm font-bold tracking-[0.12em] -mt-0.5"
+      >
+        {{ drawnCount() }}/{{ totalCount() }}
+      </p>
+    </header>
+
+    <div
+      class="mt-3 h-2.5 overflow-hidden rounded-full bg-(--ow-gray-100)"
+      role="progressbar"
+      [attr.aria-valuenow]="drawnCount()"
+      [attr.aria-valuemin]="0"
+      [attr.aria-valuemax]="totalCount()"
+      [attr.aria-label]="'Progresso dos sorteios'"
+    >
+      <span
+        class="block h-full bg-[linear-gradient(90deg,#00c3ff_0%,#0099cc_100%)] transition-[width] duration-200 ease-out"
+        [style.width.%]="progressPercent()"
+      ></span>
+    </div>
+
+    <p class="mt-2 mb-0 text-sm font-semibold text-(--ow-gray-600)">
+      @if (isRunning()) {
+        Roleta em movimento...
+      } @else if (selectedItem(); as selected) {
+        Ultimo: {{ selected.name }}
+      } @else {
+        Aguardando o primeiro sorteio
+      }
+    </p>
+
+    @if (!items().length) {
+      <p class="mt-4 mb-0 bg-[rgba(0,195,255,0.08)] p-3 text-sm font-semibold text-(--ow-gray-600)">
+        Sem participantes na lista. Use o campo "Adicionar nome na roleta" para montar o sorteio.
+      </p>
+    } @else {
+      <ul class="mt-4 grid max-h-84 list-none gap-1.5 overflow-auto p-0" aria-live="polite">
+        @for (entry of items(); track trackEntry($index, entry)) {
+          <li
+            class="flex items-center justify-between gap-2.5 bg-(--ow-gray-50) px-3 py-2 transition-[background-color,box-shadow,opacity] duration-200"
+            [class.opacity-60]="isDrawn(entry)"
+          >
+            <span
+              class="text-base font-bold leading-tight text-(--ow-gray-800)"
+              [class.line-through]="isDrawn(entry)"
+              [class.decoration-2]="isDrawn(entry)"
+              [class.decoration-gray-400]="isDrawn(entry)"
+            >
+              {{ entry.name }}
+            </span>
+            <span
+              class="shrink-0 rounded-full border border-gray-300 px-2 py-0.5 text-[0.67rem] font-extrabold tracking-[0.09em] uppercase text-gray-600"
+              [class.text-gray-500]="isDrawn(entry)"
+              [class.bg-sky-500]="isSelected(entry)"
+              [class.text-white]="isSelected(entry)"
+              [class.border-sky-500]="isSelected(entry)"
+            >
+              {{ statusLabel(entry) }}
+            </span>
+          </li>
+        }
+      </ul>
+    }
+  </ow-card>
+</section>

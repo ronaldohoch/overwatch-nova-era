@@ -37,6 +37,7 @@ type ApiResponse = Readonly<{
 export class DashboardComponent {
   private readonly http = inject(HttpClient);
   private readonly torneiosApiUrl = `${environment.apiURLTorneios}`;
+  readonly loadingRoleCards = signal(true);
 
   readonly roleCards = signal<readonly RoleCardModel[]>([
     this.emptyCard('tank', 'Tanque'),
@@ -49,6 +50,8 @@ export class DashboardComponent {
   }
 
   private async loadRoleCards(): Promise<void> {
+    this.loadingRoleCards.set(true);
+
     try {
       const response = await firstValueFrom(
         this.http.get<ApiResponse>(
@@ -64,6 +67,8 @@ export class DashboardComponent {
       ]);
     } catch {
       // Mantem os cards no estado padrao se a API falhar.
+    } finally {
+      this.loadingRoleCards.set(false);
     }
   }
 

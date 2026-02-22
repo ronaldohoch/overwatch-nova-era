@@ -3,6 +3,7 @@ import { OwCoinFlipComponent } from './component/ow-coin-flip/ow-coin-flip.compo
 // import { ButtonsComponent } from '../../../../shared/buttons/buttons';
 import { CardComponent } from '../../../../shared/card/card.component';
 // import { OwRouletteComponent } from './component/ow-roulette/ow-roulette.component';
+import { RouterLink } from '@angular/router';
 
 type Restaurant = { id: string; name: string };
 
@@ -10,8 +11,8 @@ type Restaurant = { id: string; name: string };
   selector: 'app-ferramentas-de-streamer',
   imports: [
     OwCoinFlipComponent,
-    // OwRouletteComponent
-    // CardComponent
+    CardComponent,
+    RouterLink
   ],
   templateUrl: './ferramentas-de-streamer.component.html',
   styleUrl: './ferramentas-de-streamer.component.css',

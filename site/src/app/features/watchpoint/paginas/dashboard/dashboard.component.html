@@ -1,4 +1,4 @@
-<section class="my-16">
+<section class="my-8">
   <div>
     <h2
       class="
@@ -25,6 +25,7 @@
           [value]="card.value+ ' '+'restantes'"
           [subtitle]="card.subtitle"
           [progress]="card.progress"
+          [loading]="loadingRoleCards()"
           [ariaLabel]="'Ocupacao de vagas da role ' + card.title"
         />
       </div>

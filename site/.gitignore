@@ -15,6 +15,7 @@ yarn-error.log
 .idea/
 .project
 .classpath
+desktop.ini
 .c9/
 *.launch
 .settings/

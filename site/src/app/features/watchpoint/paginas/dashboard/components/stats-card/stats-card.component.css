@@ -31,3 +31,10 @@
   transform: rotate(-20deg);
   opacity: 0.2;
 }
+
+.stats-card-loader {
+  min-height: 10rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

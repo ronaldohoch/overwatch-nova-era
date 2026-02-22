@@ -1,8 +1,10 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { OwOverwatchLoaderComponent } from '../../../../../../shared/ow-overwatch-loader/ow-overwatch-loader.component';
 
 @Component({
   selector: 'ow-stats-card',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [OwOverwatchLoaderComponent],
   templateUrl:'./stats-card.component.html',
   styleUrl:'./stats-card.component.css',
 })
@@ -14,6 +16,7 @@ export class StatsCardComponent {
 
   /** 0..100 */
   progress = input<number>(0);
+  loading = input(false);
 
   /** Ex: "Progresso de partidas jogadas" */
   ariaLabel = input<string>('Progresso');

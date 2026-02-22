@@ -48,7 +48,7 @@ export const faqItems: OwFaqEntry[] = [
   imports: [FaqItemComponent],
   template: `
     <section class="w-full" aria-label="Perguntas frequentes">
-      <div class="my-16 flex flex-col justify-center text-center rounded-sm lg:max-w-md xl:max-w-lg lg:text-left">
+      <div class="my-8 flex flex-col justify-center text-center rounded-sm lg:max-w-md xl:max-w-lg lg:text-left">
           <h1 class="text-5xl font-bold leading-none sm:text-6xl">Dúvidas frequentes</h1>
       </div>
       @for (item of items(); track item.id ?? $index; let i = $index) {

@@ -1,6 +1,6 @@
 import { isPlatformBrowser } from '@angular/common';
-import { Component, PLATFORM_ID, inject, signal } from '@angular/core';
-import { OwRouletteComponent, type Restaurant } from '../../component/ow-roulette/ow-roulette.component';
+import { Component, PLATFORM_ID, computed, inject, signal } from '@angular/core';
+import { OwRouletteComponent, type RouletteEntry } from '../../component/ow-roulette/ow-roulette.component';
 import { OW_ROULETTE_SESSION_STORAGE_KEY, type OwRouletteListItem } from './ow-roulette-session-storage';
 
 @Component({
@@ -13,7 +13,8 @@ export class RoletaComponent {
   private readonly platformId = inject(PLATFORM_ID);
   private readonly isBrowser = isPlatformBrowser(this.platformId);
 
-  readonly rouletteItems = signal<readonly Restaurant[] | null>(null);
+  readonly rouletteItems = signal<readonly RouletteEntry[] | null>(null);
+  readonly importedCount = computed(() => this.rouletteItems()?.length ?? 0);
 
   constructor() {
     this.loadRouletteItemsFromSessionStorage();
@@ -45,7 +46,7 @@ export class RoletaComponent {
     return window.sessionStorage;
   }
 
-  private readRouletteItems(value: unknown): readonly Restaurant[] {
+  private readRouletteItems(value: unknown): readonly RouletteEntry[] {
     if (!Array.isArray(value)) return [];
 
     return value
@@ -58,7 +59,7 @@ export class RoletaComponent {
         const rouletteItem: OwRouletteListItem = { id, name };
         return rouletteItem;
       })
-      .filter((item): item is Restaurant => item !== null);
+      .filter((item): item is RouletteEntry => item !== null);
   }
 
   private readString(value: Record<string, unknown>, field: string): string | null {
