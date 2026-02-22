@@ -8,12 +8,6 @@ import { rolesMiddleware } from '../_middlewares/roles';
 import { UserRole } from '../_enums/role.enum';
 
 const app = setupExpressApp();
-const allowedOrigins = [
-  'https://copa-nova-era-overwatch.web.app',
-  'https://copa-nova-era-overwatch.firebaseapp.com',
-  'http://localhost:4200',
-  'http://127.0.0.1:4200',
-];
 
 app.post('/signup', async (req: express.Request, res: express.Response) => {
   const { displayName, email, battletag, password, whatsapp } = req.body;
@@ -145,4 +139,4 @@ function readBearerToken(headerValue: string | undefined): string | null {
   return token;
 }
 
-export const auth = onRequest({ cors: allowedOrigins, invoker: 'public' }, app);
+export const auth = onRequest({ invoker: 'public' }, app);

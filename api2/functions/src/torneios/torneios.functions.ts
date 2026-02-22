@@ -196,4 +196,4 @@ app.post(
   },
 );
 
-export const torneios = onRequest(app);
+export const torneios = onRequest({ invoker: 'public' }, app);
