@@ -33,12 +33,12 @@
 
     <div class="space-y-1.5">
       <label for="torneio-description" class="text-sm font-semibold text-(--ow-gray-700)">
-        Descricao (opcional)
+        Descrição (opcional)
       </label>
       <textarea
         id="torneio-description"
         rows="3"
-        placeholder="Regras curtas, observacoes e formato"
+        placeholder="Regras curtas, observações e formato"
         class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
         [value]="form().description"
         (input)="updateField('description', $any($event.target).value)"
@@ -71,7 +71,7 @@
 
       <div class="space-y-1.5">
         <label for="torneio-maxTeams" class="text-sm font-semibold text-(--ow-gray-700)">
-          Numero maximo de times
+          Número máximo de times
         </label>
         <input
           id="torneio-maxTeams"
@@ -93,7 +93,7 @@
     <div class="grid gap-4 md:grid-cols-2">
       <div class="space-y-1.5">
         <label for="torneio-startAt" class="text-sm font-semibold text-(--ow-gray-700)">
-          Inicio do torneio
+          Início do torneio
         </label>
         <input
           id="torneio-startAt"
@@ -199,7 +199,7 @@
     <div class="flex flex-row-reverse">
       <ow-btn
         [disabled]="!canSubmit()"
-        [ariaLabel]="editing() ? 'Salvar alteracoes do torneio' : 'Cadastrar torneio'"
+        [ariaLabel]="editing() ? 'Salvar alterações do torneio' : 'Cadastrar torneio'"
         type="submit"
       >
         @if (pending()) {
@@ -210,7 +210,7 @@
           }
         } @else {
           @if (editing()) {
-            Salvar alteracoes
+            Salvar alterações
           } @else {
             Cadastrar torneio
           }
@@ -220,13 +220,13 @@
 
     @if (!auth.isAuthenticated()) {
       <p class="text-sm font-medium text-red-600">
-        Faca login para salvar torneios.
+        Faça login para salvar torneios.
       </p>
     }
 
     @if (auth.isAuthenticated() && !hasAdminPermission()) {
       <p class="text-sm font-medium text-red-600">
-        Seu usuario nao possui permissao de administrador.
+        Seu usuário não possui permissão de administrador.
       </p>
     }
 

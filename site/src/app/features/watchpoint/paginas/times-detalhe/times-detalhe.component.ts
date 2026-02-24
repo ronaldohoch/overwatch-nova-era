@@ -144,7 +144,7 @@ export class TimesDetalheComponent {
     this.addMemberError.set(false);
 
     if (!this.hasTeamId()) {
-      this.addMemberMessage.set('Time invalido para adicionar membro.');
+      this.addMemberMessage.set('Time inválido para adicionar membro.');
       this.addMemberError.set(true);
       return;
     }
@@ -174,7 +174,7 @@ export class TimesDetalheComponent {
 
       await Promise.all([this.loadTeam(), this.loadMembers(), this.loadTournaments()]);
     } catch (error: unknown) {
-      this.addMemberMessage.set(this.resolveError(error, 'Nao foi possivel adicionar o membro.'));
+      this.addMemberMessage.set(this.resolveError(error, 'Não foi possível adicionar o membro.'));
       this.addMemberError.set(true);
     } finally {
       this.addingMember.set(false);
@@ -186,13 +186,13 @@ export class TimesDetalheComponent {
     this.leaveTeamError.set(false);
 
     if (!this.hasTeamId()) {
-      this.leaveTeamMessage.set('Time invalido para sair.');
+      this.leaveTeamMessage.set('Time inválido para sair.');
       this.leaveTeamError.set(true);
       return;
     }
 
     if (!this.isCurrentUserMember()) {
-      this.leaveTeamMessage.set('Voce nao faz parte deste time.');
+      this.leaveTeamMessage.set('Você não faz parte deste time.');
       this.leaveTeamError.set(true);
       return;
     }
@@ -203,7 +203,7 @@ export class TimesDetalheComponent {
       await firstValueFrom(this.http.delete<unknown>(`${this.timesApiUrl}/${this.teamId}/members/me`));
       await this.router.navigateByUrl('/watchpoint/times');
     } catch (error: unknown) {
-      this.leaveTeamMessage.set(this.resolveError(error, 'Nao foi possivel sair do time.'));
+      this.leaveTeamMessage.set(this.resolveError(error, 'Não foi possível sair do time.'));
       this.leaveTeamError.set(true);
     } finally {
       this.leavingTeam.set(false);
@@ -227,26 +227,26 @@ export class TimesDetalheComponent {
     this.promoteCaptainError.set(false);
 
     if (!this.hasTeamId()) {
-      this.promoteCaptainMessage.set('Time invalido para transferir capitania.');
+      this.promoteCaptainMessage.set('Time inválido para transferir capitania.');
       this.promoteCaptainError.set(true);
       return;
     }
 
     if (!this.isCurrentUserCaptain()) {
-      this.promoteCaptainMessage.set('Apenas o capitao atual pode promover outro integrante.');
+      this.promoteCaptainMessage.set('Apenas o capitão atual pode promover outro integrante.');
       this.promoteCaptainError.set(true);
       return;
     }
 
     const targetUid = member.uid.trim();
     if (!targetUid) {
-      this.promoteCaptainMessage.set('Integrante invalido para promover.');
+      this.promoteCaptainMessage.set('Integrante inválido para promover.');
       this.promoteCaptainError.set(true);
       return;
     }
 
     if (member.isCaptain) {
-      this.promoteCaptainMessage.set('Este integrante ja e o capitao atual.');
+      this.promoteCaptainMessage.set('Este integrante ja e o capitão atual.');
       this.promoteCaptainError.set(true);
       return;
     }
@@ -266,7 +266,7 @@ export class TimesDetalheComponent {
       await Promise.all([this.loadTeam(), this.loadMembers()]);
     } catch (error: unknown) {
       this.promoteCaptainMessage.set(
-        this.resolveError(error, 'Nao foi possivel transferir a capitania.'),
+        this.resolveError(error, 'Não foi possível transferir a capitania.'),
       );
       this.promoteCaptainError.set(true);
     } finally {
@@ -282,14 +282,14 @@ export class TimesDetalheComponent {
       this.members.set([]);
       this.tournaments.set([]);
       this.trophies.set([]);
-      this.loadingMessage.set('Time invalido.');
+      this.loadingMessage.set('Time inválido.');
       return;
     }
 
     try {
       await Promise.all([this.loadTeam(), this.loadMembers(), this.loadTournaments()]);
     } catch (error: unknown) {
-      this.loadingMessage.set(this.resolveError(error, 'Nao foi possivel carregar os dados do time.'));
+      this.loadingMessage.set(this.resolveError(error, 'Não foi possível carregar os dados do time.'));
     }
   }
 
@@ -299,7 +299,7 @@ export class TimesDetalheComponent {
     try {
       const response = await firstValueFrom(this.http.get<unknown>(`${this.timesApiUrl}/${this.teamId}`));
       const teamRecord = this.readTeam(response);
-      if (!teamRecord) throw new Error('Time nao encontrado.');
+      if (!teamRecord) throw new Error('Time não encontrado.');
 
       this.team.set(this.toTeamDetail(teamRecord));
     } finally {
@@ -415,7 +415,7 @@ export class TimesDetalheComponent {
       captainName:
         this.readString(value, 'captainName') ??
         this.readString(value, 'captainDisplayName') ??
-        'Sem capitao definido',
+        'Sem capitão definido',
       membersCount:
         this.readInteger(value['membersCount'] ?? value['members_count']) ?? 0,
       createdAtLabel: this.toDateTimeLabel(createdAt),
@@ -435,7 +435,7 @@ export class TimesDetalheComponent {
     return {
       trackKey: uid || `member-${index + 1}`,
       uid,
-      displayName: this.readString(value, 'displayName') ?? this.readString(value, 'name') ?? 'Usuario sem nome',
+      displayName: this.readString(value, 'displayName') ?? this.readString(value, 'name') ?? 'Usuário sem nome',
       battletag: this.readString(value, 'battletag') ?? 'Sem battletag',
       joinedAtLabel: this.toDateTimeLabel(
         this.readString(value, 'joinedAt') ?? this.readString(value, 'createdAt'),
@@ -466,7 +466,7 @@ export class TimesDetalheComponent {
 
   private toTrophyItem(value: RawRecord, index: number): TeamTrophyItem {
     const tournamentName = this.readString(value, 'tournamentName') ?? 'Torneio';
-    const label = this.readString(value, 'label') ?? 'Trofeu';
+    const label = this.readString(value, 'label') ?? 'Troféu';
 
     return {
       trackKey: `${this.readString(value, 'tournamentId') ?? 'tournament'}-${index + 1}-${label}`,
@@ -491,7 +491,7 @@ export class TimesDetalheComponent {
   private toCategoryLabel(category: TeamCategory): string {
     if (category === 'formed') return 'Time com participantes selecionados';
     if (category === 'random') return 'Time com participantes sorteados';
-    return 'Categoria nao informada';
+    return 'Categoria não informada';
   }
 
   private readParticipationScope(value: RawRecord, status: string): ParticipationScope {
@@ -519,7 +519,7 @@ export class TimesDetalheComponent {
   }
 
   private toDateTimeLabel(value: string | null): string {
-    if (!value) return 'Nao informado';
+    if (!value) return 'Não informado';
 
     const parsed = new Date(value);
     if (Number.isNaN(parsed.getTime())) return value;

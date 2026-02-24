@@ -2,10 +2,10 @@
   <div class="flex flex-wrap items-end justify-between gap-4">
     <div class="space-y-1">
       <h1 class="text-4xl font-black leading-tight text-(--ow-gray-900) lg:text-5xl">
-        Usuarios cadastrados
+        Usuários cadastrados
       </h1>
       <p class="text-(--ow-gray-500)">
-        Esta pagina e exclusiva para administradores.
+        Esta página é exclusiva para administradores.
       </p>
     </div>
   </div>
@@ -18,13 +18,13 @@
 
   @if (loading()) {
     <p class="text-sm font-medium text-(--ow-gray-600)">
-      Carregando usuarios...
+      Carregando usuários...
     </p>
   }
 
   @if (!loading() && !errorMessage() && users().length === 0) {
     <p class="text-sm font-medium text-(--ow-gray-600)">
-      Nenhum usuario cadastrado.
+      Nenhum usuário cadastrado.
     </p>
   }
 

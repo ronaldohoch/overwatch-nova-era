@@ -94,14 +94,14 @@ export class TrofeusComponent {
   });
 
   readonly availableAutomationEvents = [
-    { value: '', label: 'Sem automacao' },
+    { value: '', label: 'Sem automação' },
     { value: 'tournament_random_checkin', label: 'Check-in random' },
     { value: 'tournament_closed_team_checkin', label: 'Check-in time fechado' },
   ] as const;
 
   readonly targetIdentifierLabel = computed(() =>
     this.awardForm().targetType === 'user'
-      ? 'Battletag do usuario'
+      ? 'Battletag do usuário'
       : 'ID do time',
   );
 
@@ -141,7 +141,7 @@ export class TrofeusComponent {
       }
     } catch (error: unknown) {
       this.catalog.set([]);
-      this.loadingMessage.set(this.resolveError(error, 'Nao foi possivel carregar os trofeus.'));
+      this.loadingMessage.set(this.resolveError(error, 'Não foi possível carregar os troféus.'));
     } finally {
       this.loading.set(false);
     }
@@ -154,7 +154,7 @@ export class TrofeusComponent {
 
     if (!this.canCreateCatalog()) {
       this.createStatus.set('error');
-      this.createMessage.set('Apenas admin pode cadastrar trofeus.');
+      this.createMessage.set('Apenas admin pode cadastrar troféus.');
       return;
     }
 
@@ -162,13 +162,13 @@ export class TrofeusComponent {
     const name = form.name.trim();
     if (!name) {
       this.createStatus.set('error');
-      this.createMessage.set('Informe o nome do trofeu.');
+      this.createMessage.set('Informe o nome do troféu.');
       return;
     }
 
     if (form.automationEnabled && !form.automationEvent.trim()) {
       this.createStatus.set('error');
-      this.createMessage.set('Selecione um evento para automacao.');
+      this.createMessage.set('Selecione um evento para automação.');
       return;
     }
 
@@ -196,7 +196,7 @@ export class TrofeusComponent {
       );
 
       this.createStatus.set('success');
-      this.createMessage.set('Trofeu cadastrado com sucesso.');
+      this.createMessage.set('Troféu cadastrado com sucesso.');
       this.createForm.set({
         name: '',
         code: '',
@@ -210,7 +210,7 @@ export class TrofeusComponent {
       await this.loadCatalog();
     } catch (error: unknown) {
       this.createStatus.set('error');
-      this.createMessage.set(this.resolveError(error, 'Nao foi possivel cadastrar o trofeu.'));
+      this.createMessage.set(this.resolveError(error, 'Não foi possível cadastrar o troféu.'));
     } finally {
       this.creating.set(false);
     }
@@ -223,20 +223,20 @@ export class TrofeusComponent {
 
     if (!this.canAward()) {
       this.awardStatus.set('error');
-      this.awardMessage.set('Apenas admin ou streamer pode conceder trofeus.');
+      this.awardMessage.set('Apenas admin ou streamer pode conceder troféus.');
       return;
     }
 
     const form = this.awardForm();
     if (!form.trophyId.trim()) {
       this.awardStatus.set('error');
-      this.awardMessage.set('Selecione um trofeu.');
+      this.awardMessage.set('Selecione um troféu.');
       return;
     }
 
     if (!form.targetIdentifier.trim()) {
       this.awardStatus.set('error');
-      this.awardMessage.set('Informe o alvo para concessao.');
+      this.awardMessage.set('Informe o alvo para concessão.');
       return;
     }
 
@@ -268,15 +268,15 @@ export class TrofeusComponent {
       this.awardStatus.set('success');
       this.awardMessage.set(
         alreadyAssigned
-          ? 'Este trofeu ja estava concedido para o alvo informado.'
-          : 'Trofeu concedido com sucesso.',
+          ? 'Este troféu já estava concedido para o alvo informado.'
+          : 'Troféu concedido com sucesso.',
       );
       this.updateAwardField('targetIdentifier', '');
       this.updateAwardField('reason', '');
       await this.loadCatalog();
     } catch (error: unknown) {
       this.awardStatus.set('error');
-      this.awardMessage.set(this.resolveError(error, 'Nao foi possivel conceder o trofeu.'));
+      this.awardMessage.set(this.resolveError(error, 'Não foi possível conceder o troféu.'));
     } finally {
       this.awarding.set(false);
     }
@@ -305,7 +305,7 @@ export class TrofeusComponent {
     return {
       id: this.readString(value, 'id') ?? '',
       code: this.readString(value, 'code') ?? '',
-      name: this.readString(value, 'name') ?? 'Trofeu',
+      name: this.readString(value, 'name') ?? 'Troféu',
       description: this.readString(value, 'description'),
       icon: this.readString(value, 'icon') ?? '🏅',
       target,
@@ -322,9 +322,9 @@ export class TrofeusComponent {
   }
 
   private toTargetLabel(value: TrophyTarget): string {
-    if (value === 'user') return 'Usuarios';
+    if (value === 'user') return 'Usuários';
     if (value === 'team') return 'Times';
-    return 'Usuarios e times';
+    return 'Usuários e times';
   }
 
   private readString(value: RawRecord, field: string): string | null {

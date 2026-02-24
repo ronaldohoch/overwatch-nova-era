@@ -185,13 +185,13 @@ export class LoginComponent {
     const whatsappErrors: string[] = [];
 
     if (!value.displayName.trim()) {
-      displayNameErrors.push('Informe o nome de exibicao.');
+      displayNameErrors.push('Informe o nome de exibição.');
     }
 
     if (!value.email.trim()) {
       emailErrors.push('Informe o email.');
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.email)) {
-      emailErrors.push('Informe um email valido.');
+      emailErrors.push('Informe um email válido.');
     }
 
     if (!value.password) {
@@ -224,7 +224,7 @@ export class LoginComponent {
     if (!value.email.trim()) {
       emailErrors.push('Informe o email.');
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.email)) {
-      emailErrors.push('Informe um email valido.');
+      emailErrors.push('Informe um email válido.');
     }
 
     if (!value.password) {
@@ -251,7 +251,7 @@ export class LoginComponent {
       return error.message;
     }
 
-    return 'Nao foi possivel realizar o login.';
+    return 'Não foi possível realizar o login.';
   }
 
   private resolveCreateError(error: unknown): string {
@@ -266,7 +266,7 @@ export class LoginComponent {
       return error.message;
     }
 
-    return 'Nao foi possivel realizar o cadastro.';
+    return 'Não foi possível realizar o cadastro.';
   }
 
   private async navigateAfterAuthentication(): Promise<void> {

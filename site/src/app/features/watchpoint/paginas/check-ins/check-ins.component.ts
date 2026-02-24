@@ -97,7 +97,7 @@ export class CheckInsComponent {
     } catch (error: unknown) {
       this.tournaments.set([]);
       this.selectedTournamentId.set('');
-      this.message.set(this.resolveError(error, 'Nao foi possivel carregar os torneios.'));
+      this.message.set(this.resolveError(error, 'Não foi possível carregar os torneios.'));
       this.status.set('error');
     } finally {
       this.loadingTournaments.set(false);
@@ -120,26 +120,26 @@ export class CheckInsComponent {
     this.status.set(null);
 
     if (!this.auth.isAuthenticated()) {
-      this.message.set('Sua sessao expirou. Faca login novamente.');
+      this.message.set('Sua sessão expirou. Faça login novamente.');
       this.status.set('error');
       return;
     }
 
     const tournament = this.selectedTournament();
     if (!tournament) {
-      this.message.set('Selecione um torneio valido para check-in.');
+      this.message.set('Selecione um torneio válido para check-in.');
       this.status.set('error');
       return;
     }
 
     if (!tournament.checkinAllowed) {
-      this.message.set(tournament.checkinReason ?? 'Este torneio nao esta disponivel para check-in.');
+      this.message.set(tournament.checkinReason ?? 'Este torneio não está disponível para check-in.');
       this.status.set('error');
       return;
     }
 
     if (this.checkedInTournamentIds().includes(tournament.id)) {
-      this.message.set('Voce ja realizou check-in neste torneio.');
+      this.message.set('Você já realizou check-in neste torneio.');
       this.status.set('error');
       return;
     }
@@ -163,7 +163,7 @@ export class CheckInsComponent {
         void this.loadRoleAvailability();
       }
     } catch (error: unknown) {
-      this.message.set(this.resolveError(error, 'Nao foi possivel realizar o check-in.'));
+      this.message.set(this.resolveError(error, 'Não foi possível realizar o check-in.'));
       this.status.set('error');
     } finally {
       this.submitting.set(false);
@@ -173,10 +173,10 @@ export class CheckInsComponent {
   formatTournamentLabel(item: TournamentListItem): string {
     const deadline = item.checkinDeadlineAt ? this.toLocale(item.checkinDeadlineAt) : 'sem prazo';
     const checkinState = this.checkedInTournamentIds().includes(item.id)
-      ? 'check-in ja realizado'
+      ? 'check-in já realizado'
       : item.checkinAllowed
         ? 'check-in aberto'
-        : item.checkinReason ?? 'check-in indisponivel';
+        : item.checkinReason ?? 'check-in indisponível';
 
     return `${item.name} | status: ${item.status} | prazo: ${deadline} | ${checkinState}`;
   }
@@ -186,7 +186,7 @@ export class CheckInsComponent {
 
     if (!this.auth.isAuthenticated()) {
       this.roleAvailability.set(null);
-      this.roleAvailabilityError.set('Faca login para consultar a disponibilidade por role.');
+      this.roleAvailabilityError.set('Faça login para consultar a disponibilidade por role.');
       return;
     }
 
@@ -201,14 +201,14 @@ export class CheckInsComponent {
       const parsed = this.readRoleAvailabilityResponse(response);
 
       if (!parsed) {
-        throw new Error('Resposta de disponibilidade por role invalida.');
+        throw new Error('Resposta de disponibilidade por role inválida.');
       }
 
       this.roleAvailability.set(parsed);
     } catch (error: unknown) {
       this.roleAvailability.set(null);
       this.roleAvailabilityError.set(
-        this.resolveError(error, 'Nao foi possivel carregar a disponibilidade por role.'),
+        this.resolveError(error, 'Não foi possível carregar a disponibilidade por role.'),
       );
     } finally {
       this.loadingRoleAvailability.set(false);
@@ -286,7 +286,7 @@ export class CheckInsComponent {
     checkinDeadlineAt: string | null;
   }): Readonly<{ allowed: boolean; reason: string | null }> {
     if (!data.id) {
-      return { allowed: false, reason: 'Torneio invalido.' };
+      return { allowed: false, reason: 'Torneio inválido.' };
     }
 
     if (data.teamMode !== 'random') {
@@ -298,12 +298,12 @@ export class CheckInsComponent {
     }
 
     if (!data.checkinDeadlineAt) {
-      return { allowed: false, reason: 'Prazo de check-in nao informado.' };
+      return { allowed: false, reason: 'Prazo de check-in não informado.' };
     }
 
     const checkinDeadlineTimestamp = new Date(data.checkinDeadlineAt).getTime();
     if (!Number.isFinite(checkinDeadlineTimestamp)) {
-      return { allowed: false, reason: 'Prazo de check-in invalido.' };
+      return { allowed: false, reason: 'Prazo de check-in inválido.' };
     }
 
     if (checkinDeadlineTimestamp < Date.now()) {

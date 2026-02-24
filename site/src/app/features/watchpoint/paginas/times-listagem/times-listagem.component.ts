@@ -52,10 +52,10 @@ export class TimesListagemComponent {
 
   readonly subtitle = computed(() =>
     this.isAdminViewer() && this.adminTeamScopeFilter() === 'mine'
-      ? 'Exibindo apenas os times que voce participa.'
+      ? 'Exibindo apenas os times que você participa.'
       : this.isPrivilegedViewer()
       ? 'Exibindo todos os times cadastrados.'
-      : 'Exibindo apenas os times que voce participa.',
+      : 'Exibindo apenas os times que você participa.',
   );
   readonly filteredTeams = computed(() => {
     const filter = this.teamCategoryFilter();
@@ -90,7 +90,7 @@ export class TimesListagemComponent {
     if (!this.auth.isAuthenticated()) {
       this.teams.set([]);
       this.loading.set(false);
-      this.message.set('Faca login para listar os times.');
+      this.message.set('Faça login para listar os times.');
       return;
     }
 
@@ -108,7 +108,7 @@ export class TimesListagemComponent {
       this.teams.set(teams);
     } catch (error: unknown) {
       this.teams.set([]);
-      this.message.set(this.resolveError(error, 'Nao foi possivel carregar os times.'));
+      this.message.set(this.resolveError(error, 'Não foi possível carregar os times.'));
     } finally {
       this.loading.set(false);
     }
@@ -243,7 +243,7 @@ export class TimesListagemComponent {
   private toCategoryLabel(category: TeamCategory): string {
     if (category === 'formed') return 'Time com participantes selecionados';
     if (category === 'random') return 'Time com participantes sorteados';
-    return 'Categoria nao informada';
+    return 'Categoria não informada';
   }
 
   teamLogo(category: TeamCategory): string {
@@ -265,7 +265,7 @@ export class TimesListagemComponent {
   }
 
   captainStatusLabel(team: TeamListItem): string {
-    return team.captainUid ? 'Capitao definido' : 'Sem capitao';
+    return team.captainUid ? 'Capitão definido' : 'Sem capitão';
   }
 
   private readCaptainName(
@@ -295,8 +295,8 @@ export class TimesListagemComponent {
       return currentUserDisplayName;
     }
 
-    if (captainUid) return 'Capitao sem nome informado';
-    return 'Sem capitao';
+    if (captainUid) return 'Capitão sem nome informado';
+    return 'Sem capitão';
   }
 
   private readRecord(value: unknown): RawRecord | null {

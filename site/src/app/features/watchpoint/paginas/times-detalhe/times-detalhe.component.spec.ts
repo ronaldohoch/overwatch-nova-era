@@ -67,7 +67,7 @@ describe('TimesDetalheComponent', () => {
       name: 'Alpha',
       category: 'formed',
       captainUid: 'uid-captain',
-      captainName: 'Capitao Alpha',
+      captainName: 'Capitão Alpha',
       membersCount: 2,
       createdAt: '2026-01-01T10:00:00.000Z',
     });
@@ -78,7 +78,7 @@ describe('TimesDetalheComponent', () => {
       {
         id: 'uid-captain',
         uid: 'uid-captain',
-        displayName: 'Capitao Alpha',
+        displayName: 'Capitão Alpha',
         battletag: 'Alpha#1234',
         isCaptain: true,
         joinedAt: '2026-01-01T10:00:00.000Z',
@@ -137,7 +137,7 @@ describe('TimesDetalheComponent', () => {
       name: 'Alpha',
       category: 'formed',
       captainUid: 'uid-captain',
-      captainName: 'Capitao Alpha',
+      captainName: 'Capitão Alpha',
       membersCount: 1,
       createdAt: '2026-01-01T10:00:00.000Z',
     });
@@ -145,7 +145,7 @@ describe('TimesDetalheComponent', () => {
       {
         id: 'uid-captain',
         uid: 'uid-captain',
-        displayName: 'Capitao Alpha',
+        displayName: 'Capitão Alpha',
         battletag: 'Alpha#1234',
         isCaptain: true,
         joinedAt: '2026-01-01T10:00:00.000Z',
@@ -177,7 +177,7 @@ describe('TimesDetalheComponent', () => {
       name: 'Alpha',
       category: 'formed',
       captainUid: 'uid-captain',
-      captainName: 'Capitao Alpha',
+      captainName: 'Capitão Alpha',
       membersCount: 2,
       createdAt: '2026-01-01T10:00:00.000Z',
     });
@@ -185,7 +185,7 @@ describe('TimesDetalheComponent', () => {
       {
         id: 'uid-captain',
         uid: 'uid-captain',
-        displayName: 'Capitao Alpha',
+        displayName: 'Capitão Alpha',
         battletag: 'Alpha#1234',
         isCaptain: true,
         joinedAt: '2026-01-01T10:00:00.000Z',

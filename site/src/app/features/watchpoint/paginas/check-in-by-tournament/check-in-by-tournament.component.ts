@@ -94,7 +94,7 @@ export class CheckInByTournamentComponent {
       this.tournaments.set([]);
       this.selectedTournamentId.set('');
       this.checkins.set([]);
-      this.setMessage(this.resolveError(error, 'Nao foi possivel carregar os torneios.'), true);
+      this.setMessage(this.resolveError(error, 'Não foi possível carregar os torneios.'), true);
     } finally {
       this.loadingTournaments.set(false);
     }
@@ -126,7 +126,7 @@ export class CheckInByTournamentComponent {
     this.setMessage(null, false);
 
     if (!this.auth.isAuthenticated()) {
-      this.setMessage('Sua sessao expirou. Faca login novamente.', true);
+      this.setMessage('Sua sessão expirou. Faça login novamente.', true);
       return;
     }
 
@@ -153,7 +153,7 @@ export class CheckInByTournamentComponent {
       const checkins = this.readCheckins(response).map((item) => this.toCheckin(item));
       this.checkins.set(checkins);
     } catch (error: unknown) {
-      this.setMessage(this.resolveError(error, 'Nao foi possivel carregar os check-ins.'), true);
+      this.setMessage(this.resolveError(error, 'Não foi possível carregar os check-ins.'), true);
     } finally {
       this.loadingCheckins.set(false);
     }
@@ -164,7 +164,7 @@ export class CheckInByTournamentComponent {
 
     const storage = this.getSessionStorage();
     if (!storage) {
-      this.setMessage('Nao foi possivel usar a roleta neste ambiente.', true);
+      this.setMessage('Não foi possível usar a roleta neste ambiente.', true);
       return;
     }
 
@@ -174,7 +174,7 @@ export class CheckInByTournamentComponent {
       storage.setItem(OW_ROULETTE_SESSION_STORAGE_KEY, JSON.stringify(items));
       await this.router.navigateByUrl(OW_ROULETTE_ROUTE);
     } catch {
-      this.setMessage('Nao foi possivel enviar os usuarios para a roleta.', true);
+      this.setMessage('Não foi possível enviar os usuários para a roleta.', true);
     }
   }
 
@@ -182,7 +182,7 @@ export class CheckInByTournamentComponent {
     if (role === 'tank') return 'Tank';
     if (role === 'dps') return 'DPS';
     if (role === 'support') return 'Support';
-    return 'Nao informado';
+    return 'Não informado';
   }
 
   roleBadgeClasses(role: CheckinListItem['role']): string {
@@ -195,7 +195,7 @@ export class CheckInByTournamentComponent {
   }
 
   formatCheckedInAt(value: string | null): string {
-    if (!value) return 'Data nao informada';
+    if (!value) return 'Data não informada';
 
     const parsed = new Date(value);
     if (Number.isNaN(parsed.getTime())) return value;

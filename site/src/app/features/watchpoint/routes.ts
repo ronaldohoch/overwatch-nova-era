@@ -96,7 +96,7 @@ export default [
       },
       {
         path: 'usuarios',
-        title: 'Copa Overwatch Nova Era - Usuarios',
+        title: 'Copa Overwatch Nova Era - Usuários',
         canActivate: [routeAccessGuard],
         data: {
           access: 'admin',
@@ -106,7 +106,7 @@ export default [
       },
       {
         path: 'trofeus',
-        title: 'Copa Overwatch Nova Era - Trofeus',
+        title: 'Copa Overwatch Nova Era - Troféus',
         canActivate: [routeAccessGuard],
         data: {
           access: ['admin', 'streamer'],
@@ -116,7 +116,7 @@ export default [
       },
       {
         path: 'trofeus/time/:teamId',
-        title: 'Copa Overwatch Nova Era - Trofeus',
+        title: 'Copa Overwatch Nova Era - Troféus',
         canActivate: [routeAccessGuard],
         data: {
           access: ['admin', 'streamer'],

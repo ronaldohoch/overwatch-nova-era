@@ -82,7 +82,7 @@ describe('TimesCadastroComponent', () => {
     authMock.role.set('streamer');
     createComponent();
 
-    component.updateField('name', 'Time Sem Capitao');
+    component.updateField('name', 'Time Sem Capitão');
     component.updateField('category', 'formed');
     component.updateSkipCreatorAsCaptain(true);
 
@@ -99,7 +99,7 @@ describe('TimesCadastroComponent', () => {
     await submitPromise;
 
     expect(routerMock.navigateByUrl).toHaveBeenCalledWith('/watchpoint/times');
-    expect(component.message()).toContain('sem capitao');
+    expect(component.message()).toContain('sem capitão');
     expect(component.status()).toBe('success');
   });
 });

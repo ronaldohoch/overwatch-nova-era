@@ -136,6 +136,6 @@ describe('TrofeusComponent', () => {
     await submitPromise;
 
     expect(component.awardStatus()).toBe('success');
-    expect(component.awardMessage()).toContain('Trofeu concedido');
+    expect(component.awardMessage()).toContain('Troféu concedido');
   });
 });

@@ -161,7 +161,7 @@ export class TorneiosComponent {
     this.createdTournamentId.set(null);
 
     if (!this.auth.isAuthenticated()) {
-      this.message.set('Sua sessao expirou. Faca login novamente.');
+      this.message.set('Sua sessão expirou. Faça login novamente.');
       this.status.set('error');
       return;
     }
@@ -207,8 +207,8 @@ export class TorneiosComponent {
         this.resolveError(
           error,
           this.editing()
-            ? 'Nao foi possivel atualizar o torneio.'
-            : 'Nao foi possivel cadastrar o torneio.',
+            ? 'Não foi possível atualizar o torneio.'
+            : 'Não foi possível cadastrar o torneio.',
         ),
       );
       this.status.set('error');
@@ -228,14 +228,14 @@ export class TorneiosComponent {
       );
 
       if (!this.isRecord(response)) {
-        throw new Error('Resposta invalida ao carregar torneio.');
+        throw new Error('Resposta inválida ao carregar torneio.');
       }
 
       this.form.set(this.toFormValue(response));
       this.resetTouchState();
       this.submitted.set(false);
     } catch (error: unknown) {
-      this.message.set(this.resolveError(error, 'Nao foi possivel carregar os dados do torneio.'));
+      this.message.set(this.resolveError(error, 'Não foi possível carregar os dados do torneio.'));
       this.status.set('error');
     } finally {
       this.loadingTournament.set(false);
@@ -355,11 +355,11 @@ export class TorneiosComponent {
     }
 
     if (value.description.trim().length > 240) {
-      descriptionErrors.push('Descricao deve ter no maximo 240 caracteres.');
+      descriptionErrors.push('Descrição deve ter no máximo 240 caracteres.');
     }
 
     if (value.teamMode !== 'random' && value.teamMode !== 'closed') {
-      teamModeErrors.push('Modo de times invalido.');
+      teamModeErrors.push('Modo de times inválido.');
     }
 
     const maxTeams = Number.parseInt(value.maxTeams, 10);
@@ -371,18 +371,18 @@ export class TorneiosComponent {
       }
 
       if ((maxTeams & (maxTeams - 1)) !== 0) {
-        maxTeamsErrors.push('maxTeams deve ser potencia de 2 (4, 8, 16...).');
+        maxTeamsErrors.push('maxTeams deve ser potência de 2 (4, 8, 16...).');
       }
     }
 
     const startAtDate = this.parseDate(value.startAt);
     if (!startAtDate) {
-      startAtErrors.push('Informe uma data valida de inicio.');
+      startAtErrors.push('Informe uma data válida de início.');
     }
 
     const deadlineDate = this.parseDate(value.checkinDeadlineAt);
     if (!deadlineDate) {
-      checkinDeadlineAtErrors.push('Informe uma data valida para fim do check-in.');
+      checkinDeadlineAtErrors.push('Informe uma data válida para fim do check-in.');
     }
 
     if (startAtDate && deadlineDate && deadlineDate.getTime() >= startAtDate.getTime()) {

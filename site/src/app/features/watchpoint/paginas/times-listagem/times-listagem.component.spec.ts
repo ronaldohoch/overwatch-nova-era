@@ -139,7 +139,7 @@ describe('TimesListagemComponent', () => {
     await fixture.whenStable();
 
     expect(component.teams().map((team) => team.id)).toEqual(['team-admin-mine']);
-    expect(component.subtitle()).toContain('voce participa');
+    expect(component.subtitle()).toContain('você participa');
   });
 
   it('should request only member teams and keep formed + random categories', async () => {
@@ -237,7 +237,7 @@ describe('TimesListagemComponent', () => {
 
   it('should normalize alternate team fields from legacy payload', async () => {
     authMock.role.set('competidor');
-    authMock.userState.set({ sub: 'member-uid', displayName: 'Capitao Legacy' });
+    authMock.userState.set({ sub: 'member-uid', displayName: 'Capitão Legacy' });
     createComponent();
 
     const request = httpController.expectOne(`${environment.apiURLTimes}/me`);
@@ -251,7 +251,7 @@ describe('TimesListagemComponent', () => {
             category: 'formed',
             members_count: '6',
             captain_uid: 'member-uid',
-            captainName: 'Capitao Legacy',
+            captainName: 'Capitão Legacy',
             created_at: '2026-01-05T10:00:00.000Z',
           },
         ],
@@ -263,12 +263,12 @@ describe('TimesListagemComponent', () => {
     expect(component.teams().length).toBe(1);
     expect(component.teams()[0].id).toBe('team-legacy-1');
     expect(component.teams()[0].membersCount).toBe(6);
-    expect(component.teams()[0].roleInTeamLabel).toBe('Capitao Legacy');
+    expect(component.teams()[0].roleInTeamLabel).toBe('Capitão Legacy');
   });
 
   it('should use current user display name when captain name is missing and user is captain', async () => {
     authMock.role.set('competidor');
-    authMock.userState.set({ id: 'member-uid', displayName: 'Capitao Atual' });
+    authMock.userState.set({ id: 'member-uid', displayName: 'Capitão Atual' });
     createComponent();
 
     const request = httpController.expectOne(`${environment.apiURLTimes}/me`);
@@ -287,6 +287,6 @@ describe('TimesListagemComponent', () => {
     await fixture.whenStable();
 
     expect(component.teams().length).toBe(1);
-    expect(component.teams()[0].roleInTeamLabel).toBe('Capitao Atual');
+    expect(component.teams()[0].roleInTeamLabel).toBe('Capitão Atual');
   });
 });

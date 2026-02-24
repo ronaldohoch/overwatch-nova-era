@@ -35,7 +35,7 @@ export class RoletaComponent {
       const items = this.readRouletteItems(parsed);
       if (items.length) this.rouletteItems.set(items);
     } catch {
-      // Ignora payload invalido para manter fallback da roleta.
+      // Ignora payload inválido para manter fallback da roleta.
     }
   }
 

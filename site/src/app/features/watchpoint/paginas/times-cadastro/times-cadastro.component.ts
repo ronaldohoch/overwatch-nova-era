@@ -106,7 +106,7 @@ export class TimesCadastroComponent {
     this.status.set(null);
 
     if (!this.auth.isAuthenticated()) {
-      this.message.set('Sua sessao expirou. Faca login novamente.');
+      this.message.set('Sua sessão expirou. Faça login novamente.');
       this.status.set('error');
       return;
     }
@@ -122,7 +122,7 @@ export class TimesCadastroComponent {
       if (this.shouldSkipCreatorAsCaptain()) {
         const teamId = this.readCreatedTeamId(created);
         if (!teamId) {
-          throw new Error('Nao foi possivel identificar o time criado para remover o capitao.');
+          throw new Error('Não foi possível identificar o time criado para remover o capitão.');
         }
 
         await firstValueFrom(this.http.delete(`${this.timesApiUrl}/${teamId}/members/me`));
@@ -130,13 +130,13 @@ export class TimesCadastroComponent {
 
       this.message.set(
         this.shouldSkipCreatorAsCaptain()
-          ? 'Time cadastrado com sucesso sem capitao. Redirecionando para a lista...'
+          ? 'Time cadastrado com sucesso sem capitão. Redirecionando para a lista...'
           : 'Time cadastrado com sucesso. Redirecionando para a lista...',
       );
       this.status.set('success');
       await this.router.navigateByUrl('/watchpoint/times');
     } catch (error: unknown) {
-      this.message.set(this.resolveError(error, 'Nao foi possivel cadastrar o time.'));
+      this.message.set(this.resolveError(error, 'Não foi possível cadastrar o time.'));
       this.status.set('error');
     } finally {
       this.pending.set(false);
@@ -178,15 +178,15 @@ export class TimesCadastroComponent {
     if (!name) {
       nameErrors.push('Informe o nome do time.');
     } else if (name.length > 80) {
-      nameErrors.push('Nome do time deve ter no maximo 80 caracteres.');
+      nameErrors.push('Nome do time deve ter no máximo 80 caracteres.');
     }
 
     if (this.canChooseRandomCategory()) {
       if (value.category !== 'formed' && value.category !== 'random') {
-        categoryErrors.push('Categoria do time invalida.');
+        categoryErrors.push('Categoria do time inválida.');
       }
     } else if (value.category !== 'formed') {
-      categoryErrors.push('Membro so pode criar time com participantes selecionados.');
+      categoryErrors.push('Membro só pode criar time com participantes selecionados.');
     }
 
     return {

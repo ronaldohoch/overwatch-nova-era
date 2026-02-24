@@ -82,7 +82,7 @@ export class AuthService {
     );
 
     if (!response.token || typeof response.token !== 'string') {
-      throw new Error('Resposta de login invalida.');
+      throw new Error('Resposta de login inválida.');
     }
 
     const { token, ...userData } = response;
@@ -107,7 +107,7 @@ export class AuthService {
     );
 
     if (!response.token || typeof response.token !== 'string') {
-      throw new Error('Resposta de cadastro invalida.');
+      throw new Error('Resposta de cadastro inválida.');
     }
 
     const { token, ...userData } = response;
@@ -122,7 +122,7 @@ export class AuthService {
 
   async updateCurrentUser(data: UpdateCurrentUserData): Promise<AuthSession> {
     if (!this.token()) {
-      throw new Error('Sessao invalida. Faca login novamente.');
+      throw new Error('Sessão inválida. Faça login novamente.');
     }
 
     const response = await firstValueFrom(
@@ -134,7 +134,7 @@ export class AuthService {
     );
 
     if (!response.token || typeof response.token !== 'string') {
-      throw new Error('Resposta de atualizacao invalida.');
+      throw new Error('Resposta de atualização inválida.');
     }
 
     const { token, ...userData } = response;
@@ -149,7 +149,7 @@ export class AuthService {
 
   async changeCurrentUserPassword(data: ChangeCurrentUserPasswordData): Promise<void> {
     if (!this.token()) {
-      throw new Error('Sessao invalida. Faca login novamente.');
+      throw new Error('Sessão inválida. Faça login novamente.');
     }
 
     await firstValueFrom(

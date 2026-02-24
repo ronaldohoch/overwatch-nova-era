@@ -13,7 +13,7 @@ export type OwNavItem = Readonly<{
 
 const DEFAULT_LINKS: readonly OwNavItem[] = [
     { label: 'Início', link: '/', exact: true },
-    { label: 'Dúvidas frequêntes', link: '/duvidas-frequentes' },
+    { label: 'Dúvidas frequentes', link: '/duvidas-frequentes' },
     // { label: 'Torneio', link: '/torneio' },
     // { label: 'Times', link: '/times' },
     // { label: 'Agenda', link: '/agenda' },
@@ -34,8 +34,8 @@ const STREAMER_LINKS: readonly OwNavItem[] = [
 const ADMIN_LINKS: readonly OwNavItem[] = [
   { label: 'Times', link: '/watchpoint/times' },
   { label: 'Torneios', link: '/watchpoint/torneios' },
-  { label: 'Usuarios', link: '/watchpoint/usuarios' },
-  // { label: 'Gestao do torneio', link: '/torneio' }
+  { label: 'Usuários', link: '/watchpoint/usuarios' },
+  // { label: 'Gestão do torneio', link: '/torneio' }
 ];
 
 const ADMIN_ALL_LINKS = uniqueByLink([

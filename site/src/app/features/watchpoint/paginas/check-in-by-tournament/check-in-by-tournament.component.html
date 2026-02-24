@@ -14,13 +14,13 @@
       [disabled]="!canSendVisibleCheckinsToRoulette()"
       (click)="sendVisibleCheckinsToRoulette()"
     >
-      Enviar usuarios visiveis para roleta
+      Enviar usuários visíveis para roleta
     </ow-btn>
   </div>
 
   @if (!auth.isAuthenticated()) {
     <p class="text-sm font-medium text-red-600">
-      Faca login para visualizar check-ins por torneio.
+      Faça login para visualizar check-ins por torneio.
     </p>
   }
 
@@ -117,7 +117,7 @@
                   Check-in: {{ formatCheckedInAt(checkin.checkedInAt) }}
                 </p>
                 <p class="text-xs text-(--ow-gray-500)">
-                  Team ID: {{ checkin.teamId ?? 'Nao atribuido' }}
+                  Team ID: {{ checkin.teamId ?? 'Não atribuido' }}
                 </p>
               </div>
             </div>

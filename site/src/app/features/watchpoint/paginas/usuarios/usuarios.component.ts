@@ -41,7 +41,7 @@ export class UsuariosComponent {
   readonly users = signal<readonly UserListItem[]>([]);
   readonly loading = signal(false);
   readonly errorMessage = signal<string | null>(null);
-  readonly userCountLabel = computed(() => `${this.users().length} usuarios cadastrados`);
+  readonly userCountLabel = computed(() => `${this.users().length} usuários cadastrados`);
 
   constructor() {
     void this.loadUsers();
@@ -57,7 +57,7 @@ export class UsuariosComponent {
       this.users.set(users);
     } catch (error: unknown) {
       this.users.set([]);
-      this.errorMessage.set(this.resolveError(error, 'Nao foi possivel carregar os usuarios.'));
+      this.errorMessage.set(this.resolveError(error, 'Não foi possível carregar os usuários.'));
     } finally {
       this.loading.set(false);
     }
@@ -117,7 +117,7 @@ export class UsuariosComponent {
   }
 
   private toCreatedAtLabel(value: string | null): string {
-    if (!value) return 'Cadastro: nao informado';
+    if (!value) return 'Cadastro: não informado';
 
     const parsed = new Date(value);
     if (Number.isNaN(parsed.getTime())) {

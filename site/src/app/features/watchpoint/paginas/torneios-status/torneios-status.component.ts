@@ -85,7 +85,7 @@ export class TorneiosStatusComponent {
   constructor() {
     if (!this.routeTournamentId) {
       this.message.set(
-        'ID do torneio nao informado. Acesse esta tela pelo botao da listagem de torneios.',
+        'ID do torneio não informado. Acesse esta tela pelo botao da listagem de torneios.',
       );
       this.messageStatus.set('error');
       return;
@@ -110,7 +110,7 @@ export class TorneiosStatusComponent {
     this.messageStatus.set(null);
 
     if (!this.auth.isAuthenticated()) {
-      this.message.set('Sua sessao expirou. Faca login novamente.');
+      this.message.set('Sua sessão expirou. Faça login novamente.');
       this.messageStatus.set('error');
       return;
     }
@@ -124,13 +124,13 @@ export class TorneiosStatusComponent {
     const tournamentId = this.selectedTournament()?.id ?? this.routeTournamentId;
     const nextStatus = this.selectedNextStatus();
     if (!tournamentId || !nextStatus) {
-      this.message.set('Selecione um torneio e um novo status valido.');
+      this.message.set('Selecione um torneio e um novo status válido.');
       this.messageStatus.set('error');
       return;
     }
 
     if (!this.availableTransitions().includes(nextStatus)) {
-      this.message.set('A transicao selecionada nao e permitida para o status atual.');
+      this.message.set('A transicao selecionada não e permitida para o status atual.');
       this.messageStatus.set('error');
       return;
     }
@@ -158,7 +158,7 @@ export class TorneiosStatusComponent {
       this.message.set(`Status alterado para ${this.toStatusLabel(nextStatus)} com sucesso.`);
       this.messageStatus.set('success');
     } catch (error: unknown) {
-      this.message.set(this.resolveError(error, 'Nao foi possivel alterar o status do torneio.'));
+      this.message.set(this.resolveError(error, 'Não foi possível alterar o status do torneio.'));
       this.messageStatus.set('error');
     } finally {
       this.pendingStatusChange.set(false);
@@ -211,7 +211,7 @@ export class TorneiosStatusComponent {
     } catch (error: unknown) {
       this.selectedTournament.set(null);
       this.selectedNextStatus.set('');
-      this.message.set(this.resolveError(error, 'Nao foi possivel carregar os dados do torneio.'));
+      this.message.set(this.resolveError(error, 'Não foi possível carregar os dados do torneio.'));
       this.messageStatus.set('error');
     } finally {
       this.loadingTournamentDetails.set(false);

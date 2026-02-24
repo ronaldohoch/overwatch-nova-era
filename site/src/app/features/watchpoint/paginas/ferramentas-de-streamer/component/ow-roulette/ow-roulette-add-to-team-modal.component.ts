@@ -43,12 +43,12 @@ type TeamOption = Readonly<{
       <div class="rounded-md border border-(--ow-gray-200) bg-white p-3 text-sm">
         <p class="font-semibold text-(--ow-gray-800)">Sorteado:</p>
         <p class="text-(--ow-gray-700)">{{ selectedName() }}</p>
-        <p class="mt-1 text-xs text-(--ow-gray-500)">Battletag: {{ selectedBattletag() || 'nao informada' }}</p>
+        <p class="mt-1 text-xs text-(--ow-gray-500)">Battletag: {{ selectedBattletag() || 'não informada' }}</p>
       </div>
 
       @if (!hasIdentifierForAdd()) {
         <p class="text-sm font-medium text-red-600">
-          Este sorteado nao possui UID/Battletag valida para adicionar em time.
+          Este sorteado não possui UID/Battletag valida para adicionar em time.
         </p>
       }
 
@@ -67,7 +67,7 @@ type TeamOption = Readonly<{
             >
               <p class="text-sm font-black uppercase text-(--ow-gray-900)">{{ team.name }}</p>
               <p class="mt-1 text-xs text-(--ow-gray-600)">
-                {{ team.membersCount }}/8 membros • {{ toCategoryLabel(team.category) }}
+                {{ team.membersCount }}/8 membros â€¢ {{ toCategoryLabel(team.category) }}
               </p>
               @if (assigningTeamId() === team.id) {
                 <p class="mt-1 text-xs font-semibold text-(--ow-orange)">Adicionando...</p>
@@ -144,7 +144,7 @@ export class OwRouletteAddToTeamModalComponent {
 
     const payload = this.resolveAddMemberPayload();
     if (!payload) {
-      this.setMessage('Nao foi possivel identificar UID/Battletag para adicionar no time.', true);
+      this.setMessage('Não foi possível identificar UID/Battletag para adicionar no time.', true);
       return;
     }
 
@@ -161,7 +161,7 @@ export class OwRouletteAddToTeamModalComponent {
         teamId: team.id,
       });
     } catch (error: unknown) {
-      this.setMessage(this.resolveError(error, 'Nao foi possivel adicionar o membro ao time.'), true);
+      this.setMessage(this.resolveError(error, 'Não foi possível adicionar o membro ao time.'), true);
     } finally {
       this.assigningTeamId.set(null);
     }
@@ -174,7 +174,7 @@ export class OwRouletteAddToTeamModalComponent {
   toCategoryLabel(category: TeamCategory): string {
     if (category === 'formed') return 'Time com participantes selecionados';
     if (category === 'random') return 'Time com participantes sorteados';
-    return 'Categoria nao informada';
+    return 'Categoria não informada';
   }
 
   private async loadTeams(): Promise<void> {
@@ -194,7 +194,7 @@ export class OwRouletteAddToTeamModalComponent {
       this.teams.set(teams);
     } catch (error: unknown) {
       this.teams.set([]);
-      this.setMessage(this.resolveError(error, 'Nao foi possivel carregar os times.'), true);
+      this.setMessage(this.resolveError(error, 'Não foi possível carregar os times.'), true);
     } finally {
       this.loadingTeams.set(false);
     }

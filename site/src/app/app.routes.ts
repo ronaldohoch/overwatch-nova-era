@@ -10,7 +10,7 @@ export const routes: Routes = [
   },
   {
     path: 'duvidas-frequentes',
-    title: 'Copa Overwatch Nova Era - Dúvidas frequêntes',
+    title: 'Copa Overwatch Nova Era - Dúvidas frequentes',
     loadComponent: () => import('./features/faq/faq.component').then(m=>m.FaqComponent)
   },
   {

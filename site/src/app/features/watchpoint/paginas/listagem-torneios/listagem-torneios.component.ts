@@ -65,7 +65,7 @@ export class ListagemTorneiosComponent {
       this.tournaments.set(tournaments);
     } catch (error: unknown) {
       this.tournaments.set([]);
-      this.message.set(this.resolveError(error, 'Nao foi possivel carregar os torneios.'));
+      this.message.set(this.resolveError(error, 'Não foi possível carregar os torneios.'));
     } finally {
       this.loading.set(false);
     }
@@ -120,10 +120,10 @@ export class ListagemTorneiosComponent {
           ? 'Times fechados'
           : 'Modo desconhecido';
 
-    const teamsLabel = maxTeams && maxTeams > 0 ? `${maxTeams} times` : 'Times nao informados';
+    const teamsLabel = maxTeams && maxTeams > 0 ? `${maxTeams} times` : 'Times não informados';
     const formatLabel = format ? format.replaceAll('_', ' ').toUpperCase() : 'FORMATO NAO INFORMADO';
 
-    return `${modeLabel} • ${teamsLabel} • ${formatLabel}`;
+    return `${modeLabel} â€¢ ${teamsLabel} â€¢ ${formatLabel}`;
   }
 
   private toTimeLabel(value: string | null): string {
@@ -139,10 +139,10 @@ export class ListagemTorneiosComponent {
   }
 
   private toDateLabel(value: string | null): string {
-    if (!value) return 'Data nao informada';
+    if (!value) return 'Data não informada';
 
     const parsed = new Date(value);
-    if (Number.isNaN(parsed.getTime())) return 'Data invalida';
+    if (Number.isNaN(parsed.getTime())) return 'Data inválida';
 
     return new Intl.DateTimeFormat('pt-BR', {
       weekday: 'short',

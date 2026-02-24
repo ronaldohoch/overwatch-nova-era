@@ -129,7 +129,7 @@ export class MeusDadosComponent {
     this.profileStatus.set(null);
 
     if (!this.auth.isAuthenticated()) {
-      this.profileMessage.set('Sua sessao expirou. Faca login novamente.');
+      this.profileMessage.set('Sua sessão expirou. Faça login novamente.');
       this.profileStatus.set('error');
       return;
     }
@@ -148,7 +148,7 @@ export class MeusDadosComponent {
       this.profileMessage.set('Dados atualizados com sucesso.');
       this.profileStatus.set('success');
     } catch (error: unknown) {
-      this.profileMessage.set(this.resolveError(error, 'Nao foi possivel atualizar seus dados.'));
+      this.profileMessage.set(this.resolveError(error, 'Não foi possível atualizar seus dados.'));
       this.profileStatus.set('error');
     } finally {
       this.profilePending.set(false);
@@ -162,7 +162,7 @@ export class MeusDadosComponent {
     this.passwordStatus.set(null);
 
     if (!this.auth.isAuthenticated()) {
-      this.passwordMessage.set('Sua sessao expirou. Faca login novamente.');
+      this.passwordMessage.set('Sua sessão expirou. Faça login novamente.');
       this.passwordStatus.set('error');
       return;
     }
@@ -181,7 +181,7 @@ export class MeusDadosComponent {
       this.passwordMessage.set('Senha alterada com sucesso.');
       this.passwordStatus.set('success');
     } catch (error: unknown) {
-      this.passwordMessage.set(this.resolveError(error, 'Nao foi possivel alterar sua senha.'));
+      this.passwordMessage.set(this.resolveError(error, 'Não foi possível alterar sua senha.'));
       this.passwordStatus.set('error');
     } finally {
       this.passwordPending.set(false);
@@ -224,13 +224,13 @@ export class MeusDadosComponent {
     const whatsappErrors: string[] = [];
 
     if (!value.displayName.trim()) {
-      displayNameErrors.push('Informe o nome de exibicao.');
+      displayNameErrors.push('Informe o nome de exibição.');
     }
 
     if (!value.email.trim()) {
       emailErrors.push('Informe o email.');
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.email)) {
-      emailErrors.push('Informe um email valido.');
+      emailErrors.push('Informe um email válido.');
     }
 
     if (!value.whatsapp.trim()) {
@@ -266,7 +266,7 @@ export class MeusDadosComponent {
     if (!value.confirmPassword) {
       confirmPasswordErrors.push('Confirme a nova senha.');
     } else if (value.confirmPassword !== value.newPassword) {
-      confirmPasswordErrors.push('As senhas nao conferem.');
+      confirmPasswordErrors.push('As senhas não conferem.');
     }
 
     return {

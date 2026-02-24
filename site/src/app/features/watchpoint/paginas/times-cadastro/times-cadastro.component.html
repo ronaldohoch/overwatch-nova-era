@@ -63,10 +63,10 @@
             [checked]="skipCreatorAsCaptain()"
             (change)="updateSkipCreatorAsCaptain($any($event.target).checked)"
           />
-          <span>Nao me adicionar como capitao ao criar este time.</span>
+          <span>Não me adicionar como capitão ao criar este time.</span>
         </label>
         <p class="text-xs font-medium text-(--ow-gray-600)">
-          Ao marcar esta opcao, o time sera criado sem voce na lista de membros.
+          Ao marcar esta opção, o time será criado sem você na lista de membros.
         </p>
       </div>
     }
@@ -83,7 +83,7 @@
 
     @if (!auth.isAuthenticated()) {
       <p class="text-sm font-medium text-red-600">
-        Faca login para cadastrar um time.
+        Faça login para cadastrar um time.
       </p>
     }
 

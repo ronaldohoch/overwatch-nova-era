@@ -57,9 +57,9 @@ export class OwRouletteComponent {
   readonly actionText = computed(() => {
     if (this.isRunning()) return 'Sorteando...';
     if (!this.totalItems()) return 'Adicione nomes';
-    if (!this.remainingItems().length) return 'Lista concluida';
+    if (!this.remainingItems().length) return 'Lista concluída';
     if (!this.drawnCount()) return 'Iniciar roleta';
-    return 'Sortear proximo';
+    return 'Sortear próximo';
   });
 
   private timeoutId: ReturnType<typeof setTimeout> | null = null;
