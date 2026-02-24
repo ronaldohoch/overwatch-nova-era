@@ -11,12 +11,16 @@ import {
 } from '@angular/core';
 import { ButtonsComponent } from '../../../../../../shared/buttons/buttons';
 import { CardComponent } from '../../../../../../shared/card/card.component';
+import { ModalService } from '../../../../../../shared/modal/modal.service';
 import { OwRouletteRosterComponent } from '../ow-roulette-roster/ow-roulette-roster.component';
 import { OwRouletteSelectedComponent } from '../ow-roulette-selected/list-item.component';
+import { OwRouletteAddToTeamModalComponent } from './ow-roulette-add-to-team-modal.component';
 
 export interface RouletteEntry {
   id: string;
   name: string;
+  battletag?: string | null;
+  displayName?: string | null;
 }
 
 // Mantido por compatibilidade com imports existentes.
@@ -30,6 +34,7 @@ export type Restaurant = RouletteEntry;
 })
 export class OwRouletteComponent {
   private readonly destroyRef = inject(DestroyRef);
+  private readonly modal = inject(ModalService);
 
   readonly items = input<readonly RouletteEntry[] | null>(null);
   readonly itemSelected = output<RouletteEntry>();
@@ -142,6 +147,18 @@ export class OwRouletteComponent {
     }, this.timingLms);
   }
 
+  openAddToTeamModal(): void {
+    const entry = this.selectedEntry();
+    if (!entry) return;
+
+    this.modal
+      .open(OwRouletteAddToTeamModalComponent, { entry })
+      .afterClosed()
+      .then(() => {
+        // Sem acao adicional por enquanto.
+      });
+  }
+
   private replaceAllItems(items: readonly RouletteEntry[]): void {
     const normalized = items.map((item) => ({ ...item }));
 
@@ -161,14 +178,23 @@ export class OwRouletteComponent {
     if (!items?.length) return [];
 
     const normalized = items
-      .map((item, index) => {
+      .map<RouletteEntry | null>((item, index) => {
         const name = typeof item.name === 'string' ? item.name.trim() : '';
         if (!name) return null;
 
         const idRaw = typeof item.id === 'string' ? item.id.trim() : '';
         const id = idRaw || `imported-${index + 1}`;
 
-        return { id, name };
+        const battletag =
+          typeof item.battletag === 'string' && item.battletag.trim()
+            ? item.battletag.trim()
+            : undefined;
+        const displayName =
+          typeof item.displayName === 'string' && item.displayName.trim()
+            ? item.displayName.trim()
+            : undefined;
+
+        return { id, name, battletag, displayName };
       })
       .filter((item): item is RouletteEntry => item !== null);
 

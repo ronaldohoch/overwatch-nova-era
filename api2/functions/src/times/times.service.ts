@@ -1,0 +1,1102 @@
+import { FieldValue } from 'firebase-admin/firestore';
+import { UserRole } from '../_enums/role.enum';
+import { firestore } from '../firebase';
+
+const TEAM_MAX_MEMBERS = 8;
+const USERS_COLLECTION = 'users';
+const NO_CAPTAIN_LABEL = 'Sem capitao definido';
+const UNNAMED_CAPTAIN_LABEL = 'Capitao sem nome informado';
+
+type TeamCategory = 'formed' | 'random';
+type InviteStatus = 'pending';
+type ActorRole = UserRole | 'unknown';
+
+type TeamActor = Readonly<{
+  uid: string;
+  role: string;
+}>;
+
+type CreateTeamDto = Readonly<{
+  name?: unknown;
+  tag?: unknown;
+  category?: unknown;
+}>;
+
+type AddMemberDto = Readonly<{
+  uid?: unknown;
+  userId?: unknown;
+  battletag?: unknown;
+}>;
+
+type TransferCaptainDto = Readonly<{
+  uid?: unknown;
+  userId?: unknown;
+}>;
+
+type StoredTeam = Readonly<{
+  name: string;
+  tag: string | null;
+  category: TeamCategory;
+  captainUid: string | null;
+  createdByUid: string;
+  membersCount: number;
+  createdAt: string;
+  updatedAt: string | FirebaseFirestore.FieldValue;
+  trophies: readonly unknown[];
+}>;
+
+type StoredMember = Readonly<{
+  uid: string;
+  joinedAt: string;
+  addedByUid: string;
+  addedByRole: ActorRole;
+  source: 'creator' | 'admin_add' | 'invite_accept';
+}>;
+
+type StoredInvite = Readonly<{
+  uid: string;
+  status: InviteStatus;
+  invitedByUid: string;
+  invitedByRole: ActorRole;
+  invitedAt: string;
+  updatedAt: string;
+}>;
+
+type TeamTournamentSummary = Readonly<{
+  id: string;
+  name: string;
+  status: string;
+  teamMode: string;
+  checkedIn: boolean;
+  startAt: string | null;
+  checkinDeadlineAt: string | null;
+  participationScope: 'participa' | 'participou';
+  participationLabel: string;
+  trophyLabels: readonly string[];
+}>;
+
+type TeamTrophySummary = Readonly<{
+  tournamentId: string;
+  tournamentName: string;
+  label: string;
+  icon: string;
+}>;
+
+type TeamTournamentsOverview = Readonly<{
+  teamId: string;
+  tournaments: readonly TeamTournamentSummary[];
+  trophies: readonly TeamTrophySummary[];
+}>;
+
+type ErrorWithStatus = Error & { statusCode?: number };
+
+function fail(message: string, statusCode: number): never {
+  const error = new Error(message) as ErrorWithStatus;
+  error.statusCode = statusCode;
+  throw error;
+}
+
+function readStatusCode(error: unknown): number | null {
+  if (!error || typeof error !== 'object') return null;
+
+  const value = (error as { statusCode?: unknown }).statusCode;
+  if (typeof value !== 'number' || !Number.isInteger(value)) return null;
+
+  if (value < 100 || value > 599) return null;
+  return value;
+}
+
+export function resolveTimesErrorStatus(error: unknown, fallbackStatus: number): number {
+  return readStatusCode(error) ?? fallbackStatus;
+}
+
+export class TimesService {
+  private teamsCollection = firestore.collection('teams');
+
+  private membersCol(teamId: string) {
+    return this.teamsCollection.doc(teamId).collection('members');
+  }
+
+  private invitesCol(teamId: string) {
+    return this.teamsCollection.doc(teamId).collection('invites');
+  }
+
+  private usersCollection() {
+    return firestore.collection(USERS_COLLECTION);
+  }
+
+  private parseUid(value: unknown, fieldName = 'uid'): string {
+    if (typeof value !== 'string') {
+      fail(`Campo ${fieldName} invalido.`, 400);
+    }
+
+    const normalized = value.trim();
+    if (!normalized) fail(`Campo ${fieldName} invalido.`, 400);
+    return normalized;
+  }
+
+  private parseName(value: unknown): string {
+    if (typeof value !== 'string') fail('Nome do time e obrigatorio.', 400);
+
+    const normalized = value.trim();
+    if (!normalized) fail('Nome do time e obrigatorio.', 400);
+    if (normalized.length > 80) fail('Nome do time deve ter no maximo 80 caracteres.', 400);
+    return normalized;
+  }
+
+  private parseTag(value: unknown): string | null {
+    if (value == null) return null;
+    if (typeof value !== 'string') fail('Tag do time invalida.', 400);
+
+    const normalized = value.trim();
+    if (!normalized) return null;
+    if (normalized.length > 16) fail('Tag do time deve ter no maximo 16 caracteres.', 400);
+    return normalized;
+  }
+
+  private parseTeamCategory(value: unknown): TeamCategory {
+    if (value == null) return 'formed';
+    if (typeof value !== 'string') fail('Categoria do time invalida. Use formed ou random.', 400);
+
+    const category = value.trim().toLowerCase();
+    if (category === 'formed' || category === 'random') return category;
+    fail('Categoria do time invalida. Use formed ou random.', 400);
+  }
+
+  private parseRole(value: unknown): ActorRole {
+    if (typeof value !== 'string') return 'unknown';
+
+    const normalized = value.trim().toLowerCase();
+    if (normalized === UserRole.ADMIN) return UserRole.ADMIN;
+    if (normalized === UserRole.STREAMER) return UserRole.STREAMER;
+    if (normalized === UserRole.COMPETIDOR) return UserRole.COMPETIDOR;
+    return 'unknown';
+  }
+
+  private toNonNegativeInt(value: unknown): number {
+    if (typeof value !== 'number' || !Number.isFinite(value)) return 0;
+    if (value <= 0) return 0;
+    return Math.floor(value);
+  }
+
+  private async assertUserExists(uid: string) {
+    const userSnapshot = await this.usersCollection().doc(uid).get();
+    if (!userSnapshot.exists) {
+      fail('Usuario nao encontrado.', 404);
+    }
+  }
+
+  private parseBattletag(value: unknown): string {
+    if (typeof value !== 'string') {
+      fail('Campo battletag invalido.', 400);
+    }
+
+    const normalized = value.trim();
+    if (!normalized) fail('Campo battletag invalido.', 400);
+    return normalized;
+  }
+
+  private normalizeOptionalUid(value: unknown): string | null {
+    if (typeof value !== 'string') return null;
+
+    const normalized = value.trim();
+    return normalized || null;
+  }
+
+  private normalizeOptionalString(value: unknown): string | null {
+    if (typeof value !== 'string') return null;
+
+    const normalized = value.trim();
+    return normalized || null;
+  }
+
+  private normalizeOptionalBoolean(value: unknown): boolean | null {
+    if (typeof value !== 'boolean') return null;
+    return value;
+  }
+
+  private normalizeOptionalInteger(value: unknown): number | null {
+    if (typeof value === 'number' && Number.isFinite(value)) {
+      return Math.floor(value);
+    }
+
+    if (typeof value === 'string') {
+      const parsed = Number.parseInt(value.trim(), 10);
+      if (Number.isInteger(parsed)) return parsed;
+    }
+
+    return null;
+  }
+
+  private async findUserByBattletag(battletag: string): Promise<{ uid: string; battletag: string }> {
+    const normalizedBattletag = this.parseBattletag(battletag);
+    const battletagLower = normalizedBattletag.toLowerCase();
+
+    const lowerSnapshot = await this.usersCollection()
+      .where('battletagLower', '==', battletagLower)
+      .limit(1)
+      .get();
+
+    if (!lowerSnapshot.empty) {
+      const user = lowerSnapshot.docs[0];
+      const data = (user.data() ?? {}) as Record<string, unknown>;
+      const storedBattletag = this.normalizeOptionalString(data['battletag']) ?? normalizedBattletag;
+      return { uid: user.id, battletag: storedBattletag };
+    }
+
+    const rawSnapshot = await this.usersCollection()
+      .where('battletag', '==', normalizedBattletag)
+      .limit(1)
+      .get();
+
+    if (!rawSnapshot.empty) {
+      const user = rawSnapshot.docs[0];
+      const data = (user.data() ?? {}) as Record<string, unknown>;
+      const storedBattletag = this.normalizeOptionalString(data['battletag']) ?? normalizedBattletag;
+      return { uid: user.id, battletag: storedBattletag };
+    }
+
+    fail('Nao encontramos usuario com essa battletag.', 404);
+  }
+
+  private readUserDisplayName(value: unknown): string | null {
+    if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
+
+    const raw = value as Record<string, unknown>;
+    for (const key of ['displayName', 'name']) {
+      const candidate = raw[key];
+      if (typeof candidate !== 'string') continue;
+
+      const normalized = candidate.trim();
+      if (normalized) return normalized;
+    }
+
+    return null;
+  }
+
+  private readPublicTrophies(value: unknown): readonly Record<string, unknown>[] {
+    if (!Array.isArray(value)) return [];
+
+    const result: Record<string, unknown>[] = [];
+
+    for (const item of value) {
+      if (!item || typeof item !== 'object' || Array.isArray(item)) continue;
+      const record = item as Record<string, unknown>;
+
+      const id = this.normalizeOptionalUid(record['id']) ?? '';
+      const code = this.normalizeOptionalString(record['code']) ?? '';
+      const name = this.normalizeOptionalString(record['name']) ?? '';
+      if (!id || !code || !name) continue;
+
+      const target = this.normalizeOptionalString(record['target']);
+      result.push({
+        id,
+        code,
+        name,
+        icon: this.normalizeOptionalString(record['icon']) ?? '🏅',
+        target: target === 'user' || target === 'team' || target === 'both' ? target : 'both',
+        assignedAt: this.normalizeOptionalString(record['assignedAt']) ?? '',
+      });
+    }
+
+    return result;
+  }
+
+  private async readCaptainNamesByUid(
+    uids: readonly string[],
+  ): Promise<ReadonlyMap<string, string>> {
+    const uniqueUids = Array.from(
+      new Set(uids.map((uid) => this.normalizeOptionalUid(uid)).filter((uid): uid is string => !!uid)),
+    );
+    if (!uniqueUids.length) return new Map();
+
+    const userRefs = uniqueUids.map((uid) => this.usersCollection().doc(uid));
+    const userSnapshots = await firestore.getAll(...userRefs);
+
+    const captainNames = new Map<string, string>();
+    for (const userSnapshot of userSnapshots) {
+      if (!userSnapshot.exists) continue;
+
+      const name = this.readUserDisplayName(userSnapshot.data());
+      if (!name) continue;
+
+      captainNames.set(userSnapshot.id, name);
+    }
+
+    return captainNames;
+  }
+
+  private withCaptainName(
+    team: Record<string, unknown>,
+    captainNamesByUid: ReadonlyMap<string, string>,
+  ): Record<string, unknown> {
+    const trophies = this.readPublicTrophies(team['trophies']);
+    const captainUid = this.normalizeOptionalUid(team['captainUid']);
+    if (!captainUid) {
+      return {
+        ...team,
+        trophies,
+        captainUid: null,
+        captainName: NO_CAPTAIN_LABEL,
+        captainDisplayName: NO_CAPTAIN_LABEL,
+      };
+    }
+
+    const captainName = captainNamesByUid.get(captainUid) ?? UNNAMED_CAPTAIN_LABEL;
+    return {
+      ...team,
+      trophies,
+      captainUid,
+      captainName,
+      captainDisplayName: captainName,
+    };
+  }
+
+  private async enrichTeamsWithCaptainName(
+    teams: readonly Record<string, unknown>[],
+  ): Promise<ReadonlyArray<Record<string, unknown>>> {
+    const captainUids = teams
+      .map((team) => this.normalizeOptionalUid(team['captainUid']))
+      .filter((uid): uid is string => !!uid);
+
+    const captainNamesByUid = await this.readCaptainNamesByUid(captainUids);
+    return teams.map((team) => this.withCaptainName(team, captainNamesByUid));
+  }
+
+  private async enrichTeamWithCaptainName(
+    team: Record<string, unknown>,
+  ): Promise<Record<string, unknown>> {
+    const [enriched] = await this.enrichTeamsWithCaptainName([team]);
+    return enriched;
+  }
+
+  async createTeam(actor: TeamActor, body: CreateTeamDto) {
+    const actorUid = this.parseUid(actor.uid, 'uid');
+    const actorRole = this.parseRole(actor.role);
+    const name = this.parseName(body?.name);
+    const tag = this.parseTag(body?.tag);
+    const category = this.parseTeamCategory(body?.category);
+
+    if (category === 'random' && actorRole !== UserRole.ADMIN && actorRole !== UserRole.STREAMER) {
+      fail('Membro so pode criar time formed.', 403);
+    }
+
+    await this.assertUserExists(actorUid);
+
+    const teamRef = this.teamsCollection.doc();
+    const memberRef = this.membersCol(teamRef.id).doc(actorUid);
+    const now = new Date().toISOString();
+
+    const teamDoc: StoredTeam = {
+      name,
+      tag,
+      category,
+      captainUid: actorUid,
+      createdByUid: actorUid,
+      membersCount: 1,
+      createdAt: now,
+      updatedAt: now,
+      trophies: [],
+    };
+
+    const creatorMemberDoc: StoredMember = {
+      uid: actorUid,
+      joinedAt: now,
+      addedByUid: actorUid,
+      addedByRole: actorRole,
+      source: 'creator',
+    };
+
+    await firestore.runTransaction(async (tx) => {
+      tx.set(teamRef, teamDoc);
+      tx.set(memberRef, creatorMemberDoc);
+    });
+
+    const created = await teamRef.get();
+    return this.enrichTeamWithCaptainName({
+      id: created.id,
+      ...(created.data() as Record<string, unknown>),
+    });
+  }
+
+  async getTeam(teamId: string) {
+    const normalizedTeamId = this.parseUid(teamId, 'teamId');
+    const teamSnapshot = await this.teamsCollection.doc(normalizedTeamId).get();
+    if (!teamSnapshot.exists) {
+      fail('Time nao encontrado.', 404);
+    }
+
+    return this.enrichTeamWithCaptainName({
+      id: teamSnapshot.id,
+      ...(teamSnapshot.data() as Record<string, unknown>),
+    });
+  }
+
+  async listMembers(teamId: string) {
+    const normalizedTeamId = this.parseUid(teamId, 'teamId');
+    const teamSnapshot = await this.teamsCollection.doc(normalizedTeamId).get();
+    if (!teamSnapshot.exists) {
+      fail('Time nao encontrado.', 404);
+    }
+
+    const teamData = (teamSnapshot.data() ?? {}) as Record<string, unknown>;
+    const captainUid = this.normalizeOptionalUid(teamData['captainUid']);
+
+    const membersSnapshot = await this.membersCol(normalizedTeamId)
+      .orderBy('joinedAt', 'asc')
+      .get();
+
+    const members = membersSnapshot.docs.map((doc) => {
+      const raw = (doc.data() ?? {}) as Record<string, unknown>;
+      const uid = this.normalizeOptionalUid(raw['uid']) ?? doc.id;
+
+      return {
+        id: doc.id,
+        uid,
+        ...raw,
+      } as Record<string, unknown>;
+    });
+
+    const uniqueUids = Array.from(
+      new Set(members.map((member) => this.normalizeOptionalUid(member['uid'])).filter((uid): uid is string => !!uid)),
+    );
+
+    const userRefs = uniqueUids.map((uid) => this.usersCollection().doc(uid));
+    const userSnapshots = uniqueUids.length ? await firestore.getAll(...userRefs) : [];
+    const userByUid = new Map<string, Record<string, unknown>>();
+    for (const userSnapshot of userSnapshots) {
+      if (!userSnapshot.exists) continue;
+      userByUid.set(userSnapshot.id, (userSnapshot.data() ?? {}) as Record<string, unknown>);
+    }
+
+    return members.map((member) => {
+      const uid = this.normalizeOptionalUid(member['uid']) ?? '';
+      const user = uid ? userByUid.get(uid) ?? null : null;
+      const displayName = this.readUserDisplayName(user) ?? 'Usuario sem nome';
+      const battletag =
+        this.normalizeOptionalString(user?.['battletag']) ??
+        this.normalizeOptionalString(member['battletag']) ??
+        'Sem battletag';
+
+      return {
+        ...member,
+        uid,
+        displayName,
+        battletag,
+        isCaptain: !!uid && !!captainUid && uid === captainUid,
+      };
+    });
+  }
+
+  async listAllTeams() {
+    const snapshot = await this.teamsCollection
+      .orderBy('createdAt', 'desc')
+      .get();
+
+    const teams = snapshot.docs.map(
+      (doc) =>
+        ({
+          id: doc.id,
+          ...(doc.data() as Record<string, unknown>),
+        }) as Record<string, unknown>,
+    );
+
+    return this.enrichTeamsWithCaptainName(teams);
+  }
+
+  async listMyTeams(uid: string) {
+    const normalizedUid = this.parseUid(uid, 'uid');
+
+    const memberEntries = await firestore
+      .collectionGroup('members')
+      .where('uid', '==', normalizedUid)
+      .get();
+
+    if (memberEntries.empty) return [];
+
+    const teamIds = Array.from(
+      new Set(
+        memberEntries.docs
+          .map((entry) => entry.ref.parent.parent?.id ?? null)
+          .filter((id): id is string => !!id),
+      ),
+    );
+
+    const teamDocs = await Promise.all(teamIds.map((id) => this.teamsCollection.doc(id).get()));
+
+    const teams = teamDocs
+      .filter((doc) => doc.exists)
+      .map((doc) => {
+        const data = (doc.data() ?? {}) as Record<string, unknown>;
+        const team: Record<string, unknown> = {
+          id: doc.id,
+          ...data,
+          isCaptain: data['captainUid'] === normalizedUid,
+        };
+        return team;
+      })
+      .sort((a, b) => {
+        const aCreatedAt = new Date(String(a['createdAt'] ?? '')).getTime();
+        const bCreatedAt = new Date(String(b['createdAt'] ?? '')).getTime();
+
+        if (!Number.isFinite(aCreatedAt) && !Number.isFinite(bCreatedAt)) return 0;
+        if (!Number.isFinite(aCreatedAt)) return 1;
+        if (!Number.isFinite(bCreatedAt)) return -1;
+        return bCreatedAt - aCreatedAt;
+      });
+
+    return this.enrichTeamsWithCaptainName(teams);
+  }
+
+  async listMyPendingInvites(uid: string) {
+    const normalizedUid = this.parseUid(uid, 'uid');
+
+    const inviteEntries = await firestore
+      .collectionGroup('invites')
+      .where('uid', '==', normalizedUid)
+      .get();
+
+    if (inviteEntries.empty) return [];
+
+    const pendingInvites = inviteEntries.docs.filter((doc) => {
+      const inviteData = doc.data() as { status?: unknown };
+      return inviteData.status === 'pending';
+    });
+
+    const inviteItems = pendingInvites
+      .map((doc) => {
+        const teamId = doc.ref.parent.parent?.id ?? '';
+        return {
+          teamId,
+          inviteId: doc.id,
+          ...(doc.data() as Record<string, unknown>),
+        };
+      })
+      .filter((item) => typeof item.teamId === 'string' && item.teamId.trim());
+
+    const teamIds = Array.from(new Set(inviteItems.map((item) => item.teamId)));
+
+    const teamSnapshots = await Promise.all(teamIds.map((teamId) => this.teamsCollection.doc(teamId).get()));
+    const teams = teamSnapshots
+      .filter((snap) => snap.exists)
+      .map((snap) => ({
+        id: snap.id,
+        ...((snap.data() ?? {}) as Record<string, unknown>),
+      }));
+
+    const enrichedTeams = await this.enrichTeamsWithCaptainName(teams);
+    const teamsById = new Map<string, Record<string, unknown>>();
+    for (const team of enrichedTeams) {
+      const teamId = this.normalizeOptionalUid(team['id']);
+      if (!teamId) continue;
+
+      teamsById.set(teamId, team);
+    }
+
+    return inviteItems.map((item) => ({
+      ...item,
+      team: teamsById.get(item.teamId) ?? null,
+    }));
+  }
+
+  private normalizeTournamentStatus(value: unknown): string {
+    return (this.normalizeOptionalString(value) ?? 'desconhecido').toLowerCase();
+  }
+
+  private resolveTournamentParticipationScope(status: string): 'participa' | 'participou' {
+    if (status === 'finished' || status === 'canceled') return 'participou';
+    return 'participa';
+  }
+
+  private resolveTournamentParticipationLabel(scope: 'participa' | 'participou'): string {
+    return scope === 'participou' ? 'Participou' : 'Participa';
+  }
+
+  private readStringList(value: unknown): string[] {
+    if (!Array.isArray(value)) return [];
+
+    const labels: string[] = [];
+    for (const item of value) {
+      if (typeof item === 'string') {
+        const normalized = item.trim();
+        if (normalized) labels.push(normalized);
+        continue;
+      }
+
+      if (!item || typeof item !== 'object' || Array.isArray(item)) continue;
+      const raw = item as Record<string, unknown>;
+      const label =
+        this.normalizeOptionalString(raw['label']) ??
+        this.normalizeOptionalString(raw['title']) ??
+        this.normalizeOptionalString(raw['name']);
+      if (label) labels.push(label);
+    }
+
+    return labels;
+  }
+
+  private resolveTrophyLabels(
+    teamId: string,
+    tournamentData: Record<string, unknown>,
+    teamEntryData: Record<string, unknown>,
+  ): string[] {
+    const labels = new Set<string>();
+
+    for (const field of ['trophy', 'trophyLabel', 'resultLabel', 'award']) {
+      const value =
+        this.normalizeOptionalString(teamEntryData[field]) ??
+        this.normalizeOptionalString(tournamentData[field]);
+      if (value) labels.add(value);
+    }
+
+    for (const field of ['trophies', 'trophyLabels', 'awards']) {
+      for (const label of this.readStringList(teamEntryData[field])) {
+        labels.add(label);
+      }
+      for (const label of this.readStringList(tournamentData[field])) {
+        labels.add(label);
+      }
+    }
+
+    const placement =
+      this.normalizeOptionalInteger(teamEntryData['placement']) ??
+      this.normalizeOptionalInteger(teamEntryData['place']) ??
+      this.normalizeOptionalInteger(teamEntryData['position']) ??
+      this.normalizeOptionalInteger(teamEntryData['finalPosition']);
+
+    if (placement === 1) labels.add('Campeao');
+    if (placement === 2) labels.add('Vice-campeao');
+    if (placement === 3) labels.add('3o lugar');
+
+    const isWinner =
+      this.normalizeOptionalBoolean(teamEntryData['isChampion']) === true ||
+      this.normalizeOptionalBoolean(teamEntryData['isWinner']) === true ||
+      this.normalizeOptionalBoolean(teamEntryData['winner']) === true;
+    if (isWinner) labels.add('Campeao');
+
+    const winnerTeamId =
+      this.normalizeOptionalUid(tournamentData['winnerTeamId']) ??
+      this.normalizeOptionalUid(tournamentData['championTeamId']);
+    if (winnerTeamId && winnerTeamId === teamId) {
+      labels.add('Campeao');
+    }
+
+    return Array.from(labels);
+  }
+
+  private resolveTrophyIcon(label: string): string {
+    const normalized = label.trim().toLowerCase();
+    if (!normalized) return '🏅';
+    if (normalized.includes('campe')) return '🏆';
+    if (normalized.includes('vice')) return '🥈';
+    if (normalized.includes('3')) return '🥉';
+    if (normalized.includes('ouro')) return '🥇';
+    if (normalized.includes('prata')) return '🥈';
+    if (normalized.includes('bronze')) return '🥉';
+    return '🏅';
+  }
+
+  async listTeamTournaments(teamId: string): Promise<TeamTournamentsOverview> {
+    const normalizedTeamId = this.parseUid(teamId, 'teamId');
+    const teamSnapshot = await this.teamsCollection.doc(normalizedTeamId).get();
+    if (!teamSnapshot.exists) {
+      fail('Time nao encontrado.', 404);
+    }
+
+    const tournamentsSnapshot = await firestore
+      .collection('tournaments')
+      .orderBy('startAt', 'desc')
+      .get();
+
+    const tournamentItems = await Promise.all(
+      tournamentsSnapshot.docs.map(async (tournamentDoc) => {
+        const teamDoc = await tournamentDoc.ref.collection('teams').doc(normalizedTeamId).get();
+        if (!teamDoc.exists) return null;
+
+        const tournamentData = (tournamentDoc.data() ?? {}) as Record<string, unknown>;
+        const teamEntryData = (teamDoc.data() ?? {}) as Record<string, unknown>;
+        const status = this.normalizeTournamentStatus(tournamentData['status']);
+        const participationScope = this.resolveTournamentParticipationScope(status);
+        const trophyLabels = this.resolveTrophyLabels(
+          normalizedTeamId,
+          tournamentData,
+          teamEntryData,
+        );
+
+        const summary: TeamTournamentSummary = {
+          id: tournamentDoc.id,
+          name: this.normalizeOptionalString(tournamentData['name']) ?? `Torneio ${tournamentDoc.id}`,
+          status,
+          teamMode: this.normalizeOptionalString(tournamentData['teamMode']) ?? 'desconhecido',
+          checkedIn: this.normalizeOptionalBoolean(teamEntryData['checkedIn']) ?? false,
+          startAt: this.normalizeOptionalString(tournamentData['startAt']),
+          checkinDeadlineAt: this.normalizeOptionalString(tournamentData['checkinDeadlineAt']),
+          participationScope,
+          participationLabel: this.resolveTournamentParticipationLabel(participationScope),
+          trophyLabels,
+        };
+
+        const trophies = trophyLabels.map((label) => ({
+          tournamentId: tournamentDoc.id,
+          tournamentName: summary.name,
+          label,
+          icon: this.resolveTrophyIcon(label),
+        }));
+
+        return { summary, trophies };
+      }),
+    );
+
+    const tournaments: TeamTournamentSummary[] = [];
+    const trophiesByKey = new Map<string, TeamTrophySummary>();
+
+    for (const item of tournamentItems) {
+      if (!item) continue;
+      tournaments.push(item.summary);
+
+      for (const trophy of item.trophies) {
+        const key = `${trophy.tournamentId}::${trophy.label.toLowerCase()}`;
+        if (!trophiesByKey.has(key)) {
+          trophiesByKey.set(key, trophy);
+        }
+      }
+    }
+
+    return {
+      teamId: normalizedTeamId,
+      tournaments,
+      trophies: Array.from(trophiesByKey.values()),
+    };
+  }
+
+  private async assertCanAddMember(
+    tx: FirebaseFirestore.Transaction,
+    teamId: string,
+    actorUid: string,
+    actorRole: ActorRole,
+    teamData: Record<string, unknown>,
+  ): Promise<'direct_add' | 'invite_only'> {
+    if (actorRole === UserRole.ADMIN || actorRole === UserRole.STREAMER) return 'direct_add';
+
+    const actorMemberRef = this.membersCol(teamId).doc(actorUid);
+    const actorMemberSnapshot = await tx.get(actorMemberRef);
+    const isCaptain = actorMemberSnapshot.exists && teamData['captainUid'] === actorUid;
+
+    if (!isCaptain) {
+      fail('Apenas o capitao (ou admin/streamer) pode adicionar membros.', 403);
+    }
+
+    const category = String(teamData['category'] ?? '').trim().toLowerCase();
+    if (category === 'random') {
+      fail('Capitaes de times random nao podem adicionar membros.', 403);
+    }
+
+    return 'invite_only';
+  }
+
+  private readDirectTargetUid(body: AddMemberDto | TransferCaptainDto): string | null {
+    const uidValue = body?.uid ?? body?.userId;
+    if (uidValue == null) return null;
+    return this.parseUid(uidValue, 'uid');
+  }
+
+  private async resolveAddMemberTarget(body: AddMemberDto): Promise<{
+    targetUid: string;
+    battletag: string | null;
+  }> {
+    const directUid = this.readDirectTargetUid(body);
+    if (directUid) {
+      return {
+        targetUid: directUid,
+        battletag: this.normalizeOptionalString(body?.battletag),
+      };
+    }
+
+    const battletagInput = body?.battletag;
+    if (battletagInput != null) {
+      const found = await this.findUserByBattletag(this.parseBattletag(battletagInput));
+      return {
+        targetUid: found.uid,
+        battletag: found.battletag,
+      };
+    }
+
+    fail('Informe uid, userId ou battletag.', 400);
+  }
+
+  async addMember(teamId: string, actor: TeamActor, body: AddMemberDto) {
+    const normalizedTeamId = this.parseUid(teamId, 'teamId');
+    const actorUid = this.parseUid(actor.uid, 'uid');
+    const actorRole = this.parseRole(actor.role);
+    const { targetUid, battletag } = await this.resolveAddMemberTarget(body);
+
+    if (targetUid === actorUid) {
+      fail('Voce ja faz parte da acao solicitada para este time.', 400);
+    }
+
+    await this.assertUserExists(targetUid);
+
+    const teamRef = this.teamsCollection.doc(normalizedTeamId);
+    const targetMemberRef = this.membersCol(normalizedTeamId).doc(targetUid);
+    const inviteRef = this.invitesCol(normalizedTeamId).doc(targetUid);
+    const now = new Date().toISOString();
+
+    const action = await firestore.runTransaction(async (tx) => {
+      const teamSnapshot = await tx.get(teamRef);
+      if (!teamSnapshot.exists) {
+        fail('Time nao encontrado.', 404);
+      }
+
+      const teamData = (teamSnapshot.data() ?? {}) as Record<string, unknown>;
+      const membersCount = this.toNonNegativeInt(teamData['membersCount']);
+
+      const permission = await this.assertCanAddMember(
+        tx,
+        normalizedTeamId,
+        actorUid,
+        actorRole,
+        teamData,
+      );
+
+      const targetMemberSnapshot = await tx.get(targetMemberRef);
+      if (targetMemberSnapshot.exists) {
+        fail('Usuario ja pertence ao time.', 409);
+      }
+
+      if (membersCount >= TEAM_MAX_MEMBERS) {
+        fail(`Time lotado. O limite maximo e ${TEAM_MAX_MEMBERS} membros.`, 400);
+      }
+
+      if (permission === 'direct_add') {
+        const memberDoc: StoredMember = {
+          uid: targetUid,
+          joinedAt: now,
+          addedByUid: actorUid,
+          addedByRole: actorRole,
+          source: 'admin_add',
+        };
+
+        tx.set(targetMemberRef, memberDoc);
+        tx.update(teamRef, {
+          membersCount: membersCount + 1,
+          updatedAt: FieldValue.serverTimestamp(),
+        });
+        tx.delete(inviteRef);
+
+        return 'added';
+      }
+
+      const inviteDoc: StoredInvite = {
+        uid: targetUid,
+        status: 'pending',
+        invitedByUid: actorUid,
+        invitedByRole: actorRole,
+        invitedAt: now,
+        updatedAt: now,
+      };
+
+      tx.set(inviteRef, inviteDoc, { merge: true });
+      tx.update(teamRef, {
+        updatedAt: FieldValue.serverTimestamp(),
+      });
+
+      return 'invited';
+    });
+
+    return {
+      teamId: normalizedTeamId,
+      uid: targetUid,
+      battletag,
+      action,
+    };
+  }
+
+  async acceptInvite(teamId: string, uid: string) {
+    const normalizedTeamId = this.parseUid(teamId, 'teamId');
+    const normalizedUid = this.parseUid(uid, 'uid');
+
+    const teamRef = this.teamsCollection.doc(normalizedTeamId);
+    const memberRef = this.membersCol(normalizedTeamId).doc(normalizedUid);
+    const inviteRef = this.invitesCol(normalizedTeamId).doc(normalizedUid);
+    const now = new Date().toISOString();
+
+    await firestore.runTransaction(async (tx) => {
+      const teamSnapshot = await tx.get(teamRef);
+      if (!teamSnapshot.exists) {
+        fail('Time nao encontrado.', 404);
+      }
+
+      const teamData = (teamSnapshot.data() ?? {}) as Record<string, unknown>;
+      const membersCount = this.toNonNegativeInt(teamData['membersCount']);
+
+      const memberSnapshot = await tx.get(memberRef);
+      if (memberSnapshot.exists) {
+        fail('Usuario ja pertence ao time.', 409);
+      }
+
+      const inviteSnapshot = await tx.get(inviteRef);
+      if (!inviteSnapshot.exists) {
+        fail('Convite nao encontrado.', 404);
+      }
+
+      const invite = (inviteSnapshot.data() ?? {}) as Record<string, unknown>;
+      if (invite['status'] !== 'pending') {
+        fail('Convite nao esta mais pendente.', 400);
+      }
+
+      if (membersCount >= TEAM_MAX_MEMBERS) {
+        fail(`Time lotado. O limite maximo e ${TEAM_MAX_MEMBERS} membros.`, 400);
+      }
+
+      const invitedByUid = this.parseUid(invite['invitedByUid'], 'invitedByUid');
+      const invitedByRole = this.parseRole(invite['invitedByRole']);
+
+      const acceptedMemberDoc: StoredMember = {
+        uid: normalizedUid,
+        joinedAt: now,
+        addedByUid: invitedByUid,
+        addedByRole: invitedByRole,
+        source: 'invite_accept',
+      };
+
+      tx.set(memberRef, acceptedMemberDoc);
+      tx.delete(inviteRef);
+      tx.update(teamRef, {
+        membersCount: membersCount + 1,
+        updatedAt: FieldValue.serverTimestamp(),
+      });
+    });
+
+    const updatedMember = await memberRef.get();
+    return { id: updatedMember.id, ...updatedMember.data() };
+  }
+
+  async rejectInvite(teamId: string, uid: string) {
+    const normalizedTeamId = this.parseUid(teamId, 'teamId');
+    const normalizedUid = this.parseUid(uid, 'uid');
+    const inviteRef = this.invitesCol(normalizedTeamId).doc(normalizedUid);
+    const teamRef = this.teamsCollection.doc(normalizedTeamId);
+
+    await firestore.runTransaction(async (tx) => {
+      const teamSnapshot = await tx.get(teamRef);
+      if (!teamSnapshot.exists) {
+        fail('Time nao encontrado.', 404);
+      }
+
+      const inviteSnapshot = await tx.get(inviteRef);
+      if (!inviteSnapshot.exists) {
+        fail('Convite nao encontrado.', 404);
+      }
+
+      const invite = (inviteSnapshot.data() ?? {}) as Record<string, unknown>;
+      if (invite['status'] !== 'pending') {
+        fail('Convite nao esta mais pendente.', 400);
+      }
+
+      tx.delete(inviteRef);
+      tx.update(teamRef, {
+        updatedAt: FieldValue.serverTimestamp(),
+      });
+    });
+
+    return {
+      teamId: normalizedTeamId,
+      uid: normalizedUid,
+      status: 'rejected',
+    };
+  }
+
+  async leaveTeam(teamId: string, uid: string) {
+    const normalizedTeamId = this.parseUid(teamId, 'teamId');
+    const normalizedUid = this.parseUid(uid, 'uid');
+
+    const teamRef = this.teamsCollection.doc(normalizedTeamId);
+    const memberRef = this.membersCol(normalizedTeamId).doc(normalizedUid);
+
+    await firestore.runTransaction(async (tx) => {
+      const teamSnapshot = await tx.get(teamRef);
+      if (!teamSnapshot.exists) {
+        fail('Time nao encontrado.', 404);
+      }
+
+      const teamData = (teamSnapshot.data() ?? {}) as Record<string, unknown>;
+      const membersCount = this.toNonNegativeInt(teamData['membersCount']);
+
+      const memberSnapshot = await tx.get(memberRef);
+      if (!memberSnapshot.exists) {
+        fail('Usuario nao pertence ao time.', 400);
+      }
+
+      const nextCount = membersCount > 0 ? membersCount - 1 : 0;
+      const updates: Record<string, unknown> = {
+        membersCount: nextCount,
+        updatedAt: FieldValue.serverTimestamp(),
+      };
+
+      if (teamData['captainUid'] === normalizedUid) {
+        const membersSnapshot = await tx.get(this.membersCol(normalizedTeamId));
+        const remainingMemberIds = membersSnapshot.docs
+          .map((doc) => doc.id)
+          .filter((memberId) => memberId !== normalizedUid);
+
+        if (!remainingMemberIds.length) {
+          updates['captainUid'] = null;
+        } else {
+          const randomIndex = Math.floor(Math.random() * remainingMemberIds.length);
+          updates['captainUid'] = remainingMemberIds[randomIndex];
+        }
+      }
+
+      tx.delete(memberRef);
+      tx.update(teamRef, updates);
+    });
+
+    const updated = await teamRef.get();
+    return this.enrichTeamWithCaptainName({
+      id: updated.id,
+      ...(updated.data() as Record<string, unknown>),
+    });
+  }
+
+  async transferCaptain(teamId: string, actorUid: string, body: TransferCaptainDto) {
+    const normalizedTeamId = this.parseUid(teamId, 'teamId');
+    const normalizedActorUid = this.parseUid(actorUid, 'uid');
+    const targetUid = this.readDirectTargetUid(body);
+    if (!targetUid) {
+      fail('Informe uid ou userId do novo capitao.', 400);
+    }
+
+    const teamRef = this.teamsCollection.doc(normalizedTeamId);
+    const targetMemberRef = this.membersCol(normalizedTeamId).doc(targetUid);
+
+    await firestore.runTransaction(async (tx) => {
+      const teamSnapshot = await tx.get(teamRef);
+      if (!teamSnapshot.exists) {
+        fail('Time nao encontrado.', 404);
+      }
+
+      const teamData = (teamSnapshot.data() ?? {}) as Record<string, unknown>;
+      if (teamData['captainUid'] !== normalizedActorUid) {
+        fail('Somente o capitao atual pode transferir a capitania.', 403);
+      }
+
+      const targetMemberSnapshot = await tx.get(targetMemberRef);
+      if (!targetMemberSnapshot.exists) {
+        fail('Novo capitao precisa ser membro do time.', 400);
+      }
+
+      tx.update(teamRef, {
+        captainUid: targetUid,
+        updatedAt: FieldValue.serverTimestamp(),
+      });
+    });
+
+    const updated = await teamRef.get();
+    return this.enrichTeamWithCaptainName({
+      id: updated.id,
+      ...(updated.data() as Record<string, unknown>),
+    });
+  }
+}
+
+export const timesSvc = new TimesService();

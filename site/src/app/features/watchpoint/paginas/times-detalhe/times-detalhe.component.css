@@ -1,0 +1,60 @@
+.ow-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 0.2rem 0.6rem;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.ow-team-logo-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.ow-team-logo-slot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border: 2px dashed rgba(240, 99, 20, 0.45);
+  border-radius: 0.9rem;
+  background:
+    radial-gradient(circle at top right, rgba(240, 99, 20, 0.22), transparent 62%),
+    #fff7f1;
+  color: var(--ow-orange-dark);
+  font-size: 1.4rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.ow-team-logo-hint {
+  margin: 0;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--ow-gray-600);
+  text-align: center;
+}
+
+.ow-badge-captain {
+  background: rgba(240, 99, 20, 0.14);
+  color: var(--ow-orange-dark);
+}
+
+.ow-trophy-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  border: 1px solid var(--ow-gray-200);
+  border-radius: 0.75rem;
+  padding: 0.75rem;
+  background:
+    radial-gradient(circle at top right, rgba(255, 193, 7, 0.2), transparent 60%),
+    #fff;
+}

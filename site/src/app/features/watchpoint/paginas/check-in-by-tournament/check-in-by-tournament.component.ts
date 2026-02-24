@@ -67,10 +67,6 @@ export class CheckInByTournamentComponent {
   readonly availableTournaments = computed(() =>
     this.tournaments().filter((tournament) => tournament.teamMode === 'random'),
   );
-
-  readonly canLoadCheckins = computed(
-    () => this.hasPermission() && !!this.selectedTournamentId() && !this.loadingCheckins(),
-  );
   readonly canSendVisibleCheckinsToRoulette = computed(
     () => this.hasPermission() && !this.loadingCheckins() && this.checkins().length > 0,
   );
@@ -274,7 +270,12 @@ export class CheckInByTournamentComponent {
     const hasBattleTag = checkin.battletag !== 'Sem BattleTag';
     const name = hasBattleTag ? `${checkin.displayName} (${checkin.battletag})` : checkin.displayName;
 
-    return { id, name };
+    return {
+      id,
+      name,
+      battletag: hasBattleTag ? checkin.battletag : null,
+      displayName: checkin.displayName,
+    };
   }
 
   private getSessionStorage(): Storage | null {

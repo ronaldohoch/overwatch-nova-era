@@ -9,22 +9,6 @@
   </div>
 
   <div class="flex flex-wrap items-center gap-3">
-    <ow-btn variant="secondary-mini" [disabled]="loadingTournaments()" (click)="loadTournaments()">
-      @if (loadingTournaments()) {
-        Atualizando torneios...
-      } @else {
-        Atualizar torneios
-      }
-    </ow-btn>
-
-    <ow-btn variant="blue-mini" [disabled]="!canLoadCheckins()" (click)="loadCheckins()">
-      @if (loadingCheckins()) {
-        Atualizando check-ins...
-      } @else {
-        Atualizar check-ins
-      }
-    </ow-btn>
-
     <ow-btn
       variant="primary-mini"
       [disabled]="!canSendVisibleCheckinsToRoulette()"

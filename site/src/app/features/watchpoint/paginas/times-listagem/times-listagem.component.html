@@ -1,0 +1,101 @@
+<div class="my-8">
+  <div class="flex justify-between gap-4">
+    <div class="py-2">
+      <h1 class="text-4xl font-black leading-tight text-(--ow-gray-900) lg:text-5xl">
+        Lista de times
+      </h1>
+      <p class="text-(--ow-gray-500)">{{ subtitle() }}</p>
+    </div>
+
+    <div class="flex items-center gap-3 py-2">
+      <ow-btn variant="primary-mini" href="/watchpoint/novo-time">Novo time</ow-btn>
+    </div>
+  </div>
+
+  <div class="space-y-3 py-2">
+    <div class="grid gap-3 md:grid-cols-2">
+      @if (isAdminViewer()) {
+        <label class="flex flex-col gap-2 text-sm font-semibold text-(--ow-gray-700)">
+          Escopo dos times
+          <select
+            class="rounded-lg border border-(--ow-gray-300) bg-white px-3 py-2 text-sm font-medium text-(--ow-gray-900)"
+            [value]="adminTeamScopeFilter()"
+            [disabled]="loading()"
+            (change)="applyAdminTeamScopeFilter($any($event.target).value)"
+          >
+            <option value="all">Todos os times</option>
+            <option value="mine">Times que participo</option>
+          </select>
+        </label>
+      }
+
+      <label class="flex flex-col gap-2 text-sm font-semibold text-(--ow-gray-700)">
+        Categoria
+        <select
+          class="rounded-lg border border-(--ow-gray-300) bg-white px-3 py-2 text-sm font-medium text-(--ow-gray-900)"
+          [value]="teamCategoryFilter()"
+          (change)="applyTeamCategoryFilter($any($event.target).value)"
+        >
+          <option value="all">Todas as categorias</option>
+          <option value="formed">Apenas times com participantes selecionados</option>
+          <option value="random">Apenas times com participantes sorteados</option>
+        </select>
+      </label>
+    </div>
+
+    @if (loading()) {
+      <p class="text-sm font-medium text-(--ow-gray-600)">Carregando times...</p>
+    }
+
+    @if (!loading() && filteredTeams().length === 0) {
+      <p class="text-sm font-medium text-(--ow-gray-600)">Nenhum time encontrado.</p>
+    }
+
+    @if (!loading() && filteredTeams().length > 0) {
+      <div class="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-5">
+        @for (team of filteredTeams(); track team.trackKey) {
+          <a class="block" [routerLink]="teamDetailLink(team)">
+            <ow-card
+              [status]="teamCardStatus(team)"
+              cardClass="ow-team-card team-card h-full"
+              contentClass="h-full flex flex-col"
+            >
+              <div class="mb-4 flex items-center gap-4">
+                <div class="ow-team-logo flex-shrink-0">{{ teamLogo(team.category) }}</div>
+                <div class="min-w-0">
+                  <h3 class="truncate text-lg font-black uppercase text-(--ow-gray-900)">
+                    {{ team.name }}
+                  </h3>
+                </div>
+              </div>
+
+              <div class="mb-4 text-sm text-(--ow-gray-500)">
+                <span class="font-bold text-[color:var(--ow-orange)]">{{ team.membersCount }}/8</span>
+                <span> membros</span>
+              </div>
+
+              <div class="space-y-2">
+                <!-- <div class="flex items-center gap-2 text-sm text-(--ow-gray-700)">
+                  <span class="ow-role-icon ow-role-tank">T</span>
+                  <span>{{ team.categoryLabel }}</span>
+                </div> -->
+                <div class="flex items-center gap-2 text-sm text-(--ow-gray-700)">
+                  <span class="ow-role-icon ow-role-damage">D</span>
+                  <span>{{ team.roleInTeamLabel }}</span>
+                </div>
+                <!-- <div class="flex items-center gap-2 text-sm text-(--ow-gray-700)">
+                  <span class="ow-role-icon ow-role-support">S</span>
+                  <span>{{ captainStatusLabel(team) }}</span>
+                </div> -->
+              </div>
+            </ow-card>
+          </a>
+        }
+      </div>
+    }
+
+    @if (message(); as message) {
+      <p class="text-sm font-medium text-red-600">{{ message }}</p>
+    }
+  </div>
+</div>

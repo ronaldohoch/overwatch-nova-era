@@ -21,23 +21,18 @@ const DEFAULT_LINKS: readonly OwNavItem[] = [
 ];
 
 const MEMBER_LINKS: readonly OwNavItem[] = [
-  { label: 'Dashboard', link: '/watchpoint/dashboard' },
-  { label: 'Meus dados', link: '/watchpoint/dados-do-usuario' },
-  { label: 'Fazer check-in', link: '/watchpoint/check-ins' },
+  { label: 'Times', link: '/watchpoint/times' },
   // { label: 'Torneio', link: '/torneio' },
 ];
 
 const STREAMER_LINKS: readonly OwNavItem[] = [
-  { label: 'Dashboard', link: '/watchpoint/dashboard' },
-  { label: 'Meus dados', link: '/watchpoint/dados-do-usuario' },
-  { label: 'Fazer check-in', link: '/watchpoint/check-ins' },
+  { label: 'Times', link: '/watchpoint/times' },
   { label: 'Check-ins', link: '/watchpoint/check-in-by-tournament' },
   { label: 'Ferramentas', link: '/watchpoint/ferramentas-de-streamer' },
 ];
 
 const ADMIN_LINKS: readonly OwNavItem[] = [
-  { label: 'Dashboard', link: '/watchpoint/dashboard' },
-  { label: 'Meus dados', link: '/watchpoint/dados-do-usuario' },
+  { label: 'Times', link: '/watchpoint/times' },
   { label: 'Torneios', link: '/watchpoint/torneios' },
   { label: 'Usuarios', link: '/watchpoint/usuarios' },
   // { label: 'Gestao do torneio', link: '/torneio' }
@@ -77,6 +72,17 @@ export class Header {
 
   readonly userDisplayName = computed(() => this.auth.displayName() ?? 'Jogador');
   readonly userRoleLabel = computed(() => this.resolveRoleLabel(this.auth.userRole()));
+  readonly userProfileLink = '/watchpoint/dados-do-usuario';
+  readonly loggedInBrandLink = '/watchpoint/dashboard';
+  readonly brandRouterLink = computed(() =>
+    this.auth.isAuthenticated() ? this.loggedInBrandLink : this.brandLink(),
+  );
+  readonly brandLogoSrc = computed(() =>
+    this.auth.isAuthenticated() ? '/imgs/logo-nova-era.webp' : '/imgs/logo-nova-era-low-res.webp',
+  );
+  readonly brandLogoAlt = computed(() =>
+    this.auth.isAuthenticated() ? 'Logo Watchpoint' : 'Logo Copa Overwatch Nova Era',
+  );
   readonly mobileOpen = signal(false);
   readonly mobileMenuId = 'ow-mobile-menu';
 

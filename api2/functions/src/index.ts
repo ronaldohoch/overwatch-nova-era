@@ -8,4 +8,6 @@ import { setGlobalOptions } from 'firebase-functions/v2';
 setGlobalOptions({ region: 'southamerica-east1' });
 
 export * from './auth/auth.functions';
+export * from './times/times.functions';
 export * from './torneios/torneios.functions';
+export * from './trofeus/trofeus.functions';

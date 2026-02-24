@@ -18,6 +18,7 @@ type PublicUser = Readonly<{
   role: UserRole;
   createdAt: string;
   updatedAt: string;
+  trophies: readonly PublicTrophy[];
 }>;
 
 type AuthResult = PublicUser & Readonly<{ token: string }>;
@@ -49,6 +50,16 @@ type StoredUser = Readonly<{
   role: UserRole;
   createdAt: string;
   updatedAt: string;
+  trophies?: readonly unknown[];
+}>;
+
+type PublicTrophy = Readonly<{
+  id: string;
+  code: string;
+  name: string;
+  icon: string;
+  target: 'user' | 'team' | 'both';
+  assignedAt: string;
 }>;
 
 type MutableStoredUser = {
@@ -81,6 +92,7 @@ export class AuthService {
       role: DEFAULT_ROLE,
       createdAt: now,
       updatedAt: now,
+      trophies: [],
     };
 
     const ref = await firestore.collection(USERS_COLLECTION).add(userToStore);
@@ -307,7 +319,53 @@ export class AuthService {
       role: this.readStoredRole(raw.role),
       createdAt: raw.createdAt ?? '',
       updatedAt: raw.updatedAt ?? '',
+      trophies: this.readPublicTrophies(raw.trophies),
     };
+  }
+
+  private readPublicTrophies(value: unknown): readonly PublicTrophy[] {
+    if (!Array.isArray(value)) return [];
+
+    return value
+      .map((item) => this.toPublicTrophy(item))
+      .filter((item): item is PublicTrophy => !!item);
+  }
+
+  private toPublicTrophy(value: unknown): PublicTrophy | null {
+    if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
+
+    const raw = value as Record<string, unknown>;
+    const id = this.readOptionalString(raw['id']) ?? '';
+    const code = this.readOptionalString(raw['code']) ?? '';
+    const name = this.readOptionalString(raw['name']) ?? '';
+    const icon = this.readOptionalString(raw['icon']) ?? '🏅';
+    const target = this.readTrophyTarget(raw['target']);
+    const assignedAt = this.readOptionalString(raw['assignedAt']) ?? '';
+
+    if (!id || !code || !name) return null;
+
+    return {
+      id,
+      code,
+      name,
+      icon,
+      target,
+      assignedAt,
+    };
+  }
+
+  private readTrophyTarget(value: unknown): 'user' | 'team' | 'both' {
+    if (value === 'user' || value === 'team' || value === 'both') {
+      return value;
+    }
+    return 'both';
+  }
+
+  private readOptionalString(value: unknown): string | null {
+    if (typeof value !== 'string') return null;
+
+    const normalized = value.trim();
+    return normalized || null;
   }
 
   private readStoredRole(role: unknown): UserRole {

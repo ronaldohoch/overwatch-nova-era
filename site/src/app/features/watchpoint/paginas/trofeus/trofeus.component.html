@@ -1,0 +1,271 @@
+<div class="my-8 space-y-6">
+  <div class="flex flex-wrap items-start justify-between gap-4">
+    <div class="space-y-2">
+      <h1 class="text-4xl font-black leading-tight text-(--ow-gray-900) lg:text-5xl">
+        Gestao de trofeus
+      </h1>
+      <p class="text-(--ow-gray-500)">
+        Cadastre trofeus e conceda para usuarios ou times.
+      </p>
+    </div>
+  </div>
+
+  @if (loadingMessage(); as loadingMessage) {
+    <p class="text-sm font-medium text-red-600">{{ loadingMessage }}</p>
+  }
+
+  <div class="grid gap-4 xl:grid-cols-2">
+    <ow-card cardClass="h-full">
+      <div class="space-y-4">
+        <h2 class="text-xl font-black text-(--ow-gray-900)">Conceder trofeu</h2>
+
+        @if (!canAward()) {
+          <p class="text-sm text-red-600">Apenas admin ou streamer pode conceder trofeus.</p>
+        } @else {
+          <form class="space-y-3" novalidate (submit)="onAwardTrophy($event)">
+            <label class="flex flex-col gap-2 text-sm font-semibold text-(--ow-gray-700)">
+              Trofeu
+              <select
+                class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none"
+                [value]="awardForm().trophyId"
+                [disabled]="awarding()"
+                (change)="updateAwardField('trophyId', $any($event.target).value)"
+              >
+                <option value="">Selecione um trofeu</option>
+                @for (item of catalog(); track item.id) {
+                  <option [value]="item.id">{{ item.icon }} {{ item.name }} ({{ item.code }})</option>
+                }
+              </select>
+            </label>
+
+            <label class="flex flex-col gap-2 text-sm font-semibold text-(--ow-gray-700)">
+              Tipo de alvo
+              <select
+                class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none"
+                [value]="awardForm().targetType"
+                [disabled]="awarding()"
+                (change)="updateAwardField('targetType', $any($event.target).value)"
+              >
+                <option value="user">Usuario</option>
+                <option value="team">Time</option>
+              </select>
+            </label>
+
+            <label class="flex flex-col gap-2 text-sm font-semibold text-(--ow-gray-700)">
+              {{ targetIdentifierLabel() }}
+              <input
+                type="text"
+                [placeholder]="targetIdentifierPlaceholder()"
+                class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none"
+                [value]="awardForm().targetIdentifier"
+                [disabled]="awarding()"
+                (input)="updateAwardField('targetIdentifier', $any($event.target).value)"
+              />
+            </label>
+
+            <label class="flex flex-col gap-2 text-sm font-semibold text-(--ow-gray-700)">
+              Motivo (opcional)
+              <input
+                type="text"
+                placeholder="Ex: MVP da rodada"
+                class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none"
+                [value]="awardForm().reason"
+                [disabled]="awarding()"
+                (input)="updateAwardField('reason', $any($event.target).value)"
+              />
+            </label>
+
+            <div class="flex justify-end">
+              <ow-btn type="submit" [disabled]="awarding()">
+                @if (awarding()) {
+                  Concedendo...
+                } @else {
+                  Conceder trofeu
+                }
+              </ow-btn>
+            </div>
+          </form>
+
+          @if (awardMessage(); as awardMessage) {
+            <p class="text-sm font-medium" [class.text-green-700]="awardStatus() === 'success'" [class.text-red-600]="awardStatus() === 'error'">
+              {{ awardMessage }}
+            </p>
+          }
+        }
+      </div>
+    </ow-card>
+
+    <ow-card cardClass="h-full">
+      <div class="space-y-4">
+        <h2 class="text-xl font-black text-(--ow-gray-900)">Cadastrar trofeu</h2>
+
+        @if (!canCreateCatalog()) {
+          <p class="text-sm text-(--ow-gray-600)">
+            Apenas admins podem cadastrar trofeus. Streamers podem apenas conceder.
+          </p>
+        } @else {
+          <form class="space-y-3" novalidate (submit)="onCreateTrophy($event)">
+            <label class="flex flex-col gap-2 text-sm font-semibold text-(--ow-gray-700)">
+              Nome
+              <input
+                type="text"
+                placeholder="Ex: Check-in Pro"
+                class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none"
+                [value]="createForm().name"
+                [disabled]="creating()"
+                (input)="updateCreateField('name', $any($event.target).value)"
+              />
+            </label>
+
+            <label class="flex flex-col gap-2 text-sm font-semibold text-(--ow-gray-700)">
+              Codigo (opcional)
+              <input
+                type="text"
+                placeholder="Ex: checkin-pro"
+                class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none"
+                [value]="createForm().code"
+                [disabled]="creating()"
+                (input)="updateCreateField('code', $any($event.target).value)"
+              />
+            </label>
+
+            <label class="flex flex-col gap-2 text-sm font-semibold text-(--ow-gray-700)">
+              Descricao (opcional)
+              <input
+                type="text"
+                placeholder="Ex: Realizou check-in em eventos oficiais"
+                class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none"
+                [value]="createForm().description"
+                [disabled]="creating()"
+                (input)="updateCreateField('description', $any($event.target).value)"
+              />
+            </label>
+
+            <div class="grid gap-3 md:grid-cols-2">
+              <label class="flex flex-col gap-2 text-sm font-semibold text-(--ow-gray-700)">
+                Icone
+                <input
+                  type="text"
+                  class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none"
+                  [value]="createForm().icon"
+                  [disabled]="creating()"
+                  (input)="updateCreateField('icon', $any($event.target).value)"
+                />
+              </label>
+
+              <label class="flex flex-col gap-2 text-sm font-semibold text-(--ow-gray-700)">
+                Alvo
+                <select
+                  class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none"
+                  [value]="createForm().target"
+                  [disabled]="creating()"
+                  (change)="updateCreateField('target', $any($event.target).value)"
+                >
+                  <option value="both">Usuarios e times</option>
+                  <option value="user">Usuarios</option>
+                  <option value="team">Times</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="grid gap-3 md:grid-cols-2">
+              <label class="flex items-center gap-2 text-sm font-semibold text-(--ow-gray-700)">
+                <input
+                  type="checkbox"
+                  [checked]="createForm().active"
+                  [disabled]="creating()"
+                  (change)="updateCreateField('active', $any($event.target).checked)"
+                />
+                Trofeu ativo
+              </label>
+
+              <label class="flex items-center gap-2 text-sm font-semibold text-(--ow-gray-700)">
+                <input
+                  type="checkbox"
+                  [checked]="createForm().automationEnabled"
+                  [disabled]="creating()"
+                  (change)="updateCreateField('automationEnabled', $any($event.target).checked)"
+                />
+                Concessao automatica
+              </label>
+            </div>
+
+            @if (createForm().automationEnabled) {
+              <label class="flex flex-col gap-2 text-sm font-semibold text-(--ow-gray-700)">
+                Evento automatico
+                <select
+                  class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none"
+                  [value]="createForm().automationEvent"
+                  [disabled]="creating()"
+                  (change)="updateCreateField('automationEvent', $any($event.target).value)"
+                >
+                  @for (eventOption of availableAutomationEvents; track eventOption.value) {
+                    <option [value]="eventOption.value">{{ eventOption.label }}</option>
+                  }
+                </select>
+              </label>
+            }
+
+            <div class="flex justify-end">
+              <ow-btn type="submit" [disabled]="creating()">
+                @if (creating()) {
+                  Cadastrando...
+                } @else {
+                  Cadastrar trofeu
+                }
+              </ow-btn>
+            </div>
+          </form>
+
+          @if (createMessage(); as createMessage) {
+            <p class="text-sm font-medium" [class.text-green-700]="createStatus() === 'success'" [class.text-red-600]="createStatus() === 'error'">
+              {{ createMessage }}
+            </p>
+          }
+        }
+      </div>
+    </ow-card>
+  </div>
+
+  <ow-card>
+    <div class="space-y-4">
+      <h2 class="text-xl font-black text-(--ow-gray-900)">Catalogo de trofeus</h2>
+
+      @if (loading()) {
+        <p class="text-sm text-(--ow-gray-600)">Carregando catalogo...</p>
+      } @else if (catalog().length === 0) {
+        <p class="text-sm text-(--ow-gray-600)">Nenhum trofeu cadastrado.</p>
+      } @else {
+        <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+          @for (item of catalog(); track item.id) {
+            <article class="ow-trophy-catalog-item">
+              <div class="flex items-center justify-between gap-2">
+                <p class="text-sm font-black uppercase text-(--ow-gray-900)">
+                  {{ item.icon }} {{ item.name }}
+                </p>
+                <span class="ow-trophy-pill" [class.ow-trophy-pill-inactive]="!item.active">
+                  {{ item.active ? 'Ativo' : 'Inativo' }}
+                </span>
+              </div>
+
+              <p class="mt-1 text-xs text-(--ow-gray-600)">Codigo: {{ item.code }}</p>
+              <p class="mt-1 text-xs text-(--ow-gray-600)">Alvo: {{ item.targetLabel }}</p>
+
+              @if (item.automationEnabled) {
+                <p class="mt-1 text-xs text-(--ow-blue-dark)">
+                  Automacao: {{ item.automationEvent || 'evento nao informado' }}
+                </p>
+              }
+
+              @if (item.description) {
+                <p class="mt-2 text-xs text-(--ow-gray-700)">
+                  {{ item.description }}
+                </p>
+              }
+            </article>
+          }
+        </div>
+      }
+    </div>
+  </ow-card>
+</div>

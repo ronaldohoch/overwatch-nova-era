@@ -1,11 +1,12 @@
 import { isPlatformBrowser } from '@angular/common';
 import { Component, PLATFORM_ID, computed, inject, signal } from '@angular/core';
 import { OwRouletteComponent, type RouletteEntry } from '../../component/ow-roulette/ow-roulette.component';
+import { ModalHostComponent } from '../../../../../../shared/modal/modal-host.component';
 import { OW_ROULETTE_SESSION_STORAGE_KEY, type OwRouletteListItem } from './ow-roulette-session-storage';
 
 @Component({
   selector: 'app-roleta',
-  imports: [OwRouletteComponent],
+  imports: [OwRouletteComponent, ModalHostComponent],
   templateUrl: './roleta.component.html',
   styleUrl: './roleta.component.css',
 })
@@ -56,7 +57,12 @@ export class RoletaComponent {
         if (!name) return null;
 
         const id = this.readString(item, 'id') ?? `item-${index + 1}`;
-        const rouletteItem: OwRouletteListItem = { id, name };
+        const rouletteItem: OwRouletteListItem = {
+          id,
+          name,
+          battletag: this.readString(item, 'battletag'),
+          displayName: this.readString(item, 'displayName'),
+        };
         return rouletteItem;
       })
       .filter((item): item is RouletteEntry => item !== null);

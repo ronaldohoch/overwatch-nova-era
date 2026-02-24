@@ -6,13 +6,23 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between items-center">
         <a
-          class="py-4 inline-flex items-center gap-3 font-extrabold uppercase tracking-[0.15em] text-slate-900 no-underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#f06314] focus-visible:ring-offset-2"
-          [routerLink]="brandLink()"
+          class="inline-flex items-center gap-3 text-slate-900 no-underline focus:outline-none focus-visible:ring-2 focus-visible:ring-[#f06314] focus-visible:ring-offset-2"
+          [routerLink]="brandRouterLink()"
           (click)="closeMobile()"
         >
-          Copa
-          <span class="text-[#f06314]">Overwatch</span>
-          <span>Nova Era</span>
+          <img
+            [src]="brandLogoSrc()"
+            [alt]="brandLogoAlt()"
+            class="h-11 w-11 rounded-md border border-[#f06314]/40 object-cover"
+          />
+          <span class="flex flex-col leading-tight">
+            <span class="text-[0.65rem] font-black uppercase tracking-[0.2em] text-[#f06314]">
+              @if (auth.isAuthenticated()) { Watchpoint } @else { Copa Overwatch }
+            </span>
+            <span class="text-[0.72rem] font-black uppercase tracking-[0.14em] text-slate-900">
+              @if (auth.isAuthenticated()) { Area Logada } @else { Nova Era }
+            </span>
+          </span>
         </a>
 
         <div class="hidden md:flex items-center gap-1">
@@ -25,9 +35,13 @@
                 <span class="text-[0.62rem] font-black uppercase tracking-widest text-(--ow-gray-500)">
                   {{ userRoleLabel() }}
                 </span>
-                <span class="text-[0.7rem] font-black uppercase tracking-widest text-(--ow-orange)">
+                <a
+                  [routerLink]="userProfileLink"
+                  (click)="closeMobile()"
+                  class="text-[0.7rem] font-black uppercase tracking-widest text-(--ow-orange) no-underline hover:text-[#d14e0a] transition-colors duration-200"
+                >
                   {{ userDisplayName() }}
-                </span>
+                </a>
               </div>
               @if (compactLoggedLinks()) {
                 <button
@@ -86,9 +100,13 @@
                 <p class="text-[0.62rem] font-black uppercase tracking-widest text-(--ow-gray-500)">
                   {{ userRoleLabel() }}
                 </p>
-                <p class="mb-3 text-[0.72rem] font-black uppercase tracking-widest text-(--ow-orange)">
+                <a
+                  [routerLink]="userProfileLink"
+                  (click)="closeMobile()"
+                  class="mb-3 block text-[0.72rem] font-black uppercase tracking-widest text-(--ow-orange) no-underline hover:text-[#d14e0a] transition-colors duration-200"
+                >
                   {{ userDisplayName() }}
-                </p>
+                </a>
                 <ow-btn [variant]="'secondary'" (click)="logout()">Sair</ow-btn>
               </div>
             } @else {

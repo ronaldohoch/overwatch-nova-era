@@ -1,0 +1,100 @@
+<div class="my-8">
+  <div class="space-y-2">
+    <h1 class="text-4xl font-black leading-tight text-(--ow-gray-900) lg:text-5xl">
+      {{ pageTitle }}
+    </h1>
+    <p class="text-(--ow-gray-500)">
+      {{ pageDescription }}
+    </p>
+  </div>
+
+  <form class="mt-6 space-y-5" novalidate (submit)="onSubmit($event)">
+    <div class="space-y-1.5">
+      <label for="time-name" class="text-sm font-semibold text-(--ow-gray-700)">
+        Nome do time
+      </label>
+      <input
+        id="time-name"
+        type="text"
+        placeholder="Ex: Team Nova Era"
+        class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
+        [value]="form().name"
+        (input)="updateField('name', $any($event.target).value)"
+        (blur)="markTouched('name')"
+      />
+      @if (fieldError('name'); as error) {
+        <p class="text-sm font-medium text-red-600">{{ error }}</p>
+      }
+    </div>
+
+    <div class="space-y-1.5">
+      <label for="time-category" class="text-sm font-semibold text-(--ow-gray-700)">
+        Categoria
+      </label>
+      <select
+        id="time-category"
+        class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light) disabled:cursor-not-allowed disabled:bg-(--ow-gray-100)"
+        [disabled]="!canChooseRandomCategory()"
+        [value]="form().category"
+        (change)="updateField('category', $any($event.target).value)"
+        (blur)="markTouched('category')"
+      >
+        <option value="formed">Time com participantes selecionados</option>
+        @if (canChooseRandomCategory()) {
+          <option value="random">Time com participantes sorteados</option>
+        }
+      </select>
+      @if (!canChooseRandomCategory()) {
+        <p class="text-xs font-medium text-(--ow-gray-600)">
+          Para membro, a categoria permanece travada em time com participantes selecionados.
+        </p>
+      }
+      @if (fieldError('category'); as error) {
+        <p class="text-sm font-medium text-red-600">{{ error }}</p>
+      }
+    </div>
+
+    @if (canChooseRandomCategory()) {
+      <div class="space-y-1.5">
+        <label class="flex items-start gap-2 text-sm font-semibold text-(--ow-gray-700)">
+          <input
+            type="checkbox"
+            class="mt-0.5 h-4 w-4 rounded border border-(--ow-gray-300) text-(--ow-orange) focus:ring-(--ow-orange-light)"
+            [checked]="skipCreatorAsCaptain()"
+            (change)="updateSkipCreatorAsCaptain($any($event.target).checked)"
+          />
+          <span>Nao me adicionar como capitao ao criar este time.</span>
+        </label>
+        <p class="text-xs font-medium text-(--ow-gray-600)">
+          Ao marcar esta opcao, o time sera criado sem voce na lista de membros.
+        </p>
+      </div>
+    }
+
+    <div class="flex flex-row-reverse">
+      <ow-btn type="submit" [disabled]="!canSubmit()">
+        @if (pending()) {
+          Cadastrando...
+        } @else {
+          Cadastrar time
+        }
+      </ow-btn>
+    </div>
+
+    @if (!auth.isAuthenticated()) {
+      <p class="text-sm font-medium text-red-600">
+        Faca login para cadastrar um time.
+      </p>
+    }
+
+    @if (message(); as message) {
+      <p
+        class="text-sm font-medium"
+        [class.text-green-700]="status() === 'success'"
+        [class.text-red-600]="status() === 'error'"
+      >
+        {{ message }}
+      </p>
+    }
+  </form>
+</div>

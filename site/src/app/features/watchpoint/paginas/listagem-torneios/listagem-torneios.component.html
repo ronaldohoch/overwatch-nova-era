@@ -9,13 +9,6 @@
       </p>
     </div>
     <div class="flex items-center gap-3 py-2">
-      <ow-btn variant="secondary-mini" [disabled]="loading()" (click)="loadTournaments()">
-        @if (loading()) {
-          Atualizando...
-        } @else {
-          Atualizar lista
-        }
-      </ow-btn>
       <ow-btn variant="primary-mini" href="/watchpoint/novo-torneio">Novo Torneio</ow-btn>
     </div>
   </div>
@@ -46,6 +39,15 @@
             >
               Editar
             </ow-btn>
+
+            @if (canShowStatusButton(tournament)) {
+              <ow-btn
+                variant="blue-mini"
+                [routerLink]="statusManagerLink(tournament.id)"
+              >
+                Alterar status
+              </ow-btn>
+            }
           }
           @if (tournament.teamMode === 'random') {
             <ow-btn variant="blue-mini" href="/watchpoint/check-in-by-tournament">Ver Check-ins</ow-btn>

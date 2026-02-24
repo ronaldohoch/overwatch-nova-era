@@ -1,6 +1,7 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
+import { AuthService } from '../../../../core/auth/auth.service';
 import { environment } from '../../../../../environments/environment';
 import { ButtonsComponent } from '../../../../shared/buttons/buttons';
 import { ListItemComponent, OwScheduleStatus } from '../../../../shared/list-item/list-item.component';
@@ -12,6 +13,7 @@ type TournamentListItem = Readonly<{
   id: string;
   name: string;
   teamMode: string;
+  status: string;
   startAtTimestamp: number;
   stageLabel: string;
   timeLabel: string;
@@ -29,14 +31,24 @@ type TournamentListItem = Readonly<{
 })
 export class ListagemTorneiosComponent {
   private readonly http = inject(HttpClient);
+  readonly auth = inject(AuthService);
   private readonly torneiosApiUrl = `${environment.apiURLTorneios}`;
 
   readonly loading = signal(false);
   readonly message = signal<string | null>(null);
   readonly tournaments = signal<readonly TournamentListItem[]>([]);
+  readonly canManageStatus = computed(() => this.auth.userRole() === 'admin');
 
   constructor() {
     void this.loadTournaments();
+  }
+
+  statusManagerLink(tournamentId: string): readonly [string, string, string] {
+    return ['/watchpoint/torneios', tournamentId, 'status'];
+  }
+
+  canShowStatusButton(tournament: TournamentListItem): boolean {
+    return this.canManageStatus() && tournament.status !== 'finished';
   }
 
   async loadTournaments(): Promise<void> {
@@ -90,6 +102,7 @@ export class ListagemTorneiosComponent {
       id,
       name,
       teamMode,
+      status,
       startAtTimestamp: this.toStartTimestamp(startAt),
       stageLabel: this.buildStageLabel(teamMode, format, maxTeams),
       timeLabel: this.toTimeLabel(startAt),

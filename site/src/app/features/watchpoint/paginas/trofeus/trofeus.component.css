@@ -1,0 +1,25 @@
+.ow-trophy-catalog-item {
+  border: 1px solid var(--ow-gray-200);
+  border-radius: 0.75rem;
+  padding: 0.75rem;
+  background: #fff;
+}
+
+.ow-trophy-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 0.15rem 0.5rem;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: #0b7a35;
+  background: rgba(52, 168, 83, 0.14);
+}
+
+.ow-trophy-pill-inactive {
+  color: #8c2f2f;
+  background: rgba(234, 67, 53, 0.12);
+}

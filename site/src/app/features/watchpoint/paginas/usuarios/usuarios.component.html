@@ -8,14 +8,6 @@
         Esta pagina e exclusiva para administradores.
       </p>
     </div>
-
-    <ow-btn variant="secondary-mini" [disabled]="loading()" (click)="loadUsers()">
-      @if (loading()) {
-        Atualizando...
-      } @else {
-        Atualizar lista
-      }
-    </ow-btn>
   </div>
 
   @if (errorMessage(); as errorMessage) {

@@ -36,7 +36,9 @@
         @if (selectedEntry(); as selected) {
           <ow-roulete-selected [text]="selected.name">
             <div owScheduleActions class="flex gap-4">
-              <ow-btn variant="secondary-mini">Adicionar ao time</ow-btn>
+              <ow-btn variant="secondary-mini" (click)="openAddToTeamModal()">
+                Adicionar ao time
+              </ow-btn>
             </div>
           </ow-roulete-selected>
         } @else {

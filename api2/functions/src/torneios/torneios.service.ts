@@ -1,5 +1,6 @@
 import { FieldValue } from 'firebase-admin/firestore';
 import { firestore } from '../firebase';
+import { grantAutomaticTrophiesForEvent } from '../trofeus/trofeus.service';
 import { CreateTorneioDto } from './dto/create-torneio.dto';
 import { UpdateTorneioDto } from './dto/update-torneio.dto';
 import { CheckinDto, Role } from './dto/checkin.dto';
@@ -33,6 +34,7 @@ const ROSTER_MAX_PER_TEAM = 8;
 
 export class TorneiosService {
   private torneiosCollection = firestore.collection('tournaments');
+  private globalTeamsCollection = firestore.collection('teams');
 
   private participantsCol(tournamentId: string) {
     return this.torneiosCollection.doc(tournamentId).collection('participants');
@@ -40,6 +42,10 @@ export class TorneiosService {
 
   private teamsCol(tournamentId: string) {
     return this.torneiosCollection.doc(tournamentId).collection('teams');
+  }
+
+  private globalTeamMembersCol(teamId: string) {
+    return this.globalTeamsCollection.doc(teamId).collection('members');
   }
 
   // ---------- helpers ----------
@@ -196,6 +202,9 @@ export class TorneiosService {
     if (!snap.exists) throw new Error(`Torneio com id ${id} não encontrado.`);
 
     const t: any = snap.data();
+    if (t.status === 'finished') {
+      throw new Error('Torneio finalizado nao pode receber edicoes.');
+    }
     const canEditCore = t.status === 'draft';
 
     const updateData: any = { updatedAt: FieldValue.serverTimestamp() };
@@ -331,6 +340,19 @@ export class TorneiosService {
         updatedAt: FieldValue.serverTimestamp(),
       });
     });
+
+    try {
+      await grantAutomaticTrophiesForEvent('tournament_random_checkin', {
+        userUid: uid,
+        reason: 'Check-in no torneio random.',
+        metadata: {
+          tournamentId,
+          role,
+        },
+      });
+    } catch (error) {
+      console.error('[trofeus] Falha ao conceder trofeu automatico (random checkin):', error);
+    }
 
     const participant = await pRef.get();
     return { id: participant.id, ...participant.data() };
@@ -484,32 +506,96 @@ export class TorneiosService {
 
   async checkinClosedTeam(tournamentId: string, teamId: string, uid: string) {
     const tRef = this.torneiosCollection.doc(tournamentId);
-    const teamRef = this.teamsCol(tournamentId).doc(teamId);
+    const tournamentTeamRef = this.teamsCol(tournamentId).doc(teamId);
+    const globalTeamRef = this.globalTeamsCollection.doc(teamId);
+    const globalTeamMemberRef = this.globalTeamMembersCol(teamId).doc(uid);
 
     await firestore.runTransaction(async (tx) => {
       const tSnap = await tx.get(tRef);
-      if (!tSnap.exists) throw new Error('Torneio não encontrado');
+      if (!tSnap.exists) throw new Error('Torneio nao encontrado');
       const t: any = tSnap.data();
 
-      if (t.teamMode !== 'closed') throw new Error('Este torneio não é de times fechados');
+      if (t.teamMode === 'random') {
+        throw new Error('Times so podem fazer check-in em torneios nao random');
+      }
+
+      if (!(t.status === 'published' || t.status === 'checkin')) {
+        throw new Error('Check-in fechado');
+      }
 
       const now = Date.now();
       if (new Date(t.checkinDeadlineAt).getTime() < now) throw new Error('Prazo de check-in encerrado');
 
-      const teamSnap = await tx.get(teamRef);
-      if (!teamSnap.exists) throw new Error('Time não encontrado');
-      const team: any = teamSnap.data();
-
-      if (team.captainUid !== uid) throw new Error('Apenas o capitão pode fazer check-in do time');
-      if (team.checkedIn) return;
+      const [tournamentTeamSnap, globalTeamSnap, globalTeamMemberSnap] = await Promise.all([
+        tx.get(tournamentTeamRef),
+        tx.get(globalTeamRef),
+        tx.get(globalTeamMemberRef),
+      ]);
 
       const checkedInTeams = Number(t.counters?.checkedInTeams ?? 0);
-      if (checkedInTeams >= Number(t.maxTeams)) throw new Error('Limite de check-in de times atingido');
+      const maxTeams = Number(t.maxTeams);
 
-      tx.update(teamRef, {
-        checkedIn: true,
-        checkedInAt: new Date().toISOString(),
-      });
+      if (globalTeamSnap.exists) {
+        const globalTeam = (globalTeamSnap.data() ?? {}) as Record<string, unknown>;
+        const captainUid = String(globalTeam['captainUid'] ?? '').trim();
+
+        if (!captainUid) {
+          throw new Error('Este time nao possui capitao no momento');
+        }
+
+        if (!globalTeamMemberSnap.exists) {
+          throw new Error('Voce nao faz parte do time informado');
+        }
+
+        if (captainUid !== uid) {
+          throw new Error('Apenas o capitao pode fazer check-in do time');
+        }
+
+        if (tournamentTeamSnap.exists) {
+          const currentCheckin = (tournamentTeamSnap.data() ?? {}) as Record<string, unknown>;
+          if (currentCheckin['checkedIn']) return;
+        }
+
+        if (checkedInTeams >= maxTeams) {
+          throw new Error('Limite de check-in de times atingido');
+        }
+
+        tx.set(
+          tournamentTeamRef,
+          {
+            teamId,
+            name: globalTeam['name'] ?? null,
+            tag: globalTeam['tag'] ?? null,
+            category: globalTeam['category'] ?? null,
+            captainUid,
+            membersCount: Number(globalTeam['membersCount'] ?? 0),
+            source: 'global_team',
+            checkedIn: true,
+            checkedInAt: new Date().toISOString(),
+            checkedInByUid: uid,
+          },
+          { merge: true },
+        );
+      } else {
+        if (!tournamentTeamSnap.exists) throw new Error('Time nao encontrado');
+        const tournamentTeam = (tournamentTeamSnap.data() ?? {}) as Record<string, unknown>;
+
+        if (tournamentTeam['captainUid'] !== uid) {
+          throw new Error('Apenas o capitao pode fazer check-in do time');
+        }
+
+        if (tournamentTeam['checkedIn']) return;
+
+        if (checkedInTeams >= maxTeams) {
+          throw new Error('Limite de check-in de times atingido');
+        }
+
+        tx.update(tournamentTeamRef, {
+          checkedIn: true,
+          checkedInAt: new Date().toISOString(),
+          checkedInByUid: uid,
+        });
+      }
 
       tx.update(tRef, {
         'counters.checkedInTeams': FieldValue.increment(1),
@@ -517,7 +603,21 @@ export class TorneiosService {
       });
     });
 
-    const updated = await teamRef.get();
+    try {
+      await grantAutomaticTrophiesForEvent('tournament_closed_team_checkin', {
+        userUid: uid,
+        teamId,
+        reason: 'Check-in de time em torneio fechado.',
+        metadata: {
+          tournamentId,
+          teamId,
+        },
+      });
+    } catch (error) {
+      console.error('[trofeus] Falha ao conceder trofeu automatico (closed team checkin):', error);
+    }
+
+    const updated = await tournamentTeamRef.get();
     return { id: updated.id, ...updated.data() };
   }
 
@@ -661,3 +761,4 @@ export class TorneiosService {
 }
 
 export const torneiosSvc = new TorneiosService();
+

@@ -2,7 +2,6 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { AUTH_API_BASE_URL } from '../../../../core/auth/auth.tokens';
-import { ButtonsComponent } from '../../../../shared/buttons/buttons';
 import { ListItemComponent, type OwScheduleStatus } from '../../../../shared/list-item/list-item.component';
 
 type RawRecord = Readonly<Record<string, unknown>>;
@@ -26,7 +25,7 @@ type RoleInfo = Readonly<{
 @Component({
   selector: 'app-usuarios',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ListItemComponent, ButtonsComponent],
+  imports: [ListItemComponent],
   templateUrl: './usuarios.component.html',
   styleUrl: './usuarios.component.css',
 })
