@@ -131,7 +131,16 @@ app.get('/:id', authMiddleware, async (req, res) => {
 
 app.get('/:id/members', authMiddleware, async (req, res) => {
   try {
-    const members = await timesSvc.listMembers(req.params.id);
+    const uid = getUid(req);
+    if (!uid) {
+      return res.status(401).json({ statusCode: 401, message: 'Unauthorized' });
+    }
+
+    const members = await timesSvc.listMembers(req.params.id, {
+      uid,
+      role: getRole(req),
+    });
+
     res.status(200).json(members);
     return;
   } catch (error: unknown) {
@@ -237,6 +246,31 @@ app.delete('/:id/members/me', authMiddleware, async (req, res) => {
   }
 });
 
+app.delete('/:id/members/:uid', authMiddleware, async (req, res) => {
+  try {
+    const actorUid = getUid(req);
+    if (!actorUid) {
+      return res.status(401).json({ statusCode: 401, message: 'Unauthorized' });
+    }
+
+    const result = await timesSvc.removeMemberAsAdmin(
+      req.params.id,
+      {
+        uid: actorUid,
+        role: getRole(req),
+      },
+      req.params.uid,
+    );
+
+    res.status(200).json(result);
+    return;
+  } catch (error: unknown) {
+    logger.error(`Erro ao remover membro ${req.params.uid} do time ${req.params.id}:`, error);
+    sendError(res, error, 400, 'Bad request');
+    return;
+  }
+});
+
 app.post('/:id/captain', authMiddleware, async (req, res) => {
   try {
     const uid = getUid(req);
@@ -244,7 +278,14 @@ app.post('/:id/captain', authMiddleware, async (req, res) => {
       return res.status(401).json({ statusCode: 401, message: 'Unauthorized' });
     }
 
-    const result = await timesSvc.transferCaptain(req.params.id, uid, req.body);
+    const result = await timesSvc.transferCaptain(
+      req.params.id,
+      {
+        uid,
+        role: getRole(req),
+      },
+      req.body,
+    );
     res.status(200).json(result);
     return;
   } catch (error: unknown) {

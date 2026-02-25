@@ -1,0 +1,16 @@
+export { AwardTargetType } from './award-target-type.type';
+export { AwardMode } from './award-mode.type';
+export { TrophyActorRole } from './trophy-actor-role.type';
+export { TrophyTarget } from './trophy-target.type';
+export { TrophyActor } from './trophy-actor.interface';
+export { TrophySummary } from './trophy-summary.interface';
+export { TrophyAutomation } from './trophy-automation.interface';
+export { StoredTrophyCatalog } from './stored-trophy-catalog.interface';
+export { StoredTrophyAssignment } from './stored-trophy-assignment.interface';
+export { CreateTrophyDto } from './create-trophy-dto.interface';
+export { AwardTrophyDto } from './award-trophy-dto.interface';
+export { AutomaticAwardContext } from './automatic-award-context.interface';
+export { CatalogEntity } from './catalog-entity.interface';
+export { AwardResult } from './award-result.interface';
+export { AutomaticAwardResult } from './automatic-award-result.interface';
+export { ErrorWithStatus } from './error-with-status.interface';

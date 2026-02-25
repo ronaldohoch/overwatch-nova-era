@@ -6,7 +6,7 @@ import { environment } from '../../../../../environments/environment';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { ButtonsComponent } from '../../../../shared/buttons/buttons';
 
-const TEAM_FIELDS = ['name', 'category'] as const;
+const TEAM_FIELDS = ['name', 'description', 'groupLink', 'category'] as const;
 
 type TeamField = (typeof TEAM_FIELDS)[number];
 type TeamCategory = 'formed' | 'random';
@@ -14,6 +14,8 @@ type SubmitStatus = 'success' | 'error';
 
 type TeamFormValue = Readonly<{
   name: string;
+  description: string;
+  groupLink: string;
   category: TeamCategory;
 }>;
 
@@ -21,6 +23,8 @@ type TeamErrors = Readonly<Record<TeamField, string[]>>;
 
 type CreateTeamPayload = Readonly<{
   name: string;
+  description?: string;
+  groupLink?: string;
   category: TeamCategory;
 }>;
 
@@ -40,11 +44,15 @@ export class TimesCadastroComponent {
 
   readonly form = signal<TeamFormValue>({
     name: '',
+    description: '',
+    groupLink: '',
     category: 'formed',
   });
 
   readonly touched = signal<Record<TeamField, boolean>>({
     name: false,
+    description: false,
+    groupLink: false,
     category: false,
   });
 
@@ -144,8 +152,13 @@ export class TimesCadastroComponent {
   }
 
   private toPayload(value: TeamFormValue): CreateTeamPayload {
+    const description = value.description.trim();
+    const groupLink = value.groupLink.trim();
+
     return {
       name: value.name.trim(),
+      ...(description ? { description } : {}),
+      ...(groupLink ? { groupLink } : {}),
       category: this.canChooseRandomCategory() ? value.category : 'formed',
     };
   }
@@ -172,6 +185,8 @@ export class TimesCadastroComponent {
 
   private validateForm(value: TeamFormValue): TeamErrors {
     const nameErrors: string[] = [];
+    const descriptionErrors: string[] = [];
+    const groupLinkErrors: string[] = [];
     const categoryErrors: string[] = [];
 
     const name = value.name.trim();
@@ -179,6 +194,20 @@ export class TimesCadastroComponent {
       nameErrors.push('Informe o nome do time.');
     } else if (name.length > 80) {
       nameErrors.push('Nome do time deve ter no máximo 80 caracteres.');
+    }
+
+    const description = value.description.trim();
+    if (description.length > 240) {
+      descriptionErrors.push('DescriÃ§Ã£o deve ter no mÃ¡ximo 240 caracteres.');
+    }
+
+    const groupLink = value.groupLink.trim();
+    if (groupLink) {
+      if (groupLink.length > 500) {
+        groupLinkErrors.push('Link do grupo deve ter no mÃ¡ximo 500 caracteres.');
+      } else if (!/^https?:\/\//i.test(groupLink)) {
+        groupLinkErrors.push('Link do grupo deve comeÃ§ar com http:// ou https://.');
+      }
     }
 
     if (this.canChooseRandomCategory()) {
@@ -191,6 +220,8 @@ export class TimesCadastroComponent {
 
     return {
       name: nameErrors,
+      description: descriptionErrors,
+      groupLink: groupLinkErrors,
       category: categoryErrors,
     };
   }

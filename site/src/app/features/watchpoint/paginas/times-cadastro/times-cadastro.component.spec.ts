@@ -102,4 +102,31 @@ describe('TimesCadastroComponent', () => {
     expect(component.message()).toContain('sem capitão');
     expect(component.status()).toBe('success');
   });
+
+  it('should send description and groupLink when informed', async () => {
+    authMock.role.set('admin');
+    createComponent();
+
+    component.updateField('name', 'Time com Info');
+    component.updateField('description', 'Time oficial da comunidade.');
+    component.updateField('groupLink', 'https://chat.whatsapp.com/invite-example');
+    component.updateField('category', 'formed');
+
+    const submitPromise = component.onSubmit(new Event('submit'));
+
+    const createRequest = httpController.expectOne(environment.apiURLTimes);
+    expect(createRequest.request.method).toBe('POST');
+    expect(createRequest.request.body).toEqual({
+      name: 'Time com Info',
+      description: 'Time oficial da comunidade.',
+      groupLink: 'https://chat.whatsapp.com/invite-example',
+      category: 'formed',
+    });
+    createRequest.flush({ id: 'team-info-1' });
+
+    await submitPromise;
+
+    expect(component.status()).toBe('success');
+  });
 });
+

@@ -1,94 +1,28 @@
 import { FieldValue } from 'firebase-admin/firestore';
 import { UserRole } from '../_enums/role.enum';
 import { firestore } from '../firebase';
+import {
+  ActorRole,
+  AddMemberDto,
+  CreateTeamDto,
+  ErrorWithStatus,
+  ParticipationScope,
+  StoredInvite,
+  StoredMember,
+  StoredTeam,
+  TeamActor,
+  TeamCategory,
+  TeamTournamentSummary,
+  TeamTournamentsOverview,
+  TeamTrophySummary,
+  TransferCaptainDto,
+} from './interfaces';
 
 const TEAM_MAX_MEMBERS = 8;
 const USERS_COLLECTION = 'users';
 const NO_CAPTAIN_LABEL = 'Sem capitao definido';
 const UNNAMED_CAPTAIN_LABEL = 'Capitao sem nome informado';
 
-type TeamCategory = 'formed' | 'random';
-type InviteStatus = 'pending';
-type ActorRole = UserRole | 'unknown';
-
-type TeamActor = Readonly<{
-  uid: string;
-  role: string;
-}>;
-
-type CreateTeamDto = Readonly<{
-  name?: unknown;
-  tag?: unknown;
-  category?: unknown;
-}>;
-
-type AddMemberDto = Readonly<{
-  uid?: unknown;
-  userId?: unknown;
-  battletag?: unknown;
-}>;
-
-type TransferCaptainDto = Readonly<{
-  uid?: unknown;
-  userId?: unknown;
-}>;
-
-type StoredTeam = Readonly<{
-  name: string;
-  tag: string | null;
-  category: TeamCategory;
-  captainUid: string | null;
-  createdByUid: string;
-  membersCount: number;
-  createdAt: string;
-  updatedAt: string | FirebaseFirestore.FieldValue;
-  trophies: readonly unknown[];
-}>;
-
-type StoredMember = Readonly<{
-  uid: string;
-  joinedAt: string;
-  addedByUid: string;
-  addedByRole: ActorRole;
-  source: 'creator' | 'admin_add' | 'invite_accept';
-}>;
-
-type StoredInvite = Readonly<{
-  uid: string;
-  status: InviteStatus;
-  invitedByUid: string;
-  invitedByRole: ActorRole;
-  invitedAt: string;
-  updatedAt: string;
-}>;
-
-type TeamTournamentSummary = Readonly<{
-  id: string;
-  name: string;
-  status: string;
-  teamMode: string;
-  checkedIn: boolean;
-  startAt: string | null;
-  checkinDeadlineAt: string | null;
-  participationScope: 'participa' | 'participou';
-  participationLabel: string;
-  trophyLabels: readonly string[];
-}>;
-
-type TeamTrophySummary = Readonly<{
-  tournamentId: string;
-  tournamentName: string;
-  label: string;
-  icon: string;
-}>;
-
-type TeamTournamentsOverview = Readonly<{
-  teamId: string;
-  tournaments: readonly TeamTournamentSummary[];
-  trophies: readonly TeamTrophySummary[];
-}>;
-
-type ErrorWithStatus = Error & { statusCode?: number };
 
 function fail(message: string, statusCode: number): never {
   const error = new Error(message) as ErrorWithStatus;
@@ -151,6 +85,37 @@ export class TimesService {
     const normalized = value.trim();
     if (!normalized) return null;
     if (normalized.length > 16) fail('Tag do time deve ter no maximo 16 caracteres.', 400);
+    return normalized;
+  }
+
+  private parseDescription(value: unknown): string | null {
+    if (value == null) return null;
+    if (typeof value !== 'string') fail('Descricao do time invalida.', 400);
+
+    const normalized = value.trim();
+    if (!normalized) return null;
+    if (normalized.length > 240) fail('Descricao do time deve ter no maximo 240 caracteres.', 400);
+    return normalized;
+  }
+
+  private parseGroupLink(value: unknown): string | null {
+    if (value == null) return null;
+    if (typeof value !== 'string') fail('groupLink invalido.', 400);
+
+    const normalized = value.trim();
+    if (!normalized) return null;
+    if (normalized.length > 500) fail('groupLink deve ter no maximo 500 caracteres.', 400);
+
+    try {
+      const parsed = new URL(normalized);
+      const protocol = parsed.protocol.toLowerCase();
+      if (protocol !== 'http:' && protocol !== 'https:') {
+        fail('groupLink deve usar http ou https.', 400);
+      }
+    } catch {
+      fail('groupLink invalido.', 400);
+    }
+
     return normalized;
   }
 
@@ -374,6 +339,8 @@ export class TimesService {
     const actorUid = this.parseUid(actor.uid, 'uid');
     const actorRole = this.parseRole(actor.role);
     const name = this.parseName(body?.name);
+    const description = this.parseDescription(body?.description);
+    const groupLink = this.parseGroupLink(body?.groupLink);
     const tag = this.parseTag(body?.tag);
     const category = this.parseTeamCategory(body?.category);
 
@@ -389,6 +356,8 @@ export class TimesService {
 
     const teamDoc: StoredTeam = {
       name,
+      description,
+      groupLink,
       tag,
       category,
       captainUid: actorUid,
@@ -432,8 +401,12 @@ export class TimesService {
     });
   }
 
-  async listMembers(teamId: string) {
+  async listMembers(teamId: string, actor: TeamActor) {
     const normalizedTeamId = this.parseUid(teamId, 'teamId');
+    this.parseUid(actor.uid, 'uid');
+    const actorRole = this.parseRole(actor.role);
+    const canViewContact = actorRole === UserRole.ADMIN;
+
     const teamSnapshot = await this.teamsCollection.doc(normalizedTeamId).get();
     if (!teamSnapshot.exists) {
       fail('Time nao encontrado.', 404);
@@ -477,12 +450,20 @@ export class TimesService {
         this.normalizeOptionalString(user?.['battletag']) ??
         this.normalizeOptionalString(member['battletag']) ??
         'Sem battletag';
+      const email =
+        this.normalizeOptionalString(user?.['email']) ??
+        this.normalizeOptionalString(member['email']);
+      const whatsapp =
+        this.normalizeOptionalString(user?.['whatsapp']) ??
+        this.normalizeOptionalString(member['whatsapp']);
 
       return {
         ...member,
         uid,
         displayName,
         battletag,
+        email: canViewContact ? email : null,
+        whatsapp: canViewContact ? whatsapp : null,
         isCaptain: !!uid && !!captainUid && uid === captainUid,
       };
     });
@@ -504,48 +485,115 @@ export class TimesService {
     return this.enrichTeamsWithCaptainName(teams);
   }
 
+  private isFailedPreconditionError(error: unknown): boolean {
+    if (!error || typeof error !== 'object') return false;
+
+    const code = (error as { code?: unknown }).code;
+    if (code === 9 || code === '9' || code === 'failed-precondition') {
+      return true;
+    }
+
+    const message = (error as { message?: unknown }).message;
+    return typeof message === 'string' && message.includes('FAILED_PRECONDITION');
+  }
+
+  private async listMyTeamsWithoutCollectionGroup(normalizedUid: string) {
+    const teamsSnapshot = await this.teamsCollection
+      .orderBy('createdAt', 'desc')
+      .get();
+
+    if (teamsSnapshot.empty) return [];
+
+    const teamItems = teamsSnapshot.docs.map((doc) => ({
+      id: doc.id,
+      data: (doc.data() ?? {}) as Record<string, unknown>,
+    }));
+
+    const captainTeamIds = new Set<string>();
+    const memberRefs: FirebaseFirestore.DocumentReference[] = [];
+    const memberRefTeamIds: string[] = [];
+
+    for (const item of teamItems) {
+      if (item.data['captainUid'] === normalizedUid) {
+        captainTeamIds.add(item.id);
+        continue;
+      }
+
+      memberRefs.push(this.membersCol(item.id).doc(normalizedUid));
+      memberRefTeamIds.push(item.id);
+    }
+
+    const memberTeamIds = new Set<string>();
+    for (let index = 0; index < memberRefs.length; index += 300) {
+      const chunkRefs = memberRefs.slice(index, index + 300);
+      const chunkTeamIds = memberRefTeamIds.slice(index, index + 300);
+      const chunkSnapshots = await firestore.getAll(...chunkRefs);
+
+      chunkSnapshots.forEach((snapshot, chunkIndex) => {
+        if (!snapshot.exists) return;
+        const teamId = chunkTeamIds[chunkIndex];
+        if (teamId) memberTeamIds.add(teamId);
+      });
+    }
+
+    const teams = teamItems
+      .filter((item) => captainTeamIds.has(item.id) || memberTeamIds.has(item.id))
+      .map((item) => ({
+        id: item.id,
+        ...item.data,
+        isCaptain: item.data['captainUid'] === normalizedUid,
+      }));
+
+    return this.enrichTeamsWithCaptainName(teams);
+  }
+
   async listMyTeams(uid: string) {
     const normalizedUid = this.parseUid(uid, 'uid');
 
-    const memberEntries = await firestore
-      .collectionGroup('members')
-      .where('uid', '==', normalizedUid)
-      .get();
+    try {
+      const memberEntries = await firestore
+        .collectionGroup('members')
+        .where('uid', '==', normalizedUid)
+        .get();
 
-    if (memberEntries.empty) return [];
+      if (memberEntries.empty) return [];
 
-    const teamIds = Array.from(
-      new Set(
-        memberEntries.docs
-          .map((entry) => entry.ref.parent.parent?.id ?? null)
-          .filter((id): id is string => !!id),
-      ),
-    );
+      const teamIds = Array.from(
+        new Set(
+          memberEntries.docs
+            .map((entry) => entry.ref.parent.parent?.id ?? null)
+            .filter((id): id is string => !!id),
+        ),
+      );
 
-    const teamDocs = await Promise.all(teamIds.map((id) => this.teamsCollection.doc(id).get()));
+      const teamDocs = await Promise.all(teamIds.map((id) => this.teamsCollection.doc(id).get()));
 
-    const teams = teamDocs
-      .filter((doc) => doc.exists)
-      .map((doc) => {
-        const data = (doc.data() ?? {}) as Record<string, unknown>;
-        const team: Record<string, unknown> = {
-          id: doc.id,
-          ...data,
-          isCaptain: data['captainUid'] === normalizedUid,
-        };
-        return team;
-      })
-      .sort((a, b) => {
-        const aCreatedAt = new Date(String(a['createdAt'] ?? '')).getTime();
-        const bCreatedAt = new Date(String(b['createdAt'] ?? '')).getTime();
+      const teams = teamDocs
+        .filter((doc) => doc.exists)
+        .map((doc) => {
+          const data = (doc.data() ?? {}) as Record<string, unknown>;
+          const team: Record<string, unknown> = {
+            id: doc.id,
+            ...data,
+            isCaptain: data['captainUid'] === normalizedUid,
+          };
+          return team;
+        })
+        .sort((a, b) => {
+          const aCreatedAt = new Date(String(a['createdAt'] ?? '')).getTime();
+          const bCreatedAt = new Date(String(b['createdAt'] ?? '')).getTime();
 
-        if (!Number.isFinite(aCreatedAt) && !Number.isFinite(bCreatedAt)) return 0;
-        if (!Number.isFinite(aCreatedAt)) return 1;
-        if (!Number.isFinite(bCreatedAt)) return -1;
-        return bCreatedAt - aCreatedAt;
-      });
+          if (!Number.isFinite(aCreatedAt) && !Number.isFinite(bCreatedAt)) return 0;
+          if (!Number.isFinite(aCreatedAt)) return 1;
+          if (!Number.isFinite(bCreatedAt)) return -1;
+          return bCreatedAt - aCreatedAt;
+        });
 
-    return this.enrichTeamsWithCaptainName(teams);
+      return this.enrichTeamsWithCaptainName(teams);
+    } catch (error: unknown) {
+      if (!this.isFailedPreconditionError(error)) throw error;
+      return this.listMyTeamsWithoutCollectionGroup(normalizedUid);
+    }
   }
 
   async listMyPendingInvites(uid: string) {
@@ -603,12 +651,12 @@ export class TimesService {
     return (this.normalizeOptionalString(value) ?? 'desconhecido').toLowerCase();
   }
 
-  private resolveTournamentParticipationScope(status: string): 'participa' | 'participou' {
+  private resolveTournamentParticipationScope(status: string): ParticipationScope {
     if (status === 'finished' || status === 'canceled') return 'participou';
     return 'participa';
   }
 
-  private resolveTournamentParticipationLabel(scope: 'participa' | 'participou'): string {
+  private resolveTournamentParticipationLabel(scope: ParticipationScope): string {
     return scope === 'participou' ? 'Participou' : 'Participa';
   }
 
@@ -1058,9 +1106,70 @@ export class TimesService {
     });
   }
 
-  async transferCaptain(teamId: string, actorUid: string, body: TransferCaptainDto) {
+  async removeMemberAsAdmin(teamId: string, actor: TeamActor, memberUid: string) {
     const normalizedTeamId = this.parseUid(teamId, 'teamId');
-    const normalizedActorUid = this.parseUid(actorUid, 'uid');
+    const adminUid = this.parseUid(actor.uid, 'uid');
+    const adminRole = this.parseRole(actor.role);
+    const normalizedMemberUid = this.parseUid(memberUid, 'memberUid');
+
+    if (adminRole !== UserRole.ADMIN) {
+      fail('Apenas admin pode remover membros.', 403);
+    }
+
+    const teamRef = this.teamsCollection.doc(normalizedTeamId);
+    const memberRef = this.membersCol(normalizedTeamId).doc(normalizedMemberUid);
+    const inviteRef = this.invitesCol(normalizedTeamId).doc(normalizedMemberUid);
+
+    await firestore.runTransaction(async (tx) => {
+      const teamSnapshot = await tx.get(teamRef);
+      if (!teamSnapshot.exists) {
+        fail('Time nao encontrado.', 404);
+      }
+
+      const teamData = (teamSnapshot.data() ?? {}) as Record<string, unknown>;
+      const teamCategory = String(teamData['category'] ?? '').trim().toLowerCase();
+      if (teamCategory !== 'random') {
+        fail('Admin so pode remover membros de times random.', 403);
+      }
+
+      const membersCount = this.toNonNegativeInt(teamData['membersCount']);
+      const memberSnapshot = await tx.get(memberRef);
+      if (!memberSnapshot.exists) {
+        fail('Membro nao encontrado neste time.', 404);
+      }
+
+      const nextCount = membersCount > 0 ? membersCount - 1 : 0;
+      const updates: Record<string, unknown> = {
+        membersCount: nextCount,
+        updatedAt: FieldValue.serverTimestamp(),
+        updatedByUid: adminUid,
+      };
+
+      if (teamData['captainUid'] === normalizedMemberUid) {
+        const membersSnapshot = await tx.get(this.membersCol(normalizedTeamId));
+        const remainingMemberIds = membersSnapshot.docs
+          .map((doc) => doc.id)
+          .filter((id) => id !== normalizedMemberUid);
+
+        updates['captainUid'] = remainingMemberIds.length ? remainingMemberIds[0] : null;
+      }
+
+      tx.delete(memberRef);
+      tx.delete(inviteRef);
+      tx.update(teamRef, updates);
+    });
+
+    const updated = await teamRef.get();
+    return this.enrichTeamWithCaptainName({
+      id: updated.id,
+      ...(updated.data() as Record<string, unknown>),
+    });
+  }
+
+  async transferCaptain(teamId: string, actor: TeamActor, body: TransferCaptainDto) {
+    const normalizedTeamId = this.parseUid(teamId, 'teamId');
+    const normalizedActorUid = this.parseUid(actor.uid, 'uid');
+    const actorRole = this.parseRole(actor.role);
     const targetUid = this.readDirectTargetUid(body);
     if (!targetUid) {
       fail('Informe uid ou userId do novo capitao.', 400);
@@ -1076,8 +1185,9 @@ export class TimesService {
       }
 
       const teamData = (teamSnapshot.data() ?? {}) as Record<string, unknown>;
-      if (teamData['captainUid'] !== normalizedActorUid) {
-        fail('Somente o capitao atual pode transferir a capitania.', 403);
+      const actorIsAdmin = actorRole === UserRole.ADMIN;
+      if (!actorIsAdmin && teamData['captainUid'] !== normalizedActorUid) {
+        fail('Somente o capitao atual ou admin pode transferir a capitania.', 403);
       }
 
       const targetMemberSnapshot = await tx.get(targetMemberRef);

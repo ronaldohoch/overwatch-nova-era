@@ -14,6 +14,8 @@ type ParticipationScope = 'participa' | 'participou';
 type TeamDetail = Readonly<{
   id: string;
   name: string;
+  description: string | null;
+  groupLink: string | null;
   category: TeamCategory;
   categoryLabel: string;
   captainUid: string | null;
@@ -27,6 +29,8 @@ type TeamMemberItem = Readonly<{
   uid: string;
   displayName: string;
   battletag: string;
+  email: string | null;
+  whatsapp: string | null;
   joinedAtLabel: string;
   isCaptain: boolean;
 }>;
@@ -84,6 +88,10 @@ export class TimesDetalheComponent {
   readonly leavingTeam = signal(false);
   readonly leaveTeamMessage = signal<string | null>(null);
   readonly leaveTeamError = signal(false);
+  readonly removingMemberUid = signal<string | null>(null);
+  readonly removeMemberMessage = signal<string | null>(null);
+  readonly removeMemberError = signal(false);
+  readonly contactModalMember = signal<TeamMemberItem | null>(null);
   readonly promotingCaptainUid = signal<string | null>(null);
   readonly promoteCaptainMessage = signal<string | null>(null);
   readonly promoteCaptainError = signal(false);
@@ -108,6 +116,12 @@ export class TimesDetalheComponent {
     if (!uid || !captainUid) return false;
 
     return uid === captainUid;
+  });
+  readonly isAdmin = computed(() => this.auth.userRole() === 'admin');
+  readonly canAdminRemoveMembers = computed(() => {
+    if (!this.hasTeamId()) return false;
+    if (!this.isAdmin()) return false;
+    return this.team()?.category === 'random';
   });
 
   readonly activeTournaments = computed(() =>
@@ -213,13 +227,36 @@ export class TimesDetalheComponent {
   canPromoteMember(member: TeamMemberItem): boolean {
     if (!member.uid.trim()) return false;
     if (member.isCaptain) return false;
-    if (!this.isCurrentUserCaptain()) return false;
+    if (!this.isCurrentUserCaptain() && !this.isAdmin()) return false;
 
     return this.promotingCaptainUid() === null;
   }
 
   isPromotingMember(member: TeamMemberItem): boolean {
     return this.promotingCaptainUid() === member.uid;
+  }
+
+  canRemoveMember(member: TeamMemberItem): boolean {
+    if (!this.canAdminRemoveMembers()) return false;
+    if (!member.uid.trim()) return false;
+    return this.removingMemberUid() === null;
+  }
+
+  isRemovingMember(member: TeamMemberItem): boolean {
+    return this.removingMemberUid() === member.uid;
+  }
+
+  canOpenContactModal(): boolean {
+    return this.isAdmin();
+  }
+
+  openContactModal(member: TeamMemberItem): void {
+    if (!this.canOpenContactModal()) return;
+    this.contactModalMember.set(member);
+  }
+
+  closeContactModal(): void {
+    this.contactModalMember.set(null);
   }
 
   async onPromoteCaptain(member: TeamMemberItem): Promise<void> {
@@ -232,8 +269,8 @@ export class TimesDetalheComponent {
       return;
     }
 
-    if (!this.isCurrentUserCaptain()) {
-      this.promoteCaptainMessage.set('Apenas o capitão atual pode promover outro integrante.');
+    if (!this.isCurrentUserCaptain() && !this.isAdmin()) {
+      this.promoteCaptainMessage.set('Apenas o capitão atual ou admin pode promover outro integrante.');
       this.promoteCaptainError.set(true);
       return;
     }
@@ -271,6 +308,48 @@ export class TimesDetalheComponent {
       this.promoteCaptainError.set(true);
     } finally {
       this.promotingCaptainUid.set(null);
+    }
+  }
+
+  async onRemoveMember(member: TeamMemberItem): Promise<void> {
+    this.removeMemberMessage.set(null);
+    this.removeMemberError.set(false);
+
+    if (!this.hasTeamId()) {
+      this.removeMemberMessage.set('Time invalido para remover membro.');
+      this.removeMemberError.set(true);
+      return;
+    }
+
+    if (!this.canAdminRemoveMembers()) {
+      this.removeMemberMessage.set('Somente admin pode remover membros de times random.');
+      this.removeMemberError.set(true);
+      return;
+    }
+
+    const targetUid = member.uid.trim();
+    if (!targetUid) {
+      this.removeMemberMessage.set('Membro invalido para remover.');
+      this.removeMemberError.set(true);
+      return;
+    }
+
+    this.removingMemberUid.set(targetUid);
+
+    try {
+      await firstValueFrom(
+        this.http.delete<unknown>(`${this.timesApiUrl}/${this.teamId}/members/${encodeURIComponent(targetUid)}`),
+      );
+
+      this.removeMemberMessage.set(`Integrante ${member.displayName} removido com sucesso.`);
+      this.removeMemberError.set(false);
+
+      await Promise.all([this.loadTeam(), this.loadMembers()]);
+    } catch (error: unknown) {
+      this.removeMemberMessage.set(this.resolveError(error, 'Nao foi possivel remover o integrante.'));
+      this.removeMemberError.set(true);
+    } finally {
+      this.removingMemberUid.set(null);
     }
   }
 
@@ -407,6 +486,13 @@ export class TimesDetalheComponent {
         this.readString(value, 'teamId') ??
         '',
       name: this.readString(value, 'name') ?? 'Time sem nome',
+      description:
+        this.readString(value, 'description') ??
+        this.readString(value, 'teamDescription'),
+      groupLink:
+        this.readString(value, 'groupLink') ??
+        this.readString(value, 'group_link') ??
+        this.readString(value, 'whatsappGroupLink'),
       category,
       categoryLabel: this.toCategoryLabel(category),
       captainUid:
@@ -437,6 +523,8 @@ export class TimesDetalheComponent {
       uid,
       displayName: this.readString(value, 'displayName') ?? this.readString(value, 'name') ?? 'Usuário sem nome',
       battletag: this.readString(value, 'battletag') ?? 'Sem battletag',
+      email: this.readString(value, 'email'),
+      whatsapp: this.readString(value, 'whatsapp'),
       joinedAtLabel: this.toDateTimeLabel(
         this.readString(value, 'joinedAt') ?? this.readString(value, 'createdAt'),
       ),

@@ -1,117 +1,30 @@
 import { FieldValue } from 'firebase-admin/firestore';
 import { UserRole } from '../_enums/role.enum';
 import { firestore } from '../firebase';
+import {
+  AutomaticAwardContext,
+  AutomaticAwardResult,
+  AwardMode,
+  AwardResult,
+  AwardTargetType,
+  AwardTrophyDto,
+  CatalogEntity,
+  CreateTrophyDto,
+  ErrorWithStatus,
+  StoredTrophyAssignment,
+  StoredTrophyCatalog,
+  TrophyActor,
+  TrophyActorRole,
+  TrophyAutomation,
+  TrophySummary,
+  TrophyTarget,
+} from './interfaces';
 
 const TROPHY_CATALOG_COLLECTION = 'trophyCatalog';
 const USERS_COLLECTION = 'users';
 const TEAMS_COLLECTION = 'teams';
 const DEFAULT_TROPHY_ICON = '🏅';
 
-type TrophyTarget = 'user' | 'team' | 'both';
-type AwardTargetType = 'user' | 'team';
-type AwardMode = 'manual' | 'automatic';
-
-type TrophyActor = Readonly<{
-  uid: string;
-  role: string;
-}>;
-
-type TrophySummary = Readonly<{
-  id: string;
-  code: string;
-  name: string;
-  icon: string;
-  target: TrophyTarget;
-  assignedAt: string;
-}>;
-
-type TrophyAutomation = Readonly<{
-  enabled: boolean;
-  event: string | null;
-}>;
-
-type StoredTrophyCatalog = Readonly<{
-  code: string;
-  codeLower: string;
-  name: string;
-  description: string | null;
-  icon: string;
-  target: TrophyTarget;
-  active: boolean;
-  automation: TrophyAutomation;
-  createdAt: string;
-  updatedAt: string | FirebaseFirestore.FieldValue;
-  createdByUid: string;
-  createdByRole: UserRole | 'unknown';
-}>;
-
-type StoredTrophyAssignment = Readonly<{
-  trophyId: string;
-  code: string;
-  name: string;
-  description: string | null;
-  icon: string;
-  target: TrophyTarget;
-  awardedAt: string;
-  awardedByUid: string;
-  awardedByRole: UserRole | 'streamer' | 'system' | 'unknown';
-  mode: AwardMode;
-  reason: string | null;
-  sourceEvent: string | null;
-}>;
-
-type CreateTrophyDto = Readonly<{
-  code?: unknown;
-  name?: unknown;
-  description?: unknown;
-  icon?: unknown;
-  target?: unknown;
-  active?: unknown;
-  automation?: unknown;
-}>;
-
-type AwardTrophyDto = Readonly<{
-  trophyId?: unknown;
-  trophyCode?: unknown;
-  targetType?: unknown;
-  uid?: unknown;
-  userId?: unknown;
-  battletag?: unknown;
-  teamId?: unknown;
-  teamName?: unknown;
-  reason?: unknown;
-}>;
-
-type AutomaticAwardContext = Readonly<{
-  userUid?: string;
-  teamId?: string;
-  reason?: string;
-  metadata?: Readonly<Record<string, unknown>>;
-}>;
-
-type CatalogEntity = Readonly<{
-  id: string;
-  code: string;
-  name: string;
-  description: string | null;
-  icon: string;
-  target: TrophyTarget;
-  active: boolean;
-  automation: TrophyAutomation;
-  createdAt: string;
-}>;
-
-type AwardResult = Readonly<{
-  targetType: AwardTargetType;
-  targetId: string;
-  trophyId: string;
-  trophyCode: string;
-  trophyName: string;
-  assigned: boolean;
-  alreadyAssigned: boolean;
-}>;
-
-type ErrorWithStatus = Error & { statusCode?: number };
 
 function fail(message: string, statusCode: number): never {
   const error = new Error(message) as ErrorWithStatus;
@@ -218,7 +131,7 @@ export class TrofeusService {
     fail('targetType invalido. Use user ou team.', 400);
   }
 
-  private parseRole(value: unknown): UserRole | 'streamer' | 'system' | 'unknown' {
+  private parseRole(value: unknown): TrophyActorRole {
     if (typeof value !== 'string') return 'unknown';
 
     const normalized = value.trim().toLowerCase();
@@ -328,11 +241,11 @@ export class TrofeusService {
     return snapshot.docs[0].id;
   }
 
-  private isAdmin(role: UserRole | 'streamer' | 'system' | 'unknown'): boolean {
+  private isAdmin(role: TrophyActorRole): boolean {
     return role === UserRole.ADMIN;
   }
 
-  private canAward(role: UserRole | 'streamer' | 'system' | 'unknown'): boolean {
+  private canAward(role: TrophyActorRole): boolean {
     return role === UserRole.ADMIN || role === UserRole.STREAMER;
   }
 
@@ -396,7 +309,7 @@ export class TrofeusService {
   private buildAssignmentFromCatalog(
     catalog: CatalogEntity,
     actorUid: string,
-    actorRole: UserRole | 'streamer' | 'system' | 'unknown',
+    actorRole: TrophyActorRole,
     mode: AwardMode,
     reason: string | null,
     sourceEvent: string | null,
@@ -432,7 +345,7 @@ export class TrofeusService {
     catalog: CatalogEntity,
     userUid: string,
     actorUid: string,
-    actorRole: UserRole | 'streamer' | 'system' | 'unknown',
+    actorRole: TrophyActorRole,
     mode: AwardMode,
     reason: string | null,
     sourceEvent: string | null,
@@ -494,7 +407,7 @@ export class TrofeusService {
     catalog: CatalogEntity,
     teamId: string,
     actorUid: string,
-    actorRole: UserRole | 'streamer' | 'system' | 'unknown',
+    actorRole: TrophyActorRole,
     mode: AwardMode,
     reason: string | null,
     sourceEvent: string | null,
@@ -660,7 +573,7 @@ export class TrofeusService {
   async awardAutomaticByEvent(
     eventCode: string,
     context: AutomaticAwardContext,
-  ): Promise<Readonly<{ eventCode: string; awards: readonly AwardResult[] }>> {
+  ): Promise<AutomaticAwardResult> {
     const normalizedEvent = this.parseOptionalString(eventCode);
     if (!normalizedEvent) {
       return {
@@ -682,7 +595,7 @@ export class TrofeusService {
 
     const reason = this.parseOptionalString(context.reason);
     const actorUid = 'system';
-    const actorRole: 'system' = 'system';
+    const actorRole = 'system';
     const awards: AwardResult[] = [];
 
     for (const doc of snapshot.docs) {

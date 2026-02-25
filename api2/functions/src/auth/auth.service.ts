@@ -4,67 +4,21 @@ import { JWT_SECRET } from '../_config/env';
 import { User } from '../_interfaces/users.interface';
 import { firestore } from '../firebase';
 import { UserRole } from '../_enums/role.enum';
+import {
+  AuthResult,
+  ChangePasswordPayload,
+  MutableStoredUser,
+  NormalizedUpdateUserPayload,
+  PublicTrophy,
+  PublicTrophyTarget,
+  PublicUser,
+  StoredUser,
+  UpdateUserPayload,
+} from './interfaces';
 
 const USERS_COLLECTION = 'users';
 const BCRYPT_SALT_ROUNDS = 10;
 const DEFAULT_ROLE = UserRole.COMPETIDOR;
-
-type PublicUser = Readonly<{
-  id: string;
-  displayName: string;
-  email: string;
-  battletag: string;
-  whatsapp: string;
-  role: UserRole;
-  createdAt: string;
-  updatedAt: string;
-  trophies: readonly PublicTrophy[];
-}>;
-
-type AuthResult = PublicUser & Readonly<{ token: string }>;
-
-type UpdateUserPayload = Readonly<{
-  displayName: string;
-  email: string;
-  whatsapp: string;
-}>;
-
-type NormalizedUpdateUserPayload = Readonly<{
-  displayName: string;
-  email: string;
-  whatsapp: string;
-}>;
-
-type ChangePasswordPayload = Readonly<{
-  currentPassword: string;
-  newPassword: string;
-}>;
-
-type StoredUser = Readonly<{
-  displayName: string;
-  email: string;
-  password: string;
-  battletag: string;
-  battletagLower: string;
-  whatsapp: string;
-  role: UserRole;
-  createdAt: string;
-  updatedAt: string;
-  trophies?: readonly unknown[];
-}>;
-
-type PublicTrophy = Readonly<{
-  id: string;
-  code: string;
-  name: string;
-  icon: string;
-  target: 'user' | 'team' | 'both';
-  assignedAt: string;
-}>;
-
-type MutableStoredUser = {
-  -readonly [K in keyof StoredUser]: StoredUser[K];
-};
 
 export class AuthService {
   async signUp(payload: User): Promise<AuthResult> {
@@ -354,7 +308,7 @@ export class AuthService {
     };
   }
 
-  private readTrophyTarget(value: unknown): 'user' | 'team' | 'both' {
+  private readTrophyTarget(value: unknown): PublicTrophyTarget {
     if (value === 'user' || value === 'team' || value === 'both') {
       return value;
     }

@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
-import { ButtonsComponent } from '../../../../shared/buttons/buttons';
+// import { ButtonsComponent } from '../../../../shared/buttons/buttons';
 import { StatsCardComponent } from './components/stats-card/stats-card.component';
 
 type RoleCardModel = Readonly<{
@@ -30,7 +30,7 @@ type ApiResponse = Readonly<{
 @Component({
   selector: 'app-dashboard',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ButtonsComponent, StatsCardComponent],
+  imports: [StatsCardComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
 })

@@ -28,6 +28,42 @@
     </div>
 
     <div class="space-y-1.5">
+      <label for="time-description" class="text-sm font-semibold text-(--ow-gray-700)">
+        Descrição
+      </label>
+      <textarea
+        id="time-description"
+        rows="3"
+        placeholder="Descreva o time (opcional)"
+        class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
+        [value]="form().description"
+        (input)="updateField('description', $any($event.target).value)"
+        (blur)="markTouched('description')"
+      ></textarea>
+      @if (fieldError('description'); as error) {
+        <p class="text-sm font-medium text-red-600">{{ error }}</p>
+      }
+    </div>
+
+    <div class="space-y-1.5">
+      <label for="time-group-link" class="text-sm font-semibold text-(--ow-gray-700)">
+        Link do grupo (groupLink)
+      </label>
+      <input
+        id="time-group-link"
+        type="url"
+        placeholder="https://chat.whatsapp.com/..."
+        class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
+        [value]="form().groupLink"
+        (input)="updateField('groupLink', $any($event.target).value)"
+        (blur)="markTouched('groupLink')"
+      />
+      @if (fieldError('groupLink'); as error) {
+        <p class="text-sm font-medium text-red-600">{{ error }}</p>
+      }
+    </div>
+
+    <div class="space-y-1.5">
       <label for="time-category" class="text-sm font-semibold text-(--ow-gray-700)">
         Categoria
       </label>

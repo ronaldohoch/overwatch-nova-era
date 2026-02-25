@@ -15,7 +15,7 @@ const DEFAULT_LINKS: readonly OwNavItem[] = [
     { label: 'Início', link: '/', exact: true },
     { label: 'Dúvidas frequentes', link: '/duvidas-frequentes' },
     // { label: 'Torneio', link: '/torneio' },
-    // { label: 'Times', link: '/times' },
+    { label: 'Times', link: '/times' },
     // { label: 'Agenda', link: '/agenda' },
     { label: 'Regras', link: '/regras' },
 ];

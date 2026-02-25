@@ -67,7 +67,7 @@ type TeamOption = Readonly<{
             >
               <p class="text-sm font-black uppercase text-(--ow-gray-900)">{{ team.name }}</p>
               <p class="mt-1 text-xs text-(--ow-gray-600)">
-                {{ team.membersCount }}/8 membros â€¢ {{ toCategoryLabel(team.category) }}
+                {{ team.membersCount }}/8 membros. {{ toCategoryLabel(team.category) }}
               </p>
               @if (assigningTeamId() === team.id) {
                 <p class="mt-1 text-xs font-semibold text-(--ow-orange)">Adicionando...</p>

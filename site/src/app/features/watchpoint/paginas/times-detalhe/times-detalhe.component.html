@@ -50,6 +50,25 @@
                 {{ team.categoryLabel }}
               </p>
               <p>
+                <span class="font-semibold text-(--ow-gray-900)">Descrição:</span>
+                {{ team.description || 'Não informada' }}
+              </p>
+              <p>
+                <span class="font-semibold text-(--ow-gray-900)">Grupo WhatsApp:</span>
+                @if (team.groupLink) {
+                  <a
+                    [href]="team.groupLink"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="font-semibold text-(--ow-orange-dark) underline"
+                  >
+                    Abrir grupo
+                  </a>
+                } @else {
+                  <span>Não informado</span>
+                }
+              </p>
+              <p>
                 <span class="font-semibold text-(--ow-gray-900)">Capitão:</span>
                 {{ team.captainName }}
               </p>
@@ -118,6 +137,12 @@
           </p>
         }
 
+        @if (removeMemberMessage(); as removeMemberMessage) {
+          <p class="text-sm font-medium" [class.text-red-600]="removeMemberError()" [class.text-green-700]="!removeMemberError()">
+            {{ removeMemberMessage }}
+          </p>
+        }
+
         @if (loadingMembers()) {
           <p class="text-sm text-(--ow-gray-600)">Carregando integrantes...</p>
         } @else if (members().length === 0) {
@@ -127,9 +152,24 @@
             @for (member of members(); track member.trackKey) {
               <article class="rounded-lg border border-(--ow-gray-200) bg-white p-3">
                 <div class="flex items-center justify-between gap-2">
-                  <h3 class="truncate text-sm font-black uppercase text-(--ow-gray-900)">
-                    {{ member.displayName }}
-                  </h3>
+                  <div class="flex min-w-0 items-center gap-2">
+                    @if (canRemoveMember(member) || isRemovingMember(member)) {
+                      <button
+                        type="button"
+                        class="ow-remove-member-btn"
+                        [disabled]="!canRemoveMember(member)"
+                        [attr.aria-label]="'Remover integrante ' + member.displayName"
+                        title="Remover integrante"
+                        (click)="onRemoveMember(member)"
+                      >
+                        X
+                      </button>
+                    }
+
+                    <h3 class="truncate text-sm font-black uppercase text-(--ow-gray-900)">
+                      {{ member.displayName }}
+                    </h3>
+                  </div>
                   @if (member.isCaptain) {
                     <span class="ow-badge ow-badge-captain">Capitão</span>
                   }
@@ -138,8 +178,17 @@
                 <p class="mt-2 text-sm font-semibold text-(--ow-gray-700)">{{ member.battletag }}</p>
                 <p class="mt-1 text-xs text-(--ow-gray-500)">Entrou em {{ member.joinedAtLabel }}</p>
 
-                @if (canPromoteMember(member) || isPromotingMember(member)) {
-                  <div class="mt-3 flex justify-end">
+                @if (canPromoteMember(member) || isPromotingMember(member) || canOpenContactModal()) {
+                  <div class="mt-3 flex flex-wrap justify-end gap-2">
+                    @if (canOpenContactModal()) {
+                      <ow-btn
+                        variant="secondary-mini"
+                        (click)="openContactModal(member)"
+                      >
+                        Contato
+                      </ow-btn>
+                    }
+
                     <ow-btn
                       variant="secondary-mini"
                       [disabled]="!canPromoteMember(member)"
@@ -151,6 +200,7 @@
                         Promover a capitão
                       }
                     </ow-btn>
+
                   </div>
                 }
               </article>
@@ -175,7 +225,7 @@
                 <article class="rounded-lg border border-(--ow-gray-200) bg-white p-3">
                   <p class="text-sm font-black uppercase text-(--ow-gray-900)">{{ tournament.name }}</p>
                   <p class="mt-1 text-xs text-(--ow-gray-600)">
-                    {{ tournament.statusLabel }} â€¢ {{ tournament.teamModeLabel }} â€¢ {{ tournament.checkedInLabel }}
+                    {{ tournament.statusLabel }} / {{ tournament.teamModeLabel }}, {{ tournament.checkedInLabel }}
                   </p>
                   <p class="mt-1 text-xs text-(--ow-gray-500)">Inicio: {{ tournament.startAtLabel }}</p>
                 </article>
@@ -199,7 +249,7 @@
                 <article class="rounded-lg border border-(--ow-gray-200) bg-white p-3">
                   <p class="text-sm font-black uppercase text-(--ow-gray-900)">{{ tournament.name }}</p>
                   <p class="mt-1 text-xs text-(--ow-gray-600)">
-                    {{ tournament.statusLabel }} â€¢ {{ tournament.teamModeLabel }} â€¢ {{ tournament.checkedInLabel }}
+                    {{ tournament.statusLabel }} - {{ tournament.teamModeLabel }}, {{ tournament.checkedInLabel }}
                   </p>
                   <p class="mt-1 text-xs text-(--ow-gray-500)">Inicio: {{ tournament.startAtLabel }}</p>
                 </article>
@@ -262,3 +312,34 @@
     }
   }
 </div>
+
+@if (contactModalMember(); as contactMember) {
+  <div class="ow-contact-backdrop" (click)="closeContactModal()">
+    <div class="ow-contact-modal" (click)="$event.stopPropagation()">
+      <div class="flex items-start justify-between gap-3">
+        <div>
+          <h3 class="text-lg font-black text-(--ow-gray-900)">Contato do integrante</h3>
+          <p class="text-sm text-(--ow-gray-600)">{{ contactMember.displayName }}</p>
+        </div>
+        <button
+          type="button"
+          class="ow-contact-close"
+          aria-label="Fechar modal de contato"
+          (click)="closeContactModal()"
+        >
+          X
+        </button>
+      </div>
+
+      <div class="mt-4 space-y-2 text-sm text-(--ow-gray-700)">
+        <p><span class="font-semibold text-(--ow-gray-900)">Battletag:</span> {{ contactMember.battletag }}</p>
+        <p><span class="font-semibold text-(--ow-gray-900)">WhatsApp:</span> {{ contactMember.whatsapp || 'Não informado' }}</p>
+        <p><span class="font-semibold text-(--ow-gray-900)">Email:</span> {{ contactMember.email || 'Não informado' }}</p>
+      </div>
+
+      <div class="mt-5 flex justify-end">
+        <ow-btn variant="secondary-mini" (click)="closeContactModal()">Fechar</ow-btn>
+      </div>
+    </div>
+  </div>
+}

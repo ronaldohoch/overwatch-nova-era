@@ -1,34 +1,16 @@
 import { FieldValue } from 'firebase-admin/firestore';
 import { firestore } from '../firebase';
 import { grantAutomaticTrophiesForEvent } from '../trofeus/trofeus.service';
-import { CreateTorneioDto } from './dto/create-torneio.dto';
+import { CreateTorneioDto, TeamMode } from './dto/create-torneio.dto';
 import { UpdateTorneioDto } from './dto/update-torneio.dto';
 import { CheckinDto, Role } from './dto/checkin.dto';
 import { CreateTeamDto } from './dto/create-team.dto';
 import { TournamentStatus } from './dto/set-status.dto';
-
-type TeamMode = 'random' | 'closed';
-
-type RoleSlots = { tank: number; dps: number; support: number };
-type CheckinRoleFilter = Role | 'all';
-type RoleAvailability = {
-  total: number;
-  checkedIn: number;
-  available: number;
-};
-type RandomCheckinAvailabilityByRole = {
-  tournamentId: string;
-  totals: {
-    total: number;
-    checkedIn: number;
-    available: number;
-  };
-  roles: {
-    tank: RoleAvailability;
-    dps: RoleAvailability;
-    support: RoleAvailability;
-  };
-};
+import {
+  CheckinRoleFilter,
+  RandomCheckinAvailabilityByRole,
+  RoleSlots,
+} from './interfaces';
 
 const ROSTER_MAX_PER_TEAM = 8;
 
