@@ -1,0 +1,33 @@
+@if (isEnded()) {
+  <ng-content />
+} @else {
+  <div class="flex justify-center gap-4 md:gap-8">
+
+    <div class="text-center">
+      <div class="text-4xl md:text-5xl font-black text-(--ow-orange)">{{ pad(timeRemaining().days) }}</div>
+      <div class="text-xs md:text-sm uppercase tracking-widest text-(--ow-gray-500)">Dias</div>
+    </div>
+
+    <div class="text-4xl md:text-5xl font-black text-(--ow-orange) select-none">:</div>
+
+    <div class="text-center">
+      <div class="text-4xl md:text-5xl font-black text-(--ow-orange)">{{ pad(timeRemaining().hours) }}</div>
+      <div class="text-xs md:text-sm uppercase tracking-widest text-(--ow-gray-500)">Horas</div>
+    </div>
+
+    <div class="text-4xl md:text-5xl font-black text-(--ow-orange) select-none">:</div>
+
+    <div class="text-center">
+      <div class="text-4xl md:text-5xl font-black text-(--ow-orange)">{{ pad(timeRemaining().minutes) }}</div>
+      <div class="text-xs md:text-sm uppercase tracking-widest text-(--ow-gray-500)">Min</div>
+    </div>
+
+    <div class="text-4xl md:text-5xl font-black text-(--ow-orange) select-none">:</div>
+
+    <div class="text-center">
+      <div class="text-4xl md:text-5xl font-black text-(--ow-orange)">{{ pad(timeRemaining().seconds) }}</div>
+      <div class="text-xs md:text-sm uppercase tracking-widest text-(--ow-gray-500)">Seg</div>
+    </div>
+
+  </div>
+}
