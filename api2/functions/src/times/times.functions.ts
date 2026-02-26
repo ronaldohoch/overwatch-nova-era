@@ -1,11 +1,13 @@
 import { onRequest } from 'firebase-functions/v2/https';
 import * as logger from 'firebase-functions/logger';
 import { resolveErrorMessage, resolveErrorStatus } from '../_config/errors';
+import { JWT_SECRET } from '../_config/env';
 import { setupExpressApp } from '../_config/setup';
 import { authMiddleware } from '../_middlewares/auth';
 import { resolveTimesErrorStatus, timesSvc } from './times.service';
 
 const app = setupExpressApp();
+const requireAuth = authMiddleware(() => JWT_SECRET.value());
 
 function getUid(req: any): string | null {
   const candidate = req?.user?.uid || req?.user?.sub;
@@ -37,7 +39,7 @@ function sendError(res: any, error: unknown, fallbackStatus: number, fallbackMes
   });
 }
 
-app.post('/', authMiddleware, async (req, res) => {
+app.post('/', requireAuth, async (req, res) => {
   try {
     const uid = getUid(req);
     if (!uid) {
@@ -61,7 +63,7 @@ app.post('/', authMiddleware, async (req, res) => {
   }
 });
 
-app.get('/', authMiddleware, async (req, res) => {
+app.get('/', requireAuth, async (req, res) => {
   try {
     const uid = getUid(req);
     if (!uid) {
@@ -83,7 +85,7 @@ app.get('/', authMiddleware, async (req, res) => {
   }
 });
 
-app.get('/me', authMiddleware, async (req, res) => {
+app.get('/me', requireAuth, async (req, res) => {
   try {
     const uid = getUid(req);
     if (!uid) {
@@ -100,7 +102,7 @@ app.get('/me', authMiddleware, async (req, res) => {
   }
 });
 
-app.get('/invites/me', authMiddleware, async (req, res) => {
+app.get('/invites/me', requireAuth, async (req, res) => {
   try {
     const uid = getUid(req);
     if (!uid) {
@@ -117,7 +119,7 @@ app.get('/invites/me', authMiddleware, async (req, res) => {
   }
 });
 
-app.patch('/:id', authMiddleware, async (req, res) => {
+app.patch('/:id', requireAuth, async (req, res) => {
   try {
     const uid = getUid(req);
     if (!uid) {
@@ -142,7 +144,7 @@ app.patch('/:id', authMiddleware, async (req, res) => {
   }
 });
 
-app.get('/:id', authMiddleware, async (req, res) => {
+app.get('/:id', requireAuth, async (req, res) => {
   try {
     const team = await timesSvc.getTeam(req.params.id);
     res.status(200).json(team);
@@ -154,7 +156,7 @@ app.get('/:id', authMiddleware, async (req, res) => {
   }
 });
 
-app.get('/:id/members', authMiddleware, async (req, res) => {
+app.get('/:id/members', requireAuth, async (req, res) => {
   try {
     const uid = getUid(req);
     if (!uid) {
@@ -175,7 +177,7 @@ app.get('/:id/members', authMiddleware, async (req, res) => {
   }
 });
 
-app.get('/:id/tournaments', authMiddleware, async (req, res) => {
+app.get('/:id/tournaments', requireAuth, async (req, res) => {
   try {
     const overview = await timesSvc.listTeamTournaments(req.params.id);
     res.status(200).json(overview);
@@ -187,7 +189,7 @@ app.get('/:id/tournaments', authMiddleware, async (req, res) => {
   }
 });
 
-app.post('/:id/members', authMiddleware, async (req, res) => {
+app.post('/:id/members', requireAuth, async (req, res) => {
   try {
     const uid = getUid(req);
     if (!uid) {
@@ -212,7 +214,7 @@ app.post('/:id/members', authMiddleware, async (req, res) => {
   }
 });
 
-app.post('/:id/invites/:uid/accept', authMiddleware, async (req, res) => {
+app.post('/:id/invites/:uid/accept', requireAuth, async (req, res) => {
   try {
     const uid = getUid(req);
     if (!uid) {
@@ -233,7 +235,7 @@ app.post('/:id/invites/:uid/accept', authMiddleware, async (req, res) => {
   }
 });
 
-app.post('/:id/invites/:uid/reject', authMiddleware, async (req, res) => {
+app.post('/:id/invites/:uid/reject', requireAuth, async (req, res) => {
   try {
     const uid = getUid(req);
     if (!uid) {
@@ -254,7 +256,7 @@ app.post('/:id/invites/:uid/reject', authMiddleware, async (req, res) => {
   }
 });
 
-app.delete('/:id/members/me', authMiddleware, async (req, res) => {
+app.delete('/:id/members/me', requireAuth, async (req, res) => {
   try {
     const uid = getUid(req);
     if (!uid) {
@@ -271,7 +273,7 @@ app.delete('/:id/members/me', authMiddleware, async (req, res) => {
   }
 });
 
-app.delete('/:id/members/:uid', authMiddleware, async (req, res) => {
+app.delete('/:id/members/:uid', requireAuth, async (req, res) => {
   try {
     const actorUid = getUid(req);
     if (!actorUid) {
@@ -296,7 +298,7 @@ app.delete('/:id/members/:uid', authMiddleware, async (req, res) => {
   }
 });
 
-app.post('/:id/captain', authMiddleware, async (req, res) => {
+app.post('/:id/captain', requireAuth, async (req, res) => {
   try {
     const uid = getUid(req);
     if (!uid) {
@@ -320,4 +322,4 @@ app.post('/:id/captain', authMiddleware, async (req, res) => {
   }
 });
 
-export const times = onRequest({ invoker: 'public' }, app);
+export const times = onRequest({ secrets: [JWT_SECRET], invoker: 'public' }, app);

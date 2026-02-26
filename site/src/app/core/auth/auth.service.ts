@@ -166,6 +166,15 @@ export class AuthService {
     );
   }
 
+  async resetPassword(token: string, newPassword: string): Promise<void> {
+    await firstValueFrom(
+      this.http.post(`${this.authApiBaseUrl}/reset-password`, {
+        token: token.trim(),
+        newPassword,
+      }),
+    );
+  }
+
   logout(): void {
     this.sessionState.set(null);
     this.removePersistedSession();

@@ -1,11 +1,13 @@
 import { onRequest } from 'firebase-functions/v2/https';
 import * as logger from 'firebase-functions/logger';
 import { resolveErrorMessage, resolveErrorStatus } from '../_config/errors';
+import { JWT_SECRET } from '../_config/env';
 import { setupExpressApp } from '../_config/setup';
 import { authMiddleware } from '../_middlewares/auth';
 import { resolveTrofeusErrorStatus, trofeusSvc } from './trofeus.service';
 
 const app = setupExpressApp();
+const requireAuth = authMiddleware(() => JWT_SECRET.value());
 
 function getUid(req: any): string | null {
   const candidate = req?.user?.uid || req?.user?.sub;
@@ -33,7 +35,7 @@ function sendError(res: any, error: unknown, fallbackStatus: number, fallbackMes
   });
 }
 
-app.get('/', authMiddleware, async (_req, res) => {
+app.get('/', requireAuth, async (_req, res) => {
   try {
     const catalog = await trofeusSvc.listCatalog();
     res.status(200).json(catalog);
@@ -45,7 +47,7 @@ app.get('/', authMiddleware, async (_req, res) => {
   }
 });
 
-app.post('/', authMiddleware, async (req, res) => {
+app.post('/', requireAuth, async (req, res) => {
   try {
     const uid = getUid(req);
     if (!uid) {
@@ -70,7 +72,7 @@ app.post('/', authMiddleware, async (req, res) => {
   }
 });
 
-app.post('/award', authMiddleware, async (req, res) => {
+app.post('/award', requireAuth, async (req, res) => {
   try {
     const uid = getUid(req);
     if (!uid) {
@@ -95,4 +97,4 @@ app.post('/award', authMiddleware, async (req, res) => {
   }
 });
 
-export const trofeus = onRequest({ invoker: 'public' }, app);
+export const trofeus = onRequest({ secrets: [JWT_SECRET], invoker: 'public' }, app);

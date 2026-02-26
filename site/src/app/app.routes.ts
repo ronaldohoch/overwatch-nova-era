@@ -42,4 +42,12 @@ export const routes: Routes = [
     title: 'Copa Overwatch Nova Era - Login',
     loadComponent: () => import('./features/login/login.component').then(m=>m.LoginComponent)
   },
+  {
+    path: 'reset-password',
+    title: 'Copa Overwatch Nova Era - Redefinir senha',
+    loadComponent: () =>
+      import('./features/login/reset-password/reset-password.component').then(
+        (m) => m.ResetPasswordComponent,
+      ),
+  },
 ];

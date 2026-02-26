@@ -1,6 +1,7 @@
 import { onRequest } from 'firebase-functions/v2/https';
 import * as logger from 'firebase-functions/logger';
 import { resolveErrorMessage, resolveErrorStatus } from '../_config/errors';
+import { JWT_SECRET } from '../_config/env';
 import { setupExpressApp } from '../_config/setup';
 import { authMiddleware } from '../_middlewares/auth';
 import { rolesMiddleware } from '../_middlewares/roles';
@@ -8,6 +9,7 @@ import { UserRole } from '../_enums/role.enum';
 import { torneiosSvc } from './torneios.service';
 
 const app = setupExpressApp();
+const requireAuth = authMiddleware(() => JWT_SECRET.value());
 
 function getUid(req: any) {
   return req?.user?.uid || req?.user?.sub || null;
@@ -35,7 +37,7 @@ function sendError(res: any, error: unknown, fallbackStatus: number, fallbackMes
 }
 
 // CRUD
-app.post('/', authMiddleware, rolesMiddleware([UserRole.ADMIN]), async (req, res) => {
+app.post('/', requireAuth, rolesMiddleware([UserRole.ADMIN]), async (req, res) => {
   try {
     const uid = getUid(req);
     const newTournament = await torneiosSvc.create(req.body, uid);
@@ -69,7 +71,7 @@ app.get('/:id', async (req, res) => {
 // RANDOM: listar check-ins por torneio (streamer/admin)
 app.get(
   '/:id/checkins',
-  authMiddleware,
+  requireAuth,
   rolesMiddleware([UserRole.ADMIN, UserRole.STREAMER]),
   async (req, res) => {
     try {
@@ -90,7 +92,7 @@ app.get(
 );
 
 // RANDOM: disponibilidade de check-ins por role (autenticado)
-app.get('/:id/checkins/availability-by-role', authMiddleware, async (req, res) => {
+app.get('/:id/checkins/availability-by-role', requireAuth, async (req, res) => {
   try {
     const availability = await torneiosSvc.getRandomCheckinAvailabilityByRole(req.params.id);
     res.status(200).json(availability);
@@ -100,7 +102,7 @@ app.get('/:id/checkins/availability-by-role', authMiddleware, async (req, res) =
   }
 });
 
-app.patch('/:id', authMiddleware, rolesMiddleware([UserRole.ADMIN]), async (req, res) => {
+app.patch('/:id', requireAuth, rolesMiddleware([UserRole.ADMIN]), async (req, res) => {
   try {
     const updated = await torneiosSvc.update(req.params.id, req.body);
     res.status(200).json(updated);
@@ -110,7 +112,7 @@ app.patch('/:id', authMiddleware, rolesMiddleware([UserRole.ADMIN]), async (req,
   }
 });
 
-app.delete('/:id', authMiddleware, rolesMiddleware([UserRole.ADMIN]), async (req, res) => {
+app.delete('/:id', requireAuth, rolesMiddleware([UserRole.ADMIN]), async (req, res) => {
   try {
     await torneiosSvc.remove(req.params.id);
     res.status(204).send();
@@ -121,7 +123,7 @@ app.delete('/:id', authMiddleware, rolesMiddleware([UserRole.ADMIN]), async (req
 });
 
 // status
-app.post('/:id/status', authMiddleware, rolesMiddleware([UserRole.ADMIN]), async (req, res) => {
+app.post('/:id/status', requireAuth, rolesMiddleware([UserRole.ADMIN]), async (req, res) => {
   try {
     const updated = await torneiosSvc.setStatus(req.params.id, req.body?.status);
     res.status(200).json(updated);
@@ -132,7 +134,7 @@ app.post('/:id/status', authMiddleware, rolesMiddleware([UserRole.ADMIN]), async
 });
 
 // RANDOM: check-in do jogador
-app.post('/:id/checkin', authMiddleware, async (req, res) => {
+app.post('/:id/checkin', requireAuth, async (req, res) => {
   try {
     const uid = getUid(req);
     if (!uid) return res.status(401).json({ statusCode: 401, message: 'Unauthorized' });
@@ -148,7 +150,7 @@ app.post('/:id/checkin', authMiddleware, async (req, res) => {
 });
 
 // CLOSED: criar time
-app.post('/:id/teams', authMiddleware, async (req, res) => {
+app.post('/:id/teams', requireAuth, async (req, res) => {
   try {
     const uid = getUid(req);
     if (!uid) return res.status(401).json({ statusCode: 401, message: 'Unauthorized' });
@@ -164,7 +166,7 @@ app.post('/:id/teams', authMiddleware, async (req, res) => {
 });
 
 // CLOSED: check-in do time
-app.post('/:id/teams/:teamId/checkin', authMiddleware, async (req, res) => {
+app.post('/:id/teams/:teamId/checkin', requireAuth, async (req, res) => {
   try {
     const uid = getUid(req);
     if (!uid) return res.status(401).json({ statusCode: 401, message: 'Unauthorized' });
@@ -182,7 +184,7 @@ app.post('/:id/teams/:teamId/checkin', authMiddleware, async (req, res) => {
 // RANDOM: lock + draw (admin)
 app.post(
   '/:id/lock-and-draw',
-  authMiddleware,
+  requireAuth,
   rolesMiddleware([UserRole.ADMIN]),
   async (req, res) => {
     try {
@@ -196,4 +198,4 @@ app.post(
   },
 );
 
-export const torneios = onRequest({ invoker: 'public' }, app);
+export const torneios = onRequest({ secrets: [JWT_SECRET], invoker: 'public' }, app);

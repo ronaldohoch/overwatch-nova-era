@@ -1,6 +1,7 @@
 import express from 'express';
 import { onRequest } from 'firebase-functions/v2/https';
-import { authSvc, verifyToken } from './auth.service';
+import { APP_URL, AUTH_SECRETS, JWT_SECRET, RESEND_API_KEY } from '../_config/env';
+import { AuthService } from './auth.service';
 import { setupExpressApp } from '../_config/setup';
 import { resolveErrorMessage, resolveErrorStatus } from '../_config/errors';
 import { authMiddleware } from '../_middlewares/auth';
@@ -10,6 +11,7 @@ import { UserRole } from '../_enums/role.enum';
 const app = setupExpressApp();
 
 app.post('/signup', async (req: express.Request, res: express.Response) => {
+  const authSvc = createAuthService();
   const { displayName, email, battletag, password, whatsapp } = req.body;
 
   try {
@@ -30,7 +32,8 @@ app.post('/signup', async (req: express.Request, res: express.Response) => {
 });
 
 app.put('/me', async (req: express.Request, res: express.Response) => {
-  const userId = readAuthenticatedUserId(req);
+  const authSvc = createAuthService();
+  const userId = readAuthenticatedUserId(req, authSvc);
   if (!userId) {
     res.status(401).json({ error: 'Token invalido.' });
     return;
@@ -54,7 +57,8 @@ app.put('/me', async (req: express.Request, res: express.Response) => {
 });
 
 app.put('/me/password', async (req: express.Request, res: express.Response) => {
-  const userId = readAuthenticatedUserId(req);
+  const authSvc = createAuthService();
+  const userId = readAuthenticatedUserId(req, authSvc);
   if (!userId) {
     res.status(401).json({ error: 'Token invalido.' });
     return;
@@ -77,6 +81,7 @@ app.put('/me/password', async (req: express.Request, res: express.Response) => {
 });
 
 app.post('/forgot-password', async (req: express.Request, res: express.Response) => {
+  const authSvc = createAuthService();
   try {
     await authSvc.requestPasswordReset(req.body ?? {});
     res.status(200).json({ message: 'Se o e-mail existir, você receberá um link em breve.' });
@@ -88,6 +93,7 @@ app.post('/forgot-password', async (req: express.Request, res: express.Response)
 });
 
 app.post('/reset-password', async (req: express.Request, res: express.Response) => {
+  const authSvc = createAuthService();
   try {
     await authSvc.resetPassword(req.body ?? {});
     res.status(200).json({ message: 'Senha alterada com sucesso.' });
@@ -99,6 +105,7 @@ app.post('/reset-password', async (req: express.Request, res: express.Response) 
 });
 
 app.post('/login', async (req: express.Request, res: express.Response) => {
+  const authSvc = createAuthService();
   const { email, password } = req.body;
 
   try {
@@ -113,9 +120,10 @@ app.post('/login', async (req: express.Request, res: express.Response) => {
 
 app.get(
   '/users',
-  authMiddleware,
+  authMiddleware(() => JWT_SECRET.value()),
   rolesMiddleware([UserRole.ADMIN]),
   async (req: express.Request, res: express.Response) => {
+    const authSvc = createAuthService();
     const user = (req as express.Request & { user?: Record<string, unknown> }).user;
     const role = typeof user?.['role'] === 'string' ? user.role.trim().toLowerCase() : '';
 
@@ -135,13 +143,21 @@ app.get(
   },
 );
 
-function readAuthenticatedUserId(req: express.Request): string | null {
+function createAuthService(): AuthService {
+  return new AuthService({
+    jwtSecret: JWT_SECRET.value(),
+    resendApiKey: RESEND_API_KEY.value(),
+    appUrl: APP_URL.value(),
+  });
+}
+
+function readAuthenticatedUserId(req: express.Request, authSvc: AuthService): string | null {
   const headerValue = req.header('authorization');
   const token = readBearerToken(headerValue);
   if (!token) return null;
 
   try {
-    const decoded = verifyToken(token);
+    const decoded = authSvc.verifyToken(token);
     if (!decoded || typeof decoded !== 'object') return null;
 
     const subject = (decoded as Record<string, unknown>)['sub'];
@@ -161,4 +177,7 @@ function readBearerToken(headerValue: string | undefined): string | null {
   return token;
 }
 
-export const auth = onRequest({ invoker: 'public' }, app);
+export const auth = onRequest({ 
+  secrets: AUTH_SECRETS,
+  invoker: 'public'
+}, app);

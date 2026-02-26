@@ -1,7 +1,7 @@
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
 import { Resend } from 'resend';
-import { JWT_SECRET, RESEND_API_KEY, APP_URL } from '../_config/env';
+import { buildPasswordResetEmail } from './templates/password-reset.template';
 import { User } from '../_interfaces/users.interface';
 import { firestore } from '../firebase';
 import { UserRole } from '../_enums/role.enum';
@@ -23,7 +23,15 @@ const USERS_COLLECTION = 'users';
 const BCRYPT_SALT_ROUNDS = 10;
 const DEFAULT_ROLE = UserRole.COMPETIDOR;
 
+export interface AuthServiceConfig {
+  jwtSecret: string;
+  resendApiKey: string;
+  appUrl: string;
+}
+
 export class AuthService {
+  constructor(private readonly config: AuthServiceConfig) {}
+
   async signUp(payload: User): Promise<AuthResult> {
     const displayName = payload.displayName?.trim() ?? '';
     const email = (payload.email ?? '').trim().toLowerCase();
@@ -141,7 +149,7 @@ export class AuthService {
     const email = (typeof dto.email === 'string' ? dto.email : '').trim().toLowerCase();
 
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      throw new Error('Informe um email valido.');
+      throw new Error('Informe um e-mail válido.');
     }
 
     const snapshot = await firestore
@@ -156,21 +164,18 @@ export class AuthService {
     const userId = snapshot.docs[0].id;
     const token = jwt.sign(
       { sub: userId, purpose: 'password-reset' },
-      JWT_SECRET,
+      this.config.jwtSecret,
       { expiresIn: '1h' }
     );
 
-    const resend = new Resend(RESEND_API_KEY);
+    const resetUrl = `${this.config.appUrl}/reset-password?token=${token}`;
+
+    const resend = new Resend(this.config.resendApiKey);
     await resend.emails.send({
       from: 'Nova Era <noreply@resend.dev>',
       to: email,
       subject: 'Recuperação de senha - Nova Era',
-      html: `
-        <p>Você solicitou a recuperação de senha da Nova Era.</p>
-        <p>Clique no link abaixo para redefinir sua senha. O link é válido por <strong>1 hora</strong>.</p>
-        <a href="${APP_URL}/reset-password?token=${token}">Redefinir senha</a>
-        <p>Se você não solicitou isso, ignore este e-mail.</p>
-      `,
+      html: buildPasswordResetEmail(resetUrl),
     });
   }
 
@@ -188,7 +193,7 @@ export class AuthService {
 
     let payload: jwt.JwtPayload;
     try {
-      const decoded = verifyToken(token);
+      const decoded = this.verifyToken(token);
       if (!decoded || typeof decoded !== 'object') throw new Error();
       payload = decoded as jwt.JwtPayload;
     } catch {
@@ -414,12 +419,10 @@ export class AuthService {
       role: user.role,
     };
 
-    return jwt.sign(payload, JWT_SECRET, { expiresIn: '7d' });
+    return jwt.sign(payload, this.config.jwtSecret, { expiresIn: '7d' });
+  }
+
+  verifyToken(token: string): string | jwt.JwtPayload {
+    return jwt.verify(token, this.config.jwtSecret);
   }
 }
-
-export function verifyToken(token: string): string | jwt.JwtPayload {
-  return jwt.verify(token, JWT_SECRET);
-}
-
-export const authSvc = new AuthService();
