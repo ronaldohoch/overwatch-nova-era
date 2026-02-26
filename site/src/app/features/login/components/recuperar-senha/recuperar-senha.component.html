@@ -1,0 +1,48 @@
+<div class="space-y-5">
+  <div class="space-y-1">
+    <h2 class="text-2xl font-black text-(--ow-gray-900)">Recuperar senha</h2>
+    <p class="text-sm text-(--ow-gray-500)">
+      Informe o e-mail cadastrado para receber o link de recuperação.
+    </p>
+  </div>
+
+  <form class="space-y-5" novalidate (submit)="onSubmit($event)">
+    <div class="space-y-1.5">
+      <label for="recuperar-email" class="text-sm font-semibold text-(--ow-gray-700)">E-mail</label>
+      <input
+        id="recuperar-email"
+        type="email"
+        autocomplete="email"
+        placeholder="você@email.com"
+        class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
+        [value]="email()"
+        (input)="email.set($any($event.target).value)"
+        (blur)="touched.set(true)"
+      />
+      @if (emailError(); as error) {
+        <p class="text-sm font-medium text-red-600">{{ error }}</p>
+      }
+    </div>
+
+    @if (message(); as msg) {
+      <app-alerts
+        [variant]="status() === 'success' ? 'success' : 'error'"
+        [message]="msg"
+        [dismissible]="false"
+      />
+    }
+
+    <div class="flex justify-between items-center">
+      <ow-btn type="button" variant="secondary" (click)="close()">
+        Cancelar
+      </ow-btn>
+      <ow-btn type="submit" [disabled]="pending()">
+        @if (pending()) {
+          Enviando...
+        } @else {
+          Enviar link
+        }
+      </ow-btn>
+    </div>
+  </form>
+</div>

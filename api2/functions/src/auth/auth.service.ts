@@ -1,17 +1,20 @@
 import * as bcrypt from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
-import { JWT_SECRET } from '../_config/env';
+import { Resend } from 'resend';
+import { JWT_SECRET, RESEND_API_KEY, APP_URL } from '../_config/env';
 import { User } from '../_interfaces/users.interface';
 import { firestore } from '../firebase';
 import { UserRole } from '../_enums/role.enum';
 import {
   AuthResult,
   ChangePasswordPayload,
+  ForgotPasswordDto,
   MutableStoredUser,
   NormalizedUpdateUserPayload,
   PublicTrophy,
   PublicTrophyTarget,
   PublicUser,
+  ResetPasswordDto,
   StoredUser,
   UpdateUserPayload,
 } from './interfaces';
@@ -129,6 +132,80 @@ export class AuthService {
     const passwordHash = await bcrypt.hash(newPassword, BCRYPT_SALT_ROUNDS);
 
     await userRef.update({
+      password: passwordHash,
+      updatedAt: now,
+    });
+  }
+
+  async requestPasswordReset(dto: ForgotPasswordDto): Promise<void> {
+    const email = (typeof dto.email === 'string' ? dto.email : '').trim().toLowerCase();
+
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      throw new Error('Informe um email valido.');
+    }
+
+    const snapshot = await firestore
+      .collection(USERS_COLLECTION)
+      .where('email', '==', email)
+      .limit(1)
+      .get();
+
+    // Retorna silenciosamente se o e-mail não existir (não vazar dados)
+    if (snapshot.empty) return;
+
+    const userId = snapshot.docs[0].id;
+    const token = jwt.sign(
+      { sub: userId, purpose: 'password-reset' },
+      JWT_SECRET,
+      { expiresIn: '1h' }
+    );
+
+    const resend = new Resend(RESEND_API_KEY);
+    await resend.emails.send({
+      from: 'Nova Era <noreply@resend.dev>',
+      to: email,
+      subject: 'Recuperação de senha - Nova Era',
+      html: `
+        <p>Você solicitou a recuperação de senha da Nova Era.</p>
+        <p>Clique no link abaixo para redefinir sua senha. O link é válido por <strong>1 hora</strong>.</p>
+        <a href="${APP_URL}/reset-password?token=${token}">Redefinir senha</a>
+        <p>Se você não solicitou isso, ignore este e-mail.</p>
+      `,
+    });
+  }
+
+  async resetPassword(dto: ResetPasswordDto): Promise<void> {
+    const token = typeof dto.token === 'string' ? dto.token.trim() : '';
+    const newPassword = typeof dto.newPassword === 'string' ? dto.newPassword : '';
+
+    if (!token) {
+      throw new Error('Token invalido.');
+    }
+
+    if (!newPassword || newPassword.length < 8) {
+      throw new Error('A nova senha deve ter ao menos 8 caracteres.');
+    }
+
+    let payload: jwt.JwtPayload;
+    try {
+      const decoded = verifyToken(token);
+      if (!decoded || typeof decoded !== 'object') throw new Error();
+      payload = decoded as jwt.JwtPayload;
+    } catch {
+      throw new Error('Token invalido ou expirado.');
+    }
+
+    if (payload['purpose'] !== 'password-reset') {
+      throw new Error('Token invalido.');
+    }
+
+    const userId = typeof payload['sub'] === 'string' ? payload['sub'] : '';
+    if (!userId) throw new Error('Token invalido.');
+
+    const now = new Date().toISOString();
+    const passwordHash = await bcrypt.hash(newPassword, BCRYPT_SALT_ROUNDS);
+
+    await firestore.collection(USERS_COLLECTION).doc(userId).update({
       password: passwordHash,
       updatedAt: now,
     });

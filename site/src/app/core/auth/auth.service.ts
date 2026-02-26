@@ -160,6 +160,12 @@ export class AuthService {
     );
   }
 
+  async forgotPassword(email: string): Promise<void> {
+    await firstValueFrom(
+      this.http.post(`${this.authApiBaseUrl}/forgot-password`, { email }),
+    );
+  }
+
   logout(): void {
     this.sessionState.set(null);
     this.removePersistedSession();

@@ -1,0 +1,31 @@
+@if (hasTabs()) {
+  <div [class]="tablistClass" role="tablist" aria-label="Navegação de abas">
+    @for (tab of tabs(); track $index; let index = $index) {
+      <button
+        type="button"
+        role="tab"
+        [id]="tabButtonId(index)"
+        [attr.aria-controls]="panelId(index)"
+        [attr.aria-selected]="isActive(index)"
+        [attr.tabindex]="tabIndex(index)"
+        [disabled]="tab.disabled()"
+        [class]="tabButtonClass(index, tab)"
+        (click)="selectTab(index)"
+        (keydown)="onTabKeydown($event, index)"
+      >
+        {{ tab.label() }}
+      </button>
+    }
+  </div>
+
+  @if (activeTab(); as tab) {
+    <div
+      role="tabpanel"
+      [id]="panelId(activeIndex())"
+      [attr.aria-labelledby]="tabButtonId(activeIndex())"
+      [class]="panelClass(tab)"
+    >
+      <ng-container [ngTemplateOutlet]="tab.panelTemplate()" />
+    </div>
+  }
+}

@@ -85,6 +85,12 @@ export class TimesDetalheComponent {
   readonly addingMember = signal(false);
   readonly addMemberMessage = signal<string | null>(null);
   readonly addMemberError = signal(false);
+  readonly editTeamName = signal('');
+  readonly editTeamDescription = signal('');
+  readonly editTeamGroupLink = signal('');
+  readonly updatingTeamData = signal(false);
+  readonly updateTeamDataMessage = signal<string | null>(null);
+  readonly updateTeamDataError = signal(false);
   readonly leavingTeam = signal(false);
   readonly leaveTeamMessage = signal<string | null>(null);
   readonly leaveTeamError = signal(false);
@@ -118,6 +124,20 @@ export class TimesDetalheComponent {
     return uid === captainUid;
   });
   readonly isAdmin = computed(() => this.auth.userRole() === 'admin');
+  readonly canEditTeamData = computed(() => this.hasTeamId() && this.isAdmin());
+  readonly hasTeamDataChanges = computed(() => {
+    const team = this.team();
+    if (!team) return false;
+
+    return (
+      this.normalizeField(this.editTeamName()) !== this.normalizeField(team.name) ||
+      this.normalizeField(this.editTeamDescription()) !== this.normalizeField(team.description) ||
+      this.normalizeField(this.editTeamGroupLink()) !== this.normalizeField(team.groupLink)
+    );
+  });
+  readonly canSubmitTeamData = computed(
+    () => this.canEditTeamData() && !this.updatingTeamData() && this.hasTeamDataChanges(),
+  );
   readonly canAdminRemoveMembers = computed(() => {
     if (!this.hasTeamId()) return false;
     if (!this.isAdmin()) return false;
@@ -150,6 +170,89 @@ export class TimesDetalheComponent {
 
   updateBattletag(value: string): void {
     this.addMemberBattletag.set(value);
+  }
+
+  updateTeamName(value: string): void {
+    this.editTeamName.set(value);
+  }
+
+  updateTeamDescription(value: string): void {
+    this.editTeamDescription.set(value);
+  }
+
+  updateTeamGroupLink(value: string): void {
+    this.editTeamGroupLink.set(value);
+  }
+
+  async onUpdateTeamData(event: Event): Promise<void> {
+    event.preventDefault();
+    this.updateTeamDataMessage.set(null);
+    this.updateTeamDataError.set(false);
+
+    if (!this.hasTeamId()) {
+      this.updateTeamDataMessage.set('Time invalido para atualizar.');
+      this.updateTeamDataError.set(true);
+      return;
+    }
+
+    if (!this.isAdmin()) {
+      this.updateTeamDataMessage.set('Apenas admin pode alterar dados do time.');
+      this.updateTeamDataError.set(true);
+      return;
+    }
+
+    const team = this.team();
+    if (!team) {
+      this.updateTeamDataMessage.set('Carregue o time antes de atualizar.');
+      this.updateTeamDataError.set(true);
+      return;
+    }
+
+    const name = this.normalizeField(this.editTeamName());
+    const description = this.normalizeField(this.editTeamDescription());
+    const groupLink = this.normalizeField(this.editTeamGroupLink());
+
+    if (!name) {
+      this.updateTeamDataMessage.set('Nome do time e obrigatorio.');
+      this.updateTeamDataError.set(true);
+      return;
+    }
+
+    const payload: Record<string, string> = {};
+
+    if (name !== this.normalizeField(team.name)) {
+      payload['name'] = name;
+    }
+
+    if (description !== this.normalizeField(team.description)) {
+      payload['description'] = description;
+    }
+
+    if (groupLink !== this.normalizeField(team.groupLink)) {
+      payload['groupLink'] = groupLink;
+    }
+
+    if (Object.keys(payload).length === 0) {
+      this.updateTeamDataMessage.set('Nenhuma alteracao para salvar.');
+      this.updateTeamDataError.set(false);
+      return;
+    }
+
+    this.updatingTeamData.set(true);
+
+    try {
+      await firstValueFrom(this.http.patch<unknown>(`${this.timesApiUrl}/${this.teamId}`, payload));
+      await this.loadTeam();
+      this.updateTeamDataMessage.set('Dados do time atualizados com sucesso.');
+      this.updateTeamDataError.set(false);
+    } catch (error: unknown) {
+      this.updateTeamDataMessage.set(
+        this.resolveError(error, 'Nao foi possivel atualizar os dados do time.'),
+      );
+      this.updateTeamDataError.set(true);
+    } finally {
+      this.updatingTeamData.set(false);
+    }
   }
 
   async onAddMember(event: Event): Promise<void> {
@@ -358,6 +461,7 @@ export class TimesDetalheComponent {
 
     if (!this.hasTeamId()) {
       this.team.set(null);
+      this.syncTeamDataForm(null);
       this.members.set([]);
       this.tournaments.set([]);
       this.trophies.set([]);
@@ -380,7 +484,9 @@ export class TimesDetalheComponent {
       const teamRecord = this.readTeam(response);
       if (!teamRecord) throw new Error('Time não encontrado.');
 
-      this.team.set(this.toTeamDetail(teamRecord));
+      const team = this.toTeamDetail(teamRecord);
+      this.team.set(team);
+      this.syncTeamDataForm(team);
     } finally {
       this.loadingTeam.set(false);
     }
@@ -639,6 +745,16 @@ export class TimesDetalheComponent {
     }
 
     return null;
+  }
+
+  private syncTeamDataForm(team: TeamDetail | null): void {
+    this.editTeamName.set(team?.name ?? '');
+    this.editTeamDescription.set(team?.description ?? '');
+    this.editTeamGroupLink.set(team?.groupLink ?? '');
+  }
+
+  private normalizeField(value: string | null): string {
+    return (value ?? '').trim();
   }
 
   private readString(value: RawRecord | null, field: string): string | null {

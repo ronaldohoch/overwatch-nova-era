@@ -12,12 +12,20 @@ export type OwBtnVariant =
   | 'primary'
   | 'secondary'
   | 'blue'
+  | 'ghost'
+  | 'danger'
   | 'primary-mini'
   | 'secondaty-mini'
   | 'secondary-mini'
-  | 'blue-mini';
+  | 'blue-mini'
+  | 'ghost-mini'
+  | 'danger-mini';
+
+export type OwBtnSize = 'sm' | 'md' | 'lg' | 'icon';
 export type OwBtnType = 'button' | 'submit' | 'reset';
 export type OwBtnRouterLink = string | readonly (string | number)[];
+
+type OwBtnVisualVariant = 'primary' | 'secondary' | 'blue' | 'ghost' | 'danger';
 
 @Component({
   selector: 'ow-btn',
@@ -63,22 +71,13 @@ export type OwBtnRouterLink = string | readonly (string | number)[];
   `,
 })
 export class ButtonsComponent {
-  /** primary | secondary | blue + versões mini */
   readonly variant = input<OwBtnVariant>('primary');
+  readonly size = input<OwBtnSize>('md');
 
-  /** Se informar routerLink, renderiza <a [routerLink]> (SPA) */
   readonly routerLink = input<OwBtnRouterLink | undefined>(undefined);
-
-  /** Se informar href, renderiza <a> (estilizado como botão) */
   readonly href = input<string | undefined>(undefined);
-
-  /** type do <button> */
   readonly type = input<OwBtnType>('button');
-
-  /** disabled para <button> e <a> */
   readonly disabled = input(false, { transform: booleanAttribute });
-
-  /** Para acessibilidade quando o conteúdo não descreve bem (ex: só ícone) */
   readonly ariaLabel = input<string | undefined>(undefined);
 
   readonly internalRouterLinkFromHref = computed<OwBtnRouterLink | null>(() => {
@@ -127,54 +126,60 @@ export class ButtonsComponent {
     return this.disabled() ? null : (this.href() ?? null);
   });
 
+  private isLegacyMiniVariant(variant: OwBtnVariant): boolean {
+    return (
+      variant === 'primary-mini' ||
+      variant === 'secondary-mini' ||
+      variant === 'secondaty-mini' ||
+      variant === 'blue-mini' ||
+      variant === 'ghost-mini' ||
+      variant === 'danger-mini'
+    );
+  }
+
+  private toVisualVariant(variant: OwBtnVariant): OwBtnVisualVariant {
+    switch (variant) {
+      case 'primary-mini':
+        return 'primary';
+      case 'secondary-mini':
+      case 'secondaty-mini':
+        return 'secondary';
+      case 'blue-mini':
+        return 'blue';
+      case 'ghost-mini':
+        return 'ghost';
+      case 'danger-mini':
+        return 'danger';
+      default:
+        return variant;
+    }
+  }
+
   readonly BASE = [
-    // layout
-    'inline-flex items-center justify-center',
-    'py-4 px-10',
+    'inline-flex items-center justify-center gap-2',
     'relative overflow-hidden',
     'border-0 cursor-pointer select-none',
-    'no-underline',
-
-    // tipografia
-    'text-base font-extrabold uppercase',
-    'tracking-[0.15em]',
-
-    // animações
+    'no-underline [font-family:inherit]',
+    'font-extrabold uppercase tracking-[0.15em]',
     'transition-all duration-300 ease-in-out',
     'will-change-transform',
-
-    // clip-path do tema
     '[clip-path:polygon(10%_0,100%_0,100%_70%,90%_100%,0_100%,0_30%)]',
-
-    // shine (::before)
     "before:content-[''] before:absolute before:top-0 before:left-[-100%] before:w-full before:h-full",
     'before:transition-[left] before:duration-500 before:ease-in-out',
     'before:bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.3),transparent)]',
     'hover:before:left-[100%]',
-
-    // acessibilidade (foco visível)
     'focus-visible:outline-none',
-    'focus-visible:ring-4 focus-visible:ring-[rgba(0,195,255,0.35)]',
+    'focus-visible:ring-4 focus-visible:ring-[rgba(240,99,20,0.35)]',
     'focus-visible:ring-offset-2 focus-visible:ring-offset-white',
-
-    // disabled (button nativo)
-    'disabled:opacity-60 disabled:cursor-not-allowed',
+    'disabled:opacity-[0.45] disabled:cursor-not-allowed disabled:pointer-events-none',
   ].join(' ');
 
-  readonly VARIANTS: Record<OwBtnVariant, string> = {
+  readonly VARIANTS: Record<OwBtnVisualVariant, string> = {
     primary: [
       'bg-[linear-gradient(135deg,#f06314_0%,#d14e0a_100%)]',
       'text-white',
       'hover:-translate-y-0.5',
-      'hover:shadow-[0_4px_20px_rgba(240,99,20,0.25)]',
-    ].join(' '),
-
-    'primary-mini': [
-      'bg-[linear-gradient(135deg,#f06314_0%,#d14e0a_100%)]',
-      'text-white',
-      'hover:-translate-y-0.5',
-      'hover:shadow-[0_4px_20px_rgba(240,99,20,0.25)]',
-      '!py-2.5 !px-6 !text-sm !tracking-[0.12em]',
+      'hover:shadow-[0_4px_20px_rgba(240,99,20,0.35)]',
     ].join(' '),
 
     secondary: [
@@ -185,45 +190,51 @@ export class ButtonsComponent {
       'hover:-translate-y-0.5',
     ].join(' '),
 
-    'secondary-mini': [
-      'bg-transparent',
-      'text-[#202124]',
-      'border-2 border-[#f06314]',
-      'hover:bg-[#f06314] hover:text-white',
-      'hover:-translate-y-0.5',
-      '!py-2.5 !px-6 !text-sm !tracking-[0.12em]',
-    ].join(' '),
-
-    'secondaty-mini': [
-      'bg-transparent',
-      'text-[#202124]',
-      'border-2 border-[#f06314]',
-      'hover:bg-[#f06314] hover:text-white',
-      'hover:-translate-y-0.5',
-      '!py-2.5 !px-6 !text-sm !tracking-[0.12em]',
-    ].join(' '),
-
     blue: [
       'bg-[linear-gradient(135deg,#00c3ff_0%,#0099cc_100%)]',
       'text-white',
       'hover:-translate-y-0.5',
-      'hover:shadow-[0_4px_20px_rgba(0,195,255,0.25)]',
+      'hover:shadow-[0_4px_20px_rgba(0,195,255,0.35)]',
     ].join(' '),
 
-    'blue-mini': [
-      'bg-[linear-gradient(135deg,#00c3ff_0%,#0099cc_100%)]',
+    ghost: [
+      'bg-transparent',
+      'text-[#5f6368]',
+      'border-2 border-[#dadce0]',
+      'hover:border-[#5f6368] hover:text-[#202124]',
+    ].join(' '),
+
+    danger: [
+      'bg-[linear-gradient(135deg,#ea4335_0%,#c5221f_100%)]',
       'text-white',
       'hover:-translate-y-0.5',
-      'hover:shadow-[0_4px_20px_rgba(0,195,255,0.25)]',
-      '!py-2.5 !px-6 !text-sm !tracking-[0.12em]',
+      'hover:shadow-[0_4px_20px_rgba(234,67,53,0.35)]',
     ].join(' '),
   };
 
+  readonly SIZES: Record<OwBtnSize, string> = {
+    sm: 'py-[9px] px-[22px] text-xs',
+    md: 'py-[14px] px-9 text-[0.9rem]',
+    lg: 'py-[18px] px-[52px] text-[1.05rem]',
+    icon: 'p-3 text-[0.9rem] [clip-path:polygon(20%_0,100%_0,100%_80%,80%_100%,0_100%,0_20%)]',
+  };
+
+  readonly resolvedVariant = computed<OwBtnVisualVariant>(() =>
+    this.toVisualVariant(this.variant()),
+  );
+
+  readonly resolvedSize = computed<OwBtnSize>(() => {
+    if (this.isLegacyMiniVariant(this.variant())) return 'sm';
+    return this.size();
+  });
+
   readonly classes = computed(() => {
-    const variant = this.VARIANTS[this.variant()];
+    const variant = this.VARIANTS[this.resolvedVariant()];
+    const size = this.SIZES[this.resolvedSize()];
     const disabledForAnchor =
-      this.isLink() && this.disabled() ? 'pointer-events-none opacity-60' : '';
-    return `${this.BASE} ${variant} ${disabledForAnchor}`.trim();
+      this.isLink() && this.disabled() ? 'pointer-events-none opacity-[0.45] cursor-not-allowed' : '';
+
+    return `${this.BASE} ${variant} ${size} ${disabledForAnchor}`.trim();
   });
 
   onAnchorClick(ev: MouseEvent): void {

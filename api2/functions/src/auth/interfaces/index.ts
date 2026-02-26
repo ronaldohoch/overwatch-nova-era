@@ -7,3 +7,5 @@ export { NormalizedUpdateUserPayload } from './normalized-update-user-payload.in
 export { ChangePasswordPayload } from './change-password-payload.interface';
 export { StoredUser } from './stored-user.interface';
 export { MutableStoredUser } from './mutable-stored-user.type';
+export { ForgotPasswordDto } from './forgot-password-dto.interface';
+export { ResetPasswordDto } from './reset-password-dto.interface';

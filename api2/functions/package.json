@@ -9,9 +9,9 @@
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log",
-    "emulator":"start npm run emulator:tsc && start npm run emulator:all",
-    "emulator:tsc":"tsc --watch",
-    "emulator:all":"cd .. && firebase emulators:start --import ./emulator-data --export-on-exit ./emulator-data --inspect-functions"
+    "emulator": "start npm run emulator:tsc && start npm run emulator:all",
+    "emulator:tsc": "tsc --watch",
+    "emulator:all": "cd .. && firebase emulators:start --import ./emulator-data --export-on-exit ./emulator-data --inspect-functions"
   },
   "engines": {
     "node": "24"
@@ -20,7 +20,8 @@
   "dependencies": {
     "bcrypt": "^6.0.0",
     "firebase-admin": "^13.6.0",
-    "firebase-functions": "^7.0.0"
+    "firebase-functions": "^7.0.0",
+    "resend": "^6.9.2"
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",

@@ -3,6 +3,9 @@ import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@a
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../core/auth/auth.service';
 import { ButtonsComponent } from '../../shared/buttons/buttons';
+import { ModalService } from '../../shared/modal/modal.service';
+import { ModalHostComponent } from '../../shared/modal/modal-host.component';
+import { RecuperarSenhaComponent } from './components/recuperar-senha/recuperar-senha.component';
 
 const SIGNUP_FIELDS = ['displayName', 'email', 'password', 'battletag', 'whatsapp'] as const;
 const LOGIN_FIELDS = ['email', 'password'] as const;
@@ -30,7 +33,7 @@ type SubmitStatus = 'success' | 'error';
 @Component({
   selector: 'app-login',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ButtonsComponent],
+  imports: [ButtonsComponent, ModalHostComponent],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })
@@ -38,6 +41,7 @@ export class LoginComponent {
   readonly auth = inject(AuthService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly modal = inject(ModalService);
 
   readonly signupForm = signal<SignupFormValue>({
     displayName: '',
@@ -87,6 +91,10 @@ export class LoginComponent {
 
   readonly canSubmitSignup = computed(() => !this.signupHasErrors());
   readonly canSubmitLogin = computed(() => !this.loginHasErrors());
+
+  openRecuperarSenha(): void {
+    this.modal.open(RecuperarSenhaComponent);
+  }
 
   updateSignupField(field: SignupField, value: string): void {
     this.signupForm.update((current) => ({ ...current, [field]: value }));

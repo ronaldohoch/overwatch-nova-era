@@ -81,6 +81,72 @@
                 {{ team.createdAtLabel }}
               </p>
             </div>
+
+            @if (canEditTeamData()) {
+              <div class="mt-4 my-3 border-t border-(--ow-gray-200) pt-3">
+                <h3 class="text-sm font-black uppercase tracking-wide text-(--ow-gray-900)">
+                  Editar dados do time
+                </h3>
+
+                <form class="my-3" novalidate (submit)="onUpdateTeamData($event)">
+                  <label class="flex flex-col gap-2 text-sm font-semibold text-(--ow-gray-700)">
+                    Nome do time
+                    <input
+                      type="text"
+                      placeholder="Nome do time"
+                      class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
+                      [value]="editTeamName()"
+                      [disabled]="updatingTeamData()"
+                      (input)="updateTeamName($any($event.target).value)"
+                    />
+                  </label>
+
+                  <label class="flex flex-col gap-2 text-sm font-semibold text-(--ow-gray-700)">
+                    Descricao
+                    <textarea
+                      rows="3"
+                      placeholder="Descricao do time"
+                      class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
+                      [value]="editTeamDescription()"
+                      [disabled]="updatingTeamData()"
+                      (input)="updateTeamDescription($any($event.target).value)"
+                    ></textarea>
+                  </label>
+
+                  <label class="flex flex-col gap-2 text-sm font-semibold text-(--ow-gray-700)">
+                    Link do grupo WhatsApp
+                    <input
+                      type="text"
+                      placeholder="https://..."
+                      class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
+                      [value]="editTeamGroupLink()"
+                      [disabled]="updatingTeamData()"
+                      (input)="updateTeamGroupLink($any($event.target).value)"
+                    />
+                  </label>
+
+                  <div class="flex justify-end">
+                    <ow-btn type="submit" [disabled]="!canSubmitTeamData()">
+                      @if (updatingTeamData()) {
+                        Salvando...
+                      } @else {
+                        Salvar dados
+                      }
+                    </ow-btn>
+                  </div>
+                </form>
+
+                @if (updateTeamDataMessage(); as updateTeamDataMessage) {
+                  <p
+                    class="text-sm font-medium"
+                    [class.text-red-600]="updateTeamDataError()"
+                    [class.text-green-700]="!updateTeamDataError()"
+                  >
+                    {{ updateTeamDataMessage }}
+                  </p>
+                }
+              </div>
+            }
           } @else {
             <p class="text-sm text-(--ow-gray-600)">Carregando dados do time...</p>
           }
@@ -127,88 +193,88 @@
       </ow-card>
     </div>
 
-    <ow-card>
-      <div class="space-y-4">
-        <h2 class="text-xl font-black text-(--ow-gray-900)">Integrantes</h2>
+    <div class="space-y-4">
+      <h2 class="text-xl font-black text-(--ow-gray-900)">Integrantes</h2>
 
-        @if (promoteCaptainMessage(); as promoteCaptainMessage) {
-          <p class="text-sm font-medium" [class.text-red-600]="promoteCaptainError()" [class.text-green-700]="!promoteCaptainError()">
-            {{ promoteCaptainMessage }}
-          </p>
-        }
+      @if (promoteCaptainMessage(); as promoteCaptainMessage) {
+        <p class="text-sm font-medium" [class.text-red-600]="promoteCaptainError()" [class.text-green-700]="!promoteCaptainError()">
+          {{ promoteCaptainMessage }}
+        </p>
+      }
 
-        @if (removeMemberMessage(); as removeMemberMessage) {
-          <p class="text-sm font-medium" [class.text-red-600]="removeMemberError()" [class.text-green-700]="!removeMemberError()">
-            {{ removeMemberMessage }}
-          </p>
-        }
+      @if (removeMemberMessage(); as removeMemberMessage) {
+        <p class="text-sm font-medium" [class.text-red-600]="removeMemberError()" [class.text-green-700]="!removeMemberError()">
+          {{ removeMemberMessage }}
+        </p>
+      }
 
-        @if (loadingMembers()) {
-          <p class="text-sm text-(--ow-gray-600)">Carregando integrantes...</p>
-        } @else if (members().length === 0) {
-          <p class="text-sm text-(--ow-gray-600)">Nenhum integrante encontrado.</p>
-        } @else {
-          <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-            @for (member of members(); track member.trackKey) {
-              <article class="rounded-lg border border-(--ow-gray-200) bg-white p-3">
-                <div class="flex items-center justify-between gap-2">
-                  <div class="flex min-w-0 items-center gap-2">
-                    @if (canRemoveMember(member) || isRemovingMember(member)) {
-                      <button
-                        type="button"
-                        class="ow-remove-member-btn"
-                        [disabled]="!canRemoveMember(member)"
-                        [attr.aria-label]="'Remover integrante ' + member.displayName"
-                        title="Remover integrante"
-                        (click)="onRemoveMember(member)"
-                      >
-                        X
-                      </button>
-                    }
-
-                    <h3 class="truncate text-sm font-black uppercase text-(--ow-gray-900)">
-                      {{ member.displayName }}
-                    </h3>
-                  </div>
-                  @if (member.isCaptain) {
-                    <span class="ow-badge ow-badge-captain">Capitão</span>
+      @if (loadingMembers()) {
+        <p class="text-sm text-(--ow-gray-600)">Carregando integrantes...</p>
+      } @else if (members().length === 0) {
+        <p class="text-sm text-(--ow-gray-600)">Nenhum integrante encontrado.</p>
+      } @else {
+        <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+          @for (member of members(); track member.trackKey) {
+            <article class="rounded-lg border border-(--ow-gray-200) bg-white p-3">
+              <div class="flex items-center justify-between gap-2">
+                <div class="flex min-w-0 items-center gap-2">
+                  @if (canRemoveMember(member) || isRemovingMember(member)) {
+                    <button
+                      type="button"
+                      class="ow-remove-member-btn"
+                      [disabled]="!canRemoveMember(member)"
+                      [attr.aria-label]="'Remover integrante ' + member.displayName"
+                      title="Remover integrante"
+                      (click)="onRemoveMember(member)"
+                    >
+                      X
+                    </button>
                   }
+
+                  <h3 class="truncate text-sm font-black uppercase text-(--ow-gray-900)">
+                    {{ member.displayName }}
+                  </h3>
                 </div>
+                @if (member.isCaptain) {
+                  <span class="ow-badge ow-badge-captain">Capitão</span>
+                }
+              </div>
 
-                <p class="mt-2 text-sm font-semibold text-(--ow-gray-700)">{{ member.battletag }}</p>
-                <p class="mt-1 text-xs text-(--ow-gray-500)">Entrou em {{ member.joinedAtLabel }}</p>
+              <p class="mt-2 text-sm font-semibold text-(--ow-gray-700)">{{ member.battletag }}</p>
+              <p class="mt-1 text-xs text-(--ow-gray-500)">Entrou em {{ member.joinedAtLabel }}</p>
 
-                @if (canPromoteMember(member) || isPromotingMember(member) || canOpenContactModal()) {
-                  <div class="mt-3 flex flex-wrap justify-end gap-2">
-                    @if (canOpenContactModal()) {
-                      <ow-btn
-                        variant="secondary-mini"
-                        (click)="openContactModal(member)"
-                      >
-                        Contato
-                      </ow-btn>
-                    }
-
+              @if (canPromoteMember(member) || isPromotingMember(member) || canOpenContactModal()) {
+                <div class="mt-3 flex flex-wrap justify-end gap-2">
+                  @if (canOpenContactModal()) {
                     <ow-btn
                       variant="secondary-mini"
-                      [disabled]="!canPromoteMember(member)"
-                      (click)="onPromoteCaptain(member)"
+                      (click)="openContactModal(member)"
                     >
-                      @if (isPromotingMember(member)) {
-                        Promovendo...
-                      } @else {
-                        Promover a capitão
-                      }
+                      Contato
                     </ow-btn>
+                  }
 
-                  </div>
-                }
-              </article>
-            }
-          </div>
-        }
-      </div>
-    </ow-card>
+                  <ow-btn
+                    variant="secondary-mini"
+                    [disabled]="!canPromoteMember(member)"
+                    (click)="onPromoteCaptain(member)"
+                  >
+                    @if (isPromotingMember(member)) {
+                      Promovendo...
+                    } @else {
+                      Promover a capitão
+                    }
+                  </ow-btn>
+
+                </div>
+              }
+            </article>
+          }
+        </div>
+      }
+    </div>
+    <!-- <ow-card>
+    </ow-card> -->
 
     <div class="grid gap-4 xl:grid-cols-2">
       <ow-card>
@@ -283,10 +349,10 @@
     </ow-card>
 
     @if (isCurrentUserMember() || leaveTeamMessage()) {
-      <ow-card>
-        <div class="space-y-4">
-          <h2 class="text-xl font-black text-(--ow-gray-900)">Sair do time</h2>
-          <p class="text-sm text-(--ow-gray-600)">
+      <div class="bg-white mt-8">
+        <div class="p-4 bg-[#ea433514] border-[#ea4335] border-l-4">
+          <h2 class="text-xl font-black text-[#c5221f]">Sair do time</h2>
+          <p class="text-sm text-[#c5221f]">
             Ao sair, você deixa de participar deste time e perde acesso à gestão dele.
           </p>
 
@@ -298,7 +364,7 @@
 
           @if (canLeaveTeam() || leavingTeam()) {
             <div class="flex justify-end">
-              <ow-btn variant="secondary-mini" [disabled]="leavingTeam()" (click)="onLeaveTeam()">
+              <ow-btn variant="danger" [disabled]="leavingTeam()" (click)="onLeaveTeam()">
                 @if (leavingTeam()) {
                   Saindo...
                 } @else {
@@ -308,7 +374,7 @@
             </div>
           }
         </div>
-      </ow-card>
+      </div>
     }
   }
 </div>

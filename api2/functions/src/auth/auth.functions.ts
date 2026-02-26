@@ -76,6 +76,28 @@ app.put('/me/password', async (req: express.Request, res: express.Response) => {
   }
 });
 
+app.post('/forgot-password', async (req: express.Request, res: express.Response) => {
+  try {
+    await authSvc.requestPasswordReset(req.body ?? {});
+    res.status(200).json({ message: 'Se o e-mail existir, você receberá um link em breve.' });
+  } catch (err: unknown) {
+    res
+      .status(resolveErrorStatus(err, 400))
+      .json({ error: resolveErrorMessage(err, 'Bad request') });
+  }
+});
+
+app.post('/reset-password', async (req: express.Request, res: express.Response) => {
+  try {
+    await authSvc.resetPassword(req.body ?? {});
+    res.status(200).json({ message: 'Senha alterada com sucesso.' });
+  } catch (err: unknown) {
+    res
+      .status(resolveErrorStatus(err, 400))
+      .json({ error: resolveErrorMessage(err, 'Bad request') });
+  }
+});
+
 app.post('/login', async (req: express.Request, res: express.Response) => {
   const { email, password } = req.body;
 

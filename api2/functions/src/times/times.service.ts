@@ -5,6 +5,7 @@ import {
   ActorRole,
   AddMemberDto,
   CreateTeamDto,
+  UpdateTeamDto,
   ErrorWithStatus,
   ParticipationScope,
   StoredInvite,
@@ -335,6 +336,11 @@ export class TimesService {
     return enriched;
   }
 
+  private hasOwnField(source: unknown, field: string): boolean {
+    if (!source || typeof source !== 'object' || Array.isArray(source)) return false;
+    return Object.prototype.hasOwnProperty.call(source, field);
+  }
+
   async createTeam(actor: TeamActor, body: CreateTeamDto) {
     const actorUid = this.parseUid(actor.uid, 'uid');
     const actorRole = this.parseRole(actor.role);
@@ -385,6 +391,57 @@ export class TimesService {
     return this.enrichTeamWithCaptainName({
       id: created.id,
       ...(created.data() as Record<string, unknown>),
+    });
+  }
+
+  async updateTeamData(teamId: string, actor: TeamActor, body: UpdateTeamDto) {
+    const normalizedTeamId = this.parseUid(teamId, 'teamId');
+    this.parseUid(actor.uid, 'uid');
+
+    const actorRole = this.parseRole(actor.role);
+    if (actorRole !== UserRole.ADMIN) {
+      fail('Apenas admin pode alterar dados do time.', 403);
+    }
+
+    const hasName = this.hasOwnField(body, 'name');
+    const hasDescription = this.hasOwnField(body, 'description');
+    const hasGroupLink = this.hasOwnField(body, 'groupLink');
+
+    if (!hasName && !hasDescription && !hasGroupLink) {
+      fail('Informe ao menos um campo para atualizar: name, description ou groupLink.', 400);
+    }
+
+    const updates: Record<string, unknown> = {
+      updatedAt: FieldValue.serverTimestamp(),
+    };
+
+    if (hasName) {
+      updates['name'] = this.parseName(body?.name);
+    }
+
+    if (hasDescription) {
+      updates['description'] = this.parseDescription(body?.description);
+    }
+
+    if (hasGroupLink) {
+      updates['groupLink'] = this.parseGroupLink(body?.groupLink);
+    }
+
+    const teamRef = this.teamsCollection.doc(normalizedTeamId);
+
+    await firestore.runTransaction(async (tx) => {
+      const teamSnapshot = await tx.get(teamRef);
+      if (!teamSnapshot.exists) {
+        fail('Time nao encontrado.', 404);
+      }
+
+      tx.update(teamRef, updates);
+    });
+
+    const updated = await teamRef.get();
+    return this.enrichTeamWithCaptainName({
+      id: updated.id,
+      ...(updated.data() as Record<string, unknown>),
     });
   }
 

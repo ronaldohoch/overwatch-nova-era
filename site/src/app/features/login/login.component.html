@@ -168,7 +168,10 @@
         }
       </div>
 
-      <div class="flex flex-row-reverse">
+      <div class="flex justify-between items-center">
+        <ow-btn type="button" variant="secondary-mini" (click)="openRecuperarSenha()">
+          Esqueci minha senha
+        </ow-btn>
         <ow-btn [disabled]="!canSubmitLogin() || loginPending()" ariaLabel="Entrar na conta" type="submit">
           @if (loginPending()) {
             Entrando...
@@ -190,3 +193,5 @@
     </form>
   </div>
 </section>
+
+<app-modal-host></app-modal-host>
