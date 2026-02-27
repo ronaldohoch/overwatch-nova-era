@@ -48,6 +48,15 @@
                 Alterar status
               </ow-btn>
             }
+
+            @if (canManageBracket()) {
+              <ow-btn
+                variant="primary-mini"
+                [routerLink]="['/watchpoint/torneios', tournament.id, 'bracket']"
+              >
+                Chave
+              </ow-btn>
+            }
           }
           @if (tournament.teamMode === 'random') {
             <ow-btn variant="blue-mini" href="/watchpoint/check-in-by-tournament">Ver Check-ins</ow-btn>

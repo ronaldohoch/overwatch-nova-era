@@ -11,3 +11,4 @@ export * from './auth/auth.functions';
 export * from './times/times.functions';
 export * from './torneios/torneios.functions';
 export * from './trofeus/trofeus.functions';
+export * from './brackets/brackets.functions';

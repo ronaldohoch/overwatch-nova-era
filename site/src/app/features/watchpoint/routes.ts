@@ -54,6 +54,18 @@ export default [
           ),
       },
       {
+        path: 'torneios/:id/bracket',
+        title: 'Copa Overwatch Nova Era - Chave do Torneio',
+        canActivate: [routeAccessGuard],
+        data: {
+          access: ['admin', 'streamer'],
+        },
+        loadComponent: () =>
+          import('./paginas/torneio-bracket/torneio-bracket.component').then(
+            (m) => m.TorneioBracketComponent,
+          ),
+      },
+      {
         path: 'torneios',
         title: 'Copa Overwatch Nova Era - Torneios',
         loadComponent: () => import('./paginas/listagem-torneios/listagem-torneios.component').then((m) => m.ListagemTorneiosComponent),

@@ -6,4 +6,5 @@ export const environment = {
   apiURLTorneios: 'https://torneios-hfjclii3ia-rj.a.run.app',
   apiURLTimes: 'https://times-hfjclii3ia-rj.a.run.app',
   apiURLTrofeus: 'https://trofeus-hfjclii3ia-rj.a.run.app',
+  apiURLBrackets: 'https://brackets-hfjclii3ia-rj.a.run.app',
 };

@@ -38,6 +38,10 @@ export class ListagemTorneiosComponent {
   readonly message = signal<string | null>(null);
   readonly tournaments = signal<readonly TournamentListItem[]>([]);
   readonly canManageStatus = computed(() => this.auth.userRole() === 'admin');
+  readonly canManageBracket = computed(() => {
+    const role = this.auth.userRole();
+    return role === 'admin' || role === 'streamer';
+  });
 
   constructor() {
     void this.loadTournaments();
@@ -123,7 +127,7 @@ export class ListagemTorneiosComponent {
     const teamsLabel = maxTeams && maxTeams > 0 ? `${maxTeams} times` : 'Times não informados';
     const formatLabel = format ? format.replaceAll('_', ' ').toUpperCase() : 'FORMATO NAO INFORMADO';
 
-    return `${modeLabel} â€¢ ${teamsLabel} â€¢ ${formatLabel}`;
+    return `${modeLabel} • ${teamsLabel} • ${formatLabel}`;
   }
 
   private toTimeLabel(value: string | null): string {

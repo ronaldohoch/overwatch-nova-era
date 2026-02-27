@@ -1,0 +1,90 @@
+<!-- Card container -->
+<div
+  class="bg-(--ow-white) border border-(--ow-gray-200) min-w-[280px] overflow-hidden
+         shadow-[0_2px_12px_rgba(0,0,0,0.08)]
+         [clip-path:polygon(5%_0,100%_0,100%_95%,95%_100%,0_100%,0_5%)]"
+>
+
+  <!-- Header -->
+  <div
+    class="bg-(--ow-gray-100) px-4 py-2.5 flex justify-between items-center
+           text-[0.72rem] font-bold text-(--ow-gray-500) uppercase tracking-[0.1em]"
+  >
+    <span>{{ label() || 'Partida' }}</span>
+
+    @if (isLive()) {
+      <span
+        class="inline-block py-0.5 px-3.5 text-[0.72rem] font-extrabold uppercase tracking-[0.1em]
+               bg-(--ow-red) text-white animate-pulse
+               [clip-path:polygon(10%_0,100%_0,90%_100%,0%_100%)]"
+      >
+        AO VIVO
+      </span>
+    } @else if (isFinished()) {
+      <span class="text-[0.7rem] font-extrabold uppercase tracking-[0.1em] text-(--ow-gray-400)">
+        FINALIZADO
+      </span>
+    }
+  </div>
+
+  <!-- Team 1 -->
+  <div [class]="team1RowClass()">
+    <div class="flex items-center gap-3">
+
+      <!-- Logo ou iniciais -->
+      @if (team1()?.logoUrl) {
+        <img
+          [src]="team1()!.logoUrl!"
+          [alt]="team1()!.name"
+          class="w-8 h-8 object-contain
+                 [clip-path:polygon(20%_0,100%_0,100%_80%,80%_100%,0_100%,0_20%)]"
+        />
+      } @else {
+        <div
+          class="w-8 h-8 flex items-center justify-center shrink-0
+                 bg-(--ow-gray-100) text-(--ow-orange) text-[0.65rem] font-black
+                 [clip-path:polygon(20%_0,100%_0,100%_80%,80%_100%,0_100%,0_20%)]"
+        >
+          {{ team1Initials() }}
+        </div>
+      }
+
+      <span class="font-bold text-[0.95rem] text-(--ow-gray-700)">
+        {{ team1()?.name ?? 'A definir' }}
+      </span>
+    </div>
+
+    <span [class]="score1Class()">{{ score1() }}</span>
+  </div>
+
+  <!-- Team 2 -->
+  <div [class]="team2RowClass()">
+    <div class="flex items-center gap-3">
+
+      <!-- Logo ou iniciais -->
+      @if (team2()?.logoUrl) {
+        <img
+          [src]="team2()!.logoUrl!"
+          [alt]="team2()!.name"
+          class="w-8 h-8 object-contain
+                 [clip-path:polygon(20%_0,100%_0,100%_80%,80%_100%,0_100%,0_20%)]"
+        />
+      } @else {
+        <div
+          class="w-8 h-8 flex items-center justify-center shrink-0
+                 bg-(--ow-gray-100) text-(--ow-orange) text-[0.65rem] font-black
+                 [clip-path:polygon(20%_0,100%_0,100%_80%,80%_100%,0_100%,0_20%)]"
+        >
+          {{ team2Initials() }}
+        </div>
+      }
+
+      <span class="font-bold text-[0.95rem] text-(--ow-gray-700)">
+        {{ team2()?.name ?? 'A definir' }}
+      </span>
+    </div>
+
+    <span [class]="score2Class()">{{ score2() }}</span>
+  </div>
+
+</div>

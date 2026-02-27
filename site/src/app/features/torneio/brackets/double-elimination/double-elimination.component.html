@@ -1,0 +1,120 @@
+<div class="overflow-x-auto pb-4">
+
+  <!-- ═══════════════════════════════════════════════════════
+       CHAVE DOS VENCEDORES
+  ════════════════════════════════════════════════════════ -->
+  <div class="mb-2">
+
+    <!-- Cabeçalho da seção -->
+    <div class="mb-3 flex items-center gap-3">
+      <span
+        class="shrink-0 text-[0.7rem] font-black uppercase tracking-[0.15em] text-(--ow-orange)"
+      >
+        Chave dos Vencedores
+      </span>
+      <div class="h-px flex-1 bg-(--ow-orange) opacity-25"></div>
+    </div>
+
+    <!-- Rótulos das rodadas -->
+    <div class="mb-2 flex gap-4">
+      @for (rd of wbRounds(); track rd.round) {
+        <div class="w-72 shrink-0 text-center text-[0.65rem] font-bold uppercase tracking-widest text-(--ow-gray-400)">
+          {{ rd.label }}
+        </div>
+      }
+    </div>
+
+    <!-- Colunas de partidas (altura controlada para alinhamento) -->
+    <div class="flex gap-4" [style.height]="wbSectionHeightPx()">
+      @for (rd of wbRounds(); track rd.round) {
+        <div class="flex w-72 shrink-0 flex-col">
+          @for (match of rd.matches; track match.matchNumber) {
+            <div class="flex items-center justify-center" [style.height]="rd.slotHeightPx">
+              <app-match-card
+                [match]="match"
+                [team1]="getTeam(match.team1Id)"
+                [team2]="getTeam(match.team2Id)"
+                [label]="'Jogo ' + match.matchNumber"
+              />
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       CHAVE DOS PERDEDORES
+  ════════════════════════════════════════════════════════ -->
+  @if (lbRounds().length) {
+    <div class="mt-10 mb-2">
+
+      <!-- Cabeçalho da seção -->
+      <div class="mb-3 flex items-center gap-3">
+        <span
+          class="shrink-0 text-[0.7rem] font-black uppercase tracking-[0.15em] text-(--ow-gray-500)"
+        >
+          Chave dos Perdedores
+        </span>
+        <div class="h-px flex-1 bg-(--ow-gray-400) opacity-25"></div>
+      </div>
+
+      <!-- Rótulos das rodadas -->
+      <div class="mb-2 flex gap-4">
+        @for (rd of lbRounds(); track rd.round) {
+          <div class="w-72 shrink-0 text-center text-[0.65rem] font-bold uppercase tracking-widest text-(--ow-gray-400)">
+            {{ rd.label }}
+          </div>
+        }
+      </div>
+
+      <!-- Colunas de partidas -->
+      <div class="flex gap-4" [style.height]="lbSectionHeightPx()">
+        @for (rd of lbRounds(); track rd.round) {
+          <div class="flex w-72 shrink-0 flex-col">
+            @for (match of rd.matches; track match.matchNumber) {
+              <div class="flex items-center justify-center" [style.height]="rd.slotHeightPx">
+                <app-match-card
+                  [match]="match"
+                  [team1]="getTeam(match.team1Id)"
+                  [team2]="getTeam(match.team2Id)"
+                  [label]="'Jogo ' + match.matchNumber"
+                />
+              </div>
+            }
+          </div>
+        }
+      </div>
+
+    </div>
+  }
+
+  <!-- ═══════════════════════════════════════════════════════
+       GRANDE FINAL
+  ════════════════════════════════════════════════════════ -->
+  @if (grandFinal(); as gf) {
+    <div class="mt-10">
+
+      <div class="mb-3 flex items-center gap-3">
+        <span
+          class="shrink-0 text-[0.7rem] font-black uppercase tracking-[0.15em] text-(--ow-orange)"
+        >
+          Grande Final
+        </span>
+        <div class="h-px flex-1 bg-(--ow-orange) opacity-25"></div>
+      </div>
+
+      <div class="w-72">
+        <app-match-card
+          [match]="gf"
+          [team1]="getTeam(gf.team1Id)"
+          [team2]="getTeam(gf.team2Id)"
+          label="Grande Final"
+        />
+      </div>
+
+    </div>
+  }
+
+</div>

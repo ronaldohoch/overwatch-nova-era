@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npm run build)"
+      "Bash(npm run build)",
+      "Bash(xargs grep -l \"bracket\\\\|chaveamento\")",
+      "Bash(npx ng serve --no-open)"
     ]
   }
 }

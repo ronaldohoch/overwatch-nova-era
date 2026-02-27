@@ -6,4 +6,5 @@ export const environment = {
   apiURLTorneios: 'http://127.0.0.1:5001/copa-nova-era-overwatch/southamerica-east1/torneios',
   apiURLTimes: 'http://127.0.0.1:5001/copa-nova-era-overwatch/southamerica-east1/times',
   apiURLTrofeus: 'http://127.0.0.1:5001/copa-nova-era-overwatch/southamerica-east1/trofeus',
+  apiURLBrackets: 'http://127.0.0.1:5001/copa-nova-era-overwatch/southamerica-east1/brackets',
 };
