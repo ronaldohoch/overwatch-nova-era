@@ -64,17 +64,15 @@ export class TabsComponent implements AfterContentInit {
     'py-[14px] px-6',
     'text-[0.82rem] font-extrabold uppercase tracking-[0.1em]',
     'cursor-pointer',
-    'border-b-[3px] border-b-transparent',
-    '-mb-0.5',
     'transition-all duration-200 ease-out',
-    'bg-transparent border-t-0 border-l-0 border-r-0',
+    'bg-transparent border-0',
     '[font-family:inherit]',
     'shrink-0 whitespace-nowrap',
     'focus-visible:outline-none',
     'focus-visible:ring-2 focus-visible:ring-[color:var(--ow-orange)] focus-visible:ring-offset-2 focus-visible:ring-offset-white',
   ].join(' ');
 
-  readonly tabButtonActiveClass = 'text-[color:var(--ow-orange)] border-b-[color:var(--ow-orange)]';
+  readonly tabButtonActiveClass = 'text-[color:var(--ow-orange)] shadow-[inset_0_-3px_0_var(--ow-orange)]';
   readonly tabButtonInactiveClass = 'text-[color:var(--ow-gray-500)] hover:text-[color:var(--ow-orange)]';
   readonly tabButtonDisabledClass =
     'opacity-40 cursor-not-allowed hover:text-[color:var(--ow-gray-500)]';

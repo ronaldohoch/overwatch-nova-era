@@ -46,4 +46,12 @@ export const routes: Routes = [
         (m) => m.ResetPasswordComponent,
       ),
   },
+  {
+    path: 'design-system',
+    title: 'Copa Overwatch Nova Era - Design System',
+    loadComponent: () =>
+      import('./features/design-system/design-system.component').then(
+        (m) => m.DesignSystemComponent,
+      ),
+  },
 ];
