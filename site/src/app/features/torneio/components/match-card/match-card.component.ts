@@ -1,4 +1,4 @@
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, input, output } from '@angular/core';
 import { BracketMatch } from '../../brackets/brackets.service';
 
 export interface TeamDisplay {
@@ -18,9 +18,16 @@ export class MatchCardComponent {
   team1 = input<TeamDisplay | null>(null);
   team2 = input<TeamDisplay | null>(null);
   label = input<string>('');
+  canReport = input(false);
+  readonly reportRequested = output<BracketMatch>();
 
   readonly isLive = computed(() => this.match().status === 'running');
   readonly isFinished = computed(() => this.match().status === 'finished');
+  readonly canTriggerReport = computed(() => {
+    if (!this.canReport()) return false;
+    const status = this.match().status;
+    return status === 'ready' || status === 'running';
+  });
 
   readonly isTeam1Winner = computed(
     () => this.match().winnerId !== null && this.match().winnerId === this.team1()?.id,
@@ -44,6 +51,10 @@ export class MatchCardComponent {
 
   readonly score1Class = computed(() => this.scoreClass(this.isTeam1Winner()));
   readonly score2Class = computed(() => this.scoreClass(this.isTeam2Winner()));
+
+  onReportClick(): void {
+    this.reportRequested.emit(this.match());
+  }
 
   private rowClass(isWinner: boolean): string {
     const base =

@@ -1,9 +1,9 @@
-<div class="overflow-x-auto pb-4">
+<div class="overflow-x-auto pb-4 flex flex-col gap-8">
 
   <!-- ═══════════════════════════════════════════════════════
        CHAVE DOS VENCEDORES
   ════════════════════════════════════════════════════════ -->
-  <div class="mb-2">
+  <div class="">
 
     <!-- Cabeçalho da seção -->
     <div class="mb-3 flex items-center gap-3">
@@ -27,7 +27,7 @@
     <!-- Colunas de partidas (altura controlada para alinhamento) -->
     <div class="flex gap-4" [style.height]="wbSectionHeightPx()">
       @for (rd of wbRounds(); track rd.round) {
-        <div class="flex w-72 shrink-0 flex-col">
+        <div class="flex w-72 shrink-0 flex-col gap-4">
           @for (match of rd.matches; track match.matchNumber) {
             <div class="flex items-center justify-center" [style.height]="rd.slotHeightPx">
               <app-match-card
@@ -35,6 +35,8 @@
                 [team1]="getTeam(match.team1Id)"
                 [team2]="getTeam(match.team2Id)"
                 [label]="'Jogo ' + match.matchNumber"
+                [canReport]="canReport()"
+                (reportRequested)="onReportRequested($event)"
               />
             </div>
           }
@@ -48,7 +50,7 @@
        CHAVE DOS PERDEDORES
   ════════════════════════════════════════════════════════ -->
   @if (lbRounds().length) {
-    <div class="mt-10 mb-2">
+    <div class="">
 
       <!-- Cabeçalho da seção -->
       <div class="mb-3 flex items-center gap-3">
@@ -80,6 +82,8 @@
                   [team1]="getTeam(match.team1Id)"
                   [team2]="getTeam(match.team2Id)"
                   [label]="'Jogo ' + match.matchNumber"
+                  [canReport]="canReport()"
+                  (reportRequested)="onReportRequested($event)"
                 />
               </div>
             }
@@ -94,7 +98,7 @@
        GRANDE FINAL
   ════════════════════════════════════════════════════════ -->
   @if (grandFinal(); as gf) {
-    <div class="mt-10">
+    <div class="">
 
       <div class="mb-3 flex items-center gap-3">
         <span
@@ -111,6 +115,8 @@
           [team1]="getTeam(gf.team1Id)"
           [team2]="getTeam(gf.team2Id)"
           label="Grande Final"
+          [canReport]="canReport()"
+          (reportRequested)="onReportRequested($event)"
         />
       </div>
 

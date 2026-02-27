@@ -1,4 +1,4 @@
-import { Component, computed, input } from '@angular/core';
+import { Component, computed, input, output } from '@angular/core';
 import { MatchCardComponent, TeamDisplay } from '../../components/match-card/match-card.component';
 import { Bracket, BracketMatch } from '../brackets.service';
 
@@ -20,6 +20,8 @@ const BASE_SLOT_PX = 160;
 export class DoubleEliminationComponent {
   bracket = input.required<Bracket>();
   teams = input<Record<string, TeamDisplay>>({});
+  canReport = input(false);
+  readonly reportRequested = output<BracketMatch>();
 
   // ── Agrupamentos internos ─────────────────────────────────
 
@@ -83,6 +85,10 @@ export class DoubleEliminationComponent {
   getTeam(teamId: string | null): TeamDisplay | null {
     if (!teamId) return null;
     return this.teams()[teamId] ?? null;
+  }
+
+  onReportRequested(match: BracketMatch): void {
+    this.reportRequested.emit(match);
   }
 
   // ── Helpers privados ──────────────────────────────────────

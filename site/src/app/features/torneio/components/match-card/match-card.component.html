@@ -1,6 +1,6 @@
 <!-- Card container -->
 <div
-  class="bg-(--ow-white) border border-(--ow-gray-200) min-w-[280px] overflow-hidden
+  class="bg-(--ow-white) border border-(--ow-gray-200) min-w-70 overflow-hidden
          shadow-[0_2px_12px_rgba(0,0,0,0.08)]
          [clip-path:polygon(5%_0,100%_0,100%_95%,95%_100%,0_100%,0_5%)]"
 >
@@ -8,20 +8,24 @@
   <!-- Header -->
   <div
     class="bg-(--ow-gray-100) px-4 py-2.5 flex justify-between items-center
-           text-[0.72rem] font-bold text-(--ow-gray-500) uppercase tracking-[0.1em]"
+           text-[0.72rem] font-bold text-(--ow-gray-500) uppercase tracking-widest"
   >
     <span>{{ label() || 'Partida' }}</span>
 
-    @if (isLive()) {
+    @if (canTriggerReport()) {
+      <button type="button" (click)="onReportClick()" class="cursor-pointer text-[0.7rem] font-extrabold uppercase tracking-widest text-(--ow-blue) underline">
+        REGISTRAR
+      </button>
+    } @else if (isLive()) {
       <span
-        class="inline-block py-0.5 px-3.5 text-[0.72rem] font-extrabold uppercase tracking-[0.1em]
+        class="inline-block py-0.5 px-3.5 text-[0.72rem] font-extrabold uppercase tracking-widest
                bg-(--ow-red) text-white animate-pulse
                [clip-path:polygon(10%_0,100%_0,90%_100%,0%_100%)]"
       >
         AO VIVO
       </span>
     } @else if (isFinished()) {
-      <span class="text-[0.7rem] font-extrabold uppercase tracking-[0.1em] text-(--ow-gray-400)">
+      <span class="text-[0.7rem] font-extrabold uppercase tracking-widest text-(--ow-gray-400)">
         FINALIZADO
       </span>
     }

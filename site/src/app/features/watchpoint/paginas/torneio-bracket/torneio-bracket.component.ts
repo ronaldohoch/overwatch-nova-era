@@ -1,11 +1,18 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { ButtonsComponent } from '../../../../shared/buttons/buttons';
 import { CardComponent } from '../../../../shared/card/card.component';
+import { CheckboxComponent } from '../../../../shared/design-system/checkbox/checkbox.component';
+import { InputComponent } from '../../../../shared/design-system/input/input.component';
+import {
+  OwSelectOption,
+  SelectComponent,
+} from '../../../../shared/design-system/select/select.component';
 import { DoubleEliminationComponent } from '../../../torneio/brackets/double-elimination/double-elimination.component';
 import {
   Bracket,
@@ -17,11 +24,27 @@ import { TeamDisplay } from '../../../torneio/components/match-card/match-card.c
 
 type PageState = 'loading' | 'no-bracket' | 'loaded' | 'error';
 type RawRecord = Readonly<Record<string, unknown>>;
+type TeamCategory = 'formed' | 'random' | 'unknown';
+type SelectableTeam = Readonly<{
+  id: string;
+  name: string;
+  category: TeamCategory;
+  tournamentIds: readonly string[];
+}>;
 
 @Component({
   selector: 'app-torneio-bracket',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ButtonsComponent, CardComponent, DoubleEliminationComponent, RouterLink],
+  imports: [
+    ButtonsComponent,
+    CardComponent,
+    CheckboxComponent,
+    DoubleEliminationComponent,
+    FormsModule,
+    InputComponent,
+    RouterLink,
+    SelectComponent,
+  ],
   templateUrl: './torneio-bracket.component.html',
 })
 export class TorneioBracketComponent {
@@ -38,6 +61,11 @@ export class TorneioBracketComponent {
   readonly bracket = signal<Bracket | null>(null);
   readonly teams = signal<Record<string, TeamDisplay>>({});
   readonly tournamentName = signal<string | null>(null);
+  readonly tournamentTeamMode = signal<string | null>(null);
+  readonly loadingSelectableTeams = signal(false);
+  readonly selectableTeams = signal<readonly SelectableTeam[]>([]);
+  readonly selectedRandomTeamIds = signal<readonly string[]>([]);
+  readonly selectableTeamsMessage = signal<string | null>(null);
   readonly pageError = signal<string | null>(null);
 
   // ── Formulário: criar chave ───────────────────────────────
@@ -64,28 +92,24 @@ export class TorneioBracketComponent {
     return role === 'admin' || role === 'streamer';
   });
 
-  readonly readyOrRunningMatches = computed(() =>
-    (this.bracket()?.matches ?? []).filter(
-      (m) => m.status === 'ready' || m.status === 'running',
-    ),
-  );
-
   readonly activeReportMatch = computed<BracketMatch | null>(() => {
     const num = this.reportingMatchNumber();
     if (num === null) return null;
     return this.bracket()?.matches.find((m) => m.matchNumber === num) ?? null;
   });
 
-  readonly activeReportTeam1 = computed<TeamDisplay | null>(() => {
+  readonly reportWinnerOptions = computed<OwSelectOption[]>(() => {
     const match = this.activeReportMatch();
-    if (!match?.team1Id) return null;
-    return this.teams()[match.team1Id] ?? { id: match.team1Id, name: match.team1Id };
-  });
+    if (!match) return [];
 
-  readonly activeReportTeam2 = computed<TeamDisplay | null>(() => {
-    const match = this.activeReportMatch();
-    if (!match?.team2Id) return null;
-    return this.teams()[match.team2Id] ?? { id: match.team2Id, name: match.team2Id };
+    const options: OwSelectOption[] = [];
+    if (match.team1Id) {
+      options.push({ value: match.team1Id, label: this.teamName(match.team1Id) });
+    }
+    if (match.team2Id) {
+      options.push({ value: match.team2Id, label: this.teamName(match.team2Id) });
+    }
+    return options;
   });
 
   readonly canReport = computed(() => {
@@ -111,6 +135,9 @@ export class TorneioBracketComponent {
       ? 'text-(--ow-green) font-extrabold'
       : 'text-(--ow-blue) font-extrabold';
   });
+  readonly isRandomTournament = computed(() => this.tournamentTeamMode() === 'random');
+  readonly selectedRandomTeamsCount = computed(() => this.selectedRandomTeamIds().length);
+  readonly hasMinimumSelectedRandomTeams = computed(() => this.selectedRandomTeamsCount() >= 4);
 
   constructor() {
     if (this.tournamentId) {
@@ -125,12 +152,38 @@ export class TorneioBracketComponent {
 
   onSeedModeChange(value: string): void {
     this.seedMode.set(value === 'manual' ? 'manual' : 'random');
-    this.teamIdsInput.set('');
+    if (!this.isRandomTournament()) {
+      this.teamIdsInput.set('');
+    }
     this.createMessage.set(null);
   }
 
   onTeamIdsInputChange(value: string): void {
     this.teamIdsInput.set(value);
+  }
+
+  onSelectableTeamChange(teamId: string, checked: boolean): void {
+    const normalizedTeamId = teamId.trim();
+    if (!normalizedTeamId) return;
+
+    this.selectedRandomTeamIds.update((current) => {
+      if (checked) {
+        if (current.includes(normalizedTeamId)) return current;
+        return [...current, normalizedTeamId];
+      }
+      return current.filter((id) => id !== normalizedTeamId);
+    });
+    this.createMessage.set(null);
+  }
+
+  isSelectableTeamChecked(teamId: string): boolean {
+    return this.selectedRandomTeamIds().includes(teamId);
+  }
+
+  selectableTeamLabel(teamId: string): string {
+    const team = this.selectableTeams().find((item) => item.id === teamId);
+    if (!team) return 'Time indisponível';
+    return team.name;
   }
 
   async createBracket(): Promise<void> {
@@ -143,7 +196,19 @@ export class TorneioBracketComponent {
       const mode = this.seedMode();
       let payload: { seedMode: 'random' | 'manual'; teamIds?: string[] };
 
-      if (mode === 'manual') {
+      if (this.isRandomTournament()) {
+        const selectedTeamIds = this.selectedRandomTeamIds();
+        if (selectedTeamIds.length < 4) {
+          this.createMessage.set({
+            text: 'Selecione ao menos 4 times para gerar a chave.',
+            ok: false,
+          });
+          this.creating.set(false);
+          return;
+        }
+
+        payload = { seedMode: mode, teamIds: [...selectedTeamIds] };
+      } else if (mode === 'manual') {
         const teamIds = this.parseTeamIds(this.teamIdsInput());
         if (teamIds.length < 4) {
           this.createMessage.set({
@@ -185,19 +250,30 @@ export class TorneioBracketComponent {
       this.teams.set({});
       this.teamIdsInput.set('');
       this.seedMode.set('random');
+      this.selectedRandomTeamIds.set([]);
       this.createMessage.set(null);
       this.state.set('no-bracket');
+      if (this.isRandomTournament()) {
+        await this.loadSelectableTeams();
+      }
     } catch (error: unknown) {
       alert(this.resolveError(error, 'Não foi possível excluir a chave.'));
     }
   }
 
   openReportForm(match: BracketMatch): void {
+    if (!this.isAdminOrStreamer()) return;
+    if (!(match.status === 'ready' || match.status === 'running')) return;
+
     this.reportingMatchNumber.set(match.matchNumber);
     this.reportWinnerId.set('');
     this.reportScore1.set('');
     this.reportScore2.set('');
     this.reportMessage.set(null);
+  }
+
+  onMatchReportRequested(match: BracketMatch): void {
+    this.openReportForm(match);
   }
 
   closeReportForm(): void {
@@ -253,37 +329,16 @@ export class TorneioBracketComponent {
 
   // ── Helpers para template ─────────────────────────────────
 
-  matchLabel(match: BracketMatch): string {
-    const side =
-      match.side === 'winners'
-        ? 'WB'
-        : match.side === 'losers'
-          ? 'LB'
-          : 'GF';
-    return `M${match.matchNumber} · ${side} R${match.round}`;
-  }
-
   teamName(teamId: string | null): string {
-    if (!teamId) return '—';
-    return this.teams()[teamId]?.name ?? teamId;
-  }
-
-  matchStatusLabel(status: BracketMatch['status']): string {
-    if (status === 'ready') return 'PRONTO';
-    if (status === 'running') return 'AO VIVO';
-    return status.toUpperCase();
-  }
-
-  matchStatusClass(status: BracketMatch['status']): string {
-    if (status === 'running') return 'text-(--ow-orange) font-extrabold animate-pulse';
-    return 'text-(--ow-blue) font-bold';
+    if (!teamId) return 'Time a definir';
+    return this.teams()[teamId]?.name ?? 'Time sem nome';
   }
 
   // ── Privados ──────────────────────────────────────────────
 
   private async loadPage(tournamentId: string): Promise<void> {
     this.state.set('loading');
-    await this.loadTournamentName(tournamentId);
+    await this.loadTournamentInfo(tournamentId);
 
     try {
       const bracket = await this.bracketsService.getBracket(tournamentId);
@@ -293,6 +348,9 @@ export class TorneioBracketComponent {
     } catch (error: unknown) {
       if (error instanceof HttpErrorResponse && error.status === 404) {
         this.state.set('no-bracket');
+        if (this.isRandomTournament()) {
+          await this.loadSelectableTeams();
+        }
       } else {
         this.pageError.set(this.resolveError(error, 'Não foi possível carregar a chave.'));
         this.state.set('error');
@@ -300,17 +358,56 @@ export class TorneioBracketComponent {
     }
   }
 
-  private async loadTournamentName(tournamentId: string): Promise<void> {
+  private async loadTournamentInfo(tournamentId: string): Promise<void> {
     try {
       const response = await firstValueFrom(
         this.http.get<unknown>(`${environment.apiURLTorneios}/${tournamentId}`),
       );
       if (this.isRecord(response)) {
         const name = this.readString(response, 'name');
+        const teamMode = (this.readString(response, 'teamMode') ?? '').toLowerCase();
         this.tournamentName.set(name);
+        this.tournamentTeamMode.set(teamMode || null);
       }
     } catch {
       // nome opcional — não falha a página
+    }
+  }
+
+  private async loadSelectableTeams(): Promise<void> {
+    if (!this.tournamentId || !this.isRandomTournament()) {
+      this.selectableTeams.set([]);
+      this.selectedRandomTeamIds.set([]);
+      this.selectableTeamsMessage.set(null);
+      return;
+    }
+
+    this.loadingSelectableTeams.set(true);
+    this.selectableTeamsMessage.set(null);
+    this.selectedRandomTeamIds.set([]);
+
+    try {
+      const response = await firstValueFrom(this.http.get<unknown>(environment.apiURLTimes));
+      const allTeams = this.extractArray(response).map((raw) => this.toSelectableTeam(raw));
+      const randomTeams = allTeams.filter((team) => team.category === 'random' && !!team.id);
+      const uniqueRandomTeams = [...new Map(randomTeams.map((team) => [team.id, team])).values()];
+      const teamsForTournament = uniqueRandomTeams.filter((team) =>
+        team.tournamentIds.includes(this.tournamentId!),
+      );
+      const scopedList = teamsForTournament.length > 0 ? teamsForTournament : uniqueRandomTeams;
+      const sorted = scopedList.sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'));
+
+      this.selectableTeams.set(sorted);
+      if (sorted.length === 0) {
+        this.selectableTeamsMessage.set('Nenhum time random disponível para seleção.');
+      }
+    } catch (error: unknown) {
+      this.selectableTeams.set([]);
+      this.selectableTeamsMessage.set(
+        this.resolveError(error, 'Não foi possível carregar os times para seleção.'),
+      );
+    } finally {
+      this.loadingSelectableTeams.set(false);
     }
   }
 
@@ -360,6 +457,68 @@ export class TorneioBracketComponent {
       .filter(Boolean);
   }
 
+  private toSelectableTeam(value: RawRecord): SelectableTeam {
+    const id =
+      this.readString(value, 'id') ??
+      this.readString(value, '_id') ??
+      this.readString(value, 'teamId') ??
+      '';
+    const name =
+      this.readString(value, 'name') ??
+      this.readString(value, 'teamName') ??
+      this.readString(value, 'title') ??
+      'Time sem nome';
+
+    return {
+      id,
+      name,
+      category: this.readTeamCategory(value),
+      tournamentIds: this.readTeamTournamentIds(value),
+    };
+  }
+
+  private readTeamCategory(value: RawRecord): TeamCategory {
+    const raw = (
+      this.readString(value, 'category') ??
+      this.readString(value, 'teamCategory') ??
+      ''
+    ).toLowerCase();
+    if (raw === 'formed') return 'formed';
+    if (raw === 'random') return 'random';
+    return 'unknown';
+  }
+
+  private readTeamTournamentIds(value: RawRecord): readonly string[] {
+    const tournamentIds = new Set<string>();
+
+    for (const field of ['tournamentId', 'currentTournamentId']) {
+      const id = this.readString(value, field);
+      if (id) tournamentIds.add(id);
+    }
+
+    for (const field of ['tournamentIds', 'registeredTournamentIds']) {
+      const list = value[field];
+      if (!Array.isArray(list)) continue;
+
+      for (const item of list) {
+        if (typeof item !== 'string') continue;
+        const normalized = item.trim();
+        if (normalized) tournamentIds.add(normalized);
+      }
+    }
+
+    const tournaments = value['tournaments'];
+    if (Array.isArray(tournaments)) {
+      for (const item of tournaments) {
+        if (!this.isRecord(item)) continue;
+        const id = this.readString(item, 'id') ?? this.readString(item, 'tournamentId');
+        if (id) tournamentIds.add(id);
+      }
+    }
+
+    return [...tournamentIds];
+  }
+
   private parseOptionalScore(
     key: 'team1Score' | 'team2Score',
     raw: string,
@@ -376,7 +535,7 @@ export class TorneioBracketComponent {
       return value.filter((item): item is RawRecord => this.isRecord(item));
     }
     if (this.isRecord(value)) {
-      for (const key of ['teams', 'data', 'items', 'results']) {
+      for (const key of ['teams', 'data', 'items', 'results', 'payload']) {
         const nested = value[key];
         if (Array.isArray(nested)) {
           return nested.filter((item): item is RawRecord => this.isRecord(item));
