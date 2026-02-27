@@ -238,12 +238,16 @@
       } @else {
         <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
           @for (item of catalog(); track item.id) {
-            <article class="ow-trophy-catalog-item">
+            <article class="border border-(--ow-gray-200) rounded-xl p-3 bg-white">
               <div class="flex items-center justify-between gap-2">
                 <p class="text-sm font-black uppercase text-(--ow-gray-900)">
                   {{ item.icon }} {{ item.name }}
                 </p>
-                <span class="ow-trophy-pill" [class.ow-trophy-pill-inactive]="!item.active">
+                <span
+                  class="inline-flex items-center justify-center rounded-full py-[0.15rem] px-2 text-[0.65rem] font-extrabold tracking-[0.03em] uppercase"
+                  [style.color]="item.active ? '#0b7a35' : '#8c2f2f'"
+                  [style.background]="item.active ? 'rgba(52, 168, 83, 0.14)' : 'rgba(234, 67, 53, 0.12)'"
+                >
                   {{ item.active ? 'Ativo' : 'Inativo' }}
                 </span>
               </div>
