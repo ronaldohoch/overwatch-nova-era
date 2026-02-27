@@ -1,4 +1,4 @@
-<div class="my-8 space-y-6">
+﻿<div class="my-8 space-y-6">
   <div class="flex flex-wrap items-start justify-between gap-4">
     <div class="space-y-2">
       <h1 class="text-4xl font-black leading-tight text-(--ow-gray-900) lg:text-5xl">
@@ -28,10 +28,69 @@
 
           <div class="ow-team-logo-card">
             <div class="ow-team-logo-slot">
-              {{ teamLogoFallbackLabel() }}
+              @if (team()?.logoUrl; as logoUrl) {
+                <img [src]="logoUrl" alt="Logo do time" class="ow-team-logo-image" />
+              } @else {
+                {{ teamLogoFallbackLabel() }}
+              }
             </div>
-            <p class="ow-team-logo-hint">Espaço reservado para logo</p>
           </div>
+
+          @if (canEditTeamData()) {
+            <form class="space-y-3 border-t border-(--ow-gray-200) pt-3" novalidate (submit)="onUploadTeamLogo($event)">
+              <label class="flex flex-col gap-2 text-sm font-semibold text-(--ow-gray-700)">
+                Arquivo da logo (.png ou .webp)
+                <input
+                  type="file"
+                  accept=".png,.webp,image/png,image/webp"
+                  class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2 text-(--ow-gray-900)"
+                  [disabled]="uploadingLogo() || removingLogo()"
+                  (change)="onSelectLogoFile($event)"
+                />
+              </label>
+
+              @if (selectedLogoFileLabel(); as selectedLogoFileLabel) {
+                <p class="text-xs text-(--ow-gray-600)">
+                  Selecionado: {{ selectedLogoFileLabel }}
+                </p>
+              }
+
+              <div class="flex flex-wrap justify-end gap-2">
+                <ow-btn type="button" variant="secondary-mini" [disabled]="!selectedLogoFile()" (click)="clearSelectedLogoFile()">
+                  Limpar
+                </ow-btn>
+                <ow-btn type="submit" [disabled]="!canUploadTeamLogo()">
+                  @if (uploadingLogo()) {
+                    Enviando...
+                  } @else {
+                    Enviar logo
+                  }
+                </ow-btn>
+              </div>
+
+              <div class="flex justify-end">
+                <ow-btn type="button" variant="danger" [disabled]="!canRemoveTeamLogo()" (click)="onRemoveTeamLogo()">
+                  @if (removingLogo()) {
+                    Removendo...
+                  } @else {
+                    Remover logo atual
+                  }
+                </ow-btn>
+              </div>
+            </form>
+          }
+
+          @if (uploadLogoMessage(); as uploadLogoMessage) {
+            <p class="text-sm font-medium" [class.text-red-600]="uploadLogoError()" [class.text-green-700]="!uploadLogoError()">
+              {{ uploadLogoMessage }}
+            </p>
+          }
+
+          @if (removeLogoMessage(); as removeLogoMessage) {
+            <p class="text-sm font-medium" [class.text-red-600]="removeLogoError()" [class.text-green-700]="!removeLogoError()">
+              {{ removeLogoMessage }}
+            </p>
+          }
         </div>
       </ow-card>
 
@@ -102,10 +161,10 @@
                   </label>
 
                   <label class="flex flex-col gap-2 text-sm font-semibold text-(--ow-gray-700)">
-                    Descricao
+                    Descrição
                     <textarea
                       rows="3"
-                      placeholder="Descricao do time"
+                      placeholder="Descrição do time"
                       class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
                       [value]="editTeamDescription()"
                       [disabled]="updatingTeamData()"
@@ -262,7 +321,7 @@
                     @if (isPromotingMember(member)) {
                       Promovendo...
                     } @else {
-                      Promover a capitão
+                      Promover para capitão
                     }
                   </ow-btn>
 
@@ -293,7 +352,7 @@
                   <p class="mt-1 text-xs text-(--ow-gray-600)">
                     {{ tournament.statusLabel }} / {{ tournament.teamModeLabel }}, {{ tournament.checkedInLabel }}
                   </p>
-                  <p class="mt-1 text-xs text-(--ow-gray-500)">Inicio: {{ tournament.startAtLabel }}</p>
+                  <p class="mt-1 text-xs text-(--ow-gray-500)">Início: {{ tournament.startAtLabel }}</p>
                 </article>
               }
             </div>
@@ -317,7 +376,7 @@
                   <p class="mt-1 text-xs text-(--ow-gray-600)">
                     {{ tournament.statusLabel }} - {{ tournament.teamModeLabel }}, {{ tournament.checkedInLabel }}
                   </p>
-                  <p class="mt-1 text-xs text-(--ow-gray-500)">Inicio: {{ tournament.startAtLabel }}</p>
+                  <p class="mt-1 text-xs text-(--ow-gray-500)">Início: {{ tournament.startAtLabel }}</p>
                 </article>
               }
             </div>
@@ -409,3 +468,6 @@
     </div>
   </div>
 }
+
+
+

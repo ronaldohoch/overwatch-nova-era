@@ -1,3 +1,4 @@
+import * as admin from 'firebase-admin';
 import { FieldValue } from 'firebase-admin/firestore';
 import { UserRole } from '../_enums/role.enum';
 import { firestore } from '../firebase';
@@ -23,6 +24,11 @@ const TEAM_MAX_MEMBERS = 8;
 const USERS_COLLECTION = 'users';
 const NO_CAPTAIN_LABEL = 'Sem capitao definido';
 const UNNAMED_CAPTAIN_LABEL = 'Capitao sem nome informado';
+const DEFAULT_TEAM_LOGO_BUCKET = 'copa-nova-era-overwatch.firebasestorage.app';
+const TEAM_LOGO_FOLDER = 'times/logos';
+
+const TEAM_LOGO_MAX_BYTES = 2 * 1024 * 1024;
+const TEAM_LOGO_MIME_TYPES = new Set(['image/png', 'image/webp']);
 
 
 function fail(message: string, statusCode: number): never {
@@ -47,6 +53,8 @@ export function resolveTimesErrorStatus(error: unknown, fallbackStatus: number):
 
 export class TimesService {
   private teamsCollection = firestore.collection('teams');
+  private readonly logosBucketName = this.resolveLogosBucketName();
+  private readonly logosBucket = admin.storage().bucket(this.logosBucketName);
 
   private membersCol(teamId: string) {
     return this.teamsCollection.doc(teamId).collection('members');
@@ -137,6 +145,280 @@ export class TimesService {
     if (normalized === UserRole.STREAMER) return UserRole.STREAMER;
     if (normalized === UserRole.COMPETIDOR) return UserRole.COMPETIDOR;
     return 'unknown';
+  }
+
+  private resolveLogosBucketName(): string {
+    const fromEnv =
+      this.normalizeOptionalString(process.env['TEAMS_LOGOS_BUCKET']) ??
+      this.normalizeOptionalString(process.env['FIREBASE_STORAGE_BUCKET']) ??
+      this.normalizeOptionalString(process.env['GCLOUD_STORAGE_BUCKET']);
+
+    return fromEnv ?? DEFAULT_TEAM_LOGO_BUCKET;
+  }
+
+  private toAlternateLogoBucketName(bucketName: string): string | null {
+    if (bucketName.endsWith('.firebasestorage.app')) {
+      const projectId = bucketName.slice(0, -'.firebasestorage.app'.length);
+      return projectId ? `${projectId}.appspot.com` : null;
+    }
+
+    if (bucketName.endsWith('.appspot.com')) {
+      const projectId = bucketName.slice(0, -'.appspot.com'.length);
+      return projectId ? `${projectId}.firebasestorage.app` : null;
+    }
+
+    return null;
+  }
+
+  private resolveLogoBucketCandidates(bucketHint: string | null): readonly string[] {
+    const candidates = [
+      bucketHint,
+      this.logosBucketName,
+      bucketHint ? this.toAlternateLogoBucketName(bucketHint) : null,
+      this.toAlternateLogoBucketName(this.logosBucketName),
+    ]
+      .map((value) => this.normalizeOptionalString(value))
+      .filter((value): value is string => !!value);
+
+    return Array.from(new Set(candidates));
+  }
+
+  private parseLogoReference(value: string): { bucketName: string | null; objectPath: string } {
+    const normalized = value.trim();
+    if (!normalized) {
+      return {
+        bucketName: null,
+        objectPath: '',
+      };
+    }
+
+    if (normalized.startsWith('gs://')) {
+      const withoutScheme = normalized.slice('gs://'.length);
+      const slashIndex = withoutScheme.indexOf('/');
+      if (slashIndex > 0) {
+        const bucketName = this.normalizeOptionalString(withoutScheme.slice(0, slashIndex));
+        const objectPath = withoutScheme.slice(slashIndex + 1).replace(/^\/+/, '').trim();
+        return {
+          bucketName,
+          objectPath,
+        };
+      }
+    }
+
+    try {
+      const parsed = new URL(normalized);
+      const firebaseStorageMatch = parsed.pathname.match(/^\/v0\/b\/([^/]+)\/o\/(.+)$/);
+      if (firebaseStorageMatch) {
+        const bucketName = this.normalizeOptionalString(decodeURIComponent(firebaseStorageMatch[1]));
+        const objectPath = decodeURIComponent(firebaseStorageMatch[2]).replace(/^\/+/, '').trim();
+        return {
+          bucketName,
+          objectPath,
+        };
+      }
+
+      if (parsed.hostname === 'storage.googleapis.com') {
+        const parts = parsed.pathname.replace(/^\/+/, '').split('/');
+        if (parts.length >= 2) {
+          const [bucketPart, ...objectParts] = parts;
+          const bucketName = this.normalizeOptionalString(bucketPart);
+          const objectPath = objectParts.join('/').trim();
+          return {
+            bucketName,
+            objectPath,
+          };
+        }
+      }
+    } catch {
+      // Ignore URL parsing errors and treat value as object path.
+    }
+
+    return {
+      bucketName: null,
+      objectPath: normalized.replace(/^\/+/, ''),
+    };
+  }
+
+  private assertAdminRole(actorRole: ActorRole) {
+    if (actorRole !== UserRole.ADMIN) {
+      fail('Apenas admin pode alterar logo do time.', 403);
+    }
+  }
+
+  private ensureRecord(value: unknown, fieldName: string): Record<string, unknown> {
+    if (!value || typeof value !== 'object' || Array.isArray(value)) {
+      fail(`Campo ${fieldName} invalido.`, 400);
+    }
+
+    return value as Record<string, unknown>;
+  }
+
+  private parseLogoMimeType(value: unknown): 'image/png' | 'image/webp' {
+    if (typeof value !== 'string') {
+      fail('mimeType da logo e obrigatorio (image/png ou image/webp).', 400);
+    }
+
+    const normalized = value.trim().toLowerCase();
+    if (!TEAM_LOGO_MIME_TYPES.has(normalized)) {
+      fail('Formato de logo invalido. Use image/png ou image/webp.', 400);
+    }
+
+    return normalized as 'image/png' | 'image/webp';
+  }
+
+  private parseLogoBase64(value: unknown): Buffer {
+    if (typeof value !== 'string') {
+      fail('Conteudo da logo e obrigatorio.', 400);
+    }
+
+    const normalized = value.trim();
+    if (!normalized) {
+      fail('Conteudo da logo e obrigatorio.', 400);
+    }
+
+    const rawBase64 = normalized.includes(',') ? normalized.split(',').pop() ?? '' : normalized;
+    const safeBase64 = rawBase64.replace(/\s+/g, '').replace(/-/g, '+').replace(/_/g, '/');
+    if (!safeBase64) {
+      fail('Conteudo da logo invalido.', 400);
+    }
+
+    const buffer = Buffer.from(safeBase64, 'base64');
+    if (!buffer.length) {
+      fail('Conteudo da logo invalido.', 400);
+    }
+
+    if (buffer.byteLength > TEAM_LOGO_MAX_BYTES) {
+      fail(`Logo muito grande. Limite maximo: ${TEAM_LOGO_MAX_BYTES} bytes.`, 400);
+    }
+
+    return buffer;
+  }
+
+  private parseLogoFileName(value: unknown, fallbackExtension: 'png' | 'webp'): string {
+    if (typeof value !== 'string') {
+      return `logo.${fallbackExtension}`;
+    }
+
+    const normalized = value.trim();
+    if (!normalized) return `logo.${fallbackExtension}`;
+    if (normalized.length > 120) fail('Nome do arquivo da logo muito grande.', 400);
+    return normalized;
+  }
+
+  private logoExtensionFromMimeType(mimeType: 'image/png' | 'image/webp'): 'png' | 'webp' {
+    return mimeType === 'image/webp' ? 'webp' : 'png';
+  }
+
+  private buildTeamLogoPrefix(teamId: string): string {
+    return `${TEAM_LOGO_FOLDER}/${teamId}-`;
+  }
+
+  private buildTeamLogoPath(teamId: string, extension: 'png' | 'webp'): string {
+    return `${this.buildTeamLogoPrefix(teamId)}${Date.now()}.${extension}`;
+  }
+
+  private emulatorMediaUrl(bucketName: string, path: string): string | null {
+    const host = this.normalizeOptionalString(process.env['FIREBASE_STORAGE_EMULATOR_HOST']);
+    if (!host) return null;
+
+    const baseHost = host.startsWith('http://') || host.startsWith('https://') ? host : `http://${host}`;
+    return `${baseHost}/v0/b/${bucketName}/o/${encodeURIComponent(path)}?alt=media`;
+  }
+
+  private async resolveLogoUrl(
+    rawPath: string,
+    bucketNameHint: string | null,
+  ): Promise<{ url: string | null; urlExpiresAt: string | null }> {
+    const { bucketName: bucketFromPath, objectPath } = this.parseLogoReference(rawPath);
+    if (!objectPath) {
+      return { url: null, urlExpiresAt: null };
+    }
+
+    const bucketCandidates = this.resolveLogoBucketCandidates(bucketNameHint ?? bucketFromPath);
+    const bucketName = bucketCandidates[0] ?? this.logosBucketName;
+
+    const emulatorUrl = this.emulatorMediaUrl(bucketName, objectPath);
+    if (emulatorUrl) {
+      return { url: emulatorUrl, urlExpiresAt: null };
+    }
+
+    const url = `https://firebasestorage.googleapis.com/v0/b/${bucketName}/o/${encodeURIComponent(objectPath)}?alt=media`;
+    return { url, urlExpiresAt: null };
+  }
+
+  private async withLogoUrl(team: Record<string, unknown>): Promise<Record<string, unknown>> {
+    const logoPath = this.normalizeOptionalString(team['logoPath']);
+    const logoBucketName =
+      this.normalizeOptionalString(team['logoBucketName']) ??
+      this.normalizeOptionalString(team['logoBucket']) ??
+      this.normalizeOptionalString(team['logo_bucket_name']) ??
+      this.normalizeOptionalString(team['logo_bucket']);
+    const logoMimeType = this.normalizeOptionalString(team['logoMimeType']);
+    const logoUpdatedAt = this.normalizeOptionalString(team['logoUpdatedAt']);
+
+    if (!logoPath) {
+      return {
+        ...team,
+        logoPath: null,
+        logoBucketName: logoBucketName ?? null,
+        logoMimeType: logoMimeType ?? null,
+        logoUpdatedAt: logoUpdatedAt ?? null,
+        logoUrl: null,
+        logoUrlExpiresAt: null,
+      };
+    }
+
+    try {
+      const logoUrlData = await this.resolveLogoUrl(logoPath, logoBucketName);
+      return {
+        ...team,
+        logoPath,
+        logoBucketName: logoBucketName ?? null,
+        logoMimeType: logoMimeType ?? null,
+        logoUpdatedAt: logoUpdatedAt ?? null,
+        logoUrl: logoUrlData.url,
+        logoUrlExpiresAt: logoUrlData.urlExpiresAt,
+      };
+    } catch (error: unknown) {
+      console.error('[times] Falha ao enriquecer logo do time:', {
+        logoPath,
+        logoBucketName,
+        error,
+      });
+
+      return {
+        ...team,
+        logoPath,
+        logoBucketName: logoBucketName ?? null,
+        logoMimeType: logoMimeType ?? null,
+        logoUpdatedAt: logoUpdatedAt ?? null,
+        logoUrl: null,
+        logoUrlExpiresAt: null,
+      };
+    }
+  }
+
+  private async deleteLogoPath(path: string | null, bucketNameHint: string | null = null) {
+    const normalizedPath = this.normalizeOptionalString(path);
+    if (!normalizedPath) return;
+
+    const { bucketName: bucketFromPath, objectPath } = this.parseLogoReference(normalizedPath);
+    if (!objectPath) return;
+
+    const bucketCandidates = this.resolveLogoBucketCandidates(bucketNameHint ?? bucketFromPath);
+    await Promise.all(
+      bucketCandidates.map(async (bucketName) => {
+        try {
+          await admin.storage().bucket(bucketName).file(objectPath).delete({ ignoreNotFound: true });
+        } catch (error: unknown) {
+          console.error('[times] Falha ao remover logo antiga:', {
+            bucketName,
+            path: objectPath,
+            error,
+          });
+        }
+      }),
+    );
   }
 
   private toNonNegativeInt(value: unknown): number {
@@ -329,10 +611,17 @@ export class TimesService {
     return teams.map((team) => this.withCaptainName(team, captainNamesByUid));
   }
 
-  private async enrichTeamWithCaptainName(
+  private async enrichTeamsForResponse(
+    teams: readonly Record<string, unknown>[],
+  ): Promise<ReadonlyArray<Record<string, unknown>>> {
+    const teamsWithCaptainName = await this.enrichTeamsWithCaptainName(teams);
+    return Promise.all(teamsWithCaptainName.map((team) => this.withLogoUrl(team)));
+  }
+
+  private async enrichTeamForResponse(
     team: Record<string, unknown>,
   ): Promise<Record<string, unknown>> {
-    const [enriched] = await this.enrichTeamsWithCaptainName([team]);
+    const [enriched] = await this.enrichTeamsForResponse([team]);
     return enriched;
   }
 
@@ -388,7 +677,7 @@ export class TimesService {
     });
 
     const created = await teamRef.get();
-    return this.enrichTeamWithCaptainName({
+    return this.enrichTeamForResponse({
       id: created.id,
       ...(created.data() as Record<string, unknown>),
     });
@@ -439,7 +728,125 @@ export class TimesService {
     });
 
     const updated = await teamRef.get();
-    return this.enrichTeamWithCaptainName({
+    return this.enrichTeamForResponse({
+      id: updated.id,
+      ...(updated.data() as Record<string, unknown>),
+    });
+  }
+
+  async updateTeamLogo(teamId: string, actor: TeamActor, body: unknown) {
+    const normalizedTeamId = this.parseUid(teamId, 'teamId');
+    this.parseUid(actor.uid, 'uid');
+
+    const actorRole = this.parseRole(actor.role);
+    this.assertAdminRole(actorRole);
+
+    const payload = this.ensureRecord(body, 'body');
+    const mimeType = this.parseLogoMimeType(payload['mimeType']);
+    const extension = this.logoExtensionFromMimeType(mimeType);
+    const fileName = this.parseLogoFileName(payload['fileName'], extension);
+    const logoBuffer = this.parseLogoBase64(
+      payload['dataBase64'] ?? payload['data'] ?? payload['base64'],
+    );
+
+    const teamRef = this.teamsCollection.doc(normalizedTeamId);
+    const teamSnapshot = await teamRef.get();
+    if (!teamSnapshot.exists) {
+      fail('Time nao encontrado.', 404);
+    }
+
+    const teamData = (teamSnapshot.data() ?? {}) as Record<string, unknown>;
+    const previousLogoPath = this.normalizeOptionalString(teamData['logoPath']);
+    const previousLogoBucketName =
+      this.normalizeOptionalString(teamData['logoBucketName']) ??
+      this.normalizeOptionalString(teamData['logoBucket']) ??
+      this.normalizeOptionalString(teamData['logo_bucket_name']) ??
+      this.normalizeOptionalString(teamData['logo_bucket']);
+    const nextLogoPath = this.buildTeamLogoPath(normalizedTeamId, extension);
+    const nowIso = new Date().toISOString();
+
+    await this.logosBucket.file(nextLogoPath).save(logoBuffer, {
+      resumable: false,
+      metadata: {
+        contentType: mimeType,
+        cacheControl: 'private, max-age=0, no-cache',
+        metadata: {
+          originalFileName: fileName,
+          teamId: normalizedTeamId,
+          uploadedAt: nowIso,
+        },
+      },
+    });
+
+    try {
+      await firestore.runTransaction(async (tx) => {
+        const latestTeamSnapshot = await tx.get(teamRef);
+        if (!latestTeamSnapshot.exists) {
+          fail('Time nao encontrado.', 404);
+        }
+
+        tx.update(teamRef, {
+          logoPath: nextLogoPath,
+          logoBucketName: this.logosBucketName,
+          logoMimeType: mimeType,
+          logoUpdatedAt: nowIso,
+          updatedAt: FieldValue.serverTimestamp(),
+        });
+      });
+    } catch (error: unknown) {
+      await this.deleteLogoPath(nextLogoPath);
+      throw error;
+    }
+
+    if (previousLogoPath && previousLogoPath !== nextLogoPath) {
+      await this.deleteLogoPath(previousLogoPath, previousLogoBucketName);
+    }
+
+    const updated = await teamRef.get();
+    return this.enrichTeamForResponse({
+      id: updated.id,
+      ...(updated.data() as Record<string, unknown>),
+    });
+  }
+
+  async removeTeamLogo(teamId: string, actor: TeamActor) {
+    const normalizedTeamId = this.parseUid(teamId, 'teamId');
+    this.parseUid(actor.uid, 'uid');
+
+    const actorRole = this.parseRole(actor.role);
+    this.assertAdminRole(actorRole);
+
+    const teamRef = this.teamsCollection.doc(normalizedTeamId);
+    let previousLogoPath: string | null = null;
+    let previousLogoBucketName: string | null = null;
+
+    await firestore.runTransaction(async (tx) => {
+      const teamSnapshot = await tx.get(teamRef);
+      if (!teamSnapshot.exists) {
+        fail('Time nao encontrado.', 404);
+      }
+
+      const teamData = (teamSnapshot.data() ?? {}) as Record<string, unknown>;
+      previousLogoPath = this.normalizeOptionalString(teamData['logoPath']);
+      previousLogoBucketName =
+        this.normalizeOptionalString(teamData['logoBucketName']) ??
+        this.normalizeOptionalString(teamData['logoBucket']) ??
+        this.normalizeOptionalString(teamData['logo_bucket_name']) ??
+        this.normalizeOptionalString(teamData['logo_bucket']);
+
+      tx.update(teamRef, {
+        logoPath: null,
+        logoBucketName: null,
+        logoMimeType: null,
+        logoUpdatedAt: null,
+        updatedAt: FieldValue.serverTimestamp(),
+      });
+    });
+
+    await this.deleteLogoPath(previousLogoPath, previousLogoBucketName);
+
+    const updated = await teamRef.get();
+    return this.enrichTeamForResponse({
       id: updated.id,
       ...(updated.data() as Record<string, unknown>),
     });
@@ -452,7 +859,7 @@ export class TimesService {
       fail('Time nao encontrado.', 404);
     }
 
-    return this.enrichTeamWithCaptainName({
+    return this.enrichTeamForResponse({
       id: teamSnapshot.id,
       ...(teamSnapshot.data() as Record<string, unknown>),
     });
@@ -539,7 +946,7 @@ export class TimesService {
         }) as Record<string, unknown>,
     );
 
-    return this.enrichTeamsWithCaptainName(teams);
+    return this.enrichTeamsForResponse(teams);
   }
 
   private isFailedPreconditionError(error: unknown): boolean {
@@ -601,7 +1008,7 @@ export class TimesService {
         isCaptain: item.data['captainUid'] === normalizedUid,
       }));
 
-    return this.enrichTeamsWithCaptainName(teams);
+    return this.enrichTeamsForResponse(teams);
   }
 
   async listMyTeams(uid: string) {
@@ -646,7 +1053,7 @@ export class TimesService {
           return bCreatedAt - aCreatedAt;
         });
 
-      return this.enrichTeamsWithCaptainName(teams);
+      return this.enrichTeamsForResponse(teams);
     } catch (error: unknown) {
       if (!this.isFailedPreconditionError(error)) throw error;
       return this.listMyTeamsWithoutCollectionGroup(normalizedUid);
@@ -689,7 +1096,7 @@ export class TimesService {
         ...((snap.data() ?? {}) as Record<string, unknown>),
       }));
 
-    const enrichedTeams = await this.enrichTeamsWithCaptainName(teams);
+    const enrichedTeams = await this.enrichTeamsForResponse(teams);
     const teamsById = new Map<string, Record<string, unknown>>();
     for (const team of enrichedTeams) {
       const teamId = this.normalizeOptionalUid(team['id']);
@@ -1157,7 +1564,7 @@ export class TimesService {
     });
 
     const updated = await teamRef.get();
-    return this.enrichTeamWithCaptainName({
+    return this.enrichTeamForResponse({
       id: updated.id,
       ...(updated.data() as Record<string, unknown>),
     });
@@ -1217,7 +1624,7 @@ export class TimesService {
     });
 
     const updated = await teamRef.get();
-    return this.enrichTeamWithCaptainName({
+    return this.enrichTeamForResponse({
       id: updated.id,
       ...(updated.data() as Record<string, unknown>),
     });
@@ -1259,7 +1666,7 @@ export class TimesService {
     });
 
     const updated = await teamRef.get();
-    return this.enrichTeamWithCaptainName({
+    return this.enrichTeamForResponse({
       id: updated.id,
       ...(updated.data() as Record<string, unknown>),
     });

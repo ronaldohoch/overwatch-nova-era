@@ -34,12 +34,13 @@
   text-transform: uppercase;
 }
 
-.ow-team-logo-hint {
-  margin: 0;
-  font-size: 0.72rem;
-  font-weight: 600;
-  color: var(--ow-gray-600);
-  text-align: center;
+.ow-team-logo-image {
+  width: 100%;
+  height: 100%;
+  border-radius: 0.85rem;
+  object-fit: contain;
+  background: #fff;
+  padding: 0.45rem;
 }
 
 .ow-badge-captain {

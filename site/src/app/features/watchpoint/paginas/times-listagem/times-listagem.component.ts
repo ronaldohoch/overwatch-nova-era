@@ -17,6 +17,7 @@ type TeamListItem = Readonly<{
   trackKey: string;
   id: string;
   name: string;
+  logoUrl: string | null;
   category: TeamCategory;
   categoryLabel: string;
   membersCount: number;
@@ -215,11 +216,15 @@ export class TimesListagemComponent {
       this.readString(value, 'created_at') ??
       this.readString(value, 'createdAtIso'),
     );
+    const logoUrl =
+      this.readString(value, 'logoUrl') ??
+      this.readString(value, 'logo_url');
 
     return {
       trackKey: id || `${name}-${createdAtTimestamp}`,
       id,
       name,
+      logoUrl,
       category,
       categoryLabel: this.toCategoryLabel(category),
       membersCount: membersCount > 0 ? membersCount : 0,

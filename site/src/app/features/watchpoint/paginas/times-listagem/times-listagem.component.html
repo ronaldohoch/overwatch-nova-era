@@ -63,7 +63,13 @@
               contentClass="h-full flex flex-col"
             >
               <div class="text-center flex flex-col items-center">
-                <div class="ow-team-logo shrink-0">{{ teamLogo(team.category) }}</div>
+                <div class=" shrink-0">
+                  @if (team.logoUrl) {
+                    <img [src]="team.logoUrl" [alt]="'Logo do time ' + team.name" class="max-h-44" />
+                  } @else {
+                    {{ teamLogo(team.category) }}
+                  }
+                </div>
                 <div class="mb-4 flex items-center gap-4">
                   <div class="min-w-0">
                     <h3 class="truncate text-lg font-black uppercase text-(--ow-gray-900)">

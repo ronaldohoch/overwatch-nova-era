@@ -6,7 +6,7 @@ export function setupExpressApp() {
   const app = express();
 
   app.use(cors(corsOptions));
-  app.use(express.json());
+  app.use(express.json({ limit: '8mb' }));
 
   return app;
 }

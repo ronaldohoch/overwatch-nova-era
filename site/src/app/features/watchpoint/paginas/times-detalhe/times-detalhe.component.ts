@@ -1,4 +1,4 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+﻿import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
@@ -10,6 +10,8 @@ import { CardComponent } from '../../../../shared/card/card.component';
 type RawRecord = Readonly<Record<string, unknown>>;
 type TeamCategory = 'formed' | 'random' | 'unknown';
 type ParticipationScope = 'participa' | 'participou';
+const TEAM_LOGO_MAX_BYTES = 2 * 1024 * 1024;
+const TEAM_LOGO_ALLOWED_MIME_TYPES = new Set(['image/png', 'image/webp']);
 
 type TeamDetail = Readonly<{
   id: string;
@@ -22,6 +24,10 @@ type TeamDetail = Readonly<{
   captainName: string;
   membersCount: number;
   createdAtLabel: string;
+  logoPath: string | null;
+  logoUrl: string | null;
+  logoMimeType: string | null;
+  logoUpdatedAtLabel: string | null;
 }>;
 
 type TeamMemberItem = Readonly<{
@@ -101,6 +107,13 @@ export class TimesDetalheComponent {
   readonly promotingCaptainUid = signal<string | null>(null);
   readonly promoteCaptainMessage = signal<string | null>(null);
   readonly promoteCaptainError = signal(false);
+  readonly selectedLogoFile = signal<File | null>(null);
+  readonly uploadingLogo = signal(false);
+  readonly uploadLogoMessage = signal<string | null>(null);
+  readonly uploadLogoError = signal(false);
+  readonly removingLogo = signal(false);
+  readonly removeLogoMessage = signal<string | null>(null);
+  readonly removeLogoError = signal(false);
 
   readonly hasTeamId = computed(() => !!this.teamId);
   readonly isLoading = computed(
@@ -125,6 +138,20 @@ export class TimesDetalheComponent {
   });
   readonly isAdmin = computed(() => this.auth.userRole() === 'admin');
   readonly canEditTeamData = computed(() => this.hasTeamId() && this.isAdmin());
+  readonly canUploadTeamLogo = computed(
+    () =>
+      this.canEditTeamData() &&
+      !this.uploadingLogo() &&
+      !this.removingLogo() &&
+      !!this.selectedLogoFile(),
+  );
+  readonly canRemoveTeamLogo = computed(
+    () =>
+      this.canEditTeamData() &&
+      !this.uploadingLogo() &&
+      !this.removingLogo() &&
+      !!this.team()?.logoPath,
+  );
   readonly hasTeamDataChanges = computed(() => {
     const team = this.team();
     if (!team) return false;
@@ -163,6 +190,7 @@ export class TimesDetalheComponent {
 
     return letters || name.slice(0, 2).toUpperCase();
   });
+  readonly selectedLogoFileLabel = computed(() => this.selectedLogoFile()?.name ?? null);
 
   constructor() {
     void this.loadPage();
@@ -184,13 +212,124 @@ export class TimesDetalheComponent {
     this.editTeamGroupLink.set(value);
   }
 
+  onSelectLogoFile(event: Event): void {
+    this.uploadLogoMessage.set(null);
+    this.uploadLogoError.set(false);
+
+    const input = event.target as HTMLInputElement | null;
+    const file = input?.files?.item(0) ?? null;
+    this.selectedLogoFile.set(file);
+  }
+
+  clearSelectedLogoFile(): void {
+    this.selectedLogoFile.set(null);
+  }
+
+  async onUploadTeamLogo(event: Event): Promise<void> {
+    event.preventDefault();
+    this.uploadLogoMessage.set(null);
+    this.uploadLogoError.set(false);
+    this.removeLogoMessage.set(null);
+    this.removeLogoError.set(false);
+
+    if (!this.hasTeamId()) {
+      this.uploadLogoMessage.set('Time inválido para atualizar logo.');
+      this.uploadLogoError.set(true);
+      return;
+    }
+
+    if (!this.canEditTeamData()) {
+      this.uploadLogoMessage.set('Apenas admin pode atualizar a logo do time.');
+      this.uploadLogoError.set(true);
+      return;
+    }
+
+    const file = this.selectedLogoFile();
+    if (!file) {
+      this.uploadLogoMessage.set('Selecione um arquivo .png ou .webp.');
+      this.uploadLogoError.set(true);
+      return;
+    }
+
+    if (!TEAM_LOGO_ALLOWED_MIME_TYPES.has(file.type)) {
+      this.uploadLogoMessage.set('Formato inválido. Envie apenas imagem PNG ou WEBP.');
+      this.uploadLogoError.set(true);
+      return;
+    }
+
+    if (file.size > TEAM_LOGO_MAX_BYTES) {
+      this.uploadLogoMessage.set('Arquivo muito grande. Limite: 2 MB.');
+      this.uploadLogoError.set(true);
+      return;
+    }
+
+    this.uploadingLogo.set(true);
+
+    try {
+      const base64 = await this.readFileAsBase64(file);
+      await firstValueFrom(
+        this.http.post<unknown>(`${this.timesApiUrl}/${this.teamId}/logo`, {
+          fileName: file.name,
+          mimeType: file.type,
+          dataBase64: base64,
+        }),
+      );
+
+      this.selectedLogoFile.set(null);
+      this.uploadLogoMessage.set('Logo atualizada com sucesso.');
+      this.uploadLogoError.set(false);
+
+      await this.loadTeam();
+    } catch (error: unknown) {
+      this.uploadLogoMessage.set(this.resolveError(error, 'Não foi possível atualizar a logo.'));
+      this.uploadLogoError.set(true);
+    } finally {
+      this.uploadingLogo.set(false);
+    }
+  }
+
+  async onRemoveTeamLogo(): Promise<void> {
+    this.removeLogoMessage.set(null);
+    this.removeLogoError.set(false);
+    this.uploadLogoMessage.set(null);
+    this.uploadLogoError.set(false);
+
+    if (!this.hasTeamId()) {
+      this.removeLogoMessage.set('Time inválido para remover logo.');
+      this.removeLogoError.set(true);
+      return;
+    }
+
+    if (!this.canEditTeamData()) {
+      this.removeLogoMessage.set('Apenas admin pode remover a logo do time.');
+      this.removeLogoError.set(true);
+      return;
+    }
+
+    this.removingLogo.set(true);
+
+    try {
+      await firstValueFrom(this.http.delete<unknown>(`${this.timesApiUrl}/${this.teamId}/logo`));
+      this.selectedLogoFile.set(null);
+      this.removeLogoMessage.set('Logo removida com sucesso.');
+      this.removeLogoError.set(false);
+
+      await this.loadTeam();
+    } catch (error: unknown) {
+      this.removeLogoMessage.set(this.resolveError(error, 'Não foi possível remover a logo.'));
+      this.removeLogoError.set(true);
+    } finally {
+      this.removingLogo.set(false);
+    }
+  }
+
   async onUpdateTeamData(event: Event): Promise<void> {
     event.preventDefault();
     this.updateTeamDataMessage.set(null);
     this.updateTeamDataError.set(false);
 
     if (!this.hasTeamId()) {
-      this.updateTeamDataMessage.set('Time invalido para atualizar.');
+      this.updateTeamDataMessage.set('Time inválido para atualizar.');
       this.updateTeamDataError.set(true);
       return;
     }
@@ -213,7 +352,7 @@ export class TimesDetalheComponent {
     const groupLink = this.normalizeField(this.editTeamGroupLink());
 
     if (!name) {
-      this.updateTeamDataMessage.set('Nome do time e obrigatorio.');
+      this.updateTeamDataMessage.set('Nome do time é obrigatório.');
       this.updateTeamDataError.set(true);
       return;
     }
@@ -233,7 +372,7 @@ export class TimesDetalheComponent {
     }
 
     if (Object.keys(payload).length === 0) {
-      this.updateTeamDataMessage.set('Nenhuma alteracao para salvar.');
+      this.updateTeamDataMessage.set('Nenhuma alteração para salvar.');
       this.updateTeamDataError.set(false);
       return;
     }
@@ -247,7 +386,7 @@ export class TimesDetalheComponent {
       this.updateTeamDataError.set(false);
     } catch (error: unknown) {
       this.updateTeamDataMessage.set(
-        this.resolveError(error, 'Nao foi possivel atualizar os dados do time.'),
+        this.resolveError(error, 'Não foi possível atualizar os dados do time.'),
       );
       this.updateTeamDataError.set(true);
     } finally {
@@ -386,7 +525,7 @@ export class TimesDetalheComponent {
     }
 
     if (member.isCaptain) {
-      this.promoteCaptainMessage.set('Este integrante ja e o capitão atual.');
+      this.promoteCaptainMessage.set('Este integrante já é o capitão atual.');
       this.promoteCaptainError.set(true);
       return;
     }
@@ -419,7 +558,7 @@ export class TimesDetalheComponent {
     this.removeMemberError.set(false);
 
     if (!this.hasTeamId()) {
-      this.removeMemberMessage.set('Time invalido para remover membro.');
+      this.removeMemberMessage.set('Time inválido para remover membro.');
       this.removeMemberError.set(true);
       return;
     }
@@ -432,7 +571,7 @@ export class TimesDetalheComponent {
 
     const targetUid = member.uid.trim();
     if (!targetUid) {
-      this.removeMemberMessage.set('Membro invalido para remover.');
+      this.removeMemberMessage.set('Membro inválido para remover.');
       this.removeMemberError.set(true);
       return;
     }
@@ -449,7 +588,7 @@ export class TimesDetalheComponent {
 
       await Promise.all([this.loadTeam(), this.loadMembers()]);
     } catch (error: unknown) {
-      this.removeMemberMessage.set(this.resolveError(error, 'Nao foi possivel remover o integrante.'));
+      this.removeMemberMessage.set(this.resolveError(error, 'Não foi possível remover o integrante.'));
       this.removeMemberError.set(true);
     } finally {
       this.removingMemberUid.set(null);
@@ -584,6 +723,9 @@ export class TimesDetalheComponent {
     const createdAt =
       this.readString(value, 'createdAt') ??
       this.readString(value, 'created_at');
+    const logoUpdatedAt =
+      this.readString(value, 'logoUpdatedAt') ??
+      this.readString(value, 'logo_updated_at');
 
     return {
       id:
@@ -611,6 +753,16 @@ export class TimesDetalheComponent {
       membersCount:
         this.readInteger(value['membersCount'] ?? value['members_count']) ?? 0,
       createdAtLabel: this.toDateTimeLabel(createdAt),
+      logoPath:
+        this.readString(value, 'logoPath') ??
+        this.readString(value, 'logo_path'),
+      logoUrl:
+        this.readString(value, 'logoUrl') ??
+        this.readString(value, 'logo_url'),
+      logoMimeType:
+        this.readString(value, 'logoMimeType') ??
+        this.readString(value, 'logo_mime_type'),
+      logoUpdatedAtLabel: logoUpdatedAt ? this.toDateTimeLabel(logoUpdatedAt) : null,
     };
   }
 
@@ -732,6 +884,30 @@ export class TimesDetalheComponent {
       .filter((item) => !!item);
   }
 
+  private async readFileAsBase64(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onerror = () => reject(new Error('Não foi possível ler o arquivo selecionado.'));
+      reader.onload = () => {
+        const result = reader.result;
+        if (typeof result !== 'string') {
+          reject(new Error('Conteúdo do arquivo inválido.'));
+          return;
+        }
+
+        const base64 = result.includes(',') ? result.split(',').pop() ?? '' : result;
+        if (!base64) {
+          reject(new Error('Conteúdo do arquivo inválido.'));
+          return;
+        }
+
+        resolve(base64);
+      };
+
+      reader.readAsDataURL(file);
+    });
+  }
+
   private readCurrentUserUid(): string | null {
     const user = this.auth.user();
     if (!user) return null;
@@ -812,3 +988,5 @@ export class TimesDetalheComponent {
     return fallbackMessage;
   }
 }
+
+

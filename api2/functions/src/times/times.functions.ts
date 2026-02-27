@@ -144,6 +144,52 @@ app.patch('/:id', requireAuth, async (req, res) => {
   }
 });
 
+app.post('/:id/logo', requireAuth, async (req, res) => {
+  try {
+    const uid = getUid(req);
+    if (!uid) {
+      return res.status(401).json({ statusCode: 401, message: 'Unauthorized' });
+    }
+
+    const updated = await timesSvc.updateTeamLogo(
+      req.params.id,
+      {
+        uid,
+        role: getRole(req),
+      },
+      req.body,
+    );
+
+    res.status(200).json(updated);
+    return;
+  } catch (error: unknown) {
+    logger.error(`Erro ao atualizar logo do time ${req.params.id}:`, error);
+    sendError(res, error, 400, 'Bad request');
+    return;
+  }
+});
+
+app.delete('/:id/logo', requireAuth, async (req, res) => {
+  try {
+    const uid = getUid(req);
+    if (!uid) {
+      return res.status(401).json({ statusCode: 401, message: 'Unauthorized' });
+    }
+
+    const updated = await timesSvc.removeTeamLogo(req.params.id, {
+      uid,
+      role: getRole(req),
+    });
+
+    res.status(200).json(updated);
+    return;
+  } catch (error: unknown) {
+    logger.error(`Erro ao remover logo do time ${req.params.id}:`, error);
+    sendError(res, error, 400, 'Bad request');
+    return;
+  }
+});
+
 app.get('/:id', requireAuth, async (req, res) => {
   try {
     const team = await timesSvc.getTeam(req.params.id);
