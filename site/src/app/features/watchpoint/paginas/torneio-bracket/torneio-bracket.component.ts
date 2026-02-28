@@ -10,6 +10,10 @@ import { CardComponent } from '../../../../shared/card/card.component';
 import { CheckboxComponent } from '../../../../shared/design-system/checkbox/checkbox.component';
 import { InputComponent } from '../../../../shared/design-system/input/input.component';
 import {
+  RadioGroupComponent,
+  RadioItemComponent,
+} from '../../../../shared/design-system/radio/radio.component';
+import {
   OwSelectOption,
   SelectComponent,
 } from '../../../../shared/design-system/select/select.component';
@@ -21,6 +25,7 @@ import {
   ReportMatchPayload,
 } from '../../../torneio/brackets/brackets.service';
 import { TeamDisplay } from '../../../torneio/components/match-card/match-card.component';
+import { BracketSeedingService, SeedPreview } from './bracket-seeding.service';
 
 type PageState = 'loading' | 'no-bracket' | 'loaded' | 'error';
 type RawRecord = Readonly<Record<string, unknown>>;
@@ -28,9 +33,13 @@ type TeamCategory = 'formed' | 'random' | 'unknown';
 type SelectableTeam = Readonly<{
   id: string;
   name: string;
+  logoUrl: string | null;
   category: TeamCategory;
   tournamentIds: readonly string[];
 }>;
+
+type ValidTeamCount = 4 | 8 | 16 | 32;
+const VALID_TEAM_COUNTS: ReadonlySet<number> = new Set<number>([4, 8, 16, 32]);
 
 @Component({
   selector: 'app-torneio-bracket',
@@ -42,6 +51,8 @@ type SelectableTeam = Readonly<{
     DoubleEliminationComponent,
     FormsModule,
     InputComponent,
+    RadioGroupComponent,
+    RadioItemComponent,
     RouterLink,
     SelectComponent,
   ],
@@ -51,6 +62,7 @@ export class TorneioBracketComponent {
   private readonly http = inject(HttpClient);
   private readonly route = inject(ActivatedRoute);
   private readonly bracketsService = inject(BracketsService);
+  private readonly seeding = inject(BracketSeedingService);
   readonly auth = inject(AuthService);
 
   readonly tournamentId = this.readTournamentId();
@@ -62,6 +74,7 @@ export class TorneioBracketComponent {
   readonly teams = signal<Record<string, TeamDisplay>>({});
   readonly tournamentName = signal<string | null>(null);
   readonly tournamentTeamMode = signal<string | null>(null);
+  readonly maxTeams = signal<ValidTeamCount | null>(null);
   readonly loadingSelectableTeams = signal(false);
   readonly selectableTeams = signal<readonly SelectableTeam[]>([]);
   readonly selectedRandomTeamIds = signal<readonly string[]>([]);
@@ -74,6 +87,9 @@ export class TorneioBracketComponent {
   readonly teamIdsInput = signal('');
   readonly creating = signal(false);
   readonly createMessage = signal<{ text: string; ok: boolean } | null>(null);
+
+  /** Preview interativo do chaveamento (atualizado a cada seleção de time). */
+  readonly seedPreview = signal<SeedPreview>(this.seeding.createEmpty(0));
 
   // ── Formulário: registrar resultado ───────────────────────
 
@@ -135,9 +151,37 @@ export class TorneioBracketComponent {
       ? 'text-(--ow-green) font-extrabold'
       : 'text-(--ow-blue) font-extrabold';
   });
+
   readonly isRandomTournament = computed(() => this.tournamentTeamMode() === 'random');
-  readonly selectedRandomTeamsCount = computed(() => this.selectedRandomTeamIds().length);
-  readonly hasMinimumSelectedRandomTeams = computed(() => this.selectedRandomTeamsCount() >= 4);
+
+  /** Número de times já alocados no preview. */
+  readonly selectedCount = computed(() => Object.keys(this.seedPreview().seedMap).length);
+
+  /** Pares de seeds para visualização dos confrontos WB R1 no preview. */
+  readonly wbR1Pairs = computed<readonly { matchNumber: number; seed1: number; seed2: number }[]>(
+    () => {
+      const n = this.maxTeams();
+      if (!n) return [];
+      return Array.from({ length: n / 2 }, (_, i) => ({
+        matchNumber: i + 1,
+        seed1: i * 2 + 1,
+        seed2: i * 2 + 2,
+      }));
+    },
+  );
+
+  /** Pode gerar a chave? */
+  readonly canGenerateBracket = computed(() => {
+    if (this.creating()) return false;
+    if (this.isRandomTournament()) {
+      const n = this.maxTeams();
+      return !!n && this.selectedCount() === n;
+    }
+    if (this.seedMode() === 'manual') {
+      return this.parseTeamIds(this.teamIdsInput()).length >= 4;
+    }
+    return true;
+  });
 
   constructor() {
     if (this.tournamentId) {
@@ -151,10 +195,16 @@ export class TorneioBracketComponent {
   // ── Ações ─────────────────────────────────────────────────
 
   onSeedModeChange(value: string): void {
-    this.seedMode.set(value === 'manual' ? 'manual' : 'random');
-    if (!this.isRandomTournament()) {
-      this.teamIdsInput.set('');
+    const newMode = value === 'manual' ? 'manual' : 'random';
+    this.seedMode.set(newMode);
+
+    // Reconstrói o preview mantendo os times selecionados, mas re-distribuindo
+    const n = this.maxTeams();
+    if (n && this.isRandomTournament()) {
+      const selected = [...this.selectedRandomTeamIds()];
+      this.seedPreview.set(this.seeding.rebuildForMode(this.seeding.createEmpty(n), newMode, selected));
     }
+
     this.createMessage.set(null);
   }
 
@@ -166,13 +216,24 @@ export class TorneioBracketComponent {
     const normalizedTeamId = teamId.trim();
     if (!normalizedTeamId) return;
 
-    this.selectedRandomTeamIds.update((current) => {
-      if (checked) {
+    if (checked) {
+      this.selectedRandomTeamIds.update((current) => {
         if (current.includes(normalizedTeamId)) return current;
         return [...current, normalizedTeamId];
-      }
-      return current.filter((id) => id !== normalizedTeamId);
-    });
+      });
+
+      // Atualiza o preview conforme o modo atual
+      const mode = this.seedMode();
+      this.seedPreview.update((p) =>
+        mode === 'random'
+          ? this.seeding.assignRandom(p, normalizedTeamId)
+          : this.seeding.assignManual(p, normalizedTeamId),
+      );
+    } else {
+      this.selectedRandomTeamIds.update((current) => current.filter((id) => id !== normalizedTeamId));
+      this.seedPreview.update((p) => this.seeding.removeTeam(p, normalizedTeamId));
+    }
+
     this.createMessage.set(null);
   }
 
@@ -180,14 +241,30 @@ export class TorneioBracketComponent {
     return this.selectedRandomTeamIds().includes(teamId);
   }
 
-  selectableTeamLabel(teamId: string): string {
-    const team = this.selectableTeams().find((item) => item.id === teamId);
-    if (!team) return 'Time indisponível';
-    return team.name;
+  /** Logo do time selecionável (para a lista e para o preview). */
+  selectableTeamLogo(teamId: string): string | null {
+    return this.selectableTeams().find((t) => t.id === teamId)?.logoUrl ?? null;
+  }
+
+  /** Iniciais (2 chars) de um nome de time — fallback quando não há logo. */
+  teamInitials(name: string): string {
+    return name.trim().substring(0, 2).toUpperCase();
+  }
+
+  /** Nome do time para exibição no preview do seed. */
+  previewTeamName(seedNumber: number): string {
+    const teamId = this.seedPreview().seedMap[seedNumber];
+    if (!teamId) return `Seed ${seedNumber}`;
+    return this.selectableTeams().find((t) => t.id === teamId)?.name ?? `Seed ${seedNumber}`;
+  }
+
+  /** O slot do seed está preenchido? */
+  previewSlotFilled(seedNumber: number): boolean {
+    return !!this.seedPreview().seedMap[seedNumber];
   }
 
   async createBracket(): Promise<void> {
-    if (!this.tournamentId || this.creating()) return;
+    if (!this.tournamentId || !this.canGenerateBracket()) return;
 
     this.createMessage.set(null);
     this.creating.set(true);
@@ -197,17 +274,20 @@ export class TorneioBracketComponent {
       let payload: { seedMode: 'random' | 'manual'; teamIds?: string[] };
 
       if (this.isRandomTournament()) {
-        const selectedTeamIds = this.selectedRandomTeamIds();
-        if (selectedTeamIds.length < 4) {
+        // Para torneios random, envia a ordem do preview (já sorteada ou manual)
+        const teamIds = this.seeding.getOrderedTeamIds(this.seedPreview());
+        const n = this.maxTeams();
+
+        if (!n || teamIds.length !== n) {
           this.createMessage.set({
-            text: 'Selecione ao menos 4 times para gerar a chave.',
+            text: `Selecione exatamente ${n ?? 0} times para gerar a chave.`,
             ok: false,
           });
           this.creating.set(false);
           return;
         }
 
-        payload = { seedMode: mode, teamIds: [...selectedTeamIds] };
+        payload = { seedMode: mode, teamIds };
       } else if (mode === 'manual') {
         const teamIds = this.parseTeamIds(this.teamIdsInput());
         if (teamIds.length < 4) {
@@ -223,7 +303,10 @@ export class TorneioBracketComponent {
         payload = { seedMode: 'random' };
       }
 
-      const bracket = await this.bracketsService.createBracket(this.tournamentId, payload);
+      // createBracket retorna apenas o documento do bracket sem as partidas;
+      // busca o bracket completo (com matches) antes de renderizar.
+      await this.bracketsService.createBracket(this.tournamentId, payload);
+      const bracket = await this.bracketsService.getBracket(this.tournamentId);
       this.bracket.set(bracket);
       await this.loadTeams(bracket);
       this.state.set('loaded');
@@ -254,6 +337,8 @@ export class TorneioBracketComponent {
       this.createMessage.set(null);
       this.state.set('no-bracket');
       if (this.isRandomTournament()) {
+        const n = this.maxTeams();
+        if (n) this.seedPreview.set(this.seeding.createEmpty(n));
         await this.loadSelectableTeams();
       }
     } catch (error: unknown) {
@@ -368,9 +453,18 @@ export class TorneioBracketComponent {
         const teamMode = (this.readString(response, 'teamMode') ?? '').toLowerCase();
         this.tournamentName.set(name);
         this.tournamentTeamMode.set(teamMode || null);
+
+        // Lê maxTeams para montar o preview da chave
+        const raw = response['maxTeams'];
+        const maxTeamsValue = typeof raw === 'number' ? raw : null;
+        if (maxTeamsValue && VALID_TEAM_COUNTS.has(maxTeamsValue)) {
+          const n = maxTeamsValue as ValidTeamCount;
+          this.maxTeams.set(n);
+          this.seedPreview.set(this.seeding.createEmpty(n));
+        }
       }
     } catch {
-      // nome opcional — não falha a página
+      // nome/maxTeams opcionais — não falha a página
     }
   }
 
@@ -385,6 +479,9 @@ export class TorneioBracketComponent {
     this.loadingSelectableTeams.set(true);
     this.selectableTeamsMessage.set(null);
     this.selectedRandomTeamIds.set([]);
+    // Reseta preview ao recarregar times
+    const n = this.maxTeams();
+    if (n) this.seedPreview.set(this.seeding.createEmpty(n));
 
     try {
       const response = await firstValueFrom(this.http.get<unknown>(environment.apiURLTimes));
@@ -469,9 +566,13 @@ export class TorneioBracketComponent {
       this.readString(value, 'title') ??
       'Time sem nome';
 
+    const logoUrl =
+      this.readString(value, 'logoUrl') ?? this.readString(value, 'logo_url');
+
     return {
       id,
       name,
+      logoUrl,
       category: this.readTeamCategory(value),
       tournamentIds: this.readTeamTournamentIds(value),
     };

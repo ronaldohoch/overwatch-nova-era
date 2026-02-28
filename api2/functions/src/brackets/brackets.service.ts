@@ -66,10 +66,13 @@ export class BracketsService {
 
     // Monta seedMap
     let orderedTeamIds: string[];
+    let autoCheckinTeamIds: string[] = [];
+
+    const rawIds = dto?.teamIds;
+    const hasExplicitTeamIds = Array.isArray(rawIds) && (rawIds as unknown[]).length > 0;
 
     if (seedMode === 'manual') {
-      const rawIds = dto?.teamIds;
-      if (!Array.isArray(rawIds)) throw new Error('teamIds deve ser um array quando seedMode é "manual".');
+      if (!hasExplicitTeamIds) throw new Error('teamIds deve ser um array quando seedMode é "manual".');
       orderedTeamIds = (rawIds as unknown[]).map((id, i) => {
         if (typeof id !== 'string' || !id.trim()) throw new Error(`teamIds[${i}] inválido.`);
         return id.trim();
@@ -77,14 +80,31 @@ export class BracketsService {
       if (orderedTeamIds.length !== maxTeams) {
         throw new Error(`teamIds deve conter exatamente ${maxTeams} times (recebeu ${orderedTeamIds.length}).`);
       }
+      // Times fornecidos explicitamente devem ser marcados como check-in (torneios random)
+      autoCheckinTeamIds = orderedTeamIds;
     } else {
-      const teamsSnap = await this.teamsCol(tournamentId).where('checkedIn', '==', true).get();
-      if (teamsSnap.empty) throw new Error('Nenhum time com checkin encontrado no torneio.');
-      orderedTeamIds = fisherYates(teamsSnap.docs.map((d) => d.id));
-      if (orderedTeamIds.length !== maxTeams) {
-        throw new Error(
-          `Número de times com checkin (${orderedTeamIds.length}) não corresponde a maxTeams (${maxTeams}).`,
-        );
+      if (hasExplicitTeamIds) {
+        // Modo random com teamIds explícitos (vindos do preview do frontend):
+        // usa a ordem fornecida sem re-embaralhar; o frontend já aplicou o Fisher-Yates.
+        orderedTeamIds = (rawIds as unknown[]).map((id, i) => {
+          if (typeof id !== 'string' || !id.trim()) throw new Error(`teamIds[${i}] inválido.`);
+          return id.trim();
+        });
+        if (orderedTeamIds.length !== maxTeams) {
+          throw new Error(`teamIds deve conter exatamente ${maxTeams} times (recebeu ${orderedTeamIds.length}).`);
+        }
+        // Auto check-in pois times random não fazem checkin manual
+        autoCheckinTeamIds = orderedTeamIds;
+      } else {
+        // Fallback: lê times já com check-in no Firestore e embaralha
+        const teamsSnap = await this.teamsCol(tournamentId).where('checkedIn', '==', true).get();
+        if (teamsSnap.empty) throw new Error('Nenhum time com checkin encontrado no torneio.');
+        orderedTeamIds = fisherYates(teamsSnap.docs.map((d) => d.id));
+        if (orderedTeamIds.length !== maxTeams) {
+          throw new Error(
+            `Número de times com checkin (${orderedTeamIds.length}) não corresponde a maxTeams (${maxTeams}).`,
+          );
+        }
       }
     }
 
@@ -112,6 +132,14 @@ export class BracketsService {
     const batch = firestore.batch();
 
     batch.set(this.bracketsCollection.doc(tournamentId), bracketDoc);
+
+    // Auto check-in dos times selecionados (para torneios random que não fazem checkin manual)
+    if (autoCheckinTeamIds.length > 0) {
+      const teamsCol = this.teamsCol(tournamentId);
+      for (const teamId of autoCheckinTeamIds) {
+        batch.set(teamsCol.doc(teamId), { checkedIn: true, updatedAt: now }, { merge: true });
+      }
+    }
 
     for (const tpl of templates) {
       // Resolve slots do tipo seed para team IDs imediatamente
