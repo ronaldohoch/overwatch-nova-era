@@ -22,6 +22,11 @@
       @if (state() === 'loaded') {
         <span [class]="bracketStatusClass()">{{ bracketStatusLabel() }}</span>
       }
+      @if (tournamentId) {
+        <ow-btn variant="ghost" size="sm" [routerLink]="['/torneios', tournamentId]">
+          Ver página pública
+        </ow-btn>
+      }
       @if (state() === 'loaded' && isAdmin()) {
         <ow-btn variant="danger" size="sm" (click)="deleteBracket()">
           Excluir chave

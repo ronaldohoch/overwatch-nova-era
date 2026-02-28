@@ -103,13 +103,13 @@ export class DoubleEliminationComponent {
   }
 
   private wbRoundLabel(round: number, total: number): string {
-    if (round === total) return 'Final WB';
-    if (round === total - 1 && total > 2) return 'Semi WB';
+    if (round === total) return 'Final';
+    if (round === total - 1 && total > 2) return 'Semi';
     return `Rodada ${round}`;
   }
 
   private lbRoundLabel(round: number, total: number): string {
-    if (round === total) return 'Final LB';
+    if (round === total) return 'Final';
     return `Rodada ${round}`;
   }
 }

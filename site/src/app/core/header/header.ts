@@ -4,6 +4,7 @@ import { AuthService } from '../auth/auth.service';
 import { type UserRole } from '../auth/user-role';
 import { LinksComponent } from './components/links/links.component';
 import { ButtonsComponent } from '../../shared/buttons/buttons';
+import { environment } from '../../../environments/environment';
 
 export type OwNavItem = Readonly<{
   label: string;
@@ -14,7 +15,7 @@ export type OwNavItem = Readonly<{
 const DEFAULT_LINKS: readonly OwNavItem[] = [
     { label: 'Início', link: '/', exact: true },
     { label: 'Dúvidas frequentes', link: '/duvidas-frequentes' },
-    // { label: 'Torneio', link: '/torneio' },
+    { label: 'Torneio', link: `/torneios/${environment.TOURNAMENT_ID}` },
     // { label: 'Times', link: '/times' },
     // { label: 'Agenda', link: '/agenda' },
     { label: 'Regras', link: '/regras' },

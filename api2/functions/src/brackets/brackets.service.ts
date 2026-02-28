@@ -1,4 +1,3 @@
-import { FieldValue } from 'firebase-admin/firestore';
 import { firestore } from '../firebase';
 import { generateDoubleEliminationTemplate } from './generators/double-elimination.generator';
 import {
@@ -12,6 +11,58 @@ import {
 } from './interfaces';
 
 const VALID_TEAM_COUNTS = new Set([4, 8, 16, 32]);
+const DEFAULT_LOGO_BUCKET = 'copa-nova-era-overwatch.firebasestorage.app';
+
+/**
+ * Gera a URL pública de acesso à logo a partir do logoPath armazenado no Firestore.
+ * Suporta: gs:// URI, URL HTTPS completa, e caminho relativo.
+ * Respeita FIREBASE_STORAGE_EMULATOR_HOST quando rodando localmente.
+ */
+function buildLogoUrl(
+  logoPath: string | null | undefined,
+  logoBucketName: string | null | undefined,
+): string | null {
+  if (!logoPath || typeof logoPath !== 'string') return null;
+  const path = logoPath.trim();
+  if (!path) return null;
+
+  // Já é uma URL completa
+  if (path.startsWith('https://') || path.startsWith('http://')) {
+    return path.includes('?alt=media') ? path : `${path}?alt=media`;
+  }
+
+  let bucket: string;
+  let objectPath: string;
+
+  // gs:// URI → extrai bucket e objectPath
+  if (path.startsWith('gs://')) {
+    const withoutScheme = path.slice('gs://'.length);
+    const slashIndex = withoutScheme.indexOf('/');
+    if (slashIndex <= 0) return null;
+    bucket = withoutScheme.slice(0, slashIndex);
+    objectPath = withoutScheme.slice(slashIndex + 1).replace(/^\/+/, '');
+    if (!objectPath) return null;
+  } else {
+    // Caminho relativo — usa bucket do time ou padrão
+    bucket =
+      typeof logoBucketName === 'string' && logoBucketName.trim()
+        ? logoBucketName.trim()
+        : DEFAULT_LOGO_BUCKET;
+    objectPath = path;
+  }
+
+  // Emulador local
+  const emulatorHost = process.env['FIREBASE_STORAGE_EMULATOR_HOST'];
+  if (emulatorHost) {
+    const baseHost =
+      emulatorHost.startsWith('http://') || emulatorHost.startsWith('https://')
+        ? emulatorHost
+        : `http://${emulatorHost}`;
+    return `${baseHost}/v0/b/${bucket}/o/${encodeURIComponent(objectPath)}?alt=media`;
+  }
+
+  return `https://firebasestorage.googleapis.com/v0/b/${bucket}/o/${encodeURIComponent(objectPath)}?alt=media`;
+}
 
 function fisherYates<T>(arr: T[]): T[] {
   for (let i = arr.length - 1; i > 0; i--) {
@@ -184,10 +235,32 @@ export class BracketsService {
     const bracketSnap = await this.bracketsCollection.doc(tournamentId).get();
     if (!bracketSnap.exists) throw new Error(`Bracket do torneio ${tournamentId} não encontrado.`);
 
+    const bracketData = bracketSnap.data() as StoredBracket;
     const matchesSnap = await this.matchesCol(tournamentId).orderBy('matchNumber', 'asc').get();
     const matches = matchesSnap.docs.map((d) => ({ id: d.id, ...(d.data() as StoredMatch) }));
 
-    return { id: tournamentId, ...bracketSnap.data(), matches };
+    // Embed public team info (name + logoUrl) so unauthenticated clients can display teams
+    const teamIds = Object.values(bracketData.seedMap).filter((id): id is string => !!id);
+    const teamInfo: Record<string, { name: string; logoUrl: string | null }> = {};
+
+    if (teamIds.length > 0) {
+      const teamSnaps = await Promise.all(
+        teamIds.map((id) => firestore.collection('teams').doc(id).get()),
+      );
+      for (const snap of teamSnaps) {
+        if (!snap.exists) continue;
+        const data = snap.data() as Record<string, unknown>;
+        const name = typeof data?.name === 'string' ? data.name.trim() : 'Time sem nome';
+        const logoPath = typeof data?.logoPath === 'string' ? data.logoPath : null;
+        const logoBucketName =
+          typeof data?.logoBucketName === 'string' ? data.logoBucketName :
+          typeof data?.logoBucket === 'string' ? data.logoBucket : null;
+        const logoUrl = buildLogoUrl(logoPath, logoBucketName);
+        teamInfo[snap.id] = { name, logoUrl };
+      }
+    }
+
+    return { id: tournamentId, ...bracketData, matches, teamInfo };
   }
 
   // ──────────────────────────────────────────────────────────

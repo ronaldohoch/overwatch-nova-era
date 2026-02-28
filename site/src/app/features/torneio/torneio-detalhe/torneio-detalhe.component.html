@@ -1,0 +1,112 @@
+<section class="my-8 space-y-8">
+
+  <!-- Loading -->
+  @if (state() === 'loading') {
+    <div class="flex flex-col items-center justify-center py-24 gap-4">
+      <div
+        class="h-10 w-10 animate-spin rounded-full border-4 border-(--ow-gray-200) border-t-(--ow-orange)"
+      ></div>
+      <p class="text-sm font-semibold uppercase tracking-widest text-(--ow-gray-500)">
+        Carregando torneio...
+      </p>
+    </div>
+  }
+
+  <!-- Torneio não encontrado -->
+  @if (state() === 'not-found') {
+    <div class="flex flex-col items-center justify-center py-24 gap-3 text-center">
+      <p class="text-[2rem] font-black uppercase tracking-wider text-(--ow-gray-300)">404</p>
+      <p class="text-lg font-bold text-(--ow-gray-600)">Torneio não encontrado.</p>
+      <p class="text-sm text-(--ow-gray-400)">Verifique o link ou tente novamente.</p>
+    </div>
+  }
+
+  <!-- Erro genérico -->
+  @if (state() === 'error') {
+    <div class="rounded border border-red-300 bg-red-50 p-6 text-center">
+      <p class="font-semibold text-red-600">{{ errorMessage() ?? 'Ocorreu um erro inesperado.' }}</p>
+    </div>
+  }
+
+  <!-- Conteúdo carregado (com ou sem bracket) -->
+  @if (state() === 'loaded' || state() === 'no-bracket') {
+
+    <!-- Cabeçalho do torneio -->
+    <div class="space-y-3">
+      <div class="flex flex-wrap items-start justify-between gap-3">
+        <h1
+          class="relative pb-[10px] text-[1.6rem] font-black uppercase tracking-[0.08em] text-(--ow-gray-900) md:text-[2rem] after:absolute after:bottom-0 after:left-0 after:block after:h-1 after:w-16 after:bg-(--ow-orange) after:content-[''] after:[clip-path:polygon(10%_0,90%_0,100%_100%,0_100%)]"
+        >
+          {{ tournament()?.name ?? 'Torneio' }}
+        </h1>
+
+        @if (tournament()?.status) {
+          <span
+            class="mt-1 shrink-0 self-start rounded px-3 py-1 text-[0.72rem] font-extrabold uppercase tracking-widest [clip-path:polygon(6%_0,100%_0,94%_100%,0_100%)]"
+            [class]="statusClass()"
+          >
+            {{ statusLabel() }}
+          </span>
+        }
+      </div>
+
+      @if (tournament()?.description) {
+        <p class="text-sm text-(--ow-gray-600)">{{ tournament()!.description }}</p>
+      }
+    </div>
+
+    <!-- Divisor -->
+    <div class="h-px w-full bg-(--ow-gray-200)"></div>
+
+    <!-- Chave do torneio -->
+    @if (state() === 'loaded' && bracket()) {
+
+      <div>
+        <p
+          class="mb-4 text-[0.72rem] font-black uppercase tracking-[0.15em] text-(--ow-gray-500)"
+        >
+          Chaveamento
+        </p>
+
+        <app-double-elimination
+          [bracket]="bracket()!"
+          [teams]="teams()"
+          [canReport]="false"
+        />
+      </div>
+
+    } @else {
+
+      <!-- Sem chave ainda -->
+      <div class="flex flex-col items-center justify-center gap-3 py-16 text-center">
+        <div
+          class="flex h-16 w-16 items-center justify-center rounded-full bg-(--ow-gray-100)"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-8 w-8 text-(--ow-gray-400)"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="1.5"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12"
+            />
+          </svg>
+        </div>
+        <p class="text-base font-bold uppercase tracking-wider text-(--ow-gray-500)">
+          Chave ainda não gerada
+        </p>
+        <p class="text-sm text-(--ow-gray-400)">
+          O chaveamento será publicado em breve.
+        </p>
+      </div>
+
+    }
+
+  }
+
+</section>

@@ -24,6 +24,14 @@ export const routes: Routes = [
     loadComponent: () => import('./features/torneio/torneio.component').then(m=>m.TorneioComponent)
   },
   {
+    path: 'torneios/:id',
+    title: 'Copa Overwatch Nova Era - Torneio',
+    loadComponent: () =>
+      import('./features/torneio/torneio-detalhe/torneio-detalhe.component').then(
+        (m) => m.TorneioDetalheComponent,
+      ),
+  },
+  {
     path: 'watchpoint',
     title: 'Copa Overwatch Nova Era - Watchpoint',
     canActivate: [routeAccessGuard],

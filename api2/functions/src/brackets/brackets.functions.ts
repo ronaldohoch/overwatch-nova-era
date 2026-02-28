@@ -30,8 +30,8 @@ app.post('/:tournamentId', requireAuth, rolesMiddleware([UserRole.ADMIN]), async
   }
 });
 
-// GET /brackets/:tournamentId — Retorna bracket + partidas (autenticado)
-app.get('/:tournamentId', requireAuth, async (req, res) => {
+// GET /brackets/:tournamentId — Retorna bracket + partidas (público)
+app.get('/:tournamentId', async (req, res) => {
   try {
     const bracket = await bracketsSvc.getBracket(req.params.tournamentId);
     res.status(200).json(bracket);

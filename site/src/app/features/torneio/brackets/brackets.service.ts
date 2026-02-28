@@ -29,6 +29,11 @@ export interface BracketMatch {
   readonly status: MatchStatus;
 }
 
+export interface BracketTeamInfo {
+  readonly name: string;
+  readonly logoUrl: string | null;
+}
+
 export interface Bracket {
   readonly id: string;
   readonly tournamentId: string;
@@ -38,6 +43,8 @@ export interface Bracket {
   readonly seedMap: Record<number, string>;
   readonly winnerId: string | null;
   readonly matches: BracketMatch[];
+  /** Info pública dos times (name + logoUrl) embutida pelo backend — disponível sem auth. */
+  readonly teamInfo?: Record<string, BracketTeamInfo>;
 }
 
 export interface CreateBracketPayload {
