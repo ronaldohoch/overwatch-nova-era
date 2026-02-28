@@ -2,10 +2,10 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
-import { environment } from '../../../../../environments/environment';
-import { AuthService } from '../../../../core/auth/auth.service';
-import { ButtonsComponent } from '../../../../shared/buttons/buttons';
-import { CardComponent } from '../../../../shared/card/card.component';
+import { environment } from '../../../../../../environments/environment';
+import { AuthService } from '../../../../../core/auth/auth.service';
+import { ButtonsComponent } from '../../../../../shared/buttons/buttons';
+import { CardComponent } from '../../../../../shared/card/card.component';
 
 type RawRecord = Readonly<Record<string, unknown>>;
 type TeamCategory = 'formed' | 'random' | 'unknown';

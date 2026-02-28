@@ -2,9 +2,9 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
-import { environment } from '../../../../../environments/environment';
-import { AuthService } from '../../../../core/auth/auth.service';
-import { ButtonsComponent } from '../../../../shared/buttons/buttons';
+import { environment } from '../../../../../../environments/environment';
+import { AuthService } from '../../../../../core/auth/auth.service';
+import { ButtonsComponent } from '../../../../../shared/buttons/buttons';
 
 const TEAM_FIELDS = ['name', 'description', 'groupLink', 'category'] as const;
 

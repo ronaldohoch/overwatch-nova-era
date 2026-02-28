@@ -143,7 +143,7 @@ export default [
         data: {
           access: USER_ROLES,
         },
-        loadComponent: () => import('./paginas/times-listagem/times-listagem.component').then((m) => m.TimesListagemComponent),
+        loadComponent: () => import('./paginas/times/times-listagem/times-listagem.component').then((m) => m.TimesListagemComponent),
       },
       {
         path: 'novo-time',
@@ -152,7 +152,7 @@ export default [
         data: {
           access: USER_ROLES,
         },
-        loadComponent: () => import('./paginas/times-cadastro/times-cadastro.component').then((m) => m.TimesCadastroComponent),
+        loadComponent: () => import('./paginas/times/times-cadastro/times-cadastro.component').then((m) => m.TimesCadastroComponent),
       },
       {
         path: 'time/:id/detalhe',
@@ -161,7 +161,7 @@ export default [
         data: {
           access: USER_ROLES,
         },
-        loadComponent: () => import('./paginas/times-detalhe/times-detalhe.component').then((m) => m.TimesDetalheComponent),
+        loadComponent: () => import('./paginas/times/times-detalhe/times-detalhe.component').then((m) => m.TimesDetalheComponent),
       },
     ]
   },

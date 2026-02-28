@@ -2,9 +2,9 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { computed, signal } from '@angular/core';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { Router } from '@angular/router';
-import { AuthService } from '../../../../core/auth/auth.service';
-import type { UserRole } from '../../../../core/auth/user-role';
-import { environment } from '../../../../../environments/environment';
+import { AuthService } from '../../../../../core/auth/auth.service';
+import type { UserRole } from '../../../../../core/auth/user-role';
+import { environment } from '../../../../../../environments/environment';
 
 import { TimesCadastroComponent } from './times-cadastro.component';
 

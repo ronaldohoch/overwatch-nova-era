@@ -1,9 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { computed, signal } from '@angular/core';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { AuthService } from '../../../../core/auth/auth.service';
-import type { UserRole } from '../../../../core/auth/user-role';
-import { environment } from '../../../../../environments/environment';
+import { AuthService } from '../../../../../core/auth/auth.service';
+import type { UserRole } from '../../../../../core/auth/user-role';
+import { environment } from '../../../../../../environments/environment';
 
 import { TimesListagemComponent } from './times-listagem.component';
 
