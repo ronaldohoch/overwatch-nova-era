@@ -1,0 +1,302 @@
+[
+  {
+    "name": "D.Va",
+    "avatar": "https://overwatch.blizzard.com/media/dva.png",
+    "role": "Tank",
+    "subrole": "Initiator"
+  },
+  {
+    "name": "Doomfist",
+    "avatar": "https://overwatch.blizzard.com/media/doomfist.png",
+    "role": "Tank",
+    "subrole": "Initiator"
+  },
+  {
+    "name": "Domina",
+    "avatar": "https://overwatch.blizzard.com/media/domina.png",
+    "role": "Tank",
+    "subrole": "Stalwart"
+  },
+  {
+    "name": "Hazard",
+    "avatar": "https://overwatch.blizzard.com/media/hazard.png",
+    "role": "Tank",
+    "subrole": "Stalwart"
+  },
+  {
+    "name": "Junker Queen",
+    "avatar": "https://overwatch.blizzard.com/media/junker-queen.png",
+    "role": "Tank",
+    "subrole": "Stalwart"
+  },
+  {
+    "name": "Mauga",
+    "avatar": "https://overwatch.blizzard.com/media/mauga.png",
+    "role": "Tank",
+    "subrole": "Bruiser"
+  },
+  {
+    "name": "Orisa",
+    "avatar": "https://overwatch.blizzard.com/media/orisa.png",
+    "role": "Tank",
+    "subrole": "Bruiser"
+  },
+  {
+    "name": "Ramattra",
+    "avatar": "https://overwatch.blizzard.com/media/ramattra.png",
+    "role": "Tank",
+    "subrole": "Stalwart"
+  },
+  {
+    "name": "Reinhardt",
+    "avatar": "https://overwatch.blizzard.com/media/reinhardt.png",
+    "role": "Tank",
+    "subrole": "Stalwart"
+  },
+  {
+    "name": "Roadhog",
+    "avatar": "https://overwatch.blizzard.com/media/roadhog.png",
+    "role": "Tank",
+    "subrole": "Bruiser"
+  },
+  {
+    "name": "Sigma",
+    "avatar": "https://overwatch.blizzard.com/media/sigma.png",
+    "role": "Tank",
+    "subrole": "Stalwart"
+  },
+  {
+    "name": "Winston",
+    "avatar": "https://overwatch.blizzard.com/media/winston.png",
+    "role": "Tank",
+    "subrole": "Initiator"
+  },
+  {
+    "name": "Wrecking Ball",
+    "avatar": "https://overwatch.blizzard.com/media/wrecking-ball.png",
+    "role": "Tank",
+    "subrole": "Initiator"
+  },
+  {
+    "name": "Zarya",
+    "avatar": "https://overwatch.blizzard.com/media/zarya.png",
+    "role": "Tank",
+    "subrole": "Bruiser"
+  },
+  {
+    "name": "Anran",
+    "avatar": "https://overwatch.blizzard.com/media/anran.png",
+    "role": "Damage",
+    "subrole": "Flanker"
+  },
+  {
+    "name": "Ashe",
+    "avatar": "https://overwatch.blizzard.com/media/ashe.png",
+    "role": "Damage",
+    "subrole": "Sharpshooter"
+  },
+  {
+    "name": "Bastion",
+    "avatar": "https://overwatch.blizzard.com/media/bastion.png",
+    "role": "Damage",
+    "subrole": "Specialist"
+  },
+  {
+    "name": "Cassidy",
+    "avatar": "https://overwatch.blizzard.com/media/cassidy.png",
+    "role": "Damage",
+    "subrole": "Sharpshooter"
+  },
+  {
+    "name": "Echo",
+    "avatar": "https://overwatch.blizzard.com/media/echo.png",
+    "role": "Damage",
+    "subrole": "Recon"
+  },
+  {
+    "name": "Emre",
+    "avatar": "https://overwatch.blizzard.com/media/emre.png",
+    "role": "Damage",
+    "subrole": "Specialist"
+  },
+  {
+    "name": "Freja",
+    "avatar": "https://overwatch.blizzard.com/media/freja.png",
+    "role": "Damage",
+    "subrole": "Recon"
+  },
+  {
+    "name": "Genji",
+    "avatar": "https://overwatch.blizzard.com/media/genji.png",
+    "role": "Damage",
+    "subrole": "Flanker"
+  },
+  {
+    "name": "Hanzo",
+    "avatar": "https://overwatch.blizzard.com/media/hanzo.png",
+    "role": "Damage",
+    "subrole": "Sharpshooter"
+  },
+  {
+    "name": "Junkrat",
+    "avatar": "https://overwatch.blizzard.com/media/junkrat.png",
+    "role": "Damage",
+    "subrole": "Specialist"
+  },
+  {
+    "name": "Mei",
+    "avatar": "https://overwatch.blizzard.com/media/mei.png",
+    "role": "Damage",
+    "subrole": "Specialist"
+  },
+  {
+    "name": "Pharah",
+    "avatar": "https://overwatch.blizzard.com/media/pharah.png",
+    "role": "Damage",
+    "subrole": "Recon"
+  },
+  {
+    "name": "Reaper",
+    "avatar": "https://overwatch.blizzard.com/media/reaper.png",
+    "role": "Damage",
+    "subrole": "Flanker"
+  },
+  {
+    "name": "Sojourn",
+    "avatar": "https://overwatch.blizzard.com/media/sojourn.png",
+    "role": "Damage",
+    "subrole": "Sharpshooter"
+  },
+  {
+    "name": "Soldier: 76",
+    "avatar": "https://overwatch.blizzard.com/media/soldier-76.png",
+    "role": "Damage",
+    "subrole": "Specialist"
+  },
+  {
+    "name": "Sombra",
+    "avatar": "https://overwatch.blizzard.com/media/sombra.png",
+    "role": "Damage",
+    "subrole": "Recon"
+  },
+  {
+    "name": "Symmetra",
+    "avatar": "https://overwatch.blizzard.com/media/symmetra.png",
+    "role": "Damage",
+    "subrole": "Specialist"
+  },
+  {
+    "name": "Torbjörn",
+    "avatar": "https://overwatch.blizzard.com/media/torbjorn.png",
+    "role": "Damage",
+    "subrole": "Specialist"
+  },
+  {
+    "name": "Tracer",
+    "avatar": "https://overwatch.blizzard.com/media/tracer.png",
+    "role": "Damage",
+    "subrole": "Flanker"
+  },
+  {
+    "name": "Vendetta",
+    "avatar": "https://overwatch.blizzard.com/media/vendetta.png",
+    "role": "Damage",
+    "subrole": "Flanker"
+  },
+  {
+    "name": "Venture",
+    "avatar": "https://overwatch.blizzard.com/media/venture.png",
+    "role": "Damage",
+    "subrole": "Flanker"
+  },
+  {
+    "name": "Widowmaker",
+    "avatar": "https://overwatch.blizzard.com/media/widowmaker.png",
+    "role": "Damage",
+    "subrole": "Sharpshooter"
+  },
+  {
+    "name": "Ana",
+    "avatar": "https://overwatch.blizzard.com/media/ana.png",
+    "role": "Support",
+    "subrole": "Tactician"
+  },
+  {
+    "name": "Baptiste",
+    "avatar": "https://overwatch.blizzard.com/media/baptiste.png",
+    "role": "Support",
+    "subrole": "Medic"
+  },
+  {
+    "name": "Brigitte",
+    "avatar": "https://overwatch.blizzard.com/media/brigitte.png",
+    "role": "Support",
+    "subrole": "Survivor"
+  },
+  {
+    "name": "Illari",
+    "avatar": "https://overwatch.blizzard.com/media/illari.png",
+    "role": "Support",
+    "subrole": "Survivor"
+  },
+  {
+    "name": "Jetpack Cat",
+    "avatar": "https://overwatch.blizzard.com/media/jetpack-cat.png",
+    "role": "Support",
+    "subrole": "Medic"
+  },
+  {
+    "name": "Juno",
+    "avatar": "https://overwatch.blizzard.com/media/juno.png",
+    "role": "Support",
+    "subrole": "Survivor"
+  },
+  {
+    "name": "Kiriko",
+    "avatar": "https://overwatch.blizzard.com/media/kiriko.png",
+    "role": "Support",
+    "subrole": "Tactician"
+  },
+  {
+    "name": "Lifeweaver",
+    "avatar": "https://overwatch.blizzard.com/media/lifeweaver.png",
+    "role": "Support",
+    "subrole": "Tactician"
+  },
+  {
+    "name": "Lúcio",
+    "avatar": "https://overwatch.blizzard.com/media/lucio.png",
+    "role": "Support",
+    "subrole": "Medic"
+  },
+  {
+    "name": "Mercy",
+    "avatar": "https://overwatch.blizzard.com/media/mercy.png",
+    "role": "Support",
+    "subrole": "Tactician"
+  },
+  {
+    "name": "Mizuki",
+    "avatar": "https://overwatch.blizzard.com/media/mizuki.png",
+    "role": "Support",
+    "subrole": "Survivor"
+  },
+  {
+    "name": "Moira",
+    "avatar": "https://overwatch.blizzard.com/media/moira.png",
+    "role": "Support",
+    "subrole": "Medic"
+  },
+  {
+    "name": "Wuyang",
+    "avatar": "https://overwatch.blizzard.com/media/wuyang.png",
+    "role": "Support",
+    "subrole": "Survivor"
+  },
+  {
+    "name": "Zenyatta",
+    "avatar": "https://overwatch.blizzard.com/media/zenyatta.png",
+    "role": "Support",
+    "subrole": "Tactician"
+  }
+]

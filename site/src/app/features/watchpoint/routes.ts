@@ -107,6 +107,15 @@ export default [
         loadComponent: () => import('./paginas/ferramentas-de-streamer/paginas/roleta/roleta.component').then((m) => m.RoletaComponent),
       },
       {
+        path: 'ferramentas-de-streamer/banimento-de-herois',
+        title: 'Copa Overwatch Nova Era - Banimento de herois',
+        canActivate: [routeAccessGuard],
+        data: {
+          access: ['streamer', 'admin'],
+        },
+        loadComponent: () => import('./paginas/ferramentas-de-streamer/paginas/banimento-de-herois/banimento-de-herois.component').then((m) => m.BanimentoDeHeroisComponent),
+      },
+      {
         path: 'usuarios',
         title: 'Copa Overwatch Nova Era - Usuários',
         canActivate: [routeAccessGuard],

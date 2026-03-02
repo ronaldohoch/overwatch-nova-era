@@ -1,0 +1,232 @@
+<!-- Full-screen setup overlay -->
+<div class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-gray-50/98 backdrop-blur-sm overflow-hidden">
+
+  <!-- Close button -->
+  <button type="button"
+    class="absolute top-5 right-5 w-9 h-9 flex items-center justify-center rounded-full text-gray-400 hover:text-gray-700 hover:bg-gray-200 transition-colors"
+    (click)="close()">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2.5" stroke-linecap="round">
+      <line x1="18" y1="6" x2="6" y2="18" />
+      <line x1="6" y1="6" x2="18" y2="18" />
+    </svg>
+  </button>
+
+  <!-- Content wrapper scaled 20% -->
+  <div class="scale-[1.2] flex flex-col items-center gap-6">
+
+    <!-- Teams header — mirrors the live page layout -->
+    <section class="flex items-start justify-center bg-white border border-gray-200 shadow-sm px-8 py-6 rounded-sm w-full">
+
+      <!-- Team 1 -->
+      <div class="flex-1 max-w-90 flex flex-col items-end text-right">
+
+        <!-- Label (ow-input label style) -->
+        <label class="block text-[0.78rem] font-extrabold uppercase tracking-[0.12em] text-[#3c4043] mb-1.75 w-full text-right">
+          Time 1
+        </label>
+
+        <!-- Search / Selected -->
+        <div class="relative w-full">
+          @if (team1Selected(); as t1) {
+            <!-- Selected state -->
+            <div class="flex items-center justify-end gap-3">
+              <div class="flex flex-col items-end">
+                <span class="text-[1.05rem] font-black uppercase tracking-widest text-gray-700 leading-tight">
+                  {{ t1.name }}
+                </span>
+              </div>
+              @if (t1.logoUrl) {
+                <img [src]="t1.logoUrl" [alt]="t1.name"
+                  class="w-10 h-10 rounded-full object-cover border-2 border-gray-200 shrink-0">
+              } @else {
+                <div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center shrink-0">
+                  <span class="text-[0.7rem] font-black text-gray-400">
+                    {{ t1.name.slice(0, 2).toUpperCase() }}
+                  </span>
+                </div>
+              }
+              <button (click)="clearTeam1()" type="button"
+                class="text-gray-300 hover:text-red-500 transition-colors shrink-0">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="2.5" stroke-linecap="round">
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="15" y1="9" x2="9" y2="15" />
+                  <line x1="9" y1="9" x2="15" y2="15" />
+                </svg>
+              </button>
+            </div>
+          } @else {
+            <!-- Search input (ow-input visual style) -->
+            <div class="relative">
+              <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#9aa0a6] pointer-events-none">
+                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                  <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
+              </span>
+              <input type="text" placeholder="Buscar time..." [value]="team1Query()"
+                (input)="onTeam1Input($event)" (focus)="onTeam1Focus()" (blur)="closeTeam1()"
+                class="w-full py-3.25 pl-11.5 pr-4.5 text-[0.9rem] font-medium text-[#202124] bg-white border-2 border-[#e8eaed] outline-none transition-all duration-250 [clip-path:polygon(4%_0,100%_0,100%_85%,96%_100%,0_100%,0_15%)] placeholder:text-[#9aa0a6] focus:border-[#f06314] focus:[box-shadow:0_0_0_3px_rgba(240,99,20,0.12)]">
+            </div>
+            <!-- Dropdown -->
+            @if (team1Open() && team1Results().length > 0) {
+              <div
+                class="absolute top-full right-0 z-20 w-full bg-white border border-[#e8eaed] shadow-lg max-h-52 overflow-y-auto">
+                @for (team of team1Results(); track team.id) {
+                  <button type="button"
+                    class="w-full flex items-center justify-end gap-2.5 px-3 py-2.5 text-[0.82rem] font-bold text-gray-700 hover:bg-orange-50 hover:text-[#f06314] transition-colors"
+                    (mousedown)="selectTeam1(team)">
+                    <span>{{ team.name }}</span>
+                    @if (team.logoUrl) {
+                      <img [src]="team.logoUrl" [alt]="team.name"
+                        class="w-7 h-7 rounded-full object-cover border border-gray-200 shrink-0">
+                    } @else {
+                      <div class="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center shrink-0 border border-gray-200">
+                        <span class="text-[0.55rem] font-black text-gray-400">
+                          {{ team.name.slice(0, 2).toUpperCase() }}
+                        </span>
+                      </div>
+                    }
+                  </button>
+                }
+              </div>
+            }
+          }
+        </div>
+
+        <!-- Empty ban slot previews -->
+        <div class="flex gap-2 justify-end mt-3">
+          @for (slot of banCountSlots(); track $index) {
+            <div
+              class="w-14 h-14 rounded-lg border-2 border-dashed border-gray-200 bg-gray-50 flex items-center justify-center">
+              <span class="text-[0.62rem] font-black text-gray-200">{{ $index + 1 }}</span>
+            </div>
+          }
+        </div>
+
+      </div>
+
+      <!-- Center: VS + Iniciar -->
+      <div class="flex flex-col items-center justify-center px-8 shrink-0">
+        <div class="text-[0.6rem] font-black text-gray-300 uppercase tracking-[0.2em] mb-1.5">VS</div>
+        <button type="button"
+          class="w-17 h-17 rounded-full border-4 flex items-center justify-center text-[0.5rem] font-black uppercase tracking-[0.12em] transition-all duration-300"
+          [class]="canStart()
+            ? 'border-[#f06314] text-[#f06314] hover:bg-[#f06314] hover:text-white cursor-pointer'
+            : 'border-gray-200 text-gray-300 cursor-not-allowed'"
+          [disabled]="!canStart()"
+          (click)="start()">
+          INICIAR
+        </button>
+      </div>
+
+      <!-- Team 2 -->
+      <div class="flex-1 max-w-90 flex flex-col items-start text-left">
+
+        <!-- Label (ow-input label style) -->
+        <label class="block text-[0.78rem] font-extrabold uppercase tracking-[0.12em] text-[#3c4043] mb-1.75 w-full text-left">
+          Time 2
+        </label>
+
+        <!-- Search / Selected -->
+        <div class="relative w-full">
+          @if (team2Selected(); as t2) {
+            <!-- Selected state -->
+            <div class="flex items-center justify-start gap-3">
+              <button (click)="clearTeam2()" type="button"
+                class="text-gray-300 hover:text-red-500 transition-colors shrink-0">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                  stroke-width="2.5" stroke-linecap="round">
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="15" y1="9" x2="9" y2="15" />
+                  <line x1="9" y1="9" x2="15" y2="15" />
+                </svg>
+              </button>
+              @if (t2.logoUrl) {
+                <img [src]="t2.logoUrl" [alt]="t2.name"
+                  class="w-10 h-10 rounded-full object-cover border-2 border-gray-200 shrink-0">
+              } @else {
+                <div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center shrink-0">
+                  <span class="text-[0.7rem] font-black text-gray-400">
+                    {{ t2.name.slice(0, 2).toUpperCase() }}
+                  </span>
+                </div>
+              }
+              <div class="flex flex-col items-start">
+                <span class="text-[1.05rem] font-black uppercase tracking-widest text-gray-700 leading-tight">
+                  {{ t2.name }}
+                </span>
+              </div>
+            </div>
+          } @else {
+            <!-- Search input (ow-input visual style) -->
+            <div class="relative">
+              <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#9aa0a6] pointer-events-none">
+                <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                  <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
+              </span>
+              <input type="text" placeholder="Buscar time..." [value]="team2Query()"
+                (input)="onTeam2Input($event)" (focus)="onTeam2Focus()" (blur)="closeTeam2()"
+                class="w-full py-3.25 pl-11.5 pr-4.5 text-[0.9rem] font-medium text-[#202124] bg-white border-2 border-[#e8eaed] outline-none transition-all duration-250 [clip-path:polygon(4%_0,100%_0,100%_85%,96%_100%,0_100%,0_15%)] placeholder:text-[#9aa0a6] focus:border-[#f06314] focus:[box-shadow:0_0_0_3px_rgba(240,99,20,0.12)]">
+            </div>
+            <!-- Dropdown -->
+            @if (team2Open() && team2Results().length > 0) {
+              <div
+                class="absolute top-full left-0 z-20 w-full bg-white border border-[#e8eaed] shadow-lg max-h-52 overflow-y-auto">
+                @for (team of team2Results(); track team.id) {
+                  <button type="button"
+                    class="w-full flex items-center justify-start gap-2.5 px-3 py-2.5 text-[0.82rem] font-bold text-gray-700 hover:bg-orange-50 hover:text-[#f06314] transition-colors"
+                    (mousedown)="selectTeam2(team)">
+                    @if (team.logoUrl) {
+                      <img [src]="team.logoUrl" [alt]="team.name"
+                        class="w-7 h-7 rounded-full object-cover border border-gray-200 shrink-0">
+                    } @else {
+                      <div class="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center shrink-0 border border-gray-200">
+                        <span class="text-[0.55rem] font-black text-gray-400">
+                          {{ team.name.slice(0, 2).toUpperCase() }}
+                        </span>
+                      </div>
+                    }
+                    <span>{{ team.name }}</span>
+                  </button>
+                }
+              </div>
+            }
+          }
+        </div>
+
+        <!-- Empty ban slot previews -->
+        <div class="flex gap-2 justify-start mt-3">
+          @for (slot of banCountSlots(); track $index) {
+            <div
+              class="w-14 h-14 rounded-lg border-2 border-dashed border-gray-200 bg-gray-50 flex items-center justify-center">
+              <span class="text-[0.62rem] font-black text-gray-200">{{ $index + 1 }}</span>
+            </div>
+          }
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- Ban count selector — ow-radio-group button style -->
+    <div class="flex flex-col items-center gap-2.5">
+      <span class="block text-[0.78rem] font-extrabold uppercase tracking-[0.12em] text-[#3c4043]">
+        Heróis banidos por time
+      </span>
+      <ow-radio-group
+        radioStyle="button"
+        orientation="horizontal"
+        [ngModel]="banCountStr()"
+        (ngModelChange)="onBanCountChange($event)">
+        <ow-radio-item value="1" label="1" />
+        <ow-radio-item value="2" label="2" />
+        <ow-radio-item value="3" label="3" />
+      </ow-radio-group>
+    </div>
+
+  </div>
+  <!-- end scale wrapper -->
+
+</div>

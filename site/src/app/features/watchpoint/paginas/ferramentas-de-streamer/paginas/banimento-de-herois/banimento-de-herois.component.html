@@ -1,1 +1,315 @@
-<p>banimento-de-herois works!</p>
+<!-- Setup overlay — shown before starting -->
+@if (!isStarted()) {
+  <app-setup-banimento (confirmed)="onSetupConfirmed($event)" />
+}
+
+<!-- Teams Header -->
+<section class="flex items-start justify-center bg-white border-b border-gray-200 shadow-sm px-8 py-6">
+
+  <!-- Team 1 -->
+  <div class="flex-1 max-w-[420px] flex flex-col items-end text-right">
+    <div class="min-h-[24px] mb-1.5">
+      @if (currentTeam() === 1) {
+        <span
+          class="inline-block text-[0.6rem] font-black uppercase tracking-[0.15em] px-3.5 py-[3px] bg-orange-500 text-white [clip-path:polygon(10%_0,100%_0,90%_100%,0%_100%)]">
+          SUA VEZ
+        </span>
+      }
+    </div>
+    <div
+      class="flex items-center gap-2.5 justify-end transition-opacity duration-300"
+      [class.opacity-40]="!isOver() && currentTeam() !== 1"
+      [class.opacity-50]="isOver()">
+      <span class="text-[1.1rem] font-black uppercase tracking-widest text-gray-700">
+        {{ team1Name() }}
+      </span>
+      <div class="w-10 h-10 rounded-full overflow-hidden shrink-0 bg-gray-200 flex items-center justify-center border-2 border-gray-300">
+        @if (team1Logo()) {
+          <img [src]="team1Logo()!" [alt]="team1Name()" class="w-full h-full object-cover">
+        } @else {
+          <span class="text-[0.7rem] font-black text-gray-500 uppercase">
+            {{ team1Name().slice(0, 2) }}
+          </span>
+        }
+      </div>
+    </div>
+    <div class="text-[0.68rem] font-bold text-gray-400 uppercase tracking-[0.1em] mb-2.5">
+      Time 1 · {{ bans()[1].length }}/{{ banCount() }} bans
+    </div>
+    <div class="flex gap-2 justify-end">
+      @for (slot of getBanSlots(1); track $index) {
+        <div [class]="getSlotClasses(slot)">
+          @if (slot.hero) {
+            <img
+              [src]="slot.hero.localImage"
+              [alt]="slot.hero.name"
+              class="w-full h-full object-cover rounded-[5px]"
+              style="filter: grayscale(60%) brightness(60%)">
+            <div class="absolute inset-0 flex items-center justify-center ban-strike-anim">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#e84060"
+                stroke-width="3" stroke-linecap="round">
+                <line x1="16" y1="8" x2="8" y2="16" />
+                <line x1="8" y1="8" x2="16" y2="16" />
+              </svg>
+            </div>
+            <div
+              class="absolute bottom-0.5 left-0 right-0 text-center text-[0.42rem] font-black text-white/90 uppercase tracking-[0.04em] truncate px-0.5"
+              style="text-shadow: 0 1px 3px rgba(0,0,0,0.8)">
+              {{ slot.hero.name }}
+            </div>
+          } @else {
+            <span class="text-[0.62rem] font-black text-gray-300">{{ $index + 1 }}</span>
+          }
+        </div>
+      }
+    </div>
+  </div>
+
+  <!-- Timer Center -->
+  <div class="flex flex-col items-center justify-center px-8 flex-shrink-0">
+    <div class="text-[0.6rem] font-black text-gray-300 uppercase tracking-[0.2em] mb-1.5">VS</div>
+    <div
+      class="w-[68px] h-[68px] rounded-full border-4 flex flex-col items-center justify-center transition-all duration-300"
+      [class]="timerClasses()">
+      @if (isOver()) {
+        <span class="text-2xl font-black leading-none">✓</span>
+      } @else {
+        <span class="text-2xl font-black leading-none">{{ timerValue() }}</span>
+        <span class="text-[0.5rem] font-black uppercase tracking-[0.15em] text-gray-400 -mt-0.5">seg</span>
+      }
+    </div>
+  </div>
+
+  <!-- Team 2 -->
+  <div class="flex-1 max-w-[420px] flex flex-col items-start text-left">
+    <div class="min-h-[24px] mb-1.5">
+      @if (currentTeam() === 2) {
+        <span
+          class="inline-block text-[0.6rem] font-black uppercase tracking-[0.15em] px-3.5 py-[3px] bg-orange-500 text-white [clip-path:polygon(10%_0,100%_0,90%_100%,0%_100%)]">
+          SUA VEZ
+        </span>
+      }
+    </div>
+    <div
+      class="flex items-center gap-2.5 justify-start transition-opacity duration-300"
+      [class.opacity-40]="!isOver() && currentTeam() !== 2"
+      [class.opacity-50]="isOver()">
+      <div class="w-10 h-10 rounded-full overflow-hidden shrink-0 bg-gray-200 flex items-center justify-center border-2 border-gray-300">
+        @if (team2Logo()) {
+          <img [src]="team2Logo()!" [alt]="team2Name()" class="w-full h-full object-cover">
+        } @else {
+          <span class="text-[0.7rem] font-black text-gray-500 uppercase">
+            {{ team2Name().slice(0, 2) }}
+          </span>
+        }
+      </div>
+      <span class="text-[1.1rem] font-black uppercase tracking-widest text-gray-700">
+        {{ team2Name() }}
+      </span>
+    </div>
+    <div class="text-[0.68rem] font-bold text-gray-400 uppercase tracking-[0.1em] mb-2.5">
+      Time 2 · {{ bans()[2].length }}/{{ banCount() }} bans
+    </div>
+    <div class="flex gap-2 justify-start">
+      @for (slot of getBanSlots(2); track $index) {
+        <div [class]="getSlotClasses(slot)">
+          @if (slot.hero) {
+            <img
+              [src]="slot.hero.localImage"
+              [alt]="slot.hero.name"
+              class="w-full h-full object-cover rounded-[5px]"
+              style="filter: grayscale(60%) brightness(60%)">
+            <div class="absolute inset-0 flex items-center justify-center ban-strike-anim">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#e84060"
+                stroke-width="3" stroke-linecap="round">
+                <line x1="16" y1="8" x2="8" y2="16" />
+                <line x1="8" y1="8" x2="16" y2="16" />
+              </svg>
+            </div>
+            <div
+              class="absolute bottom-0.5 left-0 right-0 text-center text-[0.42rem] font-black text-white/90 uppercase tracking-[0.04em] truncate px-0.5"
+              style="text-shadow: 0 1px 3px rgba(0,0,0,0.8)">
+              {{ slot.hero.name }}
+            </div>
+          } @else {
+            <span class="text-[0.62rem] font-black text-gray-300">{{ $index + 1 }}</span>
+          }
+        </div>
+      }
+    </div>
+  </div>
+
+</section>
+
+<!-- Main Content -->
+<main class="max-w-[1100px] mx-auto px-6 pb-10 pt-5">
+
+  <!-- Finished Banner -->
+  @if (isOver()) {
+    <div
+      class="flex items-center gap-3 px-6 py-3.5 bg-green-500/10 border-l-4 border-green-500 text-green-700 text-[0.85rem] font-black uppercase tracking-[0.08em] mb-4">
+      <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+        stroke-width="2.5">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+        <polyline points="22 4 12 14.01 9 11.01" />
+      </svg>
+      Fase de banimento concluída · {{ banSequence().length }} heróis banidos
+    </div>
+  }
+
+  <!-- Filter Row -->
+  <div class="flex items-end gap-3.5 mb-3.5">
+
+    <!-- Role Tabs -->
+    <div class="flex border-b-2 border-gray-200 flex-1">
+
+      <button
+        class="px-5 py-2.5 text-[0.76rem] font-black uppercase tracking-[0.12em] border-b-[3px] -mb-0.5 transition-all duration-200 flex items-center gap-2 bg-transparent font-inherit cursor-pointer border-t-0 border-l-0 border-r-0"
+        [class]="roleFilter() === 'all' ? 'text-orange-500 border-b-orange-500' : 'text-gray-500 border-b-transparent hover:text-orange-500'"
+        (click)="setRoleFilter('all')">
+        Todos
+        <span
+          class="text-[0.6rem] px-1.5 py-px rounded-sm"
+          [class]="roleFilter() === 'all' ? 'bg-orange-500 text-white' : 'bg-gray-200 text-gray-600'">
+          {{ roleCounts().all }}
+        </span>
+      </button>
+
+      <button
+        class="px-5 py-2.5 text-[0.76rem] font-black uppercase tracking-[0.12em] border-b-[3px] -mb-0.5 transition-all duration-200 flex items-center gap-2 bg-transparent font-inherit cursor-pointer border-t-0 border-l-0 border-r-0"
+        [class]="roleFilter() === 'Tank' ? 'text-orange-500 border-b-orange-500' : 'text-gray-500 border-b-transparent hover:text-orange-500'"
+        (click)="setRoleFilter('Tank')">
+        <img src="/imgs/icone-tanque.svg" alt="" width="13" height="13" aria-hidden="true">
+        Tanque
+        <span
+          class="text-[0.6rem] px-1.5 py-px rounded-sm"
+          [class]="roleFilter() === 'Tank' ? 'bg-orange-500 text-white' : 'bg-gray-200 text-gray-600'">
+          {{ roleCounts().Tank }}
+        </span>
+      </button>
+
+      <button
+        class="px-5 py-2.5 text-[0.76rem] font-black uppercase tracking-[0.12em] border-b-[3px] -mb-0.5 transition-all duration-200 flex items-center gap-2 bg-transparent font-inherit cursor-pointer border-t-0 border-l-0 border-r-0"
+        [class]="roleFilter() === 'Damage' ? 'text-orange-500 border-b-orange-500' : 'text-gray-500 border-b-transparent hover:text-orange-500'"
+        (click)="setRoleFilter('Damage')">
+        <img src="/imgs/icone-dano.svg" alt="" width="13" height="13" aria-hidden="true">
+        Dano
+        <span
+          class="text-[0.6rem] px-1.5 py-px rounded-sm"
+          [class]="roleFilter() === 'Damage' ? 'bg-orange-500 text-white' : 'bg-gray-200 text-gray-600'">
+          {{ roleCounts().Damage }}
+        </span>
+      </button>
+
+      <button
+        class="px-5 py-2.5 text-[0.76rem] font-black uppercase tracking-[0.12em] border-b-[3px] -mb-0.5 transition-all duration-200 flex items-center gap-2 bg-transparent font-inherit cursor-pointer border-t-0 border-l-0 border-r-0"
+        [class]="roleFilter() === 'Support' ? 'text-orange-500 border-b-orange-500' : 'text-gray-500 border-b-transparent hover:text-orange-500'"
+        (click)="setRoleFilter('Support')">
+        <img src="/imgs/icone-suporte.svg" alt="" width="13" height="13" aria-hidden="true">
+        Suporte
+        <span
+          class="text-[0.6rem] px-1.5 py-px rounded-sm"
+          [class]="roleFilter() === 'Support' ? 'bg-orange-500 text-white' : 'bg-gray-200 text-gray-600'">
+          {{ roleCounts().Support }}
+        </span>
+      </button>
+
+    </div>
+
+    <!-- Search -->
+    <div class="relative w-48 shrink-0">
+      <svg
+        class="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+        width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+        stroke-width="2.5">
+        <circle cx="11" cy="11" r="8" />
+        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+      </svg>
+      <input
+        type="text"
+        placeholder="Buscar..."
+        (input)="onSearchInput($event)"
+        class="w-full pl-8 pr-3 py-2 text-[0.8rem] font-medium text-gray-700 bg-white border-2 border-gray-200 outline-none transition-all duration-200 focus:border-orange-500 focus:shadow-[0_0_0_3px_rgba(240,99,20,0.12)] placeholder:text-gray-400 [clip-path:polygon(4%_0,100%_0,100%_85%,96%_100%,0_100%,0_15%)]">
+    </div>
+
+  </div>
+
+  <!-- Hero Grid -->
+  @if (filteredGroups().length === 0) {
+    <div
+      class="text-center py-10 text-[0.85rem] font-black text-gray-400 uppercase tracking-widest">
+      Nenhum herói encontrado
+    </div>
+  }
+
+  @for (group of filteredGroups(); track group.subrole) {
+
+    <!-- Subrole Header -->
+    <div class="flex items-center gap-2 mb-2 pb-1.25 border-b border-gray-200">
+      <div class="w-3.5 h-0.5 bg-orange-500 shrink-0"></div>
+      <span class="text-[0.65rem] font-black uppercase tracking-[0.16em] text-gray-500">
+        {{ group.subroleLabel }}
+      </span>
+    </div>
+
+    <!-- Heroes Grid -->
+    <div class="grid grid-cols-[repeat(auto-fill,minmax(76px,1fr))] gap-2.5 mb-5">
+
+      @for (hero of group.heroes; track hero.key) {
+        <div
+          [class]="getHeroCellClasses(hero)"
+          [style.background]="getHeroFrameStyle(hero)"
+          (click)="banHero(hero)">
+
+          <!-- Inner cell -->
+          <div
+            class="w-full h-full rounded-[7px] overflow-hidden relative bg-gray-100"
+            [class]="bannedKeys().has(hero.key)
+              ? 'shadow-[inset_0_0_12px_rgba(200,30,60,0.4)]'
+              : 'shadow-[inset_0_1px_0_rgba(255,255,255,0.15),inset_0_-1px_0_rgba(0,0,0,0.2)]'">
+
+            <!-- Portrait -->
+            <img
+              [src]="hero.localImage"
+              [alt]="hero.name"
+              [style.filter]="getHeroImageFilter(hero)"
+              class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.06]"
+              loading="lazy">
+
+            <!-- Hero name -->
+            <div
+              class="absolute bottom-0 left-0 right-0 bg-linear-to-t from-black/80 to-transparent pt-3.5 px-1 pb-1 text-center text-[0.52rem] font-black text-white uppercase tracking-[0.05em] truncate z-10"
+              [class.opacity-60]="bannedKeys().has(hero.key)">
+              {{ hero.name }}
+            </div>
+
+            <!-- Ban overlay -->
+            @if (bannedKeys().has(hero.key)) {
+              <div class="absolute inset-0 flex items-center justify-center z-30 ban-strike-anim">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#e84060"
+                  stroke-width="2.5" stroke-linecap="round">
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="15" y1="9" x2="9" y2="15" />
+                  <line x1="9" y1="9" x2="15" y2="15" />
+                </svg>
+              </div>
+            }
+
+          </div>
+
+          <!-- Tooltip -->
+          @if (!bannedKeys().has(hero.key) && !isOver()) {
+            <div
+              class="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-[0.65rem] font-bold px-2.5 py-1 rounded whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200 z-20 shadow-md">
+              {{ hero.name }}
+            </div>
+          }
+
+        </div>
+      }
+
+    </div>
+
+  }
+
+</main>
