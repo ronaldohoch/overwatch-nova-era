@@ -247,7 +247,6 @@ export class TorneiosService {
       if (!snap.exists) throw new Error(`Torneio com id ${id} não encontrado.`);
 
       const t = snap.data() as any;
-      this.assertStatusTransition(t.status, status);
 
       tx.update(ref, {
         status,

@@ -1,11 +1,13 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { ButtonsComponent } from '../../../../shared/buttons/buttons';
 import { CardComponent } from '../../../../shared/card/card.component';
+import { ToggleComponent } from '../../../../shared/design-system/toggle/toggle.component';
 
 type TournamentStatus =
   | 'draft'
@@ -26,20 +28,51 @@ type TournamentListItem = Readonly<{
   startAt: string | null;
 }>;
 
-const TOURNAMENT_STATUS_TRANSITIONS: Readonly<Record<TournamentStatus, readonly TournamentStatus[]>> = {
-  draft: ['published', 'canceled'],
-  published: ['checkin', 'canceled'],
-  checkin: ['locked', 'canceled'],
-  locked: ['running', 'canceled'],
-  running: ['finished', 'canceled'],
-  finished: [],
-  canceled: [],
+const ALL_STATUSES: readonly TournamentStatus[] = [
+  'draft',
+  'published',
+  'checkin',
+  'locked',
+  'running',
+  'finished',
+  'canceled',
+];
+
+const STATUS_INFO: Readonly<Record<TournamentStatus, { label: string; description: string }>> = {
+  draft: {
+    label: 'Rascunho',
+    description: 'Torneio criado mas não visível ao público. Ainda em configuração.',
+  },
+  published: {
+    label: 'Publicado',
+    description: 'Torneio visível ao público. Inscrições abertas para times e jogadores.',
+  },
+  checkin: {
+    label: 'Check-in aberto',
+    description: 'Período de confirmação de presença dos participantes inscritos.',
+  },
+  locked: {
+    label: 'Bloqueado',
+    description: 'Check-in encerrado. Times formados e aguardando início do torneio.',
+  },
+  running: {
+    label: 'Em andamento',
+    description: 'Torneio em andamento com partidas sendo disputadas.',
+  },
+  finished: {
+    label: 'Finalizado',
+    description: 'Torneio encerrado. Resultados finais registrados.',
+  },
+  canceled: {
+    label: 'Cancelado',
+    description: 'Torneio cancelado.',
+  },
 };
 
 @Component({
   selector: 'app-torneios-status',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ButtonsComponent, CardComponent],
+  imports: [ButtonsComponent, CardComponent, ToggleComponent, FormsModule],
   templateUrl: './torneios-status.component.html',
   styleUrl: './torneios-status.component.css',
 })
@@ -60,26 +93,21 @@ export class TorneiosStatusComponent {
   readonly message = signal<string | null>(null);
   readonly messageStatus = signal<SubmitStatus | null>(null);
 
+  readonly allStatuses = ALL_STATUSES;
+  readonly statusInfo = STATUS_INFO;
+
   readonly hasAdminPermission = computed(() => this.auth.userRole() === 'admin');
   readonly hasTournamentRouteParam = computed(() => !!this.routeTournamentId);
   readonly currentStatus = computed<TournamentStatus | null>(
     () => this.selectedTournament()?.status ?? null,
   );
-  readonly availableTransitions = computed(() => {
-    const status = this.currentStatus();
-    if (!status) return [] as readonly TournamentStatus[];
-
-    return (TOURNAMENT_STATUS_TRANSITIONS[status] ?? []).filter(
-      (nextStatus) => nextStatus !== 'canceled',
-    );
-  });
   readonly canSubmit = computed(() => {
     const nextStatus = this.selectedNextStatus();
     if (!this.auth.isAuthenticated() || !this.hasAdminPermission()) return false;
     if (!this.routeTournamentId || !nextStatus) return false;
     if (this.pendingStatusChange() || this.loadingTournamentDetails()) return false;
-
-    return this.availableTransitions().includes(nextStatus);
+    if (nextStatus === this.currentStatus()) return false;
+    return true;
   });
 
   constructor() {
@@ -94,14 +122,12 @@ export class TorneiosStatusComponent {
     void this.loadTournamentDetails(this.routeTournamentId);
   }
 
-  onNextStatusChange(value: string): void {
-    const normalized = this.normalizeStatus(value);
-    if (!normalized || !this.availableTransitions().includes(normalized)) {
+  onToggleChange(status: TournamentStatus, isChecked: boolean): void {
+    if (isChecked) {
+      this.selectedNextStatus.set(status);
+    } else if (this.selectedNextStatus() === status) {
       this.selectedNextStatus.set('');
-      return;
     }
-
-    this.selectedNextStatus.set(normalized);
   }
 
   async onSubmit(event: Event): Promise<void> {
@@ -124,13 +150,13 @@ export class TorneiosStatusComponent {
     const tournamentId = this.selectedTournament()?.id ?? this.routeTournamentId;
     const nextStatus = this.selectedNextStatus();
     if (!tournamentId || !nextStatus) {
-      this.message.set('Selecione um torneio e um novo status válido.');
+      this.message.set('Selecione um novo status válido.');
       this.messageStatus.set('error');
       return;
     }
 
-    if (!this.availableTransitions().includes(nextStatus)) {
-      this.message.set('A transicao selecionada não e permitida para o status atual.');
+    if (nextStatus === this.currentStatus()) {
+      this.message.set('O status selecionado é igual ao status atual.');
       this.messageStatus.set('error');
       return;
     }
@@ -153,9 +179,9 @@ export class TorneiosStatusComponent {
       });
 
       this.selectedTournament.set(updatedTournament);
-      this.selectDefaultNextStatus(updatedTournament.status);
+      this.selectedNextStatus.set(nextStatus);
 
-      this.message.set(`Status alterado para ${this.toStatusLabel(nextStatus)} com sucesso.`);
+      this.message.set(`Status alterado para ${STATUS_INFO[nextStatus].label} com sucesso.`);
       this.messageStatus.set('success');
     } catch (error: unknown) {
       this.message.set(this.resolveError(error, 'Não foi possível alterar o status do torneio.'));
@@ -163,16 +189,6 @@ export class TorneiosStatusComponent {
     } finally {
       this.pendingStatusChange.set(false);
     }
-  }
-
-  toStatusLabel(status: TournamentStatus): string {
-    if (status === 'draft') return 'Rascunho';
-    if (status === 'published') return 'Publicado';
-    if (status === 'checkin') return 'Check-in aberto';
-    if (status === 'locked') return 'Bloqueado';
-    if (status === 'running') return 'Em andamento';
-    if (status === 'finished') return 'Finalizado';
-    return 'Cancelado';
   }
 
   statusBadgeClass(status: TournamentStatus | null): string {
@@ -207,7 +223,7 @@ export class TorneiosStatusComponent {
       });
 
       this.selectedTournament.set(tournament);
-      this.selectDefaultNextStatus(tournament.status);
+      this.selectedNextStatus.set(tournament.status ?? '');
     } catch (error: unknown) {
       this.selectedTournament.set(null);
       this.selectedNextStatus.set('');
@@ -216,16 +232,6 @@ export class TorneiosStatusComponent {
     } finally {
       this.loadingTournamentDetails.set(false);
     }
-  }
-
-  private selectDefaultNextStatus(currentStatus: TournamentStatus | null): void {
-    if (!currentStatus) {
-      this.selectedNextStatus.set('');
-      return;
-    }
-
-    const [firstTransition] = TOURNAMENT_STATUS_TRANSITIONS[currentStatus] ?? [];
-    this.selectedNextStatus.set(firstTransition ?? '');
   }
 
   private toTournamentListItemFromDetails(value: unknown, fallback: TournamentListItem): TournamentListItem {

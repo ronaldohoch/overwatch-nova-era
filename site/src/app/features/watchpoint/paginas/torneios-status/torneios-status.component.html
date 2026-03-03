@@ -22,88 +22,65 @@
 
   @if (auth.isAuthenticated() && hasAdminPermission() && hasTournamentRouteParam()) {
     <div class="grid gap-4 xl:grid-cols-2">
-      <ow-card cardClass="h-full">
-        <div class="space-y-4">
-          <h2 class="text-xl font-black text-(--ow-gray-900)">Torneio selecionado</h2>
+      <div class="space-y-4">
+        <h2 class="text-xl font-black text-(--ow-gray-900)">Torneio selecionado</h2>
 
-          @if (loadingTournamentDetails()) {
-            <p class="text-sm text-(--ow-gray-600)">Carregando dados do torneio...</p>
-          }
+        @if (loadingTournamentDetails()) {
+          <p class="text-sm text-(--ow-gray-600)">Carregando dados do torneio...</p>
+        }
 
-          @if (!loadingTournamentDetails() && selectedTournament(); as selectedTournament) {
-            <div class="space-y-3 rounded-md border border-(--ow-gray-200) p-4">
-              <p class="text-xs font-semibold uppercase tracking-wider text-(--ow-gray-500)">Resumo</p>
-              <p class="text-base font-black text-(--ow-gray-900)">{{ selectedTournament.name }}</p>
-              <p class="text-xs text-(--ow-gray-500)">ID: {{ selectedTournament.id }}</p>
-              <p class="text-sm text-(--ow-gray-600)">
-                Modo: {{ selectedTournament.teamMode || 'Não informado' }}
-              </p>
-              <div class="flex items-center gap-2">
-                <p class="text-sm font-semibold text-(--ow-gray-700)">Status atual:</p>
-                <span [class]="statusBadgeClass(selectedTournament.status)">
-                  {{ selectedTournament.status ? toStatusLabel(selectedTournament.status) : 'Desconhecido' }}
-                </span>
-              </div>
+        @if (!loadingTournamentDetails() && selectedTournament(); as selectedTournament) {
+          <div class="space-y-3 rounded-md border border-(--ow-gray-200) p-4">
+            <p class="text-xs font-semibold uppercase tracking-wider text-(--ow-gray-500)">Resumo</p>
+            <p class="text-base font-black text-(--ow-gray-900)">{{ selectedTournament.name }}</p>
+            <p class="text-xs text-(--ow-gray-500)">ID: {{ selectedTournament.id }}</p>
+            <p class="text-sm text-(--ow-gray-600)">
+              Modo: {{ selectedTournament.teamMode || 'Não informado' }}
+            </p>
+            <div class="flex items-center gap-2">
+              <p class="text-sm font-semibold text-(--ow-gray-700)">Status atual:</p>
+              <span [class]="statusBadgeClass(selectedTournament.status)">
+                {{ selectedTournament.status ? statusInfo[selectedTournament.status].label : 'Desconhecido' }}
+              </span>
             </div>
-          } @else if (!loadingTournamentDetails()) {
-            <p class="text-sm font-medium text-(--ow-gray-600)">Torneio não encontrado.</p>
-          }
-        </div>
-      </ow-card>
+          </div>
+        } @else if (!loadingTournamentDetails()) {
+          <p class="text-sm font-medium text-(--ow-gray-600)">Torneio não encontrado.</p>
+        }
+      </div>
+      <!-- <ow-card cardClass="h-full">
+      </ow-card> -->
 
-      <ow-card cardClass="h-full">
-        <div class="space-y-4">
-          <h2 class="text-xl font-black text-(--ow-gray-900)">Atualizar status</h2>
+      <div class="space-y-4">
+        <h2 class="text-xl font-black text-(--ow-gray-900)">Atualizar status</h2>
 
-          <form class="space-y-3" novalidate (submit)="onSubmit($event)">
-            <label class="flex flex-col gap-2 text-sm font-semibold text-(--ow-gray-700)">
-              Próximo status
-              <select
-                class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
-                [value]="selectedNextStatus()"
-                [disabled]="!selectedTournament() || loadingTournamentDetails() || pendingStatusChange() || availableTransitions().length === 0"
-                (change)="onNextStatusChange($any($event.target).value)"
-              >
-                <option value="">Selecione um status</option>
-                @for (status of availableTransitions(); track status) {
-                  <option [value]="status">{{ toStatusLabel(status) }}</option>
-                }
-              </select>
-            </label>
-
-            @if (selectedTournament()) {
-              @if (availableTransitions().length > 0) {
-                <div class="space-y-2 rounded-md border border-(--ow-gray-200) p-3">
-                  <p class="text-xs font-semibold uppercase tracking-wider text-(--ow-gray-500)">
-                    Transições permitidas
-                  </p>
-                  <div class="flex flex-wrap gap-2">
-                    @for (status of availableTransitions(); track status) {
-                      <span [class]="statusBadgeClass(status)">
-                        {{ toStatusLabel(status) }}
-                      </span>
-                    }
-                  </div>
-                </div>
-              } @else {
-                <p class="text-sm font-medium text-(--ow-gray-600)">
-                  Este torneio não possui transições de status disponíveis.
-                </p>
-              }
+        <form class="space-y-3" novalidate (submit)="onSubmit($event)">
+          <div class="space-y-2">
+            @for (status of allStatuses; track status) {
+              <ow-toggle
+                [ngModel]="selectedNextStatus() === status"
+                [ngModelOptions]="{ standalone: true }"
+                [label]="statusInfo[status].label"
+                [description]="statusInfo[status].description"
+                [disabled]="!selectedTournament() || loadingTournamentDetails() || pendingStatusChange()"
+                (changed)="onToggleChange(status, $event)"
+              />
             }
+          </div>
 
-            <div class="flex justify-end">
-              <ow-btn type="submit" [disabled]="!canSubmit()">
-                @if (pendingStatusChange()) {
-                  Salvando...
-                } @else {
-                  Salvar novo status
-                }
-              </ow-btn>
-            </div>
-          </form>
-        </div>
-      </ow-card>
+          <div class="flex justify-end pt-2">
+            <ow-btn type="submit" [disabled]="!canSubmit()">
+              @if (pendingStatusChange()) {
+                Salvando...
+              } @else {
+                Salvar novo status
+              }
+            </ow-btn>
+          </div>
+        </form>
+      </div>
+      <!-- <ow-card cardClass="h-full">
+      </ow-card> -->
     </div>
   }
 
