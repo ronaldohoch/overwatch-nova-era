@@ -29,115 +29,129 @@
       </h2>
 
       <!-- Paleta Principal -->
-      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">
-        Paleta Principal
+      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center justify-between gap-2">
+        <span class="flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">Paleta Principal</span>
+        <ow-btn variant="ghost-mini" (click)="toggleCode('cores-paleta')">
+          @if (isCode('cores-paleta')) { Preview } @else { Código }
+        </ow-btn>
       </h3>
-      <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
-        <div class="grid grid-cols-4 gap-4 lg:grid-cols-8">
-          <!-- OW Orange -->
-          <div>
-            <div class="w-full h-20 [clip-path:polygon(5%_0,100%_0,100%_90%,95%_100%,0_100%,0_10%)] mb-2" style="background-color:#f06314"></div>
-            <div class="text-[0.72rem] font-extrabold text-[#111111] uppercase tracking-[0.06em]">OW Orange</div>
-            <div class="text-[0.68rem] text-[#5f6368] font-mono">#f06314</div>
-          </div>
-          <!-- OW Orange Dark -->
-          <div>
-            <div class="w-full h-20 [clip-path:polygon(5%_0,100%_0,100%_90%,95%_100%,0_100%,0_10%)] mb-2" style="background-color:#d14e0a"></div>
-            <div class="text-[0.72rem] font-extrabold text-[#111111] uppercase tracking-[0.06em]">OW Orange Dark</div>
-            <div class="text-[0.68rem] text-[#5f6368] font-mono">#d14e0a</div>
-          </div>
-          <!-- OW Orange Light -->
-          <div>
-            <div class="w-full h-20 [clip-path:polygon(5%_0,100%_0,100%_90%,95%_100%,0_100%,0_10%)] mb-2" style="background-color:#ff8547"></div>
-            <div class="text-[0.72rem] font-extrabold text-[#111111] uppercase tracking-[0.06em]">OW Orange Light</div>
-            <div class="text-[0.68rem] text-[#5f6368] font-mono">#ff8547</div>
-          </div>
-          <!-- OW Blue -->
-          <div>
-            <div class="w-full h-20 [clip-path:polygon(5%_0,100%_0,100%_90%,95%_100%,0_100%,0_10%)] mb-2" style="background-color:#00c3ff"></div>
-            <div class="text-[0.72rem] font-extrabold text-[#111111] uppercase tracking-[0.06em]">OW Blue</div>
-            <div class="text-[0.68rem] text-[#5f6368] font-mono">#00c3ff</div>
-          </div>
-          <!-- OW Blue Dark -->
-          <div>
-            <div class="w-full h-20 [clip-path:polygon(5%_0,100%_0,100%_90%,95%_100%,0_100%,0_10%)] mb-2" style="background-color:#0099cc"></div>
-            <div class="text-[0.72rem] font-extrabold text-[#111111] uppercase tracking-[0.06em]">OW Blue Dark</div>
-            <div class="text-[0.68rem] text-[#5f6368] font-mono">#0099cc</div>
-          </div>
-          <!-- OW Red -->
-          <div>
-            <div class="w-full h-20 [clip-path:polygon(5%_0,100%_0,100%_90%,95%_100%,0_100%,0_10%)] mb-2" style="background-color:#ea4335"></div>
-            <div class="text-[0.72rem] font-extrabold text-[#111111] uppercase tracking-[0.06em]">OW Red</div>
-            <div class="text-[0.68rem] text-[#5f6368] font-mono">#ea4335</div>
-          </div>
-          <!-- OW Green -->
-          <div>
-            <div class="w-full h-20 [clip-path:polygon(5%_0,100%_0,100%_90%,95%_100%,0_100%,0_10%)] mb-2" style="background-color:#34a853"></div>
-            <div class="text-[0.72rem] font-extrabold text-[#111111] uppercase tracking-[0.06em]">OW Green</div>
-            <div class="text-[0.68rem] text-[#5f6368] font-mono">#34a853</div>
-          </div>
-          <!-- OW Yellow -->
-          <div>
-            <div class="w-full h-20 [clip-path:polygon(5%_0,100%_0,100%_90%,95%_100%,0_100%,0_10%)] mb-2" style="background-color:#fbbc04"></div>
-            <div class="text-[0.72rem] font-extrabold text-[#111111] uppercase tracking-[0.06em]">OW Yellow</div>
-            <div class="text-[0.68rem] text-[#5f6368] font-mono">#fbbc04</div>
+      @if (!isCode('cores-paleta')) {
+        <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
+          <div class="grid grid-cols-4 gap-4 lg:grid-cols-8">
+            <!-- OW Orange -->
+            <div>
+              <div class="w-full h-20 [clip-path:polygon(5%_0,100%_0,100%_90%,95%_100%,0_100%,0_10%)] mb-2" style="background-color:#f06314"></div>
+              <div class="text-[0.72rem] font-extrabold text-[#111111] uppercase tracking-[0.06em]">OW Orange</div>
+              <div class="text-[0.68rem] text-[#5f6368] font-mono">#f06314</div>
+            </div>
+            <!-- OW Orange Dark -->
+            <div>
+              <div class="w-full h-20 [clip-path:polygon(5%_0,100%_0,100%_90%,95%_100%,0_100%,0_10%)] mb-2" style="background-color:#d14e0a"></div>
+              <div class="text-[0.72rem] font-extrabold text-[#111111] uppercase tracking-[0.06em]">OW Orange Dark</div>
+              <div class="text-[0.68rem] text-[#5f6368] font-mono">#d14e0a</div>
+            </div>
+            <!-- OW Orange Light -->
+            <div>
+              <div class="w-full h-20 [clip-path:polygon(5%_0,100%_0,100%_90%,95%_100%,0_100%,0_10%)] mb-2" style="background-color:#ff8547"></div>
+              <div class="text-[0.72rem] font-extrabold text-[#111111] uppercase tracking-[0.06em]">OW Orange Light</div>
+              <div class="text-[0.68rem] text-[#5f6368] font-mono">#ff8547</div>
+            </div>
+            <!-- OW Blue -->
+            <div>
+              <div class="w-full h-20 [clip-path:polygon(5%_0,100%_0,100%_90%,95%_100%,0_100%,0_10%)] mb-2" style="background-color:#00c3ff"></div>
+              <div class="text-[0.72rem] font-extrabold text-[#111111] uppercase tracking-[0.06em]">OW Blue</div>
+              <div class="text-[0.68rem] text-[#5f6368] font-mono">#00c3ff</div>
+            </div>
+            <!-- OW Blue Dark -->
+            <div>
+              <div class="w-full h-20 [clip-path:polygon(5%_0,100%_0,100%_90%,95%_100%,0_100%,0_10%)] mb-2" style="background-color:#0099cc"></div>
+              <div class="text-[0.72rem] font-extrabold text-[#111111] uppercase tracking-[0.06em]">OW Blue Dark</div>
+              <div class="text-[0.68rem] text-[#5f6368] font-mono">#0099cc</div>
+            </div>
+            <!-- OW Red -->
+            <div>
+              <div class="w-full h-20 [clip-path:polygon(5%_0,100%_0,100%_90%,95%_100%,0_100%,0_10%)] mb-2" style="background-color:#ea4335"></div>
+              <div class="text-[0.72rem] font-extrabold text-[#111111] uppercase tracking-[0.06em]">OW Red</div>
+              <div class="text-[0.68rem] text-[#5f6368] font-mono">#ea4335</div>
+            </div>
+            <!-- OW Green -->
+            <div>
+              <div class="w-full h-20 [clip-path:polygon(5%_0,100%_0,100%_90%,95%_100%,0_100%,0_10%)] mb-2" style="background-color:#34a853"></div>
+              <div class="text-[0.72rem] font-extrabold text-[#111111] uppercase tracking-[0.06em]">OW Green</div>
+              <div class="text-[0.68rem] text-[#5f6368] font-mono">#34a853</div>
+            </div>
+            <!-- OW Yellow -->
+            <div>
+              <div class="w-full h-20 [clip-path:polygon(5%_0,100%_0,100%_90%,95%_100%,0_100%,0_10%)] mb-2" style="background-color:#fbbc04"></div>
+              <div class="text-[0.72rem] font-extrabold text-[#111111] uppercase tracking-[0.06em]">OW Yellow</div>
+              <div class="text-[0.68rem] text-[#5f6368] font-mono">#fbbc04</div>
+            </div>
           </div>
         </div>
-      </div>
+      } @else {
+        <ds-code-cores-paleta />
+      }
 
       <!-- Escala de Cinzas -->
-      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">
-        Escala de Cinzas
+      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center justify-between gap-2">
+        <span class="flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">Escala de Cinzas</span>
+        <ow-btn variant="ghost-mini" (click)="toggleCode('cores-cinzas')">
+          @if (isCode('cores-cinzas')) { Preview } @else { Código }
+        </ow-btn>
       </h3>
-      <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
-        <div class="grid grid-cols-5 gap-4 lg:grid-cols-9">
-          <div>
-            <div class="w-full h-20 [clip-path:polygon(5%_0,100%_0,100%_90%,95%_100%,0_100%,0_10%)] mb-2 border border-[#e8eaed]" style="background-color:#f8f9fa"></div>
-            <div class="text-[0.72rem] font-extrabold text-[#111111] uppercase tracking-[0.06em]">Gray 50</div>
-            <div class="text-[0.68rem] text-[#5f6368] font-mono">#f8f9fa</div>
-          </div>
-          <div>
-            <div class="w-full h-20 [clip-path:polygon(5%_0,100%_0,100%_90%,95%_100%,0_100%,0_10%)] mb-2" style="background-color:#f1f3f4"></div>
-            <div class="text-[0.72rem] font-extrabold text-[#111111] uppercase tracking-[0.06em]">Gray 100</div>
-            <div class="text-[0.68rem] text-[#5f6368] font-mono">#f1f3f4</div>
-          </div>
-          <div>
-            <div class="w-full h-20 [clip-path:polygon(5%_0,100%_0,100%_90%,95%_100%,0_100%,0_10%)] mb-2" style="background-color:#e8eaed"></div>
-            <div class="text-[0.72rem] font-extrabold text-[#111111] uppercase tracking-[0.06em]">Gray 200</div>
-            <div class="text-[0.68rem] text-[#5f6368] font-mono">#e8eaed</div>
-          </div>
-          <div>
-            <div class="w-full h-20 [clip-path:polygon(5%_0,100%_0,100%_90%,95%_100%,0_100%,0_10%)] mb-2" style="background-color:#dadce0"></div>
-            <div class="text-[0.72rem] font-extrabold text-[#111111] uppercase tracking-[0.06em]">Gray 300</div>
-            <div class="text-[0.68rem] text-[#5f6368] font-mono">#dadce0</div>
-          </div>
-          <div>
-            <div class="w-full h-20 [clip-path:polygon(5%_0,100%_0,100%_90%,95%_100%,0_100%,0_10%)] mb-2" style="background-color:#9aa0a6"></div>
-            <div class="text-[0.72rem] font-extrabold text-[#111111] uppercase tracking-[0.06em]">Gray 400</div>
-            <div class="text-[0.68rem] text-[#5f6368] font-mono">#9aa0a6</div>
-          </div>
-          <div>
-            <div class="w-full h-20 [clip-path:polygon(5%_0,100%_0,100%_90%,95%_100%,0_100%,0_10%)] mb-2" style="background-color:#5f6368"></div>
-            <div class="text-[0.72rem] font-extrabold text-[#111111] uppercase tracking-[0.06em]">Gray 500</div>
-            <div class="text-[0.68rem] text-[#5f6368] font-mono">#5f6368</div>
-          </div>
-          <div>
-            <div class="w-full h-20 [clip-path:polygon(5%_0,100%_0,100%_90%,95%_100%,0_100%,0_10%)] mb-2" style="background-color:#3c4043"></div>
-            <div class="text-[0.72rem] font-extrabold text-[#111111] uppercase tracking-[0.06em]">Gray 600</div>
-            <div class="text-[0.68rem] text-[#5f6368] font-mono">#3c4043</div>
-          </div>
-          <div>
-            <div class="w-full h-20 [clip-path:polygon(5%_0,100%_0,100%_90%,95%_100%,0_100%,0_10%)] mb-2" style="background-color:#202124"></div>
-            <div class="text-[0.72rem] font-extrabold text-[#111111] uppercase tracking-[0.06em]">Gray 700</div>
-            <div class="text-[0.68rem] text-[#5f6368] font-mono">#202124</div>
-          </div>
-          <div>
-            <div class="w-full h-20 [clip-path:polygon(5%_0,100%_0,100%_90%,95%_100%,0_100%,0_10%)] mb-2" style="background-color:#111111"></div>
-            <div class="text-[0.72rem] font-extrabold text-[#111111] uppercase tracking-[0.06em]">Gray 900</div>
-            <div class="text-[0.68rem] text-[#5f6368] font-mono">#111111</div>
+      @if (!isCode('cores-cinzas')) {
+        <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
+          <div class="grid grid-cols-5 gap-4 lg:grid-cols-9">
+            <div>
+              <div class="w-full h-20 [clip-path:polygon(5%_0,100%_0,100%_90%,95%_100%,0_100%,0_10%)] mb-2 border border-[#e8eaed]" style="background-color:#f8f9fa"></div>
+              <div class="text-[0.72rem] font-extrabold text-[#111111] uppercase tracking-[0.06em]">Gray 50</div>
+              <div class="text-[0.68rem] text-[#5f6368] font-mono">#f8f9fa</div>
+            </div>
+            <div>
+              <div class="w-full h-20 [clip-path:polygon(5%_0,100%_0,100%_90%,95%_100%,0_100%,0_10%)] mb-2" style="background-color:#f1f3f4"></div>
+              <div class="text-[0.72rem] font-extrabold text-[#111111] uppercase tracking-[0.06em]">Gray 100</div>
+              <div class="text-[0.68rem] text-[#5f6368] font-mono">#f1f3f4</div>
+            </div>
+            <div>
+              <div class="w-full h-20 [clip-path:polygon(5%_0,100%_0,100%_90%,95%_100%,0_100%,0_10%)] mb-2" style="background-color:#e8eaed"></div>
+              <div class="text-[0.72rem] font-extrabold text-[#111111] uppercase tracking-[0.06em]">Gray 200</div>
+              <div class="text-[0.68rem] text-[#5f6368] font-mono">#e8eaed</div>
+            </div>
+            <div>
+              <div class="w-full h-20 [clip-path:polygon(5%_0,100%_0,100%_90%,95%_100%,0_100%,0_10%)] mb-2" style="background-color:#dadce0"></div>
+              <div class="text-[0.72rem] font-extrabold text-[#111111] uppercase tracking-[0.06em]">Gray 300</div>
+              <div class="text-[0.68rem] text-[#5f6368] font-mono">#dadce0</div>
+            </div>
+            <div>
+              <div class="w-full h-20 [clip-path:polygon(5%_0,100%_0,100%_90%,95%_100%,0_100%,0_10%)] mb-2" style="background-color:#9aa0a6"></div>
+              <div class="text-[0.72rem] font-extrabold text-[#111111] uppercase tracking-[0.06em]">Gray 400</div>
+              <div class="text-[0.68rem] text-[#5f6368] font-mono">#9aa0a6</div>
+            </div>
+            <div>
+              <div class="w-full h-20 [clip-path:polygon(5%_0,100%_0,100%_90%,95%_100%,0_100%,0_10%)] mb-2" style="background-color:#5f6368"></div>
+              <div class="text-[0.72rem] font-extrabold text-[#111111] uppercase tracking-[0.06em]">Gray 500</div>
+              <div class="text-[0.68rem] text-[#5f6368] font-mono">#5f6368</div>
+            </div>
+            <div>
+              <div class="w-full h-20 [clip-path:polygon(5%_0,100%_0,100%_90%,95%_100%,0_100%,0_10%)] mb-2" style="background-color:#3c4043"></div>
+              <div class="text-[0.72rem] font-extrabold text-[#111111] uppercase tracking-[0.06em]">Gray 600</div>
+              <div class="text-[0.68rem] text-[#5f6368] font-mono">#3c4043</div>
+            </div>
+            <div>
+              <div class="w-full h-20 [clip-path:polygon(5%_0,100%_0,100%_90%,95%_100%,0_100%,0_10%)] mb-2" style="background-color:#202124"></div>
+              <div class="text-[0.72rem] font-extrabold text-[#111111] uppercase tracking-[0.06em]">Gray 700</div>
+              <div class="text-[0.68rem] text-[#5f6368] font-mono">#202124</div>
+            </div>
+            <div>
+              <div class="w-full h-20 [clip-path:polygon(5%_0,100%_0,100%_90%,95%_100%,0_100%,0_10%)] mb-2" style="background-color:#111111"></div>
+              <div class="text-[0.72rem] font-extrabold text-[#111111] uppercase tracking-[0.06em]">Gray 900</div>
+              <div class="text-[0.68rem] text-[#5f6368] font-mono">#111111</div>
+            </div>
           </div>
         </div>
-      </div>
+      } @else {
+        <ds-code-cores-cinzas />
+      }
     </section>
 
     <!-- ============================================================
@@ -198,60 +212,81 @@
       </h2>
 
       <!-- Variantes -->
-      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">
-        Variantes
+      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center justify-between gap-2">
+        <span class="flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">Variantes</span>
+        <ow-btn variant="ghost-mini" (click)="toggleCode('botoes-variantes')">
+          @if (isCode('botoes-variantes')) { Preview } @else { Código }
+        </ow-btn>
       </h3>
-      <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
-        <div class="flex flex-wrap gap-3 items-center">
-          <ow-btn variant="primary">Primary</ow-btn>
-          <ow-btn variant="secondary">Secondary</ow-btn>
-          <ow-btn variant="blue">Blue</ow-btn>
-          <ow-btn variant="ghost">Ghost</ow-btn>
-          <ow-btn variant="danger">Danger</ow-btn>
+      @if (!isCode('botoes-variantes')) {
+        <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
+          <div class="flex flex-wrap gap-3 items-center">
+            <ow-btn variant="primary">Primary</ow-btn>
+            <ow-btn variant="secondary">Secondary</ow-btn>
+            <ow-btn variant="blue">Blue</ow-btn>
+            <ow-btn variant="ghost">Ghost</ow-btn>
+            <ow-btn variant="danger">Danger</ow-btn>
+          </div>
         </div>
-      </div>
+      } @else {
+        <ds-code-botoes-variantes />
+      }
 
       <!-- Tamanhos -->
-      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">
-        Tamanhos
+      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center justify-between gap-2">
+        <span class="flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">Tamanhos</span>
+        <ow-btn variant="ghost-mini" (click)="toggleCode('botoes-tamanhos')">
+          @if (isCode('botoes-tamanhos')) { Preview } @else { Código }
+        </ow-btn>
       </h3>
-      <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
-        <div class="flex flex-wrap gap-3 items-center">
-          <ow-btn size="sm">Pequeno</ow-btn>
-          <ow-btn size="md">Médio</ow-btn>
-          <ow-btn size="lg">Grande</ow-btn>
+      @if (!isCode('botoes-tamanhos')) {
+        <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
+          <div class="flex flex-wrap gap-3 items-center">
+            <ow-btn size="sm">Pequeno</ow-btn>
+            <ow-btn size="md">Médio</ow-btn>
+            <ow-btn size="lg">Grande</ow-btn>
+          </div>
         </div>
-      </div>
+      } @else {
+        <ds-code-botoes-tamanhos />
+      }
 
       <!-- Estados -->
-      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">
-        Estados
+      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center justify-between gap-2">
+        <span class="flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">Estados</span>
+        <ow-btn variant="ghost-mini" (click)="toggleCode('botoes-estados')">
+          @if (isCode('botoes-estados')) { Preview } @else { Código }
+        </ow-btn>
       </h3>
-      <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
-        <div class="flex flex-wrap gap-3 items-center">
-          <ow-btn variant="primary">Normal</ow-btn>
-          <ow-btn variant="primary" [disabled]="true">Desativado</ow-btn>
-          <!-- Com ícone SVG -->
-          <ow-btn variant="primary">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" class="mr-2 inline-block">
-              <path d="M8 1L10 6H15L11 9.5L12.5 14.5L8 11.5L3.5 14.5L5 9.5L1 6H6L8 1Z" fill="currentColor"/>
-            </svg>
-            Com Ícone
-          </ow-btn>
-          <!-- Icon only -->
-          <ow-btn variant="secondary" size="icon">
-            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-              <circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="2"/>
-              <path d="M9 6V9L11 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-            </svg>
-          </ow-btn>
-          <ow-btn variant="ghost" size="icon">
-            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-              <path d="M9 2L11 7H16.5L12 10.5L13.5 16L9 12.5L4.5 16L6 10.5L1.5 7H7L9 2Z" fill="currentColor"/>
-            </svg>
-          </ow-btn>
+      @if (!isCode('botoes-estados')) {
+        <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
+          <div class="flex flex-wrap gap-3 items-center">
+            <ow-btn variant="primary">Normal</ow-btn>
+            <ow-btn variant="primary" [disabled]="true">Desativado</ow-btn>
+            <!-- Com ícone SVG -->
+            <ow-btn variant="primary">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" class="mr-2 inline-block">
+                <path d="M8 1L10 6H15L11 9.5L12.5 14.5L8 11.5L3.5 14.5L5 9.5L1 6H6L8 1Z" fill="currentColor"/>
+              </svg>
+              Com Ícone
+            </ow-btn>
+            <!-- Icon only -->
+            <ow-btn variant="secondary" size="icon">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="2"/>
+                <path d="M9 6V9L11 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </ow-btn>
+            <ow-btn variant="ghost" size="icon">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <path d="M9 2L11 7H16.5L12 10.5L13.5 16L9 12.5L4.5 16L6 10.5L1.5 7H7L9 2Z" fill="currentColor"/>
+              </svg>
+            </ow-btn>
+          </div>
         </div>
-      </div>
+      } @else {
+        <ds-code-botoes-estados />
+      }
     </section>
 
     <!-- ============================================================
@@ -264,54 +299,75 @@
       </h2>
 
       <!-- Badges -->
-      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">
-        Badges
+      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center justify-between gap-2">
+        <span class="flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">Badges</span>
+        <ow-btn variant="ghost-mini" (click)="toggleCode('badges-badges')">
+          @if (isCode('badges-badges')) { Preview } @else { Código }
+        </ow-btn>
       </h3>
-      <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
-        <div class="flex flex-wrap gap-3 items-center">
-          <ow-badge variant="orange">Orange</ow-badge>
-          <ow-badge variant="blue">Blue</ow-badge>
-          <ow-badge variant="green">Green</ow-badge>
-          <ow-badge variant="red">Red</ow-badge>
-          <ow-badge variant="yellow">Yellow</ow-badge>
-          <ow-badge variant="gray">Gray</ow-badge>
-          <ow-badge variant="outline">Outline</ow-badge>
-          <ow-badge variant="live">🔴 Ao Vivo</ow-badge>
+      @if (!isCode('badges-badges')) {
+        <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
+          <div class="flex flex-wrap gap-3 items-center">
+            <ow-badge variant="orange">Orange</ow-badge>
+            <ow-badge variant="blue">Blue</ow-badge>
+            <ow-badge variant="green">Green</ow-badge>
+            <ow-badge variant="red">Red</ow-badge>
+            <ow-badge variant="yellow">Yellow</ow-badge>
+            <ow-badge variant="gray">Gray</ow-badge>
+            <ow-badge variant="outline">Outline</ow-badge>
+            <ow-badge variant="live">🔴 Ao Vivo</ow-badge>
+          </div>
         </div>
-      </div>
+      } @else {
+        <ds-code-badges-badges />
+      }
 
       <!-- Tags removíveis -->
-      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">
-        Tags Removíveis
+      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center justify-between gap-2">
+        <span class="flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">Tags Removíveis</span>
+        <ow-btn variant="ghost-mini" (click)="toggleCode('badges-tags')">
+          @if (isCode('badges-tags')) { Preview } @else { Código }
+        </ow-btn>
       </h3>
-      <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
-        <div class="flex flex-wrap gap-3 items-center">
-          @for (tag of tags(); track tag) {
-            <ow-tag variant="orange" [removable]="true" (removed)="removeTag(tag)">{{ tag }}</ow-tag>
-          }
-          @if (tags().length === 0) {
-            <span class="text-[0.875rem] text-[#9aa0a6] italic">Todas as tags foram removidas</span>
-          }
+      @if (!isCode('badges-tags')) {
+        <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
+          <div class="flex flex-wrap gap-3 items-center">
+            @for (tag of tags(); track tag) {
+              <ow-tag variant="orange" [removable]="true" (removed)="removeTag(tag)">{{ tag }}</ow-tag>
+            }
+            @if (tags().length === 0) {
+              <span class="text-[0.875rem] text-[#9aa0a6] italic">Todas as tags foram removidas</span>
+            }
+          </div>
         </div>
-      </div>
+      } @else {
+        <ds-code-badges-tags />
+      }
 
       <!-- Hero Badge -->
-      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">
-        Hero Badge
+      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center justify-between gap-2">
+        <span class="flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">Hero Badge</span>
+        <ow-btn variant="ghost-mini" (click)="toggleCode('badges-hero')">
+          @if (isCode('badges-hero')) { Preview } @else { Código }
+        </ow-btn>
       </h3>
-      <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
-        <div class="flex flex-wrap gap-3 items-center">
-          <span class="inline-block bg-[linear-gradient(135deg,#f06314_0%,#d14e0a_100%)] text-white py-[7px] px-[22px] font-extrabold text-[0.78rem] uppercase tracking-[0.2em] [clip-path:polygon(10%_0,100%_0,90%_100%,0%_100%)]">
-            Campeão
-          </span>
-          <span class="inline-block bg-[linear-gradient(135deg,#00c3ff_0%,#0099cc_100%)] text-white py-[7px] px-[22px] font-extrabold text-[0.78rem] uppercase tracking-[0.2em] [clip-path:polygon(10%_0,100%_0,90%_100%,0%_100%)]">
-            MVP
-          </span>
-          <span class="inline-block bg-[linear-gradient(135deg,#fbbc04_0%,#e8a800_100%)] text-[#111111] py-[7px] px-[22px] font-extrabold text-[0.78rem] uppercase tracking-[0.2em] [clip-path:polygon(10%_0,100%_0,90%_100%,0%_100%)]">
-            Top 8
-          </span>
+      @if (!isCode('badges-hero')) {
+        <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
+          <div class="flex flex-wrap gap-3 items-center">
+            <span class="inline-block bg-[linear-gradient(135deg,#f06314_0%,#d14e0a_100%)] text-white py-[7px] px-[22px] font-extrabold text-[0.78rem] uppercase tracking-[0.2em] [clip-path:polygon(10%_0,100%_0,90%_100%,0%_100%)]">
+              Campeão
+            </span>
+            <span class="inline-block bg-[linear-gradient(135deg,#00c3ff_0%,#0099cc_100%)] text-white py-[7px] px-[22px] font-extrabold text-[0.78rem] uppercase tracking-[0.2em] [clip-path:polygon(10%_0,100%_0,90%_100%,0%_100%)]">
+              MVP
+            </span>
+            <span class="inline-block bg-[linear-gradient(135deg,#fbbc04_0%,#e8a800_100%)] text-[#111111] py-[7px] px-[22px] font-extrabold text-[0.78rem] uppercase tracking-[0.2em] [clip-path:polygon(10%_0,100%_0,90%_100%,0%_100%)]">
+              Top 8
+            </span>
+          </div>
         </div>
-      </div>
+      } @else {
+        <ds-code-badges-hero />
+      }
     </section>
 
     <!-- ============================================================
@@ -352,61 +408,75 @@
       </h2>
 
       <!-- Card Base -->
-      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">
-        Card Base
+      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center justify-between gap-2">
+        <span class="flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">Card Base</span>
+        <ow-btn variant="ghost-mini" (click)="toggleCode('cards-base')">
+          @if (isCode('cards-base')) { Preview } @else { Código }
+        </ow-btn>
       </h3>
-      <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
-        <ow-card [padded]="false" cardClass="max-w-sm">
-          <!-- Header -->
-          <div class="bg-[#f8f9fa] px-6 py-[18px] border-b-2 border-[#f06314]">
-            <div class="text-[0.75rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-1">Torneio</div>
-            <div class="text-[1.05rem] font-black uppercase tracking-[0.05em] text-[#111111]">Thunder Hawks vs Dragon Squad</div>
-          </div>
-          <!-- Body -->
-          <div class="p-6">
-            <p class="text-[0.875rem] text-[#3c4043] leading-[1.6] mb-4">Partida de Quartas de Final da Temporada 2025. Transmissão ao vivo às 20h00.</p>
-            <div class="flex items-center gap-2">
-              <ow-badge variant="live">Ao Vivo</ow-badge>
-              <ow-badge variant="orange">Quartas</ow-badge>
+      @if (!isCode('cards-base')) {
+        <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
+          <ow-card [padded]="false" cardClass="max-w-sm">
+            <!-- Header -->
+            <div class="bg-[#f8f9fa] px-6 py-[18px] border-b-2 border-[#f06314]">
+              <div class="text-[0.75rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-1">Torneio</div>
+              <div class="text-[1.05rem] font-black uppercase tracking-[0.05em] text-[#111111]">Thunder Hawks vs Dragon Squad</div>
             </div>
-          </div>
-          <!-- Footer -->
-          <div class="px-6 py-[14px] bg-[#f8f9fa] border-t border-[#e8eaed] flex justify-end gap-2">
-            <ow-btn size="sm" variant="ghost">Detalhes</ow-btn>
-            <ow-btn size="sm" variant="primary">Assistir</ow-btn>
-          </div>
-        </ow-card>
-      </div>
-
-      <!-- Cards variados -->
-      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">
-        Cards de Premiação
-      </h3>
-      <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <!-- 1st Place -->
-          <ow-card cardClass="text-center" contentClass="flex flex-col items-center">
-            <div class="text-[3rem] mb-2">🥇</div>
-            <div class="text-[0.65rem] font-extrabold uppercase tracking-[0.2em] text-[#f06314] mb-1">1º Lugar</div>
-            <div class="text-[1.5rem] font-black text-[#111111] mb-2">R$ 5.000</div>
-            <p class="text-[0.8rem] text-[#5f6368]">+ Trophy + Medal</p>
-          </ow-card>
-          <!-- 2nd Place -->
-          <ow-card cardClass="text-center" contentClass="flex flex-col items-center">
-            <div class="text-[3rem] mb-2">🥈</div>
-            <div class="text-[0.65rem] font-extrabold uppercase tracking-[0.2em] text-[#5f6368] mb-1">2º Lugar</div>
-            <div class="text-[1.5rem] font-black text-[#111111] mb-2">R$ 2.500</div>
-            <p class="text-[0.8rem] text-[#5f6368]">+ Medal</p>
-          </ow-card>
-          <!-- 3rd Place -->
-          <ow-card cardClass="text-center" contentClass="flex flex-col items-center">
-            <div class="text-[3rem] mb-2">🥉</div>
-            <div class="text-[0.65rem] font-extrabold uppercase tracking-[0.2em] text-[#5f6368] mb-1">3º Lugar</div>
-            <div class="text-[1.5rem] font-black text-[#111111] mb-2">R$ 1.000</div>
-            <p class="text-[0.8rem] text-[#5f6368]">+ Certificado</p>
+            <!-- Body -->
+            <div class="p-6">
+              <p class="text-[0.875rem] text-[#3c4043] leading-[1.6] mb-4">Partida de Quartas de Final da Temporada 2025. Transmissão ao vivo às 20h00.</p>
+              <div class="flex items-center gap-2">
+                <ow-badge variant="live">Ao Vivo</ow-badge>
+                <ow-badge variant="orange">Quartas</ow-badge>
+              </div>
+            </div>
+            <!-- Footer -->
+            <div class="px-6 py-[14px] bg-[#f8f9fa] border-t border-[#e8eaed] flex justify-end gap-2">
+              <ow-btn size="sm" variant="ghost">Detalhes</ow-btn>
+              <ow-btn size="sm" variant="primary">Assistir</ow-btn>
+            </div>
           </ow-card>
         </div>
-      </div>
+      } @else {
+        <ds-code-cards-base />
+      }
+
+      <!-- Cards variados -->
+      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center justify-between gap-2">
+        <span class="flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">Cards de Premiação</span>
+        <ow-btn variant="ghost-mini" (click)="toggleCode('cards-premiacao')">
+          @if (isCode('cards-premiacao')) { Preview } @else { Código }
+        </ow-btn>
+      </h3>
+      @if (!isCode('cards-premiacao')) {
+        <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- 1st Place -->
+            <ow-card cardClass="text-center" contentClass="flex flex-col items-center">
+              <div class="text-[3rem] mb-2">🥇</div>
+              <div class="text-[0.65rem] font-extrabold uppercase tracking-[0.2em] text-[#f06314] mb-1">1º Lugar</div>
+              <div class="text-[1.5rem] font-black text-[#111111] mb-2">R$ 5.000</div>
+              <p class="text-[0.8rem] text-[#5f6368]">+ Trophy + Medal</p>
+            </ow-card>
+            <!-- 2nd Place -->
+            <ow-card cardClass="text-center" contentClass="flex flex-col items-center">
+              <div class="text-[3rem] mb-2">🥈</div>
+              <div class="text-[0.65rem] font-extrabold uppercase tracking-[0.2em] text-[#5f6368] mb-1">2º Lugar</div>
+              <div class="text-[1.5rem] font-black text-[#111111] mb-2">R$ 2.500</div>
+              <p class="text-[0.8rem] text-[#5f6368]">+ Medal</p>
+            </ow-card>
+            <!-- 3rd Place -->
+            <ow-card cardClass="text-center" contentClass="flex flex-col items-center">
+              <div class="text-[3rem] mb-2">🥉</div>
+              <div class="text-[0.65rem] font-extrabold uppercase tracking-[0.2em] text-[#5f6368] mb-1">3º Lugar</div>
+              <div class="text-[1.5rem] font-black text-[#111111] mb-2">R$ 1.000</div>
+              <p class="text-[0.8rem] text-[#5f6368]">+ Certificado</p>
+            </ow-card>
+          </div>
+        </div>
+      } @else {
+        <ds-code-cards-premiacao />
+      }
     </section>
 
     <!-- ============================================================
@@ -419,68 +489,82 @@
       </h2>
 
       <!-- Alertas -->
-      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">
-        Alertas
+      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center justify-between gap-2">
+        <span class="flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">Alertas</span>
+        <ow-btn variant="ghost-mini" (click)="toggleCode('alertas')">
+          @if (isCode('alertas')) { Preview } @else { Código }
+        </ow-btn>
       </h3>
-      <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5 space-y-4">
-        <app-alerts
-          variant="info"
-          title="Informação"
-          message="O check-in para a próxima fase abre em 30 minutos. Certifique-se de que todos os membros do seu time estejam online."
-          [dismissible]="true">
-        </app-alerts>
-        <app-alerts
-          variant="success"
-          title="Inscrição Confirmada!"
-          message="Seu time foi inscrito com sucesso no Torneio Nova Era 2025. Aguarde a confirmação por e-mail."
-          [dismissible]="true">
-        </app-alerts>
-        <app-alerts
-          variant="warning"
-          title="Atenção"
-          message="Faltam apenas 2 horas para o início do check-in. Times que não fizerem check-in serão desclassificados."
-          [dismissible]="true">
-        </app-alerts>
-        <app-alerts
-          variant="error"
-          title="Erro na Inscrição"
-          message="Não foi possível completar a inscrição. O número máximo de times para este torneio já foi atingido."
-          [dismissible]="true">
-        </app-alerts>
-      </div>
+      @if (!isCode('alertas')) {
+        <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5 space-y-4">
+          <app-alerts
+            variant="info"
+            title="Informação"
+            message="O check-in para a próxima fase abre em 30 minutos. Certifique-se de que todos os membros do seu time estejam online."
+            [dismissible]="true">
+          </app-alerts>
+          <app-alerts
+            variant="success"
+            title="Inscrição Confirmada!"
+            message="Seu time foi inscrito com sucesso no Torneio Nova Era 2025. Aguarde a confirmação por e-mail."
+            [dismissible]="true">
+          </app-alerts>
+          <app-alerts
+            variant="warning"
+            title="Atenção"
+            message="Faltam apenas 2 horas para o início do check-in. Times que não fizerem check-in serão desclassificados."
+            [dismissible]="true">
+          </app-alerts>
+          <app-alerts
+            variant="error"
+            title="Erro na Inscrição"
+            message="Não foi possível completar a inscrição. O número máximo de times para este torneio já foi atingido."
+            [dismissible]="true">
+          </app-alerts>
+        </div>
+      } @else {
+        <ds-code-alertas-alertas />
+      }
 
       <!-- Toasts -->
-      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">
-        Toasts
+      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center justify-between gap-2">
+        <span class="flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">Toasts</span>
+        <ow-btn variant="ghost-mini" (click)="toggleCode('toasts')">
+          @if (isCode('toasts')) { Preview } @else { Código }
+        </ow-btn>
       </h3>
-      <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
-        <div class="flex flex-col gap-3 max-w-sm">
-          <ow-toast
-            variant="success"
-            title="Salvo com sucesso!"
-            message="As alterações do seu perfil foram salvas."
-            [dismissible]="true">
-          </ow-toast>
-          <ow-toast
-            variant="error"
-            title="Falha na conexão"
-            message="Não foi possível conectar ao servidor. Tente novamente."
-            [dismissible]="true">
-          </ow-toast>
-          <ow-toast
-            variant="warning"
-            title="Sessão expirando"
-            message="Sua sessão expira em 5 minutos. Faça login novamente."
-            [dismissible]="true">
-          </ow-toast>
-          <ow-toast
-            variant="info"
-            title="Nova partida disponível"
-            message="Thunder Hawks vs Dragon Squad começa em 10 minutos."
-            [dismissible]="true">
-          </ow-toast>
+      @if (!isCode('toasts')) {
+        <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
+          <div class="flex flex-col gap-3 max-w-sm">
+            <ow-toast
+              variant="success"
+              title="Salvo com sucesso!"
+              message="As alterações do seu perfil foram salvas."
+              [dismissible]="true">
+            </ow-toast>
+            <ow-toast
+              variant="error"
+              title="Falha na conexão"
+              message="Não foi possível conectar ao servidor. Tente novamente."
+              [dismissible]="true">
+            </ow-toast>
+            <ow-toast
+              variant="warning"
+              title="Sessão expirando"
+              message="Sua sessão expira em 5 minutos. Faça login novamente."
+              [dismissible]="true">
+            </ow-toast>
+            <ow-toast
+              variant="info"
+              title="Nova partida disponível"
+              message="Thunder Hawks vs Dragon Squad começa em 10 minutos."
+              [dismissible]="true">
+            </ow-toast>
+          </div>
         </div>
-      </div>
+      } @else {
+        <ds-code-alertas-toasts />
+      }
     </section>
 
     <!-- ============================================================
@@ -753,49 +837,70 @@
       </h2>
 
       <!-- Grupo de Avatares -->
-      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">
-        Grupo de Avatares
+      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center justify-between gap-2">
+        <span class="flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">Grupo de Avatares</span>
+        <ow-btn variant="ghost-mini" (click)="toggleCode('avatares-grupo')">
+          @if (isCode('avatares-grupo')) { Preview } @else { Código }
+        </ow-btn>
       </h3>
-      <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
-        <div class="flex items-center gap-6">
-          <ow-avatar-group>
-            <ow-avatar initials="TH" color="orange" [grouped]="true"></ow-avatar>
-            <ow-avatar initials="DS" color="blue" [grouped]="true"></ow-avatar>
-            <ow-avatar initials="FG" color="green" [grouped]="true"></ow-avatar>
-            <ow-avatar initials="BL" color="red" [grouped]="true"></ow-avatar>
-            <div class="w-9 h-9 rounded-full bg-[#f1f3f4] border-2 border-white flex items-center justify-center text-[0.72rem] font-extrabold text-[#5f6368] -ml-2 ring-2 ring-white">+8</div>
-          </ow-avatar-group>
-          <span class="text-[0.875rem] text-[#5f6368] font-semibold">12 times inscritos</span>
-        </div>
-      </div>
-
-      <!-- Avatar Individual com Role -->
-      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">
-        Avatar Individual com Role
-      </h3>
-      <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
-        <div class="flex items-center gap-4">
-          <ow-player-avatar initials="TH"></ow-player-avatar>
-          <div>
-            <div class="text-[0.9rem] font-extrabold text-[#111111]">xShadow</div>
-            <div class="text-[0.75rem] text-[#5f6368] mb-1">Thunder Hawks</div>
-            <ow-role-badge role="damage">DPS</ow-role-badge>
+      @if (!isCode('avatares-grupo')) {
+        <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
+          <div class="flex items-center gap-6">
+            <ow-avatar-group>
+              <ow-avatar initials="TH" color="orange" [grouped]="true"></ow-avatar>
+              <ow-avatar initials="DS" color="blue" [grouped]="true"></ow-avatar>
+              <ow-avatar initials="FG" color="green" [grouped]="true"></ow-avatar>
+              <ow-avatar initials="BL" color="red" [grouped]="true"></ow-avatar>
+              <div class="w-9 h-9 rounded-full bg-[#f1f3f4] border-2 border-white flex items-center justify-center text-[0.72rem] font-extrabold text-[#5f6368] -ml-2 ring-2 ring-white">+8</div>
+            </ow-avatar-group>
+            <span class="text-[0.875rem] text-[#5f6368] font-semibold">12 times inscritos</span>
           </div>
         </div>
-      </div>
+      } @else {
+        <ds-code-avatares-grupo />
+      }
+
+      <!-- Avatar Individual com Role -->
+      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center justify-between gap-2">
+        <span class="flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">Avatar Individual com Role</span>
+        <ow-btn variant="ghost-mini" (click)="toggleCode('avatares-individual')">
+          @if (isCode('avatares-individual')) { Preview } @else { Código }
+        </ow-btn>
+      </h3>
+      @if (!isCode('avatares-individual')) {
+        <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
+          <div class="flex items-center gap-4">
+            <ow-player-avatar initials="TH"></ow-player-avatar>
+            <div>
+              <div class="text-[0.9rem] font-extrabold text-[#111111]">xShadow</div>
+              <div class="text-[0.75rem] text-[#5f6368] mb-1">Thunder Hawks</div>
+              <ow-role-badge role="damage">DPS</ow-role-badge>
+            </div>
+          </div>
+        </div>
+      } @else {
+        <ds-code-avatares-individual />
+      }
 
       <!-- Role Badges -->
-      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">
-        Role Badges
+      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center justify-between gap-2">
+        <span class="flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">Role Badges</span>
+        <ow-btn variant="ghost-mini" (click)="toggleCode('avatares-roles')">
+          @if (isCode('avatares-roles')) { Preview } @else { Código }
+        </ow-btn>
       </h3>
-      <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
-        <div class="flex flex-wrap gap-3 items-center">
-          <ow-role-badge role="tank">Tank</ow-role-badge>
-          <ow-role-badge role="damage">Damage</ow-role-badge>
-          <ow-role-badge role="support">Support</ow-role-badge>
-          <ow-role-badge role="flex">Flex</ow-role-badge>
+      @if (!isCode('avatares-roles')) {
+        <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
+          <div class="flex flex-wrap gap-3 items-center">
+            <ow-role-badge role="tank">Tank</ow-role-badge>
+            <ow-role-badge role="damage">Damage</ow-role-badge>
+            <ow-role-badge role="support">Support</ow-role-badge>
+            <ow-role-badge role="flex">Flex</ow-role-badge>
+          </div>
         </div>
-      </div>
+      } @else {
+        <ds-code-avatares-roles />
+      }
     </section>
 
     <!-- ============================================================
@@ -933,111 +1038,139 @@
       </h2>
 
       <!-- Inputs de Texto -->
-      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">
-        Inputs de Texto
+      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center justify-between gap-2">
+        <span class="flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">Inputs de Texto</span>
+        <ow-btn variant="ghost-mini" (click)="toggleCode('inputs-texto')">
+          @if (isCode('inputs-texto')) { Preview } @else { Código }
+        </ow-btn>
       </h3>
-      <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <!-- Default -->
-          <ow-input
-            label="Nome do Time"
-            [required]="true"
-            placeholder="Ex: Thunder Hawks"
-            helperText="Mínimo 3 caracteres."
-            [(ngModel)]="inputNome">
-          </ow-input>
-          <!-- Success -->
-          <ow-input
-            label="Nome do Capitão"
-            state="success"
-            placeholder="Ex: xShadow"
-            helperText="✓ Jogador encontrado"
-            [(ngModel)]="inputCapitao">
-          </ow-input>
-          <!-- Error -->
-          <ow-input
-            label="BattleTag"
-            state="error"
-            placeholder="Ex: Player#1234"
-            helperText="✕ Formato inválido"
-            [(ngModel)]="inputBattleTag">
-          </ow-input>
-          <!-- Disabled -->
-          <div class="opacity-50 pointer-events-none select-none">
+      @if (!isCode('inputs-texto')) {
+        <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Default -->
             <ow-input
-              label="ID do Torneio"
-              placeholder="Gerado automaticamente"
-              helperText="Campo somente leitura.">
+              label="Nome do Time"
+              [required]="true"
+              placeholder="Ex: Thunder Hawks"
+              helperText="Mínimo 3 caracteres."
+              [(ngModel)]="inputNome">
+            </ow-input>
+            <!-- Success -->
+            <ow-input
+              label="Nome do Capitão"
+              state="success"
+              placeholder="Ex: xShadow"
+              helperText="✓ Jogador encontrado"
+              [(ngModel)]="inputCapitao">
+            </ow-input>
+            <!-- Error -->
+            <ow-input
+              label="BattleTag"
+              state="error"
+              placeholder="Ex: Player#1234"
+              helperText="✕ Formato inválido"
+              [(ngModel)]="inputBattleTag">
+            </ow-input>
+            <!-- Disabled -->
+            <div class="opacity-50 pointer-events-none select-none">
+              <ow-input
+                label="ID do Torneio"
+                placeholder="Gerado automaticamente"
+                helperText="Campo somente leitura.">
+              </ow-input>
+            </div>
+          </div>
+        </div>
+      } @else {
+        <ds-code-inputs-texto />
+      }
+
+      <!-- Input com Ícone -->
+      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center justify-between gap-2">
+        <span class="flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">Input com Ícone</span>
+        <ow-btn variant="ghost-mini" (click)="toggleCode('inputs-icone')">
+          @if (isCode('inputs-icone')) { Preview } @else { Código }
+        </ow-btn>
+      </h3>
+      @if (!isCode('inputs-icone')) {
+        <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Icon Left -->
+            <ow-input
+              label="Buscar Time"
+              placeholder="Pesquise por nome..."
+              [iconLeft]="true">
+              <svg slot="icon-left" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M11 11L14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </ow-input>
+            <!-- Icon Right -->
+            <ow-input
+              label="Senha 123"
+              type="password"
+              placeholder="Digite sua senha"
+              [iconRight]="true">
+              <svg slot="icon-right" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <ellipse cx="8" cy="8" rx="6" ry="4" stroke="currentColor" stroke-width="1.5"/>
+                <circle cx="8" cy="8" r="2" fill="currentColor"/>
+              </svg>
             </ow-input>
           </div>
         </div>
-      </div>
-
-      <!-- Input com Ícone -->
-      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">
-        Input com Ícone
-      </h3>
-      <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <!-- Icon Left -->
-          <ow-input
-            label="Buscar Time"
-            placeholder="Pesquise por nome..."
-            [iconLeft]="true">
-            <svg slot="icon-left" width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.5"/>
-              <path d="M11 11L14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-            </svg>
-          </ow-input>
-          <!-- Icon Right -->
-          <ow-input
-            label="Senha 123"
-            type="password"
-            placeholder="Digite sua senha"
-            [iconRight]="true">
-            <svg slot="icon-right" width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <ellipse cx="8" cy="8" rx="6" ry="4" stroke="currentColor" stroke-width="1.5"/>
-              <circle cx="8" cy="8" r="2" fill="currentColor"/>
-            </svg>
-          </ow-input>
-        </div>
-      </div>
+      } @else {
+        <ds-code-inputs-icone />
+      }
 
       <!-- Select -->
-      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">
-        Select
+      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center justify-between gap-2">
+        <span class="flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">Select</span>
+        <ow-btn variant="ghost-mini" (click)="toggleCode('inputs-select')">
+          @if (isCode('inputs-select')) { Preview } @else { Código }
+        </ow-btn>
       </h3>
-      <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <ow-select
-            label="Região"
-            placeholder="Selecione sua região"
-            [options]="regiaoOptions"
-            helperText="Selecione a região do seu time."
-            [(ngModel)]="selectedRegiao">
-          </ow-select>
-          <ow-select
-            label="Fase do Torneio"
-            placeholder="Selecione uma fase"
-            [options]="faseOptions"
-            helperText="Filtre por fase da competição."
-            [(ngModel)]="selectedFase">
-          </ow-select>
+      @if (!isCode('inputs-select')) {
+        <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <ow-select
+              label="Região"
+              placeholder="Selecione sua região"
+              [options]="regiaoOptions"
+              helperText="Selecione a região do seu time."
+              [(ngModel)]="selectedRegiao">
+            </ow-select>
+            <ow-select
+              label="Fase do Torneio"
+              placeholder="Selecione uma fase"
+              [options]="faseOptions"
+              helperText="Filtre por fase da competição."
+              [(ngModel)]="selectedFase">
+            </ow-select>
+          </div>
         </div>
-      </div>
+      } @else {
+        <ds-code-inputs-select />
+      }
 
       <!-- Textarea -->
-      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">
-        Textarea
+      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center justify-between gap-2">
+        <span class="flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">Textarea</span>
+        <ow-btn variant="ghost-mini" (click)="toggleCode('inputs-textarea')">
+          @if (isCode('inputs-textarea')) { Preview } @else { Código }
+        </ow-btn>
       </h3>
-      <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
-        <ow-textarea
-          label="Descrição do Time"
-          placeholder="Descreva sua equipe, estilo de jogo, conquistas..."
-          helperText="Máximo 280 caracteres."
-          [(ngModel)]="inputTextarea">
-        </ow-textarea>
-      </div>
+      @if (!isCode('inputs-textarea')) {
+        <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
+          <ow-textarea
+            label="Descrição do Time"
+            placeholder="Descreva sua equipe, estilo de jogo, conquistas..."
+            helperText="Máximo 280 caracteres."
+            [(ngModel)]="inputTextarea">
+          </ow-textarea>
+        </div>
+      } @else {
+        <ds-code-inputs-textarea />
+      }
     </section>
 
     <!-- ============================================================
@@ -1050,48 +1183,69 @@
       </h2>
 
       <!-- Vertical Card Style -->
-      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">
-        Vertical Card Style
+      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center justify-between gap-2">
+        <span class="flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">Vertical Card Style</span>
+        <ow-btn variant="ghost-mini" (click)="toggleCode('radio-card')">
+          @if (isCode('radio-card')) { Preview } @else { Código }
+        </ow-btn>
       </h3>
-      <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
-        <ow-radio-group groupLabel="Selecione a Função" radioStyle="card" [(ngModel)]="selectedRole">
-          <ow-radio-item value="tank" label="Tank" description="Especialista em absorver dano, controlar espaço e proteger aliados no campo de batalha."></ow-radio-item>
-          <ow-radio-item value="dps" label="DPS" description="Alto dano, alta mobilidade. Responsável por eliminar alvos e criar pressão constante."></ow-radio-item>
-          <ow-radio-item value="support" label="Support" description="Mantém o time vivo com cura e buffs. Peça-chave para qualquer composição vitoriosa."></ow-radio-item>
-        </ow-radio-group>
-      </div>
-
-      <!-- Button Group Style -->
-      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">
-        Button Group Style
-      </h3>
-      <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
-        <div class="space-y-6">
-          <ow-radio-group groupLabel="Fase do Torneio" radioStyle="button" [(ngModel)]="selectedPhase">
-            <ow-radio-item value="grupos" label="Grupos"></ow-radio-item>
-            <ow-radio-item value="quartas" label="Quartas"></ow-radio-item>
-            <ow-radio-item value="semi" label="Semi Final"></ow-radio-item>
-            <ow-radio-item value="final" label="Final"></ow-radio-item>
-          </ow-radio-group>
-          <ow-radio-group groupLabel="Status da Partida" radioStyle="button" [(ngModel)]="selectedStatus">
-            <ow-radio-item value="all" label="Todas"></ow-radio-item>
-            <ow-radio-item value="live" label="Ao Vivo"></ow-radio-item>
-            <ow-radio-item value="upcoming" label="Em Breve"></ow-radio-item>
-            <ow-radio-item value="finished" label="Finalizadas"></ow-radio-item>
+      @if (!isCode('radio-card')) {
+        <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
+          <ow-radio-group groupLabel="Selecione a Função" radioStyle="card" [(ngModel)]="selectedRole">
+            <ow-radio-item value="tank" label="Tank" description="Especialista em absorver dano, controlar espaço e proteger aliados no campo de batalha."></ow-radio-item>
+            <ow-radio-item value="dps" label="DPS" description="Alto dano, alta mobilidade. Responsável por eliminar alvos e criar pressão constante."></ow-radio-item>
+            <ow-radio-item value="support" label="Support" description="Mantém o time vivo com cura e buffs. Peça-chave para qualquer composição vitoriosa."></ow-radio-item>
           </ow-radio-group>
         </div>
-      </div>
+      } @else {
+        <ds-code-radio-card />
+      }
+
+      <!-- Button Group Style -->
+      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center justify-between gap-2">
+        <span class="flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">Button Group Style</span>
+        <ow-btn variant="ghost-mini" (click)="toggleCode('radio-button')">
+          @if (isCode('radio-button')) { Preview } @else { Código }
+        </ow-btn>
+      </h3>
+      @if (!isCode('radio-button')) {
+        <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
+          <div class="space-y-6">
+            <ow-radio-group groupLabel="Fase do Torneio" radioStyle="button" [(ngModel)]="selectedPhase">
+              <ow-radio-item value="grupos" label="Grupos"></ow-radio-item>
+              <ow-radio-item value="quartas" label="Quartas"></ow-radio-item>
+              <ow-radio-item value="semi" label="Semi Final"></ow-radio-item>
+              <ow-radio-item value="final" label="Final"></ow-radio-item>
+            </ow-radio-group>
+            <ow-radio-group groupLabel="Status da Partida" radioStyle="button" [(ngModel)]="selectedStatus">
+              <ow-radio-item value="all" label="Todas"></ow-radio-item>
+              <ow-radio-item value="live" label="Ao Vivo"></ow-radio-item>
+              <ow-radio-item value="upcoming" label="Em Breve"></ow-radio-item>
+              <ow-radio-item value="finished" label="Finalizadas"></ow-radio-item>
+            </ow-radio-group>
+          </div>
+        </div>
+      } @else {
+        <ds-code-radio-button />
+      }
 
       <!-- Horizontal Pill Style -->
-      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">
-        Horizontal Pill Style
+      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center justify-between gap-2">
+        <span class="flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">Horizontal Pill Style</span>
+        <ow-btn variant="ghost-mini" (click)="toggleCode('radio-horizontal')">
+          @if (isCode('radio-horizontal')) { Preview } @else { Código }
+        </ow-btn>
       </h3>
-      <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
-        <ow-radio-group groupLabel="Plataforma" orientation="horizontal" [(ngModel)]="selectedPlatform">
-          <ow-radio-item value="pc" label="PC"></ow-radio-item>
-          <ow-radio-item value="console" label="Console"></ow-radio-item>
-        </ow-radio-group>
-      </div>
+      @if (!isCode('radio-horizontal')) {
+        <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
+          <ow-radio-group groupLabel="Plataforma" orientation="horizontal" [(ngModel)]="selectedPlatform">
+            <ow-radio-item value="pc" label="PC"></ow-radio-item>
+            <ow-radio-item value="console" label="Console"></ow-radio-item>
+          </ow-radio-group>
+        </div>
+      } @else {
+        <ds-code-radio-horizontal />
+      }
     </section>
 
     <!-- ============================================================
@@ -1104,45 +1258,59 @@
       </h2>
 
       <!-- Card Style -->
-      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">
-        Card Style
+      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center justify-between gap-2">
+        <span class="flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">Card Style</span>
+        <ow-btn variant="ghost-mini" (click)="toggleCode('checkbox-card')">
+          @if (isCode('checkbox-card')) { Preview } @else { Código }
+        </ow-btn>
       </h3>
-      <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
-        <div class="space-y-3 max-w-sm">
-          <ow-checkbox
-            label="King's Row"
-            description="Payload map — London, United Kingdom"
-            [(ngModel)]="checkKingsRow">
-          </ow-checkbox>
-          <ow-checkbox
-            label="Hanamura"
-            description="Assault map — Japan"
-            [(ngModel)]="checkHanamura">
-          </ow-checkbox>
-          <ow-checkbox
-            label="Ilios"
-            description="Control map — Greece"
-            [(ngModel)]="checkIlios">
-          </ow-checkbox>
-          <ow-checkbox
-            label="Eichenwalde"
-            description="Hybrid map — Germany (indeterminate)"
-            [indeterminate]="true">
-          </ow-checkbox>
+      @if (!isCode('checkbox-card')) {
+        <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
+          <div class="space-y-3 max-w-sm">
+            <ow-checkbox
+              label="King's Row"
+              description="Payload map — London, United Kingdom"
+              [(ngModel)]="checkKingsRow">
+            </ow-checkbox>
+            <ow-checkbox
+              label="Hanamura"
+              description="Assault map — Japan"
+              [(ngModel)]="checkHanamura">
+            </ow-checkbox>
+            <ow-checkbox
+              label="Ilios"
+              description="Control map — Greece"
+              [(ngModel)]="checkIlios">
+            </ow-checkbox>
+            <ow-checkbox
+              label="Eichenwalde"
+              description="Hybrid map — Germany (indeterminate)"
+              [indeterminate]="true">
+            </ow-checkbox>
+          </div>
         </div>
-      </div>
+      } @else {
+        <ds-code-checkbox-card />
+      }
 
       <!-- Inline Compacto -->
-      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">
-        Inline Compacto
+      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center justify-between gap-2">
+        <span class="flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">Inline Compacto</span>
+        <ow-btn variant="ghost-mini" (click)="toggleCode('checkbox-inline')">
+          @if (isCode('checkbox-inline')) { Preview } @else { Código }
+        </ow-btn>
       </h3>
-      <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
-        <div class="flex flex-wrap gap-6 items-center">
-          <ow-checkbox label="Tank" [compact]="true" [(ngModel)]="checkTank"></ow-checkbox>
-          <ow-checkbox label="DPS" [compact]="true" [(ngModel)]="checkDps"></ow-checkbox>
-          <ow-checkbox label="Suporte" [compact]="true" [(ngModel)]="checkSupport"></ow-checkbox>
+      @if (!isCode('checkbox-inline')) {
+        <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
+          <div class="flex flex-wrap gap-6 items-center">
+            <ow-checkbox label="Tank" [compact]="true" [(ngModel)]="checkTank"></ow-checkbox>
+            <ow-checkbox label="DPS" [compact]="true" [(ngModel)]="checkDps"></ow-checkbox>
+            <ow-checkbox label="Suporte" [compact]="true" [(ngModel)]="checkSupport"></ow-checkbox>
+          </div>
         </div>
-      </div>
+      } @else {
+        <ds-code-checkbox-inline />
+      }
     </section>
 
     <!-- ============================================================
@@ -1221,70 +1389,84 @@
       </h2>
 
       <!-- Team Cards -->
-      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">
-        Team Cards
+      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center justify-between gap-2">
+        <span class="flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">Team Cards</span>
+        <ow-btn variant="ghost-mini" (click)="toggleCode('teams-cards')">
+          @if (isCode('teams-cards')) { Preview } @else { Código }
+        </ow-btn>
       </h3>
-      <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <!-- Thunder Hawks -->
-          <ow-card cardClass="text-center" contentClass="flex flex-col items-center gap-2 p-6">
-            <div class="w-[72px] h-[72px] bg-[#f1f3f4] [clip-path:polygon(20%_0,100%_0,100%_80%,80%_100%,0_100%,0_20%)] flex items-center justify-center text-[1.8rem] font-black text-[#f06314] mx-auto mb-4">
-              TH
-            </div>
-            <div class="text-[1rem] font-black uppercase tracking-[0.06em] text-[#111111]">Thunder Hawks</div>
-            <div class="text-[0.75rem] text-[#5f6368] uppercase tracking-[0.08em]">São Paulo, SP</div>
-            <div class="flex gap-2 mt-2">
-              <ow-role-badge role="tank">Tank</ow-role-badge>
-              <ow-role-badge role="damage">DPS</ow-role-badge>
-              <ow-role-badge role="support">Support</ow-role-badge>
-            </div>
-          </ow-card>
-          <!-- Dragon Squad -->
-          <ow-card cardClass="text-center" contentClass="flex flex-col items-center gap-2 p-6">
-            <div class="w-[72px] h-[72px] bg-[#f1f3f4] [clip-path:polygon(20%_0,100%_0,100%_80%,80%_100%,0_100%,0_20%)] flex items-center justify-center text-[1.8rem] font-black text-[#00c3ff] mx-auto mb-4">
-              DS
-            </div>
-            <div class="text-[1rem] font-black uppercase tracking-[0.06em] text-[#111111]">Dragon Squad</div>
-            <div class="text-[0.75rem] text-[#5f6368] uppercase tracking-[0.08em]">Rio de Janeiro, RJ</div>
-            <div class="flex gap-2 mt-2">
-              <ow-role-badge role="tank">Tank</ow-role-badge>
-              <ow-role-badge role="flex">Flex</ow-role-badge>
-              <ow-role-badge role="support">Support</ow-role-badge>
-            </div>
-          </ow-card>
-          <!-- Frost Giants -->
-          <ow-card cardClass="text-center" contentClass="flex flex-col items-center gap-2 p-6">
-            <div class="w-[72px] h-[72px] bg-[#f1f3f4] [clip-path:polygon(20%_0,100%_0,100%_80%,80%_100%,0_100%,0_20%)] flex items-center justify-center text-[1.8rem] font-black text-[#34a853] mx-auto mb-4">
-              FG
-            </div>
-            <div class="text-[1rem] font-black uppercase tracking-[0.06em] text-[#111111]">Frost Giants</div>
-            <div class="text-[0.75rem] text-[#5f6368] uppercase tracking-[0.08em]">Curitiba, PR</div>
-            <div class="flex gap-2 mt-2">
-              <ow-role-badge role="tank">Tank</ow-role-badge>
-              <ow-role-badge role="damage">DPS</ow-role-badge>
-              <ow-role-badge role="flex">Flex</ow-role-badge>
+      @if (!isCode('teams-cards')) {
+        <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Thunder Hawks -->
+            <ow-card cardClass="text-center" contentClass="flex flex-col items-center gap-2 p-6">
+              <div class="w-[72px] h-[72px] bg-[#f1f3f4] [clip-path:polygon(20%_0,100%_0,100%_80%,80%_100%,0_100%,0_20%)] flex items-center justify-center text-[1.8rem] font-black text-[#f06314] mx-auto mb-4">
+                TH
+              </div>
+              <div class="text-[1rem] font-black uppercase tracking-[0.06em] text-[#111111]">Thunder Hawks</div>
+              <div class="text-[0.75rem] text-[#5f6368] uppercase tracking-[0.08em]">São Paulo, SP</div>
+              <div class="flex gap-2 mt-2">
+                <ow-role-badge role="tank">Tank</ow-role-badge>
+                <ow-role-badge role="damage">DPS</ow-role-badge>
+                <ow-role-badge role="support">Support</ow-role-badge>
+              </div>
+            </ow-card>
+            <!-- Dragon Squad -->
+            <ow-card cardClass="text-center" contentClass="flex flex-col items-center gap-2 p-6">
+              <div class="w-[72px] h-[72px] bg-[#f1f3f4] [clip-path:polygon(20%_0,100%_0,100%_80%,80%_100%,0_100%,0_20%)] flex items-center justify-center text-[1.8rem] font-black text-[#00c3ff] mx-auto mb-4">
+                DS
+              </div>
+              <div class="text-[1rem] font-black uppercase tracking-[0.06em] text-[#111111]">Dragon Squad</div>
+              <div class="text-[0.75rem] text-[#5f6368] uppercase tracking-[0.08em]">Rio de Janeiro, RJ</div>
+              <div class="flex gap-2 mt-2">
+                <ow-role-badge role="tank">Tank</ow-role-badge>
+                <ow-role-badge role="flex">Flex</ow-role-badge>
+                <ow-role-badge role="support">Support</ow-role-badge>
+              </div>
+            </ow-card>
+            <!-- Frost Giants -->
+            <ow-card cardClass="text-center" contentClass="flex flex-col items-center gap-2 p-6">
+              <div class="w-[72px] h-[72px] bg-[#f1f3f4] [clip-path:polygon(20%_0,100%_0,100%_80%,80%_100%,0_100%,0_20%)] flex items-center justify-center text-[1.8rem] font-black text-[#34a853] mx-auto mb-4">
+                FG
+              </div>
+              <div class="text-[1rem] font-black uppercase tracking-[0.06em] text-[#111111]">Frost Giants</div>
+              <div class="text-[0.75rem] text-[#5f6368] uppercase tracking-[0.08em]">Curitiba, PR</div>
+              <div class="flex gap-2 mt-2">
+                <ow-role-badge role="tank">Tank</ow-role-badge>
+                <ow-role-badge role="damage">DPS</ow-role-badge>
+                <ow-role-badge role="flex">Flex</ow-role-badge>
+              </div>
+            </ow-card>
+          </div>
+        </div>
+      } @else {
+        <ds-code-teams-cards />
+      }
+
+      <!-- Player Card -->
+      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center justify-between gap-2">
+        <span class="flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">Player Card</span>
+        <ow-btn variant="ghost-mini" (click)="toggleCode('teams-player')">
+          @if (isCode('teams-player')) { Preview } @else { Código }
+        </ow-btn>
+      </h3>
+      @if (!isCode('teams-player')) {
+        <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
+          <ow-card [padded]="false" cardClass="max-w-sm">
+            <div class="flex items-center gap-4 p-5">
+              <ow-player-avatar initials="xS"></ow-player-avatar>
+              <div class="flex-1">
+                <div class="text-[0.9rem] font-extrabold text-[#111111] mb-0.5">xShadow</div>
+                <div class="text-[0.75rem] text-[#5f6368] mb-1">Thunder Hawks &bull; BattleTag: xShadow#9823</div>
+                <ow-role-badge role="damage">DPS</ow-role-badge>
+              </div>
+              <ow-btn size="sm" variant="ghost">Ver Perfil</ow-btn>
             </div>
           </ow-card>
         </div>
-      </div>
-
-      <!-- Player Card -->
-      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">
-        Player Card
-      </h3>
-      <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
-        <ow-card [padded]="false" cardClass="max-w-sm">
-          <div class="flex items-center gap-4 p-5">
-            <ow-player-avatar initials="xS"></ow-player-avatar>
-            <div class="flex-1">
-              <div class="text-[0.9rem] font-extrabold text-[#111111] mb-0.5">xShadow</div>
-              <div class="text-[0.75rem] text-[#5f6368] mb-1">Thunder Hawks &bull; BattleTag: xShadow#9823</div>
-              <ow-role-badge role="damage">DPS</ow-role-badge>
-            </div>
-            <ow-btn size="sm" variant="ghost">Ver Perfil</ow-btn>
-          </div>
-        </ow-card>
-      </div>
+      } @else {
+        <ds-code-teams-player />
+      }
     </section>
 
     <!-- Divider demo -->
