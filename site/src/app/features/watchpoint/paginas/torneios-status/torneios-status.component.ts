@@ -6,7 +6,6 @@ import { firstValueFrom } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { ButtonsComponent } from '../../../../shared/buttons/buttons';
-import { CardComponent } from '../../../../shared/card/card.component';
 import { ToggleComponent } from '../../../../shared/design-system/toggle/toggle.component';
 
 type TournamentStatus =
@@ -72,7 +71,7 @@ const STATUS_INFO: Readonly<Record<TournamentStatus, { label: string; descriptio
 @Component({
   selector: 'app-torneios-status',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ButtonsComponent, CardComponent, ToggleComponent, FormsModule],
+  imports: [ButtonsComponent, ToggleComponent, FormsModule],
   templateUrl: './torneios-status.component.html',
   styleUrl: './torneios-status.component.css',
 })

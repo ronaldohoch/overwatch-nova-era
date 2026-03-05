@@ -1,0 +1,336 @@
+
+    <!-- ============================================================
+         SECTION 15: INPUTS & SELECT
+         ============================================================ -->
+
+    <section id="inputs" class="mb-20 scroll-mt-6">
+      <h2 class="text-[2rem] font-black uppercase tracking-[0.08em] text-[#111111] pb-[14px] mb-8 border-b-[3px] border-[#f06314] flex items-center gap-[14px]">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="2" y="9" width="24" height="10" rx="2" stroke="#f06314" stroke-width="2"/><rect x="5" y="12" width="8" height="4" rx="1" fill="#f06314" opacity="0.4"/><rect x="21" y="11" width="2" height="6" rx="1" fill="#f06314"/></svg>
+        Inputs &amp; Select
+      </h2>
+
+      <!-- Inputs de Texto -->
+      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center justify-between gap-2">
+        <span class="flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">Inputs de Texto</span>
+        <ow-btn variant="ghost-mini" (click)="toggleCode('inputs-texto')">
+          @if (isCode('inputs-texto')) { Preview } @else { Código }
+        </ow-btn>
+      </h3>
+      @if (!isCode('inputs-texto')) {
+        <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Default -->
+            <ow-input
+              label="Nome do Time"
+              [required]="true"
+              placeholder="Ex: Thunder Hawks"
+              helperText="Mínimo 3 caracteres."
+              [(ngModel)]="inputNome">
+            </ow-input>
+            <!-- Success -->
+            <ow-input
+              label="Nome do Capitão"
+              state="success"
+              placeholder="Ex: xShadow"
+              helperText="✓ Jogador encontrado"
+              [(ngModel)]="inputCapitao">
+            </ow-input>
+            <!-- Error -->
+            <ow-input
+              label="BattleTag"
+              state="error"
+              placeholder="Ex: Player#1234"
+              helperText="✕ Formato inválido"
+              [(ngModel)]="inputBattleTag">
+            </ow-input>
+            <!-- Disabled -->
+            <div class="opacity-50 pointer-events-none select-none">
+              <ow-input
+                label="ID do Torneio"
+                placeholder="Gerado automaticamente"
+                helperText="Campo somente leitura.">
+              </ow-input>
+            </div>
+          </div>
+        </div>
+      } @else {
+        <ds-code-inputs-texto />
+      }
+
+      <!-- Input com Ícone -->
+      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center justify-between gap-2">
+        <span class="flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">Input com Ícone</span>
+        <ow-btn variant="ghost-mini" (click)="toggleCode('inputs-icone')">
+          @if (isCode('inputs-icone')) { Preview } @else { Código }
+        </ow-btn>
+      </h3>
+      @if (!isCode('inputs-icone')) {
+        <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Icon Left -->
+            <ow-input
+              label="Buscar Time"
+              placeholder="Pesquise por nome..."
+              [iconLeft]="true">
+              <svg slot="icon-left" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M11 11L14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </ow-input>
+            <!-- Icon Right -->
+            <ow-input
+              label="Senha 123"
+              type="password"
+              placeholder="Digite sua senha"
+              [iconRight]="true">
+              <svg slot="icon-right" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <ellipse cx="8" cy="8" rx="6" ry="4" stroke="currentColor" stroke-width="1.5"/>
+                <circle cx="8" cy="8" r="2" fill="currentColor"/>
+              </svg>
+            </ow-input>
+          </div>
+        </div>
+      } @else {
+        <ds-code-inputs-icone />
+      }
+
+      <!-- Select -->
+      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center justify-between gap-2">
+        <span class="flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">Select</span>
+        <ow-btn variant="ghost-mini" (click)="toggleCode('inputs-select')">
+          @if (isCode('inputs-select')) { Preview } @else { Código }
+        </ow-btn>
+      </h3>
+      @if (!isCode('inputs-select')) {
+        <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <ow-select
+              label="Região"
+              placeholder="Selecione sua região"
+              [options]="regiaoOptions"
+              helperText="Selecione a região do seu time."
+              [(ngModel)]="selectedRegiao">
+            </ow-select>
+            <ow-select
+              label="Fase do Torneio"
+              placeholder="Selecione uma fase"
+              [options]="faseOptions"
+              helperText="Filtre por fase da competição."
+              [(ngModel)]="selectedFase">
+            </ow-select>
+          </div>
+        </div>
+      } @else {
+        <ds-code-inputs-select />
+      }
+
+      <!-- Textarea -->
+      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center justify-between gap-2">
+        <span class="flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">Textarea</span>
+        <ow-btn variant="ghost-mini" (click)="toggleCode('inputs-textarea')">
+          @if (isCode('inputs-textarea')) { Preview } @else { Código }
+        </ow-btn>
+      </h3>
+      @if (!isCode('inputs-textarea')) {
+        <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
+          <ow-textarea
+            label="Descrição do Time"
+            placeholder="Descreva sua equipe, estilo de jogo, conquistas..."
+            helperText="Máximo 280 caracteres."
+            [(ngModel)]="inputTextarea">
+          </ow-textarea>
+        </div>
+      } @else {
+        <ds-code-inputs-textarea />
+      }
+    </section>
+
+    <!-- ============================================================
+         SECTION 16: RADIO BUTTONS
+         ============================================================ -->
+    <section id="radio" class="mb-20 scroll-mt-6">
+      <h2 class="text-[2rem] font-black uppercase tracking-[0.08em] text-[#111111] pb-[14px] mb-8 border-b-[3px] border-[#f06314] flex items-center gap-[14px]">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="10" stroke="#f06314" stroke-width="2"/><circle cx="14" cy="14" r="5" fill="#f06314"/></svg>
+        Radio Buttons
+      </h2>
+
+      <!-- Vertical Card Style -->
+      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center justify-between gap-2">
+        <span class="flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">Vertical Card Style</span>
+        <ow-btn variant="ghost-mini" (click)="toggleCode('radio-card')">
+          @if (isCode('radio-card')) { Preview } @else { Código }
+        </ow-btn>
+      </h3>
+      @if (!isCode('radio-card')) {
+        <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
+          <ow-radio-group groupLabel="Selecione a Função" radioStyle="card" [(ngModel)]="selectedRole">
+            <ow-radio-item value="tank" label="Tank" description="Especialista em absorver dano, controlar espaço e proteger aliados no campo de batalha."></ow-radio-item>
+            <ow-radio-item value="dps" label="DPS" description="Alto dano, alta mobilidade. Responsável por eliminar alvos e criar pressão constante."></ow-radio-item>
+            <ow-radio-item value="support" label="Support" description="Mantém o time vivo com cura e buffs. Peça-chave para qualquer composição vitoriosa."></ow-radio-item>
+          </ow-radio-group>
+        </div>
+      } @else {
+        <ds-code-radio-card />
+      }
+
+      <!-- Button Group Style -->
+      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center justify-between gap-2">
+        <span class="flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">Button Group Style</span>
+        <ow-btn variant="ghost-mini" (click)="toggleCode('radio-button')">
+          @if (isCode('radio-button')) { Preview } @else { Código }
+        </ow-btn>
+      </h3>
+      @if (!isCode('radio-button')) {
+        <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
+          <div class="space-y-6">
+            <ow-radio-group groupLabel="Fase do Torneio" radioStyle="button" [(ngModel)]="selectedPhase">
+              <ow-radio-item value="grupos" label="Grupos"></ow-radio-item>
+              <ow-radio-item value="quartas" label="Quartas"></ow-radio-item>
+              <ow-radio-item value="semi" label="Semi Final"></ow-radio-item>
+              <ow-radio-item value="final" label="Final"></ow-radio-item>
+            </ow-radio-group>
+            <ow-radio-group groupLabel="Status da Partida" radioStyle="button" [(ngModel)]="selectedStatus">
+              <ow-radio-item value="all" label="Todas"></ow-radio-item>
+              <ow-radio-item value="live" label="Ao Vivo"></ow-radio-item>
+              <ow-radio-item value="upcoming" label="Em Breve"></ow-radio-item>
+              <ow-radio-item value="finished" label="Finalizadas"></ow-radio-item>
+            </ow-radio-group>
+          </div>
+        </div>
+      } @else {
+        <ds-code-radio-button />
+      }
+
+      <!-- Horizontal Pill Style -->
+      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center justify-between gap-2">
+        <span class="flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">Horizontal Pill Style</span>
+        <ow-btn variant="ghost-mini" (click)="toggleCode('radio-horizontal')">
+          @if (isCode('radio-horizontal')) { Preview } @else { Código }
+        </ow-btn>
+      </h3>
+      @if (!isCode('radio-horizontal')) {
+        <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
+          <ow-radio-group groupLabel="Plataforma" orientation="horizontal" [(ngModel)]="selectedPlatform">
+            <ow-radio-item value="pc" label="PC"></ow-radio-item>
+            <ow-radio-item value="console" label="Console"></ow-radio-item>
+          </ow-radio-group>
+        </div>
+      } @else {
+        <ds-code-radio-horizontal />
+      }
+    </section>
+
+    <!-- ============================================================
+         SECTION 17: CHECKBOXES
+         ============================================================ -->
+    <section id="checkbox" class="mb-20 scroll-mt-6">
+      <h2 class="text-[2rem] font-black uppercase tracking-[0.08em] text-[#111111] pb-[14px] mb-8 border-b-[3px] border-[#f06314] flex items-center gap-[14px]">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="4" y="4" width="20" height="20" rx="3" stroke="#f06314" stroke-width="2"/><path d="M9 14L12.5 17.5L19 11" stroke="#f06314" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Checkboxes
+      </h2>
+
+      <!-- Card Style -->
+      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center justify-between gap-2">
+        <span class="flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">Card Style</span>
+        <ow-btn variant="ghost-mini" (click)="toggleCode('checkbox-card')">
+          @if (isCode('checkbox-card')) { Preview } @else { Código }
+        </ow-btn>
+      </h3>
+      @if (!isCode('checkbox-card')) {
+        <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
+          <div class="space-y-3 max-w-sm">
+            <ow-checkbox
+              label="King's Row"
+              description="Payload map — London, United Kingdom"
+              [(ngModel)]="checkKingsRow">
+            </ow-checkbox>
+            <ow-checkbox
+              label="Hanamura"
+              description="Assault map — Japan"
+              [(ngModel)]="checkHanamura">
+            </ow-checkbox>
+            <ow-checkbox
+              label="Ilios"
+              description="Control map — Greece"
+              [(ngModel)]="checkIlios">
+            </ow-checkbox>
+            <ow-checkbox
+              label="Eichenwalde"
+              description="Hybrid map — Germany (indeterminate)"
+              [indeterminate]="true">
+            </ow-checkbox>
+          </div>
+        </div>
+      } @else {
+        <ds-code-checkbox-card />
+      }
+
+      <!-- Inline Compacto -->
+      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center justify-between gap-2">
+        <span class="flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">Inline Compacto</span>
+        <ow-btn variant="ghost-mini" (click)="toggleCode('checkbox-inline')">
+          @if (isCode('checkbox-inline')) { Preview } @else { Código }
+        </ow-btn>
+      </h3>
+      @if (!isCode('checkbox-inline')) {
+        <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
+          <div class="flex flex-wrap gap-6 items-center">
+            <ow-checkbox label="Tank" [compact]="true" [(ngModel)]="checkTank"></ow-checkbox>
+            <ow-checkbox label="DPS" [compact]="true" [(ngModel)]="checkDps"></ow-checkbox>
+            <ow-checkbox label="Suporte" [compact]="true" [(ngModel)]="checkSupport"></ow-checkbox>
+          </div>
+        </div>
+      } @else {
+        <ds-code-checkbox-inline />
+      }
+    </section>
+
+    <!-- ============================================================
+         SECTION 18: TOGGLES
+         ============================================================ -->
+    <section id="toggle" class="mb-20 scroll-mt-6">
+      <h2 class="text-[2rem] font-black uppercase tracking-[0.08em] text-[#111111] pb-[14px] mb-8 border-b-[3px] border-[#f06314] flex items-center gap-[14px]">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="4" y="9" width="20" height="10" rx="5" stroke="#f06314" stroke-width="2"/><circle cx="19" cy="14" r="3" fill="#f06314"/></svg>
+        Toggles
+      </h2>
+      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center justify-between gap-2">
+        <span class="flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">Exemplo</span>
+        <ow-btn variant="ghost-mini" (click)="toggleCode('toggle')">
+          @if (isCode('toggle')) { Preview } @else { Código }
+        </ow-btn>
+      </h3>
+      @if (!isCode('toggle')) {
+      <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
+        <div class="space-y-4 max-w-sm">
+          <ow-toggle
+            label="Notificações"
+            description="Receba alertas de partidas e torneios"
+            [(ngModel)]="toggleNotif">
+          </ow-toggle>
+          <ow-toggle
+            label="Transmissão ao Vivo"
+            description="Habilitar streaming do seu gameplay"
+            [(ngModel)]="toggleStream">
+          </ow-toggle>
+          <ow-toggle
+            label="Sons do Sistema"
+            description="Ativar efeitos sonoros na interface"
+            [(ngModel)]="toggleSounds">
+          </ow-toggle>
+          <!-- Disabled -->
+          <div class="opacity-50 cursor-not-allowed pointer-events-none">
+            <ow-toggle
+              label="Modo Observador"
+              description="Disponível apenas para streamers verificados">
+            </ow-toggle>
+          </div>
+        </div>
+      </div>
+      } @else {
+        <ds-code-toggle />
+      }
+    </section>
+
+    <!-- ============================================================
+         SECTION 19: MATCH CARD
+         ============================================================ -->

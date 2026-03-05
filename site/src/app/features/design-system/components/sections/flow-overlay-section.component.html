@@ -1,0 +1,155 @@
+    <!-- ============================================================
+         SECTION 12: STEPPER
+         ============================================================ -->
+
+    <section id="stepper" class="mb-20 scroll-mt-6">
+      <h2 class="text-[2rem] font-black uppercase tracking-[0.08em] text-[#111111] pb-[14px] mb-8 border-b-[3px] border-[#f06314] flex items-center gap-[14px]">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="6" cy="14" r="3" fill="#f06314" opacity="0.4"/><circle cx="14" cy="14" r="3" fill="#f06314"/><circle cx="22" cy="14" r="3" fill="#f06314" opacity="0.4"/><line x1="9" y1="14" x2="11" y2="14" stroke="#f06314" stroke-width="2"/><line x1="17" y1="14" x2="19" y2="14" stroke="#f06314" stroke-width="2" opacity="0.4"/></svg>
+        Stepper
+      </h2>
+      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center justify-between gap-2">
+        <span class="flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">Exemplo</span>
+        <ow-btn variant="ghost-mini" (click)="toggleCode('stepper')">
+          @if (isCode('stepper')) { Preview } @else { Código }
+        </ow-btn>
+      </h3>
+      @if (!isCode('stepper')) {
+      <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
+        <ow-stepper [activeStep]="activeStep()">
+          <ow-step label="Inscrição">
+            <p class="text-[0.875rem] text-[#3c4043] leading-[1.6]">Preencha os dados do seu time e inscreva-se no torneio. Certifique-se de ter todos os membros confirmados antes de prosseguir.</p>
+          </ow-step>
+          <ow-step label="Aprovação">
+            <p class="text-[0.875rem] text-[#3c4043] leading-[1.6]">Aguarde a aprovação da sua inscrição pelos organizadores. Você receberá uma notificação por e-mail quando aprovado.</p>
+          </ow-step>
+          <ow-step label="Check-in">
+            <p class="text-[0.875rem] text-[#3c4043] leading-[1.6]">Faça o check-in do seu time antes do horário limite. Todos os membros devem confirmar a presença na plataforma.</p>
+          </ow-step>
+          <ow-step label="Competir">
+            <p class="text-[0.875rem] text-[#3c4043] leading-[1.6]">Boa sorte! Acompanhe o bracket, conecte-se ao servidor e dê o seu melhor. Que vença o melhor time!</p>
+          </ow-step>
+        </ow-stepper>
+        <div class="flex gap-3 mt-8">
+          <ow-btn size="sm" variant="ghost" (click)="activeStep.set(activeStep() - 1)">Anterior</ow-btn>
+          <ow-btn size="sm" (click)="activeStep.set(activeStep() + 1)">Próximo</ow-btn>
+        </div>
+      </div>
+      } @else {
+        <ds-code-stepper />
+      }
+    </section>
+
+    <!-- ============================================================
+         SECTION 13: MODAL
+         ============================================================ -->
+    <section id="modal" class="mb-20 scroll-mt-6">
+      <h2 class="text-[2rem] font-black uppercase tracking-[0.08em] text-[#111111] pb-[14px] mb-8 border-b-[3px] border-[#f06314] flex items-center gap-[14px]">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="4" y="6" width="20" height="16" rx="2" fill="#f06314" opacity="0.1"/><rect x="4" y="6" width="20" height="16" rx="2" stroke="#f06314" stroke-width="2"/><rect x="4" y="6" width="20" height="5" rx="2" fill="#f06314" opacity="0.3"/></svg>
+        Modal
+      </h2>
+      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center justify-between gap-2">
+        <span class="flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">Exemplo</span>
+        <ow-btn variant="ghost-mini" (click)="toggleCode('modal')">
+          @if (isCode('modal')) { Preview } @else { Código }
+        </ow-btn>
+      </h3>
+      @if (!isCode('modal')) {
+      <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
+        <ow-btn (click)="modalOpen.set(true)">Abrir Modal</ow-btn>
+      </div>
+
+      <!-- Modal Overlay -->
+      @if (modalOpen()) {
+        <div
+          class="fixed inset-0 bg-black/50 flex items-center justify-center z-[500]"
+          (click)="modalOpen.set(false)">
+          <div
+            class="bg-white [clip-path:polygon(5%_0,100%_0,100%_95%,95%_100%,0_100%,0_5%)] max-w-lg w-[90%] overflow-hidden [box-shadow:0_24px_64px_rgba(0,0,0,0.25)]"
+            (click)="$event.stopPropagation()">
+            <!-- Modal Header -->
+            <div class="bg-[#f8f9fa] border-b-[3px] border-[#f06314] px-6 py-5 flex items-center justify-between">
+              <span class="text-[1.1rem] font-black uppercase tracking-[0.08em] text-[#111111]">Confirmar Inscrição</span>
+              <button
+                type="button"
+                class="w-8 h-8 flex items-center justify-center text-[#5f6368] hover:text-[#f06314] hover:bg-[rgba(240,99,20,0.08)] transition-colors rounded-sm"
+                (click)="modalOpen.set(false)">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M2 2L14 14M14 2L2 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+              </button>
+            </div>
+            <!-- Modal Body -->
+            <div class="px-6 py-7">
+              <p class="text-[0.875rem] text-[#3c4043] leading-[1.6] mb-4">
+                Você está prestes a inscrever o time <strong class="text-[#111111]">Thunder Hawks</strong> no torneio <strong class="text-[#111111]">Overwatch Nova Era 2025</strong>.
+              </p>
+              <div class="bg-[#f8f9fa] p-4 space-y-2">
+                <div class="flex justify-between text-[0.8rem]">
+                  <span class="text-[#5f6368] font-semibold">Torneio</span>
+                  <span class="text-[#111111] font-extrabold">Nova Era 2025</span>
+                </div>
+                <div class="flex justify-between text-[0.8rem]">
+                  <span class="text-[#5f6368] font-semibold">Fase Inicial</span>
+                  <span class="text-[#111111] font-extrabold">Grupos</span>
+                </div>
+                <div class="flex justify-between text-[0.8rem]">
+                  <span class="text-[#5f6368] font-semibold">Check-in</span>
+                  <span class="text-[#111111] font-extrabold">28/02/2025 18:00</span>
+                </div>
+              </div>
+              <p class="text-[0.78rem] text-[#9aa0a6] mt-4">
+                Ao confirmar, você concorda com os <span class="text-[#f06314] font-semibold underline cursor-pointer">regulamentos do torneio</span>.
+              </p>
+            </div>
+            <!-- Modal Footer -->
+            <div class="px-6 py-4 bg-[#f8f9fa] border-t border-[#e8eaed] flex gap-[10px] justify-end">
+              <ow-btn variant="ghost" (click)="modalOpen.set(false)">Cancelar</ow-btn>
+              <ow-btn variant="primary" (click)="modalOpen.set(false)">Confirmar Inscrição</ow-btn>
+            </div>
+          </div>
+        </div>
+      }
+      } @else {
+        <ds-code-modal />
+      }
+    </section>
+
+    <!-- ============================================================
+         SECTION 14: TOOLTIP
+         ============================================================ -->
+    <section id="tooltip" class="mb-20 scroll-mt-6">
+      <h2 class="text-[2rem] font-black uppercase tracking-[0.08em] text-[#111111] pb-[14px] mb-8 border-b-[3px] border-[#f06314] flex items-center gap-[14px]">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="4" y="8" width="14" height="10" rx="2" fill="#f06314" opacity="0.2"/><rect x="4" y="8" width="14" height="10" rx="2" stroke="#f06314" stroke-width="2"/><path d="M11 18L14 22" stroke="#f06314" stroke-width="2" stroke-linecap="round"/></svg>
+        Tooltip
+      </h2>
+      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center justify-between gap-2">
+        <span class="flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">Exemplo</span>
+        <ow-btn variant="ghost-mini" (click)="toggleCode('tooltip')">
+          @if (isCode('tooltip')) { Preview } @else { Código }
+        </ow-btn>
+      </h3>
+      @if (!isCode('tooltip')) {
+      <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
+        <p class="text-[0.78rem] text-[#5f6368] uppercase tracking-[0.1em] mb-6">Passe o mouse para ver o tooltip</p>
+        <div class="flex flex-wrap gap-6 items-center">
+          <ow-tooltip text="Clique para inscrever seu time no torneio">
+            <ow-btn variant="primary">Inscrever Time</ow-btn>
+          </ow-tooltip>
+          <ow-tooltip text="Partida ao vivo agora! Assista gratuitamente">
+            <ow-badge variant="live">Ao Vivo</ow-badge>
+          </ow-tooltip>
+          <ow-tooltip text="Tank: Especialista em absorver dano e proteger aliados">
+            <ow-btn variant="secondary" size="sm">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none" class="mr-1 inline-block">
+                <circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M7 6V10M7 4.5V5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+              O que é Tank?
+            </ow-btn>
+          </ow-tooltip>
+        </div>
+      </div>
+      } @else {
+        <ds-code-tooltip />
+      }
+    </section>

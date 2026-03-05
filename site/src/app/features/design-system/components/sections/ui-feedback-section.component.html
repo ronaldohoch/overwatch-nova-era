@@ -1,0 +1,379 @@
+    <section id="buttons" class="mb-20 scroll-mt-6">
+      <h2 class="text-[2rem] font-black uppercase tracking-[0.08em] text-[#111111] pb-[14px] mb-8 border-b-[3px] border-[#f06314] flex items-center gap-[14px]">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="2" y="8" width="24" height="12" rx="3" fill="#f06314" opacity="0.15"/><rect x="2" y="8" width="24" height="12" rx="3" stroke="#f06314" stroke-width="2"/><rect x="9" y="13" width="10" height="2" rx="1" fill="#f06314"/></svg>
+        Botões
+      </h2>
+
+      <!-- Variantes -->
+      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center justify-between gap-2">
+        <span class="flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">Variantes</span>
+        <ow-btn variant="ghost-mini" (click)="toggleCode('botoes-variantes')">
+          @if (isCode('botoes-variantes')) { Preview } @else { Código }
+        </ow-btn>
+      </h3>
+      @if (!isCode('botoes-variantes')) {
+        <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
+          <div class="flex flex-wrap gap-3 items-center">
+            <ow-btn variant="primary">Primary</ow-btn>
+            <ow-btn variant="secondary">Secondary</ow-btn>
+            <ow-btn variant="blue">Blue</ow-btn>
+            <ow-btn variant="ghost">Ghost</ow-btn>
+            <ow-btn variant="danger">Danger</ow-btn>
+          </div>
+        </div>
+      } @else {
+        <ds-code-botoes-variantes />
+      }
+
+      <!-- Tamanhos -->
+      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center justify-between gap-2">
+        <span class="flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">Tamanhos</span>
+        <ow-btn variant="ghost-mini" (click)="toggleCode('botoes-tamanhos')">
+          @if (isCode('botoes-tamanhos')) { Preview } @else { Código }
+        </ow-btn>
+      </h3>
+      @if (!isCode('botoes-tamanhos')) {
+        <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
+          <div class="flex flex-wrap gap-3 items-center">
+            <ow-btn size="sm">Pequeno</ow-btn>
+            <ow-btn size="md">Médio</ow-btn>
+            <ow-btn size="lg">Grande</ow-btn>
+          </div>
+        </div>
+      } @else {
+        <ds-code-botoes-tamanhos />
+      }
+
+      <!-- Estados -->
+      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center justify-between gap-2">
+        <span class="flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">Estados</span>
+        <ow-btn variant="ghost-mini" (click)="toggleCode('botoes-estados')">
+          @if (isCode('botoes-estados')) { Preview } @else { Código }
+        </ow-btn>
+      </h3>
+      @if (!isCode('botoes-estados')) {
+        <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
+          <div class="flex flex-wrap gap-3 items-center">
+            <ow-btn variant="primary">Normal</ow-btn>
+            <ow-btn variant="primary" [disabled]="true">Desativado</ow-btn>
+            <!-- Com ícone SVG -->
+            <ow-btn variant="primary">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" class="mr-2 inline-block">
+                <path d="M8 1L10 6H15L11 9.5L12.5 14.5L8 11.5L3.5 14.5L5 9.5L1 6H6L8 1Z" fill="currentColor"/>
+              </svg>
+              Com Ícone
+            </ow-btn>
+            <!-- Icon only -->
+            <ow-btn variant="secondary" size="icon">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="2"/>
+                <path d="M9 6V9L11 11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </ow-btn>
+            <ow-btn variant="ghost" size="icon">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                <path d="M9 2L11 7H16.5L12 10.5L13.5 16L9 12.5L4.5 16L6 10.5L1.5 7H7L9 2Z" fill="currentColor"/>
+              </svg>
+            </ow-btn>
+          </div>
+        </div>
+      } @else {
+        <ds-code-botoes-estados />
+      }
+    </section>
+
+    <!-- ============================================================
+         SECTION 4: BADGES & TAGS
+         ============================================================ -->
+    <section id="badges" class="mb-20 scroll-mt-6">
+      <h2 class="text-[2rem] font-black uppercase tracking-[0.08em] text-[#111111] pb-[14px] mb-8 border-b-[3px] border-[#f06314] flex items-center gap-[14px]">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="4" y="9" width="20" height="10" rx="5" fill="#f06314" opacity="0.15"/><rect x="4" y="9" width="20" height="10" rx="5" stroke="#f06314" stroke-width="2"/></svg>
+        Badges &amp; Tags
+      </h2>
+
+      <!-- Badges -->
+      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center justify-between gap-2">
+        <span class="flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">Badges</span>
+        <ow-btn variant="ghost-mini" (click)="toggleCode('badges-badges')">
+          @if (isCode('badges-badges')) { Preview } @else { Código }
+        </ow-btn>
+      </h3>
+      @if (!isCode('badges-badges')) {
+        <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
+          <div class="flex flex-wrap gap-3 items-center">
+            <ow-badge variant="orange">Orange</ow-badge>
+            <ow-badge variant="blue">Blue</ow-badge>
+            <ow-badge variant="green">Green</ow-badge>
+            <ow-badge variant="red">Red</ow-badge>
+            <ow-badge variant="yellow">Yellow</ow-badge>
+            <ow-badge variant="gray">Gray</ow-badge>
+            <ow-badge variant="outline">Outline</ow-badge>
+            <ow-badge variant="live">🔴 Ao Vivo</ow-badge>
+          </div>
+        </div>
+      } @else {
+        <ds-code-badges-badges />
+      }
+
+      <!-- Tags removíveis -->
+      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center justify-between gap-2">
+        <span class="flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">Tags Removíveis</span>
+        <ow-btn variant="ghost-mini" (click)="toggleCode('badges-tags')">
+          @if (isCode('badges-tags')) { Preview } @else { Código }
+        </ow-btn>
+      </h3>
+      @if (!isCode('badges-tags')) {
+        <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
+          <div class="flex flex-wrap gap-3 items-center">
+            @for (tag of tags(); track tag) {
+              <ow-tag variant="orange" [removable]="true" (removed)="removeTag(tag)">{{ tag }}</ow-tag>
+            }
+            @if (tags().length === 0) {
+              <span class="text-[0.875rem] text-[#9aa0a6] italic">Todas as tags foram removidas</span>
+            }
+          </div>
+        </div>
+      } @else {
+        <ds-code-badges-tags />
+      }
+
+      <!-- Hero Badge -->
+      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center justify-between gap-2">
+        <span class="flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">Hero Badge</span>
+        <ow-btn variant="ghost-mini" (click)="toggleCode('badges-hero')">
+          @if (isCode('badges-hero')) { Preview } @else { Código }
+        </ow-btn>
+      </h3>
+      @if (!isCode('badges-hero')) {
+        <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
+          <div class="flex flex-wrap gap-3 items-center">
+            <span class="inline-block bg-[linear-gradient(135deg,#f06314_0%,#d14e0a_100%)] text-white py-[7px] px-[22px] font-extrabold text-[0.78rem] uppercase tracking-[0.2em] [clip-path:polygon(10%_0,100%_0,90%_100%,0%_100%)]">
+              Campeão
+            </span>
+            <span class="inline-block bg-[linear-gradient(135deg,#00c3ff_0%,#0099cc_100%)] text-white py-[7px] px-[22px] font-extrabold text-[0.78rem] uppercase tracking-[0.2em] [clip-path:polygon(10%_0,100%_0,90%_100%,0%_100%)]">
+              MVP
+            </span>
+            <span class="inline-block bg-[linear-gradient(135deg,#fbbc04_0%,#e8a800_100%)] text-[#111111] py-[7px] px-[22px] font-extrabold text-[0.78rem] uppercase tracking-[0.2em] [clip-path:polygon(10%_0,100%_0,90%_100%,0%_100%)]">
+              Top 8
+            </span>
+          </div>
+        </div>
+      } @else {
+        <ds-code-badges-hero />
+      }
+    </section>
+
+    <!-- ============================================================
+         SECTION 5: DIVISOR
+         ============================================================ -->
+    <section id="divider" class="mb-20 scroll-mt-6">
+      <h2 class="text-[2rem] font-black uppercase tracking-[0.08em] text-[#111111] pb-[14px] mb-8 border-b-[3px] border-[#f06314] flex items-center gap-[14px]">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><line x1="2" y1="14" x2="26" y2="14" stroke="#f06314" stroke-width="2.5"/><circle cx="14" cy="14" r="4" fill="#f06314"/></svg>
+        Divisor
+      </h2>
+
+      <!-- Com gradiente (padrão) -->
+      <h3 class="text-[0.7rem] font-extrabold uppercase tracking-[0.18em] text-[#9aa0a6] mb-3 flex items-center justify-between gap-2">
+        <span>Padrão — gradiente laranja</span>
+        <ow-btn variant="ghost-mini" (click)="toggleCode('divisor-padrao')">
+          @if (isCode('divisor-padrao')) { Preview } @else { Código }
+        </ow-btn>
+      </h3>
+      @if (!isCode('divisor-padrao')) {
+        <div class="bg-white border border-[#e8eaed] px-10 pt-8 pb-2 relative mb-0.5">
+          <ow-divider />
+        </div>
+      } @else {
+        <ds-code-divisor-padrao />
+      }
+
+      <!-- Com label -->
+      <h3 class="text-[0.7rem] font-extrabold uppercase tracking-[0.18em] text-[#9aa0a6] mb-3 mt-6 flex items-center justify-between gap-2">
+        <span>Com label centralizada</span>
+        <ow-btn variant="ghost-mini" (click)="toggleCode('divisor-label')">
+          @if (isCode('divisor-label')) { Preview } @else { Código }
+        </ow-btn>
+      </h3>
+      @if (!isCode('divisor-label')) {
+        <div class="bg-white border border-[#e8eaed] px-10 pt-4 pb-2 relative mb-0.5">
+          <ow-divider label="ou" />
+          <ow-divider label="fase de grupos" />
+          <ow-divider label="fim do torneio" />
+        </div>
+      } @else {
+        <ds-code-divisor-label />
+      }
+    </section>
+
+    <!-- ============================================================
+         SECTION 6: CARDS
+         ============================================================ -->
+    <section id="cards" class="mb-20 scroll-mt-6">
+      <h2 class="text-[2rem] font-black uppercase tracking-[0.08em] text-[#111111] pb-[14px] mb-8 border-b-[3px] border-[#f06314] flex items-center gap-[14px]">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="2" y="4" width="24" height="20" rx="2" fill="#f06314" opacity="0.1"/><rect x="2" y="4" width="24" height="20" rx="2" stroke="#f06314" stroke-width="2"/><rect x="2" y="9" width="24" height="2" fill="#f06314"/></svg>
+        Cards
+      </h2>
+
+      <!-- Card Base -->
+      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center justify-between gap-2">
+        <span class="flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">Card Base</span>
+        <ow-btn variant="ghost-mini" (click)="toggleCode('cards-base')">
+          @if (isCode('cards-base')) { Preview } @else { Código }
+        </ow-btn>
+      </h3>
+      @if (!isCode('cards-base')) {
+        <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
+          <ow-card [padded]="false" cardClass="max-w-sm">
+            <!-- Header -->
+            <div class="bg-[#f8f9fa] px-6 py-[18px] border-b-2 border-[#f06314]">
+              <div class="text-[0.75rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-1">Torneio</div>
+              <div class="text-[1.05rem] font-black uppercase tracking-[0.05em] text-[#111111]">Thunder Hawks vs Dragon Squad</div>
+            </div>
+            <!-- Body -->
+            <div class="p-6">
+              <p class="text-[0.875rem] text-[#3c4043] leading-[1.6] mb-4">Partida de Quartas de Final da Temporada 2025. Transmissão ao vivo às 20h00.</p>
+              <div class="flex items-center gap-2">
+                <ow-badge variant="live">Ao Vivo</ow-badge>
+                <ow-badge variant="orange">Quartas</ow-badge>
+              </div>
+            </div>
+            <!-- Footer -->
+            <div class="px-6 py-[14px] bg-[#f8f9fa] border-t border-[#e8eaed] flex justify-end gap-2">
+              <ow-btn size="sm" variant="ghost">Detalhes</ow-btn>
+              <ow-btn size="sm" variant="primary">Assistir</ow-btn>
+            </div>
+          </ow-card>
+        </div>
+      } @else {
+        <ds-code-cards-base />
+      }
+
+      <!-- Cards variados -->
+      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center justify-between gap-2">
+        <span class="flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">Cards de Premiação</span>
+        <ow-btn variant="ghost-mini" (click)="toggleCode('cards-premiacao')">
+          @if (isCode('cards-premiacao')) { Preview } @else { Código }
+        </ow-btn>
+      </h3>
+      @if (!isCode('cards-premiacao')) {
+        <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- 1st Place -->
+            <ow-card cardClass="text-center" contentClass="flex flex-col items-center">
+              <div class="text-[3rem] mb-2">🥇</div>
+              <div class="text-[0.65rem] font-extrabold uppercase tracking-[0.2em] text-[#f06314] mb-1">1º Lugar</div>
+              <div class="text-[1.5rem] font-black text-[#111111] mb-2">R$ 5.000</div>
+              <p class="text-[0.8rem] text-[#5f6368]">+ Trophy + Medal</p>
+            </ow-card>
+            <!-- 2nd Place -->
+            <ow-card cardClass="text-center" contentClass="flex flex-col items-center">
+              <div class="text-[3rem] mb-2">🥈</div>
+              <div class="text-[0.65rem] font-extrabold uppercase tracking-[0.2em] text-[#5f6368] mb-1">2º Lugar</div>
+              <div class="text-[1.5rem] font-black text-[#111111] mb-2">R$ 2.500</div>
+              <p class="text-[0.8rem] text-[#5f6368]">+ Medal</p>
+            </ow-card>
+            <!-- 3rd Place -->
+            <ow-card cardClass="text-center" contentClass="flex flex-col items-center">
+              <div class="text-[3rem] mb-2">🥉</div>
+              <div class="text-[0.65rem] font-extrabold uppercase tracking-[0.2em] text-[#5f6368] mb-1">3º Lugar</div>
+              <div class="text-[1.5rem] font-black text-[#111111] mb-2">R$ 1.000</div>
+              <p class="text-[0.8rem] text-[#5f6368]">+ Certificado</p>
+            </ow-card>
+          </div>
+        </div>
+      } @else {
+        <ds-code-cards-premiacao />
+      }
+    </section>
+
+    <!-- ============================================================
+         SECTION 6: ALERTAS & TOASTS
+         ============================================================ -->
+    <section id="alerts" class="mb-20 scroll-mt-6">
+      <h2 class="text-[2rem] font-black uppercase tracking-[0.08em] text-[#111111] pb-[14px] mb-8 border-b-[3px] border-[#f06314] flex items-center gap-[14px]">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M14 4L25 23H3L14 4Z" fill="#f06314" opacity="0.15"/><path d="M14 4L25 23H3L14 4Z" stroke="#f06314" stroke-width="2" stroke-linejoin="round"/><rect x="13" y="12" width="2" height="5" rx="1" fill="#f06314"/><rect x="13" y="19" width="2" height="2" rx="1" fill="#f06314"/></svg>
+        Alertas &amp; Toasts
+      </h2>
+
+      <!-- Alertas -->
+      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center justify-between gap-2">
+        <span class="flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">Alertas</span>
+        <ow-btn variant="ghost-mini" (click)="toggleCode('alertas')">
+          @if (isCode('alertas')) { Preview } @else { Código }
+        </ow-btn>
+      </h3>
+      @if (!isCode('alertas')) {
+        <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5 space-y-4">
+          <app-alerts
+            variant="info"
+            title="Informação"
+            message="O check-in para a próxima fase abre em 30 minutos. Certifique-se de que todos os membros do seu time estejam online."
+            [dismissible]="true">
+          </app-alerts>
+          <app-alerts
+            variant="success"
+            title="Inscrição Confirmada!"
+            message="Seu time foi inscrito com sucesso no Torneio Nova Era 2025. Aguarde a confirmação por e-mail."
+            [dismissible]="true">
+          </app-alerts>
+          <app-alerts
+            variant="warning"
+            title="Atenção"
+            message="Faltam apenas 2 horas para o início do check-in. Times que não fizerem check-in serão desclassificados."
+            [dismissible]="true">
+          </app-alerts>
+          <app-alerts
+            variant="error"
+            title="Erro na Inscrição"
+            message="Não foi possível completar a inscrição. O número máximo de times para este torneio já foi atingido."
+            [dismissible]="true">
+          </app-alerts>
+        </div>
+      } @else {
+        <ds-code-alertas-alertas />
+      }
+
+      <!-- Toasts -->
+      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center justify-between gap-2">
+        <span class="flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">Toasts</span>
+        <ow-btn variant="ghost-mini" (click)="toggleCode('toasts')">
+          @if (isCode('toasts')) { Preview } @else { Código }
+        </ow-btn>
+      </h3>
+      @if (!isCode('toasts')) {
+        <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
+          <div class="flex flex-col gap-3 max-w-sm">
+            <ow-toast
+              variant="success"
+              title="Salvo com sucesso!"
+              message="As alterações do seu perfil foram salvas."
+              [dismissible]="true">
+            </ow-toast>
+            <ow-toast
+              variant="error"
+              title="Falha na conexão"
+              message="Não foi possível conectar ao servidor. Tente novamente."
+              [dismissible]="true">
+            </ow-toast>
+            <ow-toast
+              variant="warning"
+              title="Sessão expirando"
+              message="Sua sessão expira em 5 minutos. Faça login novamente."
+              [dismissible]="true">
+            </ow-toast>
+            <ow-toast
+              variant="info"
+              title="Nova partida disponível"
+              message="Thunder Hawks vs Dragon Squad começa em 10 minutos."
+              [dismissible]="true">
+            </ow-toast>
+          </div>
+        </div>
+      } @else {
+        <ds-code-alertas-toasts />
+      }
+    </section>
+
+    <!-- ============================================================
+         SECTION 7: TABS
+         ============================================================ -->

@@ -1,0 +1,186 @@
+    <!-- ============================================================
+         SECTION 1: CORES
+         ============================================================ -->
+    <section id="colors" class="mb-20 scroll-mt-6">
+      <h2 class="text-[2rem] font-black uppercase tracking-[0.08em] text-[#111111] pb-[14px] mb-8 border-b-[3px] border-[#f06314] flex items-center gap-[14px]">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="14" r="12" fill="#f06314" opacity="0.15"/><circle cx="14" cy="14" r="7" fill="#f06314"/></svg>
+        Cores
+      </h2>
+
+      <!-- Paleta Principal -->
+      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center justify-between gap-2">
+        <span class="flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">Paleta Principal</span>
+        <ow-btn variant="ghost-mini" (click)="toggleCode('cores-paleta')">
+          @if (isCode('cores-paleta')) { Preview } @else { Código }
+        </ow-btn>
+      </h3>
+      @if (!isCode('cores-paleta')) {
+        <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
+          <div class="grid grid-cols-4 gap-4 lg:grid-cols-8">
+            <!-- OW Orange -->
+            <div>
+              <div class="w-full h-20 [clip-path:polygon(5%_0,100%_0,100%_90%,95%_100%,0_100%,0_10%)] mb-2" style="background-color:#f06314"></div>
+              <div class="text-[0.72rem] font-extrabold text-[#111111] uppercase tracking-[0.06em]">OW Orange</div>
+              <div class="text-[0.68rem] text-[#5f6368] font-mono">#f06314</div>
+            </div>
+            <!-- OW Orange Dark -->
+            <div>
+              <div class="w-full h-20 [clip-path:polygon(5%_0,100%_0,100%_90%,95%_100%,0_100%,0_10%)] mb-2" style="background-color:#d14e0a"></div>
+              <div class="text-[0.72rem] font-extrabold text-[#111111] uppercase tracking-[0.06em]">OW Orange Dark</div>
+              <div class="text-[0.68rem] text-[#5f6368] font-mono">#d14e0a</div>
+            </div>
+            <!-- OW Orange Light -->
+            <div>
+              <div class="w-full h-20 [clip-path:polygon(5%_0,100%_0,100%_90%,95%_100%,0_100%,0_10%)] mb-2" style="background-color:#ff8547"></div>
+              <div class="text-[0.72rem] font-extrabold text-[#111111] uppercase tracking-[0.06em]">OW Orange Light</div>
+              <div class="text-[0.68rem] text-[#5f6368] font-mono">#ff8547</div>
+            </div>
+            <!-- OW Blue -->
+            <div>
+              <div class="w-full h-20 [clip-path:polygon(5%_0,100%_0,100%_90%,95%_100%,0_100%,0_10%)] mb-2" style="background-color:#00c3ff"></div>
+              <div class="text-[0.72rem] font-extrabold text-[#111111] uppercase tracking-[0.06em]">OW Blue</div>
+              <div class="text-[0.68rem] text-[#5f6368] font-mono">#00c3ff</div>
+            </div>
+            <!-- OW Blue Dark -->
+            <div>
+              <div class="w-full h-20 [clip-path:polygon(5%_0,100%_0,100%_90%,95%_100%,0_100%,0_10%)] mb-2" style="background-color:#0099cc"></div>
+              <div class="text-[0.72rem] font-extrabold text-[#111111] uppercase tracking-[0.06em]">OW Blue Dark</div>
+              <div class="text-[0.68rem] text-[#5f6368] font-mono">#0099cc</div>
+            </div>
+            <!-- OW Red -->
+            <div>
+              <div class="w-full h-20 [clip-path:polygon(5%_0,100%_0,100%_90%,95%_100%,0_100%,0_10%)] mb-2" style="background-color:#ea4335"></div>
+              <div class="text-[0.72rem] font-extrabold text-[#111111] uppercase tracking-[0.06em]">OW Red</div>
+              <div class="text-[0.68rem] text-[#5f6368] font-mono">#ea4335</div>
+            </div>
+            <!-- OW Green -->
+            <div>
+              <div class="w-full h-20 [clip-path:polygon(5%_0,100%_0,100%_90%,95%_100%,0_100%,0_10%)] mb-2" style="background-color:#34a853"></div>
+              <div class="text-[0.72rem] font-extrabold text-[#111111] uppercase tracking-[0.06em]">OW Green</div>
+              <div class="text-[0.68rem] text-[#5f6368] font-mono">#34a853</div>
+            </div>
+            <!-- OW Yellow -->
+            <div>
+              <div class="w-full h-20 [clip-path:polygon(5%_0,100%_0,100%_90%,95%_100%,0_100%,0_10%)] mb-2" style="background-color:#fbbc04"></div>
+              <div class="text-[0.72rem] font-extrabold text-[#111111] uppercase tracking-[0.06em]">OW Yellow</div>
+              <div class="text-[0.68rem] text-[#5f6368] font-mono">#fbbc04</div>
+            </div>
+          </div>
+        </div>
+      } @else {
+        <ds-code-cores-paleta />
+      }
+
+      <!-- Escala de Cinzas -->
+      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center justify-between gap-2">
+        <span class="flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">Escala de Cinzas</span>
+        <ow-btn variant="ghost-mini" (click)="toggleCode('cores-cinzas')">
+          @if (isCode('cores-cinzas')) { Preview } @else { Código }
+        </ow-btn>
+      </h3>
+      @if (!isCode('cores-cinzas')) {
+        <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
+          <div class="grid grid-cols-5 gap-4 lg:grid-cols-9">
+            <div>
+              <div class="w-full h-20 [clip-path:polygon(5%_0,100%_0,100%_90%,95%_100%,0_100%,0_10%)] mb-2 border border-[#e8eaed]" style="background-color:#f8f9fa"></div>
+              <div class="text-[0.72rem] font-extrabold text-[#111111] uppercase tracking-[0.06em]">Gray 50</div>
+              <div class="text-[0.68rem] text-[#5f6368] font-mono">#f8f9fa</div>
+            </div>
+            <div>
+              <div class="w-full h-20 [clip-path:polygon(5%_0,100%_0,100%_90%,95%_100%,0_100%,0_10%)] mb-2" style="background-color:#f1f3f4"></div>
+              <div class="text-[0.72rem] font-extrabold text-[#111111] uppercase tracking-[0.06em]">Gray 100</div>
+              <div class="text-[0.68rem] text-[#5f6368] font-mono">#f1f3f4</div>
+            </div>
+            <div>
+              <div class="w-full h-20 [clip-path:polygon(5%_0,100%_0,100%_90%,95%_100%,0_100%,0_10%)] mb-2" style="background-color:#e8eaed"></div>
+              <div class="text-[0.72rem] font-extrabold text-[#111111] uppercase tracking-[0.06em]">Gray 200</div>
+              <div class="text-[0.68rem] text-[#5f6368] font-mono">#e8eaed</div>
+            </div>
+            <div>
+              <div class="w-full h-20 [clip-path:polygon(5%_0,100%_0,100%_90%,95%_100%,0_100%,0_10%)] mb-2" style="background-color:#dadce0"></div>
+              <div class="text-[0.72rem] font-extrabold text-[#111111] uppercase tracking-[0.06em]">Gray 300</div>
+              <div class="text-[0.68rem] text-[#5f6368] font-mono">#dadce0</div>
+            </div>
+            <div>
+              <div class="w-full h-20 [clip-path:polygon(5%_0,100%_0,100%_90%,95%_100%,0_100%,0_10%)] mb-2" style="background-color:#9aa0a6"></div>
+              <div class="text-[0.72rem] font-extrabold text-[#111111] uppercase tracking-[0.06em]">Gray 400</div>
+              <div class="text-[0.68rem] text-[#5f6368] font-mono">#9aa0a6</div>
+            </div>
+            <div>
+              <div class="w-full h-20 [clip-path:polygon(5%_0,100%_0,100%_90%,95%_100%,0_100%,0_10%)] mb-2" style="background-color:#5f6368"></div>
+              <div class="text-[0.72rem] font-extrabold text-[#111111] uppercase tracking-[0.06em]">Gray 500</div>
+              <div class="text-[0.68rem] text-[#5f6368] font-mono">#5f6368</div>
+            </div>
+            <div>
+              <div class="w-full h-20 [clip-path:polygon(5%_0,100%_0,100%_90%,95%_100%,0_100%,0_10%)] mb-2" style="background-color:#3c4043"></div>
+              <div class="text-[0.72rem] font-extrabold text-[#111111] uppercase tracking-[0.06em]">Gray 600</div>
+              <div class="text-[0.68rem] text-[#5f6368] font-mono">#3c4043</div>
+            </div>
+            <div>
+              <div class="w-full h-20 [clip-path:polygon(5%_0,100%_0,100%_90%,95%_100%,0_100%,0_10%)] mb-2" style="background-color:#202124"></div>
+              <div class="text-[0.72rem] font-extrabold text-[#111111] uppercase tracking-[0.06em]">Gray 700</div>
+              <div class="text-[0.68rem] text-[#5f6368] font-mono">#202124</div>
+            </div>
+            <div>
+              <div class="w-full h-20 [clip-path:polygon(5%_0,100%_0,100%_90%,95%_100%,0_100%,0_10%)] mb-2" style="background-color:#111111"></div>
+              <div class="text-[0.72rem] font-extrabold text-[#111111] uppercase tracking-[0.06em]">Gray 900</div>
+              <div class="text-[0.68rem] text-[#5f6368] font-mono">#111111</div>
+            </div>
+          </div>
+        </div>
+      } @else {
+        <ds-code-cores-cinzas />
+      }
+    </section>
+
+    <!-- ============================================================
+         SECTION 2: TIPOGRAFIA
+         ============================================================ -->
+    <section id="typography" class="mb-20 scroll-mt-6">
+      <h2 class="text-[2rem] font-black uppercase tracking-[0.08em] text-[#111111] pb-[14px] mb-8 border-b-[3px] border-[#f06314] flex items-center gap-[14px]">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="2" y="6" width="24" height="3" rx="1" fill="#f06314"/><rect x="2" y="13" width="16" height="3" rx="1" fill="#f06314" opacity="0.5"/><rect x="2" y="20" width="20" height="2" rx="1" fill="#f06314" opacity="0.3"/></svg>
+        Tipografia
+      </h2>
+      <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5 space-y-8">
+
+        <div class="flex items-baseline gap-8 pb-6 border-b border-[#f1f3f4]">
+          <div class="w-28 shrink-0 text-[0.68rem] font-extrabold uppercase tracking-[0.12em] text-[#9aa0a6]">Display</div>
+          <span class="text-[3.5rem] font-black uppercase tracking-[0.08em] text-[#111111] leading-none">Nova Era</span>
+        </div>
+
+        <div class="flex items-baseline gap-8 pb-6 border-b border-[#f1f3f4]">
+          <div class="w-28 shrink-0 text-[0.68rem] font-extrabold uppercase tracking-[0.12em] text-[#9aa0a6]">H1</div>
+          <span class="text-[2.5rem] font-black uppercase tracking-[0.06em] text-[#111111] leading-none">Overwatch</span>
+        </div>
+
+        <div class="flex items-baseline gap-8 pb-6 border-b border-[#f1f3f4]">
+          <div class="w-28 shrink-0 text-[0.68rem] font-extrabold uppercase tracking-[0.12em] text-[#9aa0a6]">H2</div>
+          <span class="text-[1.8rem] font-black uppercase tracking-[0.05em] text-[#111111] leading-none">Temporada 2025</span>
+        </div>
+
+        <div class="flex items-baseline gap-8 pb-6 border-b border-[#f1f3f4]">
+          <div class="w-28 shrink-0 text-[0.68rem] font-extrabold uppercase tracking-[0.12em] text-[#9aa0a6]">H3</div>
+          <span class="text-[1.3rem] font-extrabold uppercase tracking-[0.05em] text-[#111111] leading-none">Quartas de Final</span>
+        </div>
+
+        <div class="flex items-baseline gap-8 pb-6 border-b border-[#f1f3f4]">
+          <div class="w-28 shrink-0 text-[0.68rem] font-extrabold uppercase tracking-[0.12em] text-[#9aa0a6]">Body Large</div>
+          <span class="text-[1.05rem] text-[#3c4043] leading-[1.7] max-w-xl">A plataforma Overwatch Nova Era conecta jogadores competitivos de todo o Brasil em torneios emocionantes e transmissões ao vivo.</span>
+        </div>
+
+        <div class="flex items-baseline gap-8 pb-6 border-b border-[#f1f3f4]">
+          <div class="w-28 shrink-0 text-[0.68rem] font-extrabold uppercase tracking-[0.12em] text-[#9aa0a6]">Body</div>
+          <span class="text-[0.9rem] text-[#3c4043] leading-[1.6] max-w-xl">Inscreva seu time, faça o check-in antes da partida e acompanhe cada resultado em tempo real através do nosso painel de controle.</span>
+        </div>
+
+        <div class="flex items-baseline gap-8">
+          <div class="w-28 shrink-0 text-[0.68rem] font-extrabold uppercase tracking-[0.12em] text-[#9aa0a6]">Caption</div>
+          <span class="text-[0.78rem] text-[#5f6368] uppercase tracking-[0.1em]">Temporada 2025 &bull; Fase de Grupos &bull; Semana 3</span>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ============================================================
+         SECTION 3: BOTOES
+         ============================================================ -->

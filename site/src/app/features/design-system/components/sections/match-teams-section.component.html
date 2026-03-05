@@ -1,0 +1,126 @@
+    <section id="match" class="mb-20 scroll-mt-6">
+      <h2 class="text-[2rem] font-black uppercase tracking-[0.08em] text-[#111111] pb-[14px] mb-8 border-b-[3px] border-[#f06314] flex items-center gap-[14px]">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="2" y="6" width="24" height="16" rx="2" fill="#f06314" opacity="0.1"/><rect x="2" y="6" width="24" height="16" rx="2" stroke="#f06314" stroke-width="2"/><circle cx="14" cy="14" r="3" fill="#f06314"/><line x1="5" y1="14" x2="11" y2="14" stroke="#f06314" stroke-width="1.5"/><line x1="17" y1="14" x2="23" y2="14" stroke="#f06314" stroke-width="1.5"/></svg>
+        Match Card
+      </h2>
+      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center justify-between gap-2">
+        <span class="flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">Exemplo</span>
+        <ow-btn variant="ghost-mini" (click)="toggleCode('match-card')">
+          @if (isCode('match-card')) { Preview } @else { Código }
+        </ow-btn>
+      </h3>
+      @if (!isCode('match-card')) {
+      <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <ow-match-card
+            stage="Quartas de Final"
+            status="live"
+            [teams]="matchLive">
+          </ow-match-card>
+          <ow-match-card
+            stage="Semi Final"
+            status="upcoming"
+            scheduledAt="HOJE 20:00"
+            [teams]="matchUpcoming">
+          </ow-match-card>
+          <ow-match-card
+            stage="Oitavas de Final"
+            status="finished"
+            [teams]="matchFinished">
+          </ow-match-card>
+        </div>
+      </div>
+      } @else {
+        <ds-code-match-card />
+      }
+    </section>
+
+    <!-- ============================================================
+         SECTION 20: TIMES & JOGADORES
+         ============================================================ -->
+    <section id="teams" class="mb-20 scroll-mt-6">
+      <h2 class="text-[2rem] font-black uppercase tracking-[0.08em] text-[#111111] pb-[14px] mb-8 border-b-[3px] border-[#f06314] flex items-center gap-[14px]">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="10" cy="10" r="4" fill="#f06314" opacity="0.4"/><circle cx="18" cy="10" r="4" fill="#f06314" opacity="0.4"/><path d="M4 24c0-4 3-6 6-6s6 2 6 6" stroke="#f06314" stroke-width="2" fill="none"/><path d="M16 24c0-4 3-6 6-6s6 2 6 6" stroke="#f06314" stroke-width="2" fill="none" opacity="0.4"/></svg>
+        Times &amp; Jogadores
+      </h2>
+
+      <!-- Team Cards -->
+      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center justify-between gap-2">
+        <span class="flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">Team Cards</span>
+        <ow-btn variant="ghost-mini" (click)="toggleCode('teams-cards')">
+          @if (isCode('teams-cards')) { Preview } @else { Código }
+        </ow-btn>
+      </h3>
+      @if (!isCode('teams-cards')) {
+        <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Thunder Hawks -->
+            <ow-card cardClass="text-center" contentClass="flex flex-col items-center gap-2 p-6">
+              <div class="w-[72px] h-[72px] bg-[#f1f3f4] [clip-path:polygon(20%_0,100%_0,100%_80%,80%_100%,0_100%,0_20%)] flex items-center justify-center text-[1.8rem] font-black text-[#f06314] mx-auto mb-4">
+                TH
+              </div>
+              <div class="text-[1rem] font-black uppercase tracking-[0.06em] text-[#111111]">Thunder Hawks</div>
+              <div class="text-[0.75rem] text-[#5f6368] uppercase tracking-[0.08em]">São Paulo, SP</div>
+              <div class="flex gap-2 mt-2">
+                <ow-role-badge role="tank">Tank</ow-role-badge>
+                <ow-role-badge role="damage">DPS</ow-role-badge>
+                <ow-role-badge role="support">Support</ow-role-badge>
+              </div>
+            </ow-card>
+            <!-- Dragon Squad -->
+            <ow-card cardClass="text-center" contentClass="flex flex-col items-center gap-2 p-6">
+              <div class="w-[72px] h-[72px] bg-[#f1f3f4] [clip-path:polygon(20%_0,100%_0,100%_80%,80%_100%,0_100%,0_20%)] flex items-center justify-center text-[1.8rem] font-black text-[#00c3ff] mx-auto mb-4">
+                DS
+              </div>
+              <div class="text-[1rem] font-black uppercase tracking-[0.06em] text-[#111111]">Dragon Squad</div>
+              <div class="text-[0.75rem] text-[#5f6368] uppercase tracking-[0.08em]">Rio de Janeiro, RJ</div>
+              <div class="flex gap-2 mt-2">
+                <ow-role-badge role="tank">Tank</ow-role-badge>
+                <ow-role-badge role="flex">Flex</ow-role-badge>
+                <ow-role-badge role="support">Support</ow-role-badge>
+              </div>
+            </ow-card>
+            <!-- Frost Giants -->
+            <ow-card cardClass="text-center" contentClass="flex flex-col items-center gap-2 p-6">
+              <div class="w-[72px] h-[72px] bg-[#f1f3f4] [clip-path:polygon(20%_0,100%_0,100%_80%,80%_100%,0_100%,0_20%)] flex items-center justify-center text-[1.8rem] font-black text-[#34a853] mx-auto mb-4">
+                FG
+              </div>
+              <div class="text-[1rem] font-black uppercase tracking-[0.06em] text-[#111111]">Frost Giants</div>
+              <div class="text-[0.75rem] text-[#5f6368] uppercase tracking-[0.08em]">Curitiba, PR</div>
+              <div class="flex gap-2 mt-2">
+                <ow-role-badge role="tank">Tank</ow-role-badge>
+                <ow-role-badge role="damage">DPS</ow-role-badge>
+                <ow-role-badge role="flex">Flex</ow-role-badge>
+              </div>
+            </ow-card>
+          </div>
+        </div>
+      } @else {
+        <ds-code-teams-cards />
+      }
+
+      <!-- Player Card -->
+      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center justify-between gap-2">
+        <span class="flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">Player Card</span>
+        <ow-btn variant="ghost-mini" (click)="toggleCode('teams-player')">
+          @if (isCode('teams-player')) { Preview } @else { Código }
+        </ow-btn>
+      </h3>
+      @if (!isCode('teams-player')) {
+        <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
+          <ow-card [padded]="false" cardClass="max-w-sm">
+            <div class="flex items-center gap-4 p-5">
+              <ow-player-avatar initials="xS"></ow-player-avatar>
+              <div class="flex-1">
+                <div class="text-[0.9rem] font-extrabold text-[#111111] mb-0.5">xShadow</div>
+                <div class="text-[0.75rem] text-[#5f6368] mb-1">Thunder Hawks &bull; BattleTag: xShadow#9823</div>
+                <ow-role-badge role="damage">DPS</ow-role-badge>
+              </div>
+              <ow-btn size="sm" variant="ghost">Ver Perfil</ow-btn>
+            </div>
+          </ow-card>
+        </div>
+      } @else {
+        <ds-code-teams-player />
+      }
+    </section>

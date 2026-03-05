@@ -1,0 +1,372 @@
+    <section id="tabs" class="mb-20 scroll-mt-6">
+      <h2 class="text-[2rem] font-black uppercase tracking-[0.08em] text-[#111111] pb-[14px] mb-8 border-b-[3px] border-[#f06314] flex items-center gap-[14px]">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="2" y="10" width="24" height="16" rx="2" fill="#f06314" opacity="0.1"/><rect x="2" y="10" width="24" height="16" rx="2" stroke="#f06314" stroke-width="2"/><rect x="2" y="4" width="8" height="8" rx="2" fill="#f06314"/><rect x="12" y="4" width="8" height="8" rx="2" fill="#f06314" opacity="0.4"/></svg>
+        Tabs
+      </h2>
+      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center justify-between gap-2">
+        <span class="flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">Exemplo</span>
+        <ow-btn variant="ghost-mini" (click)="toggleCode('tabs')">
+          @if (isCode('tabs')) { Preview } @else { Código }
+        </ow-btn>
+      </h3>
+      @if (!isCode('tabs')) {
+      <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
+        <ow-tabs>
+          <ow-tab label="Visão Geral">
+            <div class="pt-6">
+              <h4 class="text-[1rem] font-extrabold uppercase tracking-[0.06em] text-[#111111] mb-3">Visão Geral do Torneio</h4>
+              <p class="text-[0.875rem] text-[#3c4043] leading-[1.6] mb-4">O Overwatch Nova Era Temporada 2025 reúne os melhores times do Brasil em uma competição épica. 32 equipes, 5 semanas de competição, 1 campeão.</p>
+              <div class="grid grid-cols-3 gap-4">
+                <div class="bg-[#f8f9fa] p-4 text-center">
+                  <div class="text-[1.8rem] font-black text-[#f06314]">32</div>
+                  <div class="text-[0.72rem] font-extrabold uppercase tracking-[0.1em] text-[#5f6368]">Times</div>
+                </div>
+                <div class="bg-[#f8f9fa] p-4 text-center">
+                  <div class="text-[1.8rem] font-black text-[#f06314]">5</div>
+                  <div class="text-[0.72rem] font-extrabold uppercase tracking-[0.1em] text-[#5f6368]">Semanas</div>
+                </div>
+                <div class="bg-[#f8f9fa] p-4 text-center">
+                  <div class="text-[1.8rem] font-black text-[#f06314]">R$8.5k</div>
+                  <div class="text-[0.72rem] font-extrabold uppercase tracking-[0.1em] text-[#5f6368]">Prize Pool</div>
+                </div>
+              </div>
+            </div>
+          </ow-tab>
+
+          <ow-tab label="Estatísticas">
+            <div class="pt-6">
+              <h4 class="text-[1rem] font-extrabold uppercase tracking-[0.06em] text-[#111111] mb-3">Estatísticas</h4>
+              <div class="space-y-3">
+                <div class="flex items-center justify-between py-2 border-b border-[#f1f3f4]">
+                  <span class="text-[0.875rem] font-semibold text-[#3c4043]">Partidas jogadas</span>
+                  <span class="text-[0.875rem] font-extrabold text-[#f06314]">48</span>
+                </div>
+                <div class="flex items-center justify-between py-2 border-b border-[#f1f3f4]">
+                  <span class="text-[0.875rem] font-semibold text-[#3c4043]">Média de kills</span>
+                  <span class="text-[0.875rem] font-extrabold text-[#f06314]">14.2</span>
+                </div>
+                <div class="flex items-center justify-between py-2 border-b border-[#f1f3f4]">
+                  <span class="text-[0.875rem] font-semibold text-[#3c4043]">Herói mais usado</span>
+                  <span class="text-[0.875rem] font-extrabold text-[#f06314]">Reinhardt</span>
+                </div>
+                <div class="flex items-center justify-between py-2">
+                  <span class="text-[0.875rem] font-semibold text-[#3c4043]">Mapa mais jogado</span>
+                  <span class="text-[0.875rem] font-extrabold text-[#f06314]">King's Row</span>
+                </div>
+              </div>
+            </div>
+          </ow-tab>
+
+          <ow-tab label="Resultados">
+            <div class="pt-6">
+              <h4 class="text-[1rem] font-extrabold uppercase tracking-[0.06em] text-[#111111] mb-3">Últimos Resultados</h4>
+              <div class="space-y-3">
+                <div class="flex items-center justify-between p-3 bg-[#f8f9fa]">
+                  <div class="flex items-center gap-3">
+                    <span class="text-[0.8rem] font-semibold">Thunder Hawks</span>
+                    <span class="text-[1rem] font-black text-[#34a853]">3</span>
+                    <span class="text-[0.7rem] text-[#9aa0a6]">vs</span>
+                    <span class="text-[1rem] font-black text-[#ea4335]">1</span>
+                    <span class="text-[0.8rem] font-semibold">Blaze Legion</span>
+                  </div>
+                  <ow-badge variant="green">Finalizado</ow-badge>
+                </div>
+                <div class="flex items-center justify-between p-3 bg-[#f8f9fa]">
+                  <div class="flex items-center gap-3">
+                    <span class="text-[0.8rem] font-semibold">Nova Elite</span>
+                    <span class="text-[1rem] font-black text-[#34a853]">3</span>
+                    <span class="text-[0.7rem] text-[#9aa0a6]">vs</span>
+                    <span class="text-[1rem] font-black text-[#ea4335]">0</span>
+                    <span class="text-[0.8rem] font-semibold">Precision</span>
+                  </div>
+                  <ow-badge variant="green">Finalizado</ow-badge>
+                </div>
+              </div>
+            </div>
+          </ow-tab>
+
+          <ow-tab label="Agenda">
+            <div class="pt-6">
+              <h4 class="text-[1rem] font-extrabold uppercase tracking-[0.06em] text-[#111111] mb-3">Próximas Partidas</h4>
+              <div class="space-y-3">
+                <div class="flex items-center justify-between p-3 border-l-[3px] border-[#f06314] bg-[rgba(240,99,20,0.04)]">
+                  <div>
+                    <div class="text-[0.875rem] font-extrabold text-[#111111]">Dragon Squad vs Frost Giants</div>
+                    <div class="text-[0.75rem] text-[#5f6368]">Semi Final</div>
+                  </div>
+                  <div class="text-right">
+                    <div class="text-[0.78rem] font-extrabold text-[#f06314] uppercase tracking-[0.08em]">HOJE</div>
+                    <div class="text-[0.875rem] font-black text-[#111111]">20:00</div>
+                  </div>
+                </div>
+                <div class="flex items-center justify-between p-3 border-l-[3px] border-[#dadce0] bg-[#f8f9fa]">
+                  <div>
+                    <div class="text-[0.875rem] font-extrabold text-[#111111]">Thunder Hawks vs Nova Elite</div>
+                    <div class="text-[0.75rem] text-[#5f6368]">Semi Final</div>
+                  </div>
+                  <div class="text-right">
+                    <div class="text-[0.78rem] font-extrabold text-[#5f6368] uppercase tracking-[0.08em]">AMANHÃ</div>
+                    <div class="text-[0.875rem] font-black text-[#111111]">19:00</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ow-tab>
+        </ow-tabs>
+      </div>
+      } @else {
+        <ds-code-tabs />
+      }
+    </section>
+
+    <!-- ============================================================
+         SECTION 8: PROGRESS
+         ============================================================ -->
+    <section id="progress" class="mb-20 scroll-mt-6">
+      <h2 class="text-[2rem] font-black uppercase tracking-[0.08em] text-[#111111] pb-[14px] mb-8 border-b-[3px] border-[#f06314] flex items-center gap-[14px]">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="2" y="12" width="24" height="4" rx="2" fill="#f06314" opacity="0.2"/><rect x="2" y="12" width="16" height="4" rx="2" fill="#f06314"/></svg>
+        Progress
+      </h2>
+      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center justify-between gap-2">
+        <span class="flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">Exemplo</span>
+        <ow-btn variant="ghost-mini" (click)="toggleCode('progress')">
+          @if (isCode('progress')) { Preview } @else { Código }
+        </ow-btn>
+      </h3>
+      @if (!isCode('progress')) {
+      <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5 space-y-6">
+        <ow-progress label="Thunder Hawks" [value]="100" color="orange" [showValue]="true"></ow-progress>
+        <ow-progress label="Dragon Squad" [value]="91" color="blue" [showValue]="true"></ow-progress>
+        <ow-progress label="Frost Giants" [value]="83" color="green" [showValue]="true"></ow-progress>
+        <ow-progress label="Blaze Legion" [value]="75" color="orange" [showValue]="true"></ow-progress>
+      </div>
+      } @else {
+        <ds-code-progress />
+      }
+    </section>
+
+    <!-- ============================================================
+         SECTION 9: TABELA
+         ============================================================ -->
+    <section id="table" class="mb-20 scroll-mt-6">
+      <h2 class="text-[2rem] font-black uppercase tracking-[0.08em] text-[#111111] pb-[14px] mb-8 border-b-[3px] border-[#f06314] flex items-center gap-[14px]">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="2" y="4" width="24" height="20" rx="2" stroke="#f06314" stroke-width="2"/><line x1="2" y1="11" x2="26" y2="11" stroke="#f06314" stroke-width="2"/><line x1="10" y1="4" x2="10" y2="24" stroke="#f06314" stroke-width="1" opacity="0.5"/></svg>
+        Tabela
+      </h2>
+      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center justify-between gap-2">
+        <span class="flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">Exemplo</span>
+        <ow-btn variant="ghost-mini" (click)="toggleCode('tabela')">
+          @if (isCode('tabela')) { Preview } @else { Código }
+        </ow-btn>
+      </h3>
+      @if (!isCode('tabela')) {
+      <div class="bg-white border border-[#e8eaed] relative mb-0.5 overflow-hidden">
+        <table class="w-full border-collapse">
+          <thead>
+            <tr>
+              <th class="py-3 px-4 text-left text-[0.72rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] bg-[#f8f9fa] border-b-2 border-[#f06314]">#</th>
+              <th class="py-3 px-4 text-left text-[0.72rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] bg-[#f8f9fa] border-b-2 border-[#f06314]">Time</th>
+              <th class="py-3 px-4 text-left text-[0.72rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] bg-[#f8f9fa] border-b-2 border-[#f06314]">V</th>
+              <th class="py-3 px-4 text-left text-[0.72rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] bg-[#f8f9fa] border-b-2 border-[#f06314]">D</th>
+              <th class="py-3 px-4 text-left text-[0.72rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] bg-[#f8f9fa] border-b-2 border-[#f06314]">Win Rate</th>
+              <th class="py-3 px-4 text-left text-[0.72rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] bg-[#f8f9fa] border-b-2 border-[#f06314]">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="hover:bg-[rgba(240,99,20,0.03)] transition-colors">
+              <td class="py-[14px] px-4 text-[0.875rem] font-semibold text-[#202124] border-b border-[#f1f3f4]">
+                <span class="text-[#f06314] font-black">1</span>
+              </td>
+              <td class="py-[14px] px-4 text-[0.875rem] font-semibold text-[#202124] border-b border-[#f1f3f4]">
+                <div class="flex items-center gap-2">
+                  <ow-avatar initials="TH" color="orange"></ow-avatar>
+                  <span class="font-extrabold">Thunder Hawks</span>
+                </div>
+              </td>
+              <td class="py-[14px] px-4 text-[0.875rem] font-semibold text-[#202124] border-b border-[#f1f3f4]">
+                <span class="text-[#34a853] font-extrabold">12</span>
+              </td>
+              <td class="py-[14px] px-4 text-[0.875rem] font-semibold text-[#202124] border-b border-[#f1f3f4]">
+                <span class="text-[#ea4335] font-extrabold">1</span>
+              </td>
+              <td class="py-[14px] px-4 text-[0.875rem] font-semibold text-[#202124] border-b border-[#f1f3f4]">92%</td>
+              <td class="py-[14px] px-4 text-[0.875rem] font-semibold text-[#202124] border-b border-[#f1f3f4]">
+                <ow-badge variant="green">Classificado</ow-badge>
+              </td>
+            </tr>
+            <tr class="hover:bg-[rgba(240,99,20,0.03)] transition-colors">
+              <td class="py-[14px] px-4 text-[0.875rem] font-semibold text-[#202124] border-b border-[#f1f3f4]">
+                <span class="text-[#5f6368] font-black">2</span>
+              </td>
+              <td class="py-[14px] px-4 text-[0.875rem] font-semibold text-[#202124] border-b border-[#f1f3f4]">
+                <div class="flex items-center gap-2">
+                  <ow-avatar initials="DS" color="blue"></ow-avatar>
+                  <span class="font-extrabold">Dragon Squad</span>
+                </div>
+              </td>
+              <td class="py-[14px] px-4 text-[0.875rem] font-semibold text-[#202124] border-b border-[#f1f3f4]">
+                <span class="text-[#34a853] font-extrabold">10</span>
+              </td>
+              <td class="py-[14px] px-4 text-[0.875rem] font-semibold text-[#202124] border-b border-[#f1f3f4]">
+                <span class="text-[#ea4335] font-extrabold">3</span>
+              </td>
+              <td class="py-[14px] px-4 text-[0.875rem] font-semibold text-[#202124] border-b border-[#f1f3f4]">77%</td>
+              <td class="py-[14px] px-4 text-[0.875rem] font-semibold text-[#202124] border-b border-[#f1f3f4]">
+                <ow-badge variant="green">Classificado</ow-badge>
+              </td>
+            </tr>
+            <tr class="hover:bg-[rgba(240,99,20,0.03)] transition-colors">
+              <td class="py-[14px] px-4 text-[0.875rem] font-semibold text-[#202124] border-b border-[#f1f3f4]">
+                <span class="text-[#5f6368] font-black">3</span>
+              </td>
+              <td class="py-[14px] px-4 text-[0.875rem] font-semibold text-[#202124] border-b border-[#f1f3f4]">
+                <div class="flex items-center gap-2">
+                  <ow-avatar initials="FG" color="gray"></ow-avatar>
+                  <span class="font-extrabold">Frost Giants</span>
+                </div>
+              </td>
+              <td class="py-[14px] px-4 text-[0.875rem] font-semibold text-[#202124] border-b border-[#f1f3f4]">
+                <span class="text-[#34a853] font-extrabold">8</span>
+              </td>
+              <td class="py-[14px] px-4 text-[0.875rem] font-semibold text-[#202124] border-b border-[#f1f3f4]">
+                <span class="text-[#ea4335] font-extrabold">5</span>
+              </td>
+              <td class="py-[14px] px-4 text-[0.875rem] font-semibold text-[#202124] border-b border-[#f1f3f4]">62%</td>
+              <td class="py-[14px] px-4 text-[0.875rem] font-semibold text-[#202124] border-b border-[#f1f3f4]">
+                <ow-badge variant="yellow">Em Disputa</ow-badge>
+              </td>
+            </tr>
+            <tr class="hover:bg-[rgba(240,99,20,0.03)] transition-colors">
+              <td class="py-[14px] px-4 text-[0.875rem] font-semibold text-[#202124] border-b border-[#f1f3f4]">
+                <span class="text-[#5f6368] font-black">4</span>
+              </td>
+              <td class="py-[14px] px-4 text-[0.875rem] font-semibold text-[#202124] border-b border-[#f1f3f4]">
+                <div class="flex items-center gap-2">
+                  <ow-avatar initials="BL" color="red"></ow-avatar>
+                  <span class="font-extrabold">Blaze Legion</span>
+                </div>
+              </td>
+              <td class="py-[14px] px-4 text-[0.875rem] font-semibold text-[#202124] border-b border-[#f1f3f4]">
+                <span class="text-[#34a853] font-extrabold">5</span>
+              </td>
+              <td class="py-[14px] px-4 text-[0.875rem] font-semibold text-[#202124] border-b border-[#f1f3f4]">
+                <span class="text-[#ea4335] font-extrabold">8</span>
+              </td>
+              <td class="py-[14px] px-4 text-[0.875rem] font-semibold text-[#202124] border-b border-[#f1f3f4]">38%</td>
+              <td class="py-[14px] px-4 text-[0.875rem] font-semibold text-[#202124] border-b border-[#f1f3f4]">
+                <ow-badge variant="red">Eliminado</ow-badge>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      } @else {
+        <ds-code-tabela />
+      }
+    </section>
+
+    <!-- ============================================================
+         SECTION 10: PAGINAÇÃO
+         ============================================================ -->
+        <section id="pagination" class="mb-20 scroll-mt-6">
+      <h2 class="text-[2rem] font-black uppercase tracking-[0.08em] text-[#111111] pb-[14px] mb-8 border-b-[3px] border-[#f06314] flex items-center gap-[14px]">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><rect x="2" y="9" width="6" height="10" rx="1" fill="#f06314" opacity="0.4"/><rect x="11" y="9" width="6" height="10" rx="1" fill="#f06314"/><rect x="20" y="9" width="6" height="10" rx="1" fill="#f06314" opacity="0.4"/></svg>
+        Paginação
+      </h2>
+      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center justify-between gap-2">
+        <span class="flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">Exemplo</span>
+        <ow-btn variant="ghost-mini" (click)="toggleCode('paginacao')">
+          @if (isCode('paginacao')) { Preview } @else { Código }
+        </ow-btn>
+      </h3>
+      @if (!isCode('paginacao')) {
+        <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
+          <ow-pagination
+            [currentPage]="currentPage()"
+            [totalPages]="totalPages()"
+            (pageChange)="onPageChange($event)">
+          </ow-pagination>
+          <p class="mt-4 text-[0.875rem] text-[#5f6368] font-semibold">
+            Página <span class="text-[#f06314] font-extrabold">{{ currentPage() }}</span> de <span class="font-extrabold text-[#111111]">{{ totalPages() }}</span>
+          </p>
+        </div>
+      } @else {
+        <ds-code-paginacao />
+      }
+    </section>
+
+    <!-- ============================================================
+         SECTION 11: AVATARES
+         ============================================================ -->
+    <section id="avatars" class="mb-20 scroll-mt-6">
+      <h2 class="text-[2rem] font-black uppercase tracking-[0.08em] text-[#111111] pb-[14px] mb-8 border-b-[3px] border-[#f06314] flex items-center gap-[14px]">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="10" r="5" fill="#f06314" opacity="0.3"/><path d="M5 24c0-5 4-8 9-8s9 3 9 8" stroke="#f06314" stroke-width="2" fill="none"/></svg>
+        Avatares
+      </h2>
+
+      <!-- Grupo de Avatares -->
+      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center justify-between gap-2">
+        <span class="flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">Grupo de Avatares</span>
+        <ow-btn variant="ghost-mini" (click)="toggleCode('avatares-grupo')">
+          @if (isCode('avatares-grupo')) { Preview } @else { Código }
+        </ow-btn>
+      </h3>
+      @if (!isCode('avatares-grupo')) {
+        <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
+          <div class="flex items-center gap-6">
+            <ow-avatar-group>
+              <ow-avatar initials="TH" color="orange" [grouped]="true"></ow-avatar>
+              <ow-avatar initials="DS" color="blue" [grouped]="true"></ow-avatar>
+              <ow-avatar initials="FG" color="green" [grouped]="true"></ow-avatar>
+              <ow-avatar initials="BL" color="red" [grouped]="true"></ow-avatar>
+              <div class="w-9 h-9 rounded-full bg-[#f1f3f4] border-2 border-white flex items-center justify-center text-[0.72rem] font-extrabold text-[#5f6368] -ml-2 ring-2 ring-white">+8</div>
+            </ow-avatar-group>
+            <span class="text-[0.875rem] text-[#5f6368] font-semibold">12 times inscritos</span>
+          </div>
+        </div>
+      } @else {
+        <ds-code-avatares-grupo />
+      }
+
+      <!-- Avatar Individual com Role -->
+      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center justify-between gap-2">
+        <span class="flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">Avatar Individual com Role</span>
+        <ow-btn variant="ghost-mini" (click)="toggleCode('avatares-individual')">
+          @if (isCode('avatares-individual')) { Preview } @else { Código }
+        </ow-btn>
+      </h3>
+      @if (!isCode('avatares-individual')) {
+        <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
+          <div class="flex items-center gap-4">
+            <ow-player-avatar initials="TH"></ow-player-avatar>
+            <div>
+              <div class="text-[0.9rem] font-extrabold text-[#111111]">xShadow</div>
+              <div class="text-[0.75rem] text-[#5f6368] mb-1">Thunder Hawks</div>
+              <ow-role-badge role="damage">DPS</ow-role-badge>
+            </div>
+          </div>
+        </div>
+      } @else {
+        <ds-code-avatares-individual />
+      }
+
+      <!-- Role Badges -->
+      <h3 class="text-[1rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-4 mt-8 flex items-center justify-between gap-2">
+        <span class="flex items-center gap-2 before:content-[''] before:w-[18px] before:h-[2px] before:bg-[#f06314] before:inline-block">Role Badges</span>
+        <ow-btn variant="ghost-mini" (click)="toggleCode('avatares-roles')">
+          @if (isCode('avatares-roles')) { Preview } @else { Código }
+        </ow-btn>
+      </h3>
+      @if (!isCode('avatares-roles')) {
+        <div class="bg-white border border-[#e8eaed] p-10 relative mb-0.5">
+          <div class="flex flex-wrap gap-3 items-center">
+            <ow-role-badge role="tank">Tank</ow-role-badge>
+            <ow-role-badge role="damage">Damage</ow-role-badge>
+            <ow-role-badge role="support">Support</ow-role-badge>
+            <ow-role-badge role="flex">Flex</ow-role-badge>
+          </div>
+        </div>
+      } @else {
+        <ds-code-avatares-roles />
+      }
+    </section>
