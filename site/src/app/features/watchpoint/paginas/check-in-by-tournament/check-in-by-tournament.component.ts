@@ -12,7 +12,7 @@ import {
   type OwRouletteListItem,
 } from '../ferramentas-de-streamer/paginas/roleta/ow-roulette-session-storage';
 
-type RoleFilter = 'all' | 'tank' | 'dps' | 'support';
+type RoleFilter = 'all' | 'tank' | 'dps' | 'support' | 'repescagem';
 
 type TournamentListItem = Readonly<{
   id: string;
@@ -26,7 +26,7 @@ type CheckinListItem = Readonly<{
   uid: string;
   displayName: string;
   battletag: string;
-  role: 'tank' | 'dps' | 'support' | 'unknown';
+  role: 'tank' | 'dps' | 'support' | 'flex' | 'unknown';
   checkedInAt: string | null;
   teamId: string | null;
 }>;
@@ -57,7 +57,7 @@ export class CheckInByTournamentComponent {
   readonly message = signal<string | null>(null);
   readonly messageIsError = signal(false);
 
-  readonly filterOptions: readonly RoleFilter[] = ['all', 'dps', 'tank', 'support'];
+  readonly filterOptions: readonly RoleFilter[] = ['all', 'dps', 'tank', 'support', 'repescagem'];
 
   readonly hasPermission = computed(() => {
     const role = this.auth.userRole();
@@ -110,7 +110,7 @@ export class CheckInByTournamentComponent {
   }
 
   onRoleFilterChange(value: string): void {
-    if (value === 'all' || value === 'tank' || value === 'dps' || value === 'support') {
+    if (value === 'all' || value === 'tank' || value === 'dps' || value === 'support' || value === 'repescagem') {
       this.roleFilter.set(value);
     }
 
@@ -145,10 +145,14 @@ export class CheckInByTournamentComponent {
 
     try {
       const filter = this.roleFilter();
-      const query = filter === 'all' ? '' : `?role=${filter}`;
-      const response = await firstValueFrom(
-        this.http.get<unknown>(`${this.torneiosApiUrl}/${tournamentId}/checkins${query}`),
-      );
+      let url: string;
+      if (filter === 'repescagem') {
+        url = `${this.torneiosApiUrl}/${tournamentId}/repescagem/checkins`;
+      } else {
+        const query = filter === 'all' ? '' : `?role=${filter}`;
+        url = `${this.torneiosApiUrl}/${tournamentId}/checkins${query}`;
+      }
+      const response = await firstValueFrom(this.http.get<unknown>(url));
 
       const checkins = this.readCheckins(response).map((item) => this.toCheckin(item));
       this.checkins.set(checkins);
@@ -182,6 +186,7 @@ export class CheckInByTournamentComponent {
     if (role === 'tank') return 'Tank';
     if (role === 'dps') return 'DPS';
     if (role === 'support') return 'Support';
+    if (role === 'flex') return 'Flex';
     return 'Não informado';
   }
 
@@ -191,7 +196,17 @@ export class CheckInByTournamentComponent {
     if (role === 'dps') return `${base} bg-[color:var(--ow-blue)] text-white`;
     if (role === 'tank') return `${base} bg-[color:var(--ow-orange)] text-white`;
     if (role === 'support') return `${base} bg-green-600 text-white`;
+    if (role === 'flex') return `${base} bg-purple-600 text-white`;
     return `${base} bg-[color:var(--ow-gray-400)] text-white`;
+  }
+
+  filterLabel(filter: RoleFilter): string {
+    if (filter === 'all') return 'Todos';
+    if (filter === 'tank') return 'Tank';
+    if (filter === 'dps') return 'DPS';
+    if (filter === 'support') return 'Support';
+    if (filter === 'repescagem') return 'Repescagem';
+    return filter;
   }
 
   formatCheckedInAt(value: string | null): string {
@@ -252,7 +267,9 @@ export class CheckInByTournamentComponent {
   private toCheckin(value: RawRecord): CheckinListItem {
     const roleRaw = (this.readString(value, 'role') ?? '').toLowerCase();
     const role: CheckinListItem['role'] =
-      roleRaw === 'tank' || roleRaw === 'dps' || roleRaw === 'support' ? roleRaw : 'unknown';
+      roleRaw === 'tank' || roleRaw === 'dps' || roleRaw === 'support' || roleRaw === 'flex'
+        ? roleRaw
+        : 'unknown';
 
     return {
       id: this.readString(value, 'id') ?? '',

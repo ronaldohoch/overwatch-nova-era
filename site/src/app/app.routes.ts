@@ -9,6 +9,11 @@ export const routes: Routes = [
     loadComponent: () => import('./features/pagina-inicial/pagina-inicial').then(m=>m.PaginaInicial)
   },
   {
+    path: 'como-funciona',
+    title: 'Copa Overwatch Nova Era - Como Funciona',
+    loadComponent: () => import('./features/como-funciona/como-funciona.component').then(m => m.ComoFuncionaComponent)
+  },
+  {
     path: 'duvidas-frequentes',
     title: 'Copa Overwatch Nova Era - Dúvidas frequentes',
     loadComponent: () => import('./features/faq/faq.component').then(m=>m.FaqComponent)

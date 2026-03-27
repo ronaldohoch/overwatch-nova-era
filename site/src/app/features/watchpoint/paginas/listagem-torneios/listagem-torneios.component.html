@@ -57,6 +57,15 @@
                 Chave
               </ow-btn>
             }
+
+            @if (canManageStatus()) {
+              <ow-btn
+                variant="ghost-mini"
+                [routerLink]="['/watchpoint/torneios', tournament.id, 'repescagem']"
+              >
+                Repescagem
+              </ow-btn>
+            }
           }
           @if (tournament.teamMode === 'random') {
             <ow-btn variant="blue-mini" href="/watchpoint/check-in-by-tournament">Ver Check-ins</ow-btn>

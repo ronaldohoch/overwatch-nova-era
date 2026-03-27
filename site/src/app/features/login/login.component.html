@@ -9,105 +9,48 @@
       </p>
     </div>
 
-    <form class="space-y-5" novalidate (submit)="onCreate($event)">
-      <div class="space-y-1.5">
-        <label for="signup-displayName" class="text-sm font-semibold text-(--ow-gray-700)">
-          Nome
-        </label>
-        <input
-          id="signup-displayName"
-          type="text"
-          autocomplete="name"
-          placeholder="Seu nome no campeonato"
-          class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
-          [value]="signupForm().displayName"
-          (input)="updateSignupField('displayName', $any($event.target).value)"
-          (blur)="markSignupTouched('displayName')"
-        />
-        @if (signupFieldError('displayName'); as error) {
-          <p class="text-sm font-medium text-red-600">{{ error }}</p>
-        }
-      </div>
-
-      <div class="space-y-1.5">
-        <label for="signup-email" class="text-sm font-semibold text-(--ow-gray-700)">E-mail</label>
-        <input
-          id="signup-email"
-          type="email"
-          autocomplete="email"
-          placeholder="Seu melhor e-mail"
-          class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
-          [value]="signupForm().email"
-          (input)="updateSignupField('email', $any($event.target).value)"
-          (blur)="markSignupTouched('email')"
-        />
-        @if (signupFieldError('email'); as error) {
-          <p class="text-sm font-medium text-red-600">{{ error }}</p>
-        }
-      </div>
-
-      <div class="space-y-1.5">
-        <label for="signup-password" class="text-sm font-semibold text-(--ow-gray-700)">Senha</label>
-        <input
-          id="signup-password"
-          type="password"
-          autocomplete="new-password"
-          placeholder="Minimo de 8 caracteres"
-          class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
-          [value]="signupForm().password"
-          (input)="updateSignupField('password', $any($event.target).value)"
-          (blur)="markSignupTouched('password')"
-        />
-        @if (signupFieldError('password'); as error) {
-          <p class="text-sm font-medium text-red-600">{{ error }}</p>
-        }
-      </div>
-
-      <div class="space-y-1.5">
-        <label for="signup-battletag" class="text-sm font-semibold text-(--ow-gray-700)">
-          BattleTag
-        </label>
-        <input
-          id="signup-battletag"
-          type="text"
-          autocomplete="off"
-          placeholder="Jogador#1234"
-          class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
-          [value]="signupForm().battletag"
-          (input)="updateSignupField('battletag', $any($event.target).value)"
-          (blur)="markSignupTouched('battletag')"
-        />
-        @if (signupFieldError('battletag'); as error) {
-          <p class="text-sm font-medium text-red-600">{{ error }}</p>
-        }
-      </div>
-
-      <div class="space-y-1.5">
-        <label for="signup-whatsapp" class="text-sm font-semibold text-(--ow-gray-700)">
-          whatsapp
-        </label>
-        <input
-          id="signup-whatsapp"
-          type="text"
-          autocomplete="off"
-          placeholder="51999999999"
-          class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
-          [value]="signupForm().whatsapp"
-          (input)="updateSignupField('whatsapp', $any($event.target).value)"
-          (blur)="markSignupTouched('whatsapp')"
-        />
-        @if (signupFieldError('whatsapp'); as error) {
-          <p class="text-sm font-medium text-red-600">{{ error }}</p>
-        }
-      </div>
+    <form class="space-y-4" novalidate (submit)="onCreate($event)">
+      <ow-input
+        label="Nome"
+        placeholder="Seu nome no campeonato"
+        [formControl]="signupGroup.controls.displayName"
+        [state]="fieldState(signupGroup.controls.displayName, signupSubmitted())"
+        [helperText]="fieldError(signupGroup.controls.displayName, signupSubmitted(), 'o nome de exibição')"
+      />
+      <ow-input
+        label="E-mail"
+        type="email"
+        placeholder="Seu melhor e-mail"
+        [formControl]="signupGroup.controls.email"
+        [state]="fieldState(signupGroup.controls.email, signupSubmitted())"
+        [helperText]="fieldError(signupGroup.controls.email, signupSubmitted(), 'o e-mail')"
+      />
+      <ow-input
+        label="Senha"
+        type="password"
+        placeholder="Mínimo de 8 caracteres"
+        [formControl]="signupGroup.controls.password"
+        [state]="fieldState(signupGroup.controls.password, signupSubmitted())"
+        [helperText]="fieldError(signupGroup.controls.password, signupSubmitted(), 'a senha')"
+      />
+      <ow-input
+        label="BattleTag"
+        placeholder="Jogador#1234"
+        [formControl]="signupGroup.controls.battletag"
+        [state]="fieldState(signupGroup.controls.battletag, signupSubmitted())"
+        [helperText]="fieldError(signupGroup.controls.battletag, signupSubmitted(), 'a BattleTag')"
+      />
+      <ow-input
+        label="WhatsApp"
+        placeholder="51999999999"
+        [formControl]="signupGroup.controls.whatsapp"
+        [state]="fieldState(signupGroup.controls.whatsapp, signupSubmitted())"
+        [helperText]="fieldError(signupGroup.controls.whatsapp, signupSubmitted(), 'o WhatsApp')"
+      />
 
       <div class="flex flex-row-reverse">
-        <ow-btn [disabled]="!canSubmitSignup() || signupPending()" ariaLabel="Criar conta" type="submit">
-          @if (signupPending()) {
-            Criando...
-          } @else {
-            Criar conta
-          }
+        <ow-btn [disabled]="signupPending()" ariaLabel="Criar conta" type="submit">
+          {{ signupPending() ? 'Criando...' : 'Criar conta' }}
         </ow-btn>
       </div>
 
@@ -116,9 +59,7 @@
           class="text-sm font-medium"
           [class.text-green-700]="signupStatus() === 'success'"
           [class.text-red-600]="signupStatus() === 'error'"
-        >
-          {{ message }}
-        </p>
+        >{{ message }}</p>
       }
     </form>
   </div>
@@ -133,51 +74,30 @@
       </p>
     </div>
 
-    <form class="space-y-5" novalidate (submit)="onLogin($event)">
-      <div class="space-y-1.5">
-        <label for="login-email" class="text-sm font-semibold text-(--ow-gray-700)">Email</label>
-        <input
-          id="login-email"
-          type="email"
-          autocomplete="email"
-          placeholder="você@email.com"
-          class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
-          [value]="loginForm().email"
-          (input)="updateLoginField('email', $any($event.target).value)"
-          (blur)="markLoginTouched('email')"
-        />
-        @if (loginFieldError('email'); as error) {
-          <p class="text-sm font-medium text-red-600">{{ error }}</p>
-        }
-      </div>
-
-      <div class="space-y-1.5">
-        <label for="login-password" class="text-sm font-semibold text-(--ow-gray-700)">Password</label>
-        <input
-          id="login-password"
-          type="password"
-          autocomplete="current-password"
-          placeholder="Minimo de 8 caracteres"
-          class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
-          [value]="loginForm().password"
-          (input)="updateLoginField('password', $any($event.target).value)"
-          (blur)="markLoginTouched('password')"
-        />
-        @if (loginFieldError('password'); as error) {
-          <p class="text-sm font-medium text-red-600">{{ error }}</p>
-        }
-      </div>
+    <form class="space-y-4" novalidate (submit)="onLogin($event)">
+      <ow-input
+        label="E-mail"
+        type="email"
+        placeholder="você@email.com"
+        [formControl]="loginGroup.controls.email"
+        [state]="fieldState(loginGroup.controls.email, loginSubmitted())"
+        [helperText]="fieldError(loginGroup.controls.email, loginSubmitted(), 'o e-mail')"
+      />
+      <ow-input
+        label="Senha"
+        type="password"
+        placeholder="Mínimo de 8 caracteres"
+        [formControl]="loginGroup.controls.password"
+        [state]="fieldState(loginGroup.controls.password, loginSubmitted())"
+        [helperText]="fieldError(loginGroup.controls.password, loginSubmitted(), 'a senha')"
+      />
 
       <div class="flex justify-between items-center">
         <ow-btn type="button" variant="secondary-mini" (click)="openRecuperarSenha()">
           Esqueci minha senha
         </ow-btn>
-        <ow-btn [disabled]="!canSubmitLogin() || loginPending()" ariaLabel="Entrar na conta" type="submit">
-          @if (loginPending()) {
-            Entrando...
-          } @else {
-            Entrar
-          }
+        <ow-btn [disabled]="loginPending()" ariaLabel="Entrar na conta" type="submit">
+          {{ loginPending() ? 'Entrando...' : 'Entrar' }}
         </ow-btn>
       </div>
 
@@ -186,9 +106,7 @@
           class="text-sm font-medium"
           [class.text-green-700]="loginStatus() === 'success'"
           [class.text-red-600]="loginStatus() === 'error'"
-        >
-          {{ message }}
-        </p>
+        >{{ message }}</p>
       }
     </form>
   </div>

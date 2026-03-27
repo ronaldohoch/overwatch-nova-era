@@ -252,6 +252,43 @@ export class AuthService {
     return { ...publicUser, token: this.createToken(publicUser) };
   }
 
+  async requestRoleUpgrade(userId: string, links: string[]): Promise<void> {
+    const userRef = firestore.collection(USERS_COLLECTION).doc(userId);
+    const userSnap = await userRef.get();
+
+    if (!userSnap.exists) throw new Error('Usuário não encontrado.');
+
+    const user = userSnap.data() as Partial<StoredUser>;
+    if (user.role !== UserRole.COMPETIDOR) {
+      throw new Error('Apenas usuários do tipo competidor podem solicitar upgrade para streamer.');
+    }
+
+    const validLinks = links.map((l) => (typeof l === 'string' ? l.trim() : '')).filter(Boolean);
+    if (validLinks.length === 0) {
+      throw new Error('Informe ao menos um link de streamer.');
+    }
+
+    const existingSnap = await firestore
+      .collection('role-requests')
+      .where('userId', '==', userId)
+      .where('status', '==', 'pending')
+      .limit(1)
+      .get();
+
+    if (!existingSnap.empty) {
+      throw new Error('Você já possui uma solicitação de upgrade pendente.');
+    }
+
+    await firestore.collection('role-requests').add({
+      userId,
+      displayName: user.displayName ?? '',
+      email: user.email ?? '',
+      links: validLinks,
+      status: 'pending',
+      requestedAt: new Date().toISOString(),
+    });
+  }
+
   async listUsers(): Promise<PublicUser[]> {
     const snapshot = await firestore
       .collection(USERS_COLLECTION)

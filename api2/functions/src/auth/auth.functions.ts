@@ -118,6 +118,26 @@ app.post('/login', async (req: express.Request, res: express.Response) => {
   }
 });
 
+app.post('/me/role-request', async (req: express.Request, res: express.Response) => {
+  const authSvc = createAuthService();
+  const userId = readAuthenticatedUserId(req, authSvc);
+  if (!userId) {
+    res.status(401).json({ error: 'Token invalido.' });
+    return;
+  }
+
+  const { links } = req.body ?? {};
+
+  try {
+    await authSvc.requestRoleUpgrade(userId, Array.isArray(links) ? links : []);
+    res.status(201).json({ message: 'Solicitação de upgrade enviada com sucesso.' });
+  } catch (err: unknown) {
+    res
+      .status(resolveErrorStatus(err, 400))
+      .json({ error: resolveErrorMessage(err, 'Bad request') });
+  }
+});
+
 app.get(
   '/users',
   authMiddleware(() => JWT_SECRET.value()),

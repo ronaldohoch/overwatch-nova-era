@@ -8,6 +8,7 @@ import { AuthService } from '../../../../core/auth/auth.service';
 import { ButtonsComponent } from '../../../../shared/buttons/buttons';
 import { CardComponent } from '../../../../shared/card/card.component';
 import { CheckboxComponent } from '../../../../shared/design-system/checkbox/checkbox.component';
+import { ToggleComponent } from '../../../../shared/design-system/toggle/toggle.component';
 import { InputComponent } from '../../../../shared/design-system/input/input.component';
 import {
   RadioGroupComponent,
@@ -55,6 +56,7 @@ const VALID_TEAM_COUNTS: ReadonlySet<number> = new Set<number>([4, 8, 16, 32]);
     RadioItemComponent,
     RouterLink,
     SelectComponent,
+    ToggleComponent,
   ],
   templateUrl: './torneio-bracket.component.html',
 })
@@ -97,6 +99,7 @@ export class TorneioBracketComponent {
   readonly reportWinnerId = signal('');
   readonly reportScore1 = signal('');
   readonly reportScore2 = signal('');
+  readonly reportIsWalkover = signal(false);
   readonly reportSubmitting = signal(false);
   readonly reportMessage = signal<{ text: string; ok: boolean } | null>(null);
 
@@ -354,6 +357,7 @@ export class TorneioBracketComponent {
     this.reportWinnerId.set('');
     this.reportScore1.set('');
     this.reportScore2.set('');
+    this.reportIsWalkover.set(false);
     this.reportMessage.set(null);
   }
 
@@ -363,7 +367,12 @@ export class TorneioBracketComponent {
 
   closeReportForm(): void {
     this.reportingMatchNumber.set(null);
+    this.reportIsWalkover.set(false);
     this.reportMessage.set(null);
+  }
+
+  onReportWalkoverChange(value: boolean): void {
+    this.reportIsWalkover.set(value);
   }
 
   onReportWinnerChange(value: string): void {
@@ -388,10 +397,13 @@ export class TorneioBracketComponent {
     this.reportMessage.set(null);
 
     try {
+      const isWalkover = this.reportIsWalkover();
       const payload: ReportMatchPayload = {
         winnerId: this.reportWinnerId().trim(),
-        ...this.parseOptionalScore('team1Score', this.reportScore1()),
-        ...this.parseOptionalScore('team2Score', this.reportScore2()),
+        ...(isWalkover ? { walkover: true } : {
+          ...this.parseOptionalScore('team1Score', this.reportScore1()),
+          ...this.parseOptionalScore('team2Score', this.reportScore2()),
+        }),
       };
 
       await this.bracketsService.reportMatchResult(this.tournamentId, matchNumber, payload);

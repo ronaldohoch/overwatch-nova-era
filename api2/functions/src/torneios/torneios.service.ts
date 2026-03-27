@@ -239,7 +239,7 @@ export class TorneiosService {
     await ref.delete();
   }
 
-  async setStatus(id: string, status: TournamentStatus) {
+  async setStatus(id: string, status: TournamentStatus, byAdmin = false) {
     const ref = this.torneiosCollection.doc(id);
 
     await firestore.runTransaction(async (tx) => {
@@ -247,6 +247,8 @@ export class TorneiosService {
       if (!snap.exists) throw new Error(`Torneio com id ${id} não encontrado.`);
 
       const t = snap.data() as any;
+
+      if (!byAdmin) this.assertStatusTransition(t.status, status);
 
       tx.update(ref, {
         status,
@@ -738,6 +740,115 @@ export class TorneiosService {
     });
 
     return { tournamentId, teamsGenerated: possibleTeams, unassigned };
+  }
+
+  // ---------- REPESCAGEM ----------
+
+  private repescagemParticipantsCol(tournamentId: string) {
+    return this.torneiosCollection.doc(tournamentId).collection('repescagem-participants');
+  }
+
+  async setRepescagem(tournamentId: string, body: any) {
+    const roleRaw = String(body?.role || '').trim().toLowerCase();
+    if (roleRaw !== 'flex' && roleRaw !== 'tank' && roleRaw !== 'dps' && roleRaw !== 'support') {
+      throw new Error('role deve ser flex | tank | dps | support');
+    }
+    const slots = Number(body?.slots);
+    if (!Number.isInteger(slots) || slots < 1) {
+      throw new Error('slots deve ser um inteiro >= 1');
+    }
+
+    const tRef = this.torneiosCollection.doc(tournamentId);
+    const tSnap = await tRef.get();
+    if (!tSnap.exists) throw new Error('Torneio não encontrado');
+
+    const current = (tSnap.data() as any)?.repescagem;
+    const checkedIn = current?.checkedIn ?? 0;
+
+    await tRef.update({
+      repescagem: { role: roleRaw, slots, checkedIn },
+      status: 'checkin',
+      updatedAt: FieldValue.serverTimestamp(),
+    });
+
+    return { tournamentId, repescagem: { role: roleRaw, slots, checkedIn } };
+  }
+
+  async deleteRepescagem(tournamentId: string) {
+    const tRef = this.torneiosCollection.doc(tournamentId);
+    const tSnap = await tRef.get();
+    if (!tSnap.exists) throw new Error('Torneio não encontrado');
+
+    await tRef.update({
+      repescagem: FieldValue.delete(),
+      updatedAt: FieldValue.serverTimestamp(),
+    });
+
+    return { tournamentId, repescagem: null };
+  }
+
+  async repescagemCheckin(tournamentId: string, uid: string, body: any) {
+    const tRef = this.torneiosCollection.doc(tournamentId);
+    const pRef = this.repescagemParticipantsCol(tournamentId).doc(uid);
+
+    await firestore.runTransaction(async (tx) => {
+      const tSnap = await tx.get(tRef);
+      if (!tSnap.exists) throw new Error('Torneio não encontrado');
+      const t: any = tSnap.data();
+
+      if (!t.repescagem) throw new Error('Repescagem não configurada neste torneio');
+
+      if (!(t.status === 'published' || t.status === 'checkin')) {
+        throw new Error('Check-in de repescagem fechado');
+      }
+
+      const { role: repescagemRole, slots, checkedIn } = t.repescagem as {
+        role: string;
+        slots: number;
+        checkedIn: number;
+      };
+
+      if (checkedIn >= slots) throw new Error('Vagas de repescagem esgotadas');
+
+      const existing = await tx.get(pRef);
+      if (existing.exists) throw new Error('Você já realizou check-in na repescagem deste torneio.');
+
+      const playerRole = repescagemRole as 'flex' | 'tank' | 'dps' | 'support';
+
+      const profile = await this.getUserProfile(uid);
+      const displayName = String(profile?.displayName || '').trim();
+      const battletag = String(profile?.battletag || '').trim();
+      if (!displayName || !battletag) {
+        throw new Error('Perfil do usuário incompleto (displayName/battletag).');
+      }
+
+      tx.set(pRef, {
+        uid,
+        displayName,
+        battletag,
+        role: playerRole,
+        checkedInAt: new Date().toISOString(),
+      });
+
+      tx.update(tRef, {
+        'repescagem.checkedIn': FieldValue.increment(1),
+        updatedAt: FieldValue.serverTimestamp(),
+      });
+    });
+
+    const participant = await pRef.get();
+    return { id: participant.id, ...participant.data() };
+  }
+
+  async listRepescagemCheckins(tournamentId: string) {
+    const tSnap = await this.torneiosCollection.doc(tournamentId).get();
+    if (!tSnap.exists) throw new Error('Torneio não encontrado');
+
+    const snap = await this.repescagemParticipantsCol(tournamentId)
+      .orderBy('checkedInAt', 'asc')
+      .get();
+
+    return snap.docs.map((doc) => ({ id: doc.id, ...(doc.data() as Record<string, unknown>) }));
   }
 }
 

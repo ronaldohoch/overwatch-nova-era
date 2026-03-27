@@ -61,18 +61,8 @@
           [value]="roleFilter()"
           (change)="onRoleFilterChange($any($event.target).value)"
         >
-          @for (role of filterOptions; track role) {
-            <option [value]="role">
-              @if (role === 'all') {
-                Todos
-              } @else if (role === 'dps') {
-                DPS
-              } @else if (role === 'tank') {
-                Tank
-              } @else {
-                Support
-              }
-            </option>
+          @for (filter of filterOptions; track filter) {
+            <option [value]="filter">{{ filterLabel(filter) }}</option>
           }
         </select>
       </div>

@@ -1,39 +1,18 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../core/auth/auth.service';
 import { ButtonsComponent } from '../../shared/buttons/buttons';
 import { ModalService } from '../../shared/modal/modal.service';
 import { ModalHostComponent } from '../../shared/modal/modal-host.component';
 import { RecuperarSenhaComponent } from './components/recuperar-senha/recuperar-senha.component';
-
-const SIGNUP_FIELDS = ['displayName', 'email', 'password', 'battletag', 'whatsapp'] as const;
-const LOGIN_FIELDS = ['email', 'password'] as const;
-
-type SignupField = (typeof SIGNUP_FIELDS)[number];
-type LoginField = (typeof LOGIN_FIELDS)[number];
-
-type SignupFormValue = Readonly<{
-  displayName: string;
-  email: string;
-  password: string;
-  battletag: string;
-  whatsapp: string;
-}>;
-
-type LoginFormValue = Readonly<{
-  email: string;
-  password: string;
-}>;
-
-type SignupErrors = Readonly<Record<SignupField, string[]>>;
-type LoginErrors = Readonly<Record<LoginField, string[]>>;
-type SubmitStatus = 'success' | 'error';
+import { InputComponent, OwInputState } from '../../shared/design-system/input/input.component';
 
 @Component({
   selector: 'app-login',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [ButtonsComponent, ModalHostComponent],
+  imports: [ButtonsComponent, ModalHostComponent, ReactiveFormsModule, InputComponent],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })
@@ -43,89 +22,44 @@ export class LoginComponent {
   private readonly router = inject(Router);
   private readonly modal = inject(ModalService);
 
-  readonly signupForm = signal<SignupFormValue>({
-    displayName: '',
-    email: '',
-    password: '',
-    battletag: '',
-    whatsapp: '',
+  readonly signupGroup = new FormGroup({
+    displayName: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+    email: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
+    password: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.minLength(8)] }),
+    battletag: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+    whatsapp: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
   });
 
-  readonly loginForm = signal<LoginFormValue>({
-    email: '',
-    password: '',
-  });
-
-  readonly signupTouched = signal<Record<SignupField, boolean>>({
-    displayName: false,
-    email: false,
-    password: false,
-    battletag: false,
-    whatsapp: false,
-  });
-
-  readonly loginTouched = signal<Record<LoginField, boolean>>({
-    email: false,
-    password: false,
+  readonly loginGroup = new FormGroup({
+    email: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
+    password: new FormControl('', { nonNullable: true, validators: [Validators.required, Validators.minLength(8)] }),
   });
 
   readonly signupSubmitted = signal(false);
   readonly loginSubmitted = signal(false);
   readonly signupMessage = signal<string | null>(null);
   readonly loginMessage = signal<string | null>(null);
-  readonly signupStatus = signal<SubmitStatus | null>(null);
-  readonly loginStatus = signal<SubmitStatus | null>(null);
+  readonly signupStatus = signal<'success' | 'error' | null>(null);
+  readonly loginStatus = signal<'success' | 'error' | null>(null);
   readonly signupPending = signal(false);
   readonly loginPending = signal(false);
-
-  readonly signupErrors = computed<SignupErrors>(() => this.validateSignup(this.signupForm()));
-  readonly loginErrors = computed<LoginErrors>(() => this.validateLogin(this.loginForm()));
-
-  readonly signupHasErrors = computed(() =>
-    SIGNUP_FIELDS.some((field) => this.signupErrors()[field].length > 0),
-  );
-
-  readonly loginHasErrors = computed(() =>
-    LOGIN_FIELDS.some((field) => this.loginErrors()[field].length > 0),
-  );
-
-  readonly canSubmitSignup = computed(() => !this.signupHasErrors());
-  readonly canSubmitLogin = computed(() => !this.loginHasErrors());
 
   openRecuperarSenha(): void {
     this.modal.open(RecuperarSenhaComponent);
   }
 
-  updateSignupField(field: SignupField, value: string): void {
-    this.signupForm.update((current) => ({ ...current, [field]: value }));
+  fieldState(control: FormControl, submitted: boolean): OwInputState {
+    return control.invalid && (control.touched || submitted) ? 'error' : 'default';
   }
 
-  updateLoginField(field: LoginField, value: string): void {
-    this.loginForm.update((current) => ({ ...current, [field]: value }));
-  }
-
-  markSignupTouched(field: SignupField): void {
-    this.signupTouched.update((current) => ({ ...current, [field]: true }));
-  }
-
-  markLoginTouched(field: LoginField): void {
-    this.loginTouched.update((current) => ({ ...current, [field]: true }));
-  }
-
-  signupFieldError(field: SignupField): string | null {
-    const show = this.signupSubmitted() || this.signupTouched()[field];
-    if (!show) return null;
-
-    const [firstError] = this.signupErrors()[field];
-    return firstError ?? null;
-  }
-
-  loginFieldError(field: LoginField): string | null {
-    const show = this.loginSubmitted() || this.loginTouched()[field];
-    if (!show) return null;
-
-    const [firstError] = this.loginErrors()[field];
-    return firstError ?? null;
+  fieldError(control: FormControl, submitted: boolean, label: string): string | undefined {
+    if (!control.invalid || (!control.touched && !submitted)) return undefined;
+    if (control.hasError('required')) return `Informe ${label}.`;
+    if (control.hasError('email')) return 'Informe um e-mail válido.';
+    if (control.hasError('minlength')) {
+      return `Deve ter ao menos ${control.getError('minlength').requiredLength} caracteres.`;
+    }
+    return undefined;
   }
 
   async onCreate(event: Event): Promise<void> {
@@ -134,19 +68,13 @@ export class LoginComponent {
     this.signupMessage.set(null);
     this.signupStatus.set(null);
 
-    if (!this.canSubmitSignup()) return;
+    if (this.signupGroup.invalid) return;
 
     this.signupPending.set(true);
 
     try {
-      await this.auth.create({
-        displayName: this.signupForm().displayName,
-        email: this.signupForm().email,
-        password: this.signupForm().password,
-        battletag: this.signupForm().battletag,
-        whatsapp: this.signupForm().whatsapp,
-      });
-
+      const { displayName, email, password, battletag, whatsapp } = this.signupGroup.getRawValue();
+      await this.auth.create({ displayName, email, password, battletag, whatsapp });
       this.signupMessage.set('Cadastro realizado com sucesso.');
       this.signupStatus.set('success');
       await this.navigateAfterAuthentication();
@@ -164,16 +92,13 @@ export class LoginComponent {
     this.loginMessage.set(null);
     this.loginStatus.set(null);
 
-    if (!this.canSubmitLogin()) return;
+    if (this.loginGroup.invalid) return;
 
     this.loginPending.set(true);
 
     try {
-      await this.auth.login({
-        email: this.loginForm().email,
-        password: this.loginForm().password,
-      });
-
+      const { email, password } = this.loginGroup.getRawValue();
+      await this.auth.login({ email, password });
       this.loginMessage.set('Login realizado com sucesso.');
       this.loginStatus.set('success');
       await this.navigateAfterAuthentication();
@@ -185,95 +110,21 @@ export class LoginComponent {
     }
   }
 
-  private validateSignup(value: SignupFormValue): SignupErrors {
-    const displayNameErrors: string[] = [];
-    const emailErrors: string[] = [];
-    const passwordErrors: string[] = [];
-    const battletagErrors: string[] = [];
-    const whatsappErrors: string[] = [];
-
-    if (!value.displayName.trim()) {
-      displayNameErrors.push('Informe o nome de exibição.');
-    }
-
-    if (!value.email.trim()) {
-      emailErrors.push('Informe o email.');
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.email)) {
-      emailErrors.push('Informe um email válido.');
-    }
-
-    if (!value.password) {
-      passwordErrors.push('Informe a senha.');
-    } else if (value.password.length < 8) {
-      passwordErrors.push('A senha deve ter ao menos 8 caracteres.');
-    }
-
-    if (!value.battletag.trim()) {
-      battletagErrors.push('Informe a BattleTag.');
-    }
-
-    if (!value.whatsapp.trim()) {
-      whatsappErrors.push('Informe seu whatsapp.');
-    }
-
-    return {
-      displayName: displayNameErrors,
-      email: emailErrors,
-      password: passwordErrors,
-      battletag: battletagErrors,
-      whatsapp: whatsappErrors,
-    };
-  }
-
-  private validateLogin(value: LoginFormValue): LoginErrors {
-    const emailErrors: string[] = [];
-    const passwordErrors: string[] = [];
-
-    if (!value.email.trim()) {
-      emailErrors.push('Informe o email.');
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.email)) {
-      emailErrors.push('Informe um email válido.');
-    }
-
-    if (!value.password) {
-      passwordErrors.push('Informe a senha.');
-    } else if (value.password.length < 8) {
-      passwordErrors.push('A senha deve ter ao menos 8 caracteres.');
-    }
-
-    return {
-      email: emailErrors,
-      password: passwordErrors,
-    };
-  }
-
   private resolveLoginError(error: unknown): string {
     if (error instanceof HttpErrorResponse) {
-      const backendMessage =
-        typeof error.error?.error === 'string' ? error.error.error : null;
-
+      const backendMessage = typeof error.error?.error === 'string' ? error.error.error : null;
       if (backendMessage) return backendMessage;
     }
-
-    if (error instanceof Error && error.message.trim()) {
-      return error.message;
-    }
-
+    if (error instanceof Error && error.message.trim()) return error.message;
     return 'Não foi possível realizar o login.';
   }
 
   private resolveCreateError(error: unknown): string {
     if (error instanceof HttpErrorResponse) {
-      const backendMessage =
-        typeof error.error?.error === 'string' ? error.error.error : null;
-
+      const backendMessage = typeof error.error?.error === 'string' ? error.error.error : null;
       if (backendMessage) return backendMessage;
     }
-
-    if (error instanceof Error && error.message.trim()) {
-      return error.message;
-    }
-
+    if (error instanceof Error && error.message.trim()) return error.message;
     return 'Não foi possível realizar o cadastro.';
   }
 
@@ -283,7 +134,6 @@ export class LoginComponent {
       await this.router.navigateByUrl('/watchpoint');
       return;
     }
-
     await this.router.navigateByUrl(redirect);
   }
 

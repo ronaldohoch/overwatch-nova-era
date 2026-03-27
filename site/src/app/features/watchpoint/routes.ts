@@ -42,6 +42,18 @@ export default [
         loadComponent: () => import('./paginas/torneios/torneios.component').then((m) => m.TorneiosComponent),
       },
       {
+        path: 'torneios/:id/repescagem',
+        title: 'Copa Overwatch Nova Era - Repescagem do Torneio',
+        canActivate: [routeAccessGuard],
+        data: {
+          access: 'admin',
+        },
+        loadComponent: () =>
+          import('./paginas/repescagem/repescagem.component').then(
+            (m) => m.RepescagemComponent,
+          ),
+      },
+      {
         path: 'torneios/:id/status',
         title: 'Copa Overwatch Nova Era - Alterar Status de Torneio',
         canActivate: [routeAccessGuard],

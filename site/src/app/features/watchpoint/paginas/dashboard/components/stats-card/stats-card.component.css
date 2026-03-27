@@ -7,9 +7,13 @@
 .Suporte:before{
   background-image:url('/imgs/icone-suporte.svg')
 }
+.Flex:before{
+  background-image:url('/imgs/icone-flex.svg')
+}
 
 .Tanque,
 .Dano,
+.Flex,
 .Suporte{
   overflow: hidden;
   display: block;
@@ -18,6 +22,7 @@
 
 .Tanque:before,
 .Dano:before,
+.Flex:before,
 .Suporte:before{
   content: "";
   width: 150px;

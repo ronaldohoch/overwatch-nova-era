@@ -190,4 +190,93 @@
       }
     </form>
   </div>
+
+  @if (isCompetidor()) {
+    <div class="space-y-6 rounded-xl border border-(--ow-gray-200) bg-white p-6">
+      <div class="space-y-2">
+        <h2 class="text-3xl font-black leading-tight text-(--ow-gray-900) lg:text-4xl">
+          Tornar-se Streamer
+        </h2>
+        <p class="text-(--ow-gray-500)">
+          Streamers podem criar e gerenciar torneios, divulgar competições e ter acesso às ferramentas do Watchpoint.
+        </p>
+      </div>
+
+      <div class="rounded-lg border border-(--ow-gray-200) bg-(--ow-gray-50) p-4 text-sm text-(--ow-gray-600) space-y-1">
+        <p class="font-semibold text-(--ow-gray-700)">O que muda ao se tornar Streamer?</p>
+        <ul class="list-disc list-inside space-y-0.5">
+          <li>Criação e gerenciamento de torneios</li>
+          <li>Acesso ao painel Watchpoint completo</li>
+          <li>Ferramentas de divulgação e controle de check-in</li>
+        </ul>
+      </div>
+
+      <form class="space-y-5" novalidate (submit)="onRequestRoleUpgrade($event)">
+        <div class="space-y-3">
+          <label class="text-sm font-semibold text-(--ow-gray-700)">
+            Links de streamer
+          </label>
+          <p class="text-xs text-(--ow-gray-500)">
+            Informe seus links de streaming (Twitch, YouTube, etc.) para validarmos seu pedido.
+          </p>
+
+          @for (link of streamerLinks(); track $index) {
+            <div class="flex gap-2">
+              <input
+                type="url"
+                placeholder="https://twitch.tv/seucanal"
+                class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
+                [value]="link"
+                (input)="updateStreamerLink($index, $any($event.target).value)"
+              />
+              @if (streamerLinks().length > 1) {
+                <button
+                  type="button"
+                  class="shrink-0 rounded-md border border-(--ow-gray-300) px-3 py-2 text-(--ow-gray-500) transition-colors hover:border-red-300 hover:text-red-500"
+                  (click)="removeStreamerLink($index)"
+                  aria-label="Remover link"
+                >
+                  ✕
+                </button>
+              }
+            </div>
+          }
+
+          @if (canAddLink()) {
+            <button
+              type="button"
+              class="text-sm font-medium text-(--ow-orange) hover:underline"
+              (click)="addStreamerLink()"
+            >
+              + Adicionar outro link
+            </button>
+          }
+        </div>
+
+        <div class="flex flex-row-reverse">
+          <ow-btn
+            [disabled]="!canSubmitRoleRequest() || roleRequestPending()"
+            ariaLabel="Solicitar upgrade para streamer"
+            type="submit"
+          >
+            @if (roleRequestPending()) {
+              Enviando...
+            } @else {
+              Solicitar upgrade
+            }
+          </ow-btn>
+        </div>
+
+        @if (roleRequestMessage(); as message) {
+          <p
+            class="text-sm font-medium"
+            [class.text-green-700]="roleRequestStatus() === 'success'"
+            [class.text-red-600]="roleRequestStatus() === 'error'"
+          >
+            {{ message }}
+          </p>
+        }
+      </form>
+    </div>
+  }
 </div>

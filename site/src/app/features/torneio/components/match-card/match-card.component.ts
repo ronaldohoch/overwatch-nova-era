@@ -23,6 +23,7 @@ export class MatchCardComponent {
 
   readonly isLive = computed(() => this.match().status === 'running');
   readonly isFinished = computed(() => this.match().status === 'finished');
+  readonly isWalkover = computed(() => this.match().walkover === true);
   readonly canTriggerReport = computed(() => {
     if (!this.canReport()) return false;
     const status = this.match().status;
@@ -39,18 +40,28 @@ export class MatchCardComponent {
   readonly team1Initials = computed(() => this.initials(this.team1()?.name));
   readonly team2Initials = computed(() => this.initials(this.team2()?.name));
 
-  readonly score1 = computed(() =>
-    this.match().team1Score !== null ? String(this.match().team1Score) : '–',
-  );
-  readonly score2 = computed(() =>
-    this.match().team2Score !== null ? String(this.match().team2Score) : '–',
-  );
+  readonly score1 = computed(() => {
+    if (this.isWalkover() && this.isFinished() && !this.isTeam1Winner()) return 'W.O.';
+    return this.match().team1Score !== null ? String(this.match().team1Score) : '–';
+  });
+  readonly score2 = computed(() => {
+    if (this.isWalkover() && this.isFinished() && !this.isTeam2Winner()) return 'W.O.';
+    return this.match().team2Score !== null ? String(this.match().team2Score) : '–';
+  });
 
   readonly team1RowClass = computed(() => this.rowClass(this.isTeam1Winner()));
   readonly team2RowClass = computed(() => this.rowClass(this.isTeam2Winner()));
 
-  readonly score1Class = computed(() => this.scoreClass(this.isTeam1Winner()));
-  readonly score2Class = computed(() => this.scoreClass(this.isTeam2Winner()));
+  readonly score1Class = computed(() =>
+    this.isWalkover() && !this.isTeam1Winner()
+      ? 'font-black text-[1rem] text-(--ow-gray-400)'
+      : this.scoreClass(this.isTeam1Winner()),
+  );
+  readonly score2Class = computed(() =>
+    this.isWalkover() && !this.isTeam2Winner()
+      ? 'font-black text-[1rem] text-(--ow-gray-400)'
+      : this.scoreClass(this.isTeam2Winner()),
+  );
 
   onReportClick(): void {
     this.reportRequested.emit(this.match());

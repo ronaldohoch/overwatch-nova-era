@@ -20,7 +20,7 @@ import {
   TransferCaptainDto,
 } from './interfaces';
 
-const TEAM_MAX_MEMBERS = 8;
+
 const USERS_COLLECTION = 'users';
 const NO_CAPTAIN_LABEL = 'Sem capitao definido';
 const UNNAMED_CAPTAIN_LABEL = 'Capitao sem nome informado';
@@ -1375,10 +1375,6 @@ export class TimesService {
         fail('Usuario ja pertence ao time.', 409);
       }
 
-      if (membersCount >= TEAM_MAX_MEMBERS) {
-        fail(`Time lotado. O limite maximo e ${TEAM_MAX_MEMBERS} membros.`, 400);
-      }
-
       if (permission === 'direct_add') {
         const memberDoc: StoredMember = {
           uid: targetUid,
@@ -1454,10 +1450,6 @@ export class TimesService {
       const invite = (inviteSnapshot.data() ?? {}) as Record<string, unknown>;
       if (invite['status'] !== 'pending') {
         fail('Convite nao esta mais pendente.', 400);
-      }
-
-      if (membersCount >= TEAM_MAX_MEMBERS) {
-        fail(`Time lotado. O limite maximo e ${TEAM_MAX_MEMBERS} membros.`, 400);
       }
 
       const invitedByUid = this.parseUid(invite['invitedByUid'], 'invitedByUid');

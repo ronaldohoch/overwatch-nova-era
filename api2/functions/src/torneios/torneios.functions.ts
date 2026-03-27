@@ -125,7 +125,7 @@ app.delete('/:id', requireAuth, rolesMiddleware([UserRole.ADMIN]), async (req, r
 // status
 app.post('/:id/status', requireAuth, rolesMiddleware([UserRole.ADMIN]), async (req, res) => {
   try {
-    const updated = await torneiosSvc.setStatus(req.params.id, req.body?.status);
+    const updated = await torneiosSvc.setStatus(req.params.id, req.body?.status, true);
     res.status(200).json(updated);
   } catch (error: unknown) {
     logger.error(`Erro ao alterar status do torneio ${req.params.id}:`, error);
@@ -194,6 +194,66 @@ app.post(
     } catch (error: unknown) {
       logger.error(`Erro no lock-and-draw do torneio ${req.params.id}:`, error);
       sendError(res, error, 400, 'Bad request');
+    }
+  },
+);
+
+// REPESCAGEM: configurar (admin)
+app.post('/:id/repescagem', requireAuth, rolesMiddleware([UserRole.ADMIN]), async (req, res) => {
+  try {
+    const result = await torneiosSvc.setRepescagem(req.params.id, req.body);
+    res.status(200).json(result);
+  } catch (error: unknown) {
+    logger.error(`Erro ao configurar repescagem do torneio ${req.params.id}:`, error);
+    sendError(res, error, 400, 'Bad request');
+  }
+});
+
+// REPESCAGEM: remover configuração (admin)
+app.delete('/:id/repescagem', requireAuth, rolesMiddleware([UserRole.ADMIN]), async (req, res) => {
+  try {
+    const result = await torneiosSvc.deleteRepescagem(req.params.id);
+    res.status(200).json(result);
+  } catch (error: unknown) {
+    logger.error(`Erro ao remover repescagem do torneio ${req.params.id}:`, error);
+    sendError(res, error, 400, 'Bad request');
+  }
+});
+
+// REPESCAGEM: check-in do jogador (autenticado)
+app.post('/:id/repescagem/checkin', requireAuth, async (req, res) => {
+  try {
+    const uid = getUid(req);
+    if (!uid) return res.status(401).json({ statusCode: 401, message: 'Unauthorized' });
+
+    const result = await torneiosSvc.repescagemCheckin(req.params.id, uid, req.body);
+    res.status(200).json(result);
+    return;
+  } catch (error: unknown) {
+    logger.error(`Erro no check-in de repescagem do torneio ${req.params.id}:`, error);
+    sendError(res, error, 400, 'Bad request');
+    return;
+  }
+});
+
+// REPESCAGEM: listar check-ins (admin/streamer)
+app.get(
+  '/:id/repescagem/checkins',
+  requireAuth,
+  rolesMiddleware([UserRole.ADMIN, UserRole.STREAMER]),
+  async (req, res) => {
+    try {
+      const role = getRole(req);
+      if (role !== UserRole.ADMIN && role !== UserRole.STREAMER) {
+        return res.status(403).json({ statusCode: 403, message: 'Access denied' });
+      }
+
+      const checkins = await torneiosSvc.listRepescagemCheckins(req.params.id);
+      return res.status(200).json(checkins);
+    } catch (error: unknown) {
+      logger.error(`Erro ao buscar check-ins de repescagem do torneio ${req.params.id}:`, error);
+      sendError(res, error, 400, 'Bad request');
+      return;
     }
   },
 );

@@ -26,6 +26,7 @@ export interface BracketMatch {
   readonly team2Score: number | null;
   readonly winnerId: string | null;
   readonly loserId: string | null;
+  readonly walkover?: boolean;
   readonly status: MatchStatus;
 }
 
@@ -56,6 +57,7 @@ export interface ReportMatchPayload {
   readonly winnerId: string;
   readonly team1Score?: number;
   readonly team2Score?: number;
+  readonly walkover?: boolean;
 }
 
 export interface ReportMatchResult {

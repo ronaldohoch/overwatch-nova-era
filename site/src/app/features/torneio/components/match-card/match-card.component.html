@@ -28,6 +28,9 @@
       <span class="text-[0.7rem] font-extrabold uppercase tracking-widest text-(--ow-gray-400)">
         FINALIZADO
       </span>
+      @if (isWalkover()) {
+        <span class="ml-1 text-[0.65rem] font-extrabold uppercase tracking-widest text-(--ow-gray-400)">(W.O.)</span>
+      }
     }
   </div>
 

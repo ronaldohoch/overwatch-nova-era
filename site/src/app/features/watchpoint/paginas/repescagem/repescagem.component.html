@@ -1,0 +1,158 @@
+<div class="my-8 space-y-6">
+  <div class="space-y-2">
+    <h1 class="text-4xl font-black leading-tight text-(--ow-gray-900) lg:text-5xl">
+      Configurar Repescagem
+    </h1>
+    <p class="text-(--ow-gray-500)">
+      Defina a role e a quantidade de vagas disponíveis para a repescagem do torneio.
+    </p>
+  </div>
+
+  @if (!auth.isAuthenticated()) {
+    <p class="text-sm font-medium text-red-600">Faça login para configurar a repescagem.</p>
+  }
+
+  @if (auth.isAuthenticated() && !hasAdminPermission()) {
+    <p class="text-sm font-medium text-red-600">
+      Apenas administradores podem configurar a repescagem.
+    </p>
+  }
+
+  @if (!hasTournamentRouteParam()) {
+    <p class="text-sm font-medium text-red-600">
+      ID do torneio não informado. Acesse esta tela pela listagem de torneios.
+    </p>
+  }
+
+  @if (auth.isAuthenticated() && hasAdminPermission() && hasTournamentRouteParam()) {
+    @if (loadingTournament()) {
+      <p class="text-sm text-(--ow-gray-600)">Carregando dados do torneio...</p>
+    }
+
+    @if (!loadingTournament() && tournament(); as tournament) {
+      <div class="grid gap-6 xl:grid-cols-2">
+        <!-- Informações do torneio -->
+        <div class="space-y-4">
+          <h2 class="text-xl font-black text-(--ow-gray-900)">Torneio selecionado</h2>
+
+          <div class="space-y-3 rounded-md border border-(--ow-gray-200) p-4">
+            <p class="text-xs font-semibold uppercase tracking-wider text-(--ow-gray-500)">Resumo</p>
+            <p class="text-base font-black text-(--ow-gray-900)">{{ tournament.name }}</p>
+            <p class="text-xs text-(--ow-gray-500)">ID: {{ tournament.id }}</p>
+
+            @if (currentRepescagem(); as repescagem) {
+              <div class="mt-3 space-y-1 border-t border-(--ow-gray-200) pt-3">
+                <p class="text-xs font-semibold uppercase tracking-wider text-(--ow-gray-500)">
+                  Repescagem configurada
+                </p>
+                <p class="text-sm text-(--ow-gray-700)">
+                  Role: <span class="font-bold">{{ roleLabelOf(repescagem.role) }}</span>
+                </p>
+                <p class="text-sm text-(--ow-gray-700)">
+                  Vagas: <span class="font-bold">{{ repescagem.slots }}</span>
+                </p>
+                <p class="text-sm text-(--ow-gray-700)">
+                  Check-ins realizados: <span class="font-bold">{{ repescagem.checkedIn }}</span>
+                </p>
+              </div>
+            } @else {
+              <p class="text-sm text-(--ow-gray-500)">Nenhuma repescagem configurada.</p>
+            }
+          </div>
+        </div>
+
+        <!-- Formulário -->
+        <div class="space-y-4">
+          <h2 class="text-xl font-black text-(--ow-gray-900)">Configuração</h2>
+
+          <form class="space-y-5" novalidate (submit)="onSave($event)">
+            <fieldset class="space-y-2">
+              <legend class="text-sm font-semibold text-(--ow-gray-700)">Role da repescagem</legend>
+
+              @for (role of allRoles; track role) {
+                <label
+                  class="flex cursor-pointer items-start gap-3 rounded-md border p-3 transition-colors"
+                  [class.border-(--ow-orange)]="selectedRole() === role"
+                  [class.bg-orange-50]="selectedRole() === role"
+                  [class.border-(--ow-gray-200)]="selectedRole() !== role"
+                >
+                  <input
+                    type="radio"
+                    name="repescagem-role"
+                    [value]="role"
+                    [checked]="selectedRole() === role"
+                    class="mt-0.5 accent-(--ow-orange)"
+                    (change)="onRoleChange(role)"
+                  />
+                  <div class="space-y-0.5">
+                    <p class="text-sm font-semibold text-(--ow-gray-900)">{{ roleLabelOf(role) }}</p>
+                    @if (role === 'flex') {
+                      <p class="text-xs text-(--ow-gray-500)">
+                        Jogador pode entrar em qualquer role ao se inscrever.
+                      </p>
+                    }
+                  </div>
+                </label>
+
+                @if (selectedRole() === role) {
+                  <div class="ml-6 space-y-1.5">
+                    <label
+                      [for]="'slots-' + role"
+                      class="text-sm font-semibold text-(--ow-gray-700)"
+                    >
+                      Vagas disponíveis
+                    </label>
+                    <input
+                      [id]="'slots-' + role"
+                      type="number"
+                      min="1"
+                      class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
+                      [value]="slotsValue()"
+                      (input)="onSlotsChange($any($event.target).value)"
+                      placeholder="Ex: 8"
+                    />
+                  </div>
+                }
+              }
+            </fieldset>
+
+            <div class="flex flex-wrap items-center justify-end gap-3 pt-2">
+              @if (canDelete()) {
+                <ow-btn
+                  type="button"
+                  variant="secondary"
+                  [disabled]="pendingDelete() || pendingSave()"
+                  (click)="onDelete($event)"
+                >
+                  @if (pendingDelete()) {
+                    Removendo...
+                  } @else {
+                    Remover repescagem
+                  }
+                </ow-btn>
+              }
+
+              <ow-btn type="submit" [disabled]="!canSave()">
+                @if (pendingSave()) {
+                  Salvando...
+                } @else {
+                  Salvar configuração
+                }
+              </ow-btn>
+            </div>
+          </form>
+        </div>
+      </div>
+    }
+  }
+
+  @if (message(); as message) {
+    <p
+      class="text-sm font-medium"
+      [class.text-green-700]="messageStatus() === 'success'"
+      [class.text-red-600]="messageStatus() === 'error'"
+    >
+      {{ message }}
+    </p>
+  }
+</div>

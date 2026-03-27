@@ -270,6 +270,7 @@ export class BracketsService {
   async reportMatchResult(tournamentId: string, matchNumber: number, dto: ReportMatchDto) {
     const winnerId = typeof dto?.winnerId === 'string' ? dto.winnerId.trim() : null;
     if (!winnerId) throw new Error('winnerId é obrigatório.');
+    const walkover = dto?.walkover === true;
 
     const matchRef = this.matchesCol(tournamentId).doc(String(matchNumber));
     const matchSnap = await matchRef.get();
@@ -289,9 +290,9 @@ export class BracketsService {
 
     const loserId = winnerId === match.team1Id ? match.team2Id : match.team1Id;
 
-    // Placar opcional
-    const team1Score = this.parseOptionalScore(dto?.team1Score);
-    const team2Score = this.parseOptionalScore(dto?.team2Score);
+    // Placar opcional — ignorado em W.O.
+    const team1Score = walkover ? null : this.parseOptionalScore(dto?.team1Score);
+    const team2Score = walkover ? null : this.parseOptionalScore(dto?.team2Score);
 
     // Carrega todas as partidas para propagar resultado
     const allMatchesSnap = await this.matchesCol(tournamentId).get();
@@ -309,6 +310,7 @@ export class BracketsService {
       loserId,
       team1Score: team1Score ?? null,
       team2Score: team2Score ?? null,
+      walkover,
       status: 'finished' as MatchStatus,
       updatedAt: now,
     });

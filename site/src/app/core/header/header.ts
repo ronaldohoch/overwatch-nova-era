@@ -14,7 +14,7 @@ export type OwNavItem = Readonly<{
 
 const DEFAULT_LINKS: readonly OwNavItem[] = [
     { label: 'Início', link: '/', exact: true },
-    { label: 'Dúvidas frequentes', link: '/duvidas-frequentes' },
+    { label: 'Como Funciona', link: '/como-funciona' },
     { label: 'Torneio', link: `/torneios/${environment.TOURNAMENT_ID}` },
     // { label: 'Times', link: '/times' },
     // { label: 'Agenda', link: '/agenda' },

@@ -160,6 +160,16 @@ export class AuthService {
     );
   }
 
+  async requestRoleUpgrade(links: string[]): Promise<void> {
+    if (!this.token()) {
+      throw new Error('Sessão inválida. Faça login novamente.');
+    }
+
+    await firstValueFrom(
+      this.http.post(`${this.authApiBaseUrl}/me/role-request`, { links }),
+    );
+  }
+
   async forgotPassword(email: string): Promise<void> {
     await firstValueFrom(
       this.http.post(`${this.authApiBaseUrl}/forgot-password`, { email }),

@@ -32,7 +32,55 @@
     }
   </div>
   <div class="flex flex-col sm:flex-row gap-4 justify-center pulsate-fwd">
-    <!-- <ow-btn [variant]="'primary'" href="/watchpoint/dados-do-usuario">Editar meus dados</ow-btn> -->
-    <!-- <ow-btn [variant]="'primary'" href="/watchpoint/check-ins">Fazer check-in</ow-btn> -->
+    <ow-btn [variant]="'primary'" href="/watchpoint/dados-do-usuario">Editar meus dados</ow-btn>
+    <ow-btn [variant]="'primary'" href="/watchpoint/check-ins">Fazer check-in</ow-btn>
   </div>
 </section>
+
+@if (loadingRepescagemCard() || repescagemCard()) {
+  <section class="my-8">
+    <div>
+      <h2
+        class="
+          text-[2.5rem] leading-[1.2] text-center font-extrabold
+          uppercase tracking-[0.08em]
+          text-(--ow-gray-900)
+          relative pb-3.75 mb-7.5
+          after:content-[''] after:absolute after:bottom-0 after:left-1/2 after:-translate-x-1/2
+          after:w-20 after:h-1
+          after:bg-(--ow-orange)
+          after:[clip-path:polygon(10%_0,90%_0,100%_100%,0%_100%)]
+        "
+      >
+        Vagas da Repescagem
+      </h2>
+    </div>
+
+    <div class="mb-16 grid grid-cols-1 gap-8 md:grid-cols-3">
+      @if (repescagemCard(); as card) {
+        <div class="md:col-start-2">
+          <ow-stats-card
+            [customClass]="card.role"
+            [title]="card.role"
+            [value]="card.available + ' ' + 'restantes'"
+            [subtitle]="card.checkedIn + ' de ' + card.slots + ' ocupadas'"
+            [progress]="card.progress"
+            [loading]="loadingRepescagemCard()"
+            [ariaLabel]="'Ocupacao de vagas da repescagem ' + card.role"
+          />
+        </div>
+      } @else if (loadingRepescagemCard()) {
+        <div class="md:col-start-2">
+          <ow-stats-card
+            title="Repescagem"
+            value="--"
+            subtitle="Sem dados"
+            [progress]="0"
+            [loading]="true"
+            ariaLabel="Carregando vagas da repescagem"
+          />
+        </div>
+      }
+    </div>
+  </section>
+}

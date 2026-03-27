@@ -6,6 +6,7 @@ import { ButtonsComponent } from '../../../../shared/buttons/buttons';
 import { environment } from '../../../../../environments/environment';
 
 type Role = 'tank' | 'dps' | 'support';
+type RepescagemRole = 'flex' | 'tank' | 'dps' | 'support';
 type SubmitStatus = 'success' | 'error';
 type RoleAvailabilityItem = Readonly<{
   total: number;
@@ -30,6 +31,11 @@ type TournamentListItem = Readonly<{
   checkinDeadlineAt: string | null;
   checkinAllowed: boolean;
   checkinReason: string | null;
+  repescagem: Readonly<{
+    role: RepescagemRole;
+    slots: number;
+    checkedIn: number;
+  }> | null;
 }>;
 
 type RawRecord = Readonly<Record<string, unknown>>;
@@ -62,10 +68,38 @@ export class CheckInsComponent {
 
   readonly availableRoles: readonly Role[] = ['tank', 'dps', 'support'];
 
+  // Repescagem state
+  readonly selectedRepescagemTournamentId = signal('');
+  readonly submittingRepescagem = signal(false);
+  readonly repescagemMessage = signal<string | null>(null);
+  readonly repescagemStatus = signal<SubmitStatus | null>(null);
+  readonly checkedInRepescagemTournamentIds = signal<readonly string[]>([]);
+
   readonly tournamentOptions = computed(() => this.tournaments());
   readonly selectedTournament = computed(() =>
     this.tournamentOptions().find((item) => item.id === this.selectedTournamentId()) ?? null,
   );
+
+  readonly repescagemTournamentOptions = computed(() =>
+    this.tournamentOptions().filter((item) => item.repescagem !== null),
+  );
+
+  readonly selectedRepescagemTournament = computed(() =>
+    this.repescagemTournamentOptions().find(
+      (item) => item.id === this.selectedRepescagemTournamentId(),
+    ) ?? null,
+  );
+
+  readonly canSubmitRepescagem = computed(() => {
+    if (!this.auth.isAuthenticated()) return false;
+    const tournament = this.selectedRepescagemTournament();
+    if (!tournament?.repescagem) return false;
+    if (this.checkedInRepescagemTournamentIds().includes(tournament.id)) return false;
+    if (this.submittingRepescagem()) return false;
+    const { slots, checkedIn } = tournament.repescagem;
+    return checkedIn < slots;
+  });
+
   readonly canSubmit = computed(
     () =>
       this.auth.isAuthenticated() &&
@@ -168,6 +202,78 @@ export class CheckInsComponent {
     } finally {
       this.submitting.set(false);
     }
+  }
+
+  onRepescagemTournamentChange(value: string): void {
+    this.selectedRepescagemTournamentId.set(value);
+  }
+
+  async onRepescagemSubmit(event: Event): Promise<void> {
+    event.preventDefault();
+    this.repescagemMessage.set(null);
+    this.repescagemStatus.set(null);
+
+    if (!this.auth.isAuthenticated()) {
+      this.repescagemMessage.set('Sua sessão expirou. Faça login novamente.');
+      this.repescagemStatus.set('error');
+      return;
+    }
+
+    const tournament = this.selectedRepescagemTournament();
+    if (!tournament?.repescagem) {
+      this.repescagemMessage.set('Selecione um torneio com repescagem disponível.');
+      this.repescagemStatus.set('error');
+      return;
+    }
+
+    if (this.checkedInRepescagemTournamentIds().includes(tournament.id)) {
+      this.repescagemMessage.set('Você já realizou check-in na repescagem deste torneio.');
+      this.repescagemStatus.set('error');
+      return;
+    }
+
+    if (!this.canSubmitRepescagem()) return;
+
+    this.submittingRepescagem.set(true);
+
+    try {
+      await firstValueFrom(
+        this.http.post(`${this.torneiosApiUrl}/${tournament.id}/repescagem/checkin`, {}),
+      );
+
+      this.checkedInRepescagemTournamentIds.update((current) => [...current, tournament.id]);
+      this.selectedRepescagemTournamentId.set('');
+      this.repescagemMessage.set('Check-in de repescagem realizado com sucesso.');
+      this.repescagemStatus.set('success');
+    } catch (error: unknown) {
+      this.repescagemMessage.set(
+        this.resolveError(error, 'Não foi possível realizar o check-in de repescagem.'),
+      );
+      this.repescagemStatus.set('error');
+    } finally {
+      this.submittingRepescagem.set(false);
+    }
+  }
+
+  repescagemRoleLabel(role: RepescagemRole): string {
+    if (role === 'flex') return 'Flex';
+    if (role === 'tank') return 'Tanque';
+    if (role === 'dps') return 'DPS';
+    if (role === 'support') return 'Suporte';
+    return role;
+  }
+
+  formatRepescagemTournamentLabel(item: TournamentListItem): string {
+    if (!item.repescagem) return item.name;
+    const { role, slots, checkedIn } = item.repescagem;
+    const available = slots - checkedIn;
+    const alreadyCheckedIn = this.checkedInRepescagemTournamentIds().includes(item.id);
+    const state = alreadyCheckedIn
+      ? 'check-in já realizado'
+      : available > 0
+        ? `${available} vaga(s) disponível(eis)`
+        : 'sem vagas';
+    return `${item.name} | role: ${this.repescagemRoleLabel(role)} | ${state}`;
   }
 
   formatTournamentLabel(item: TournamentListItem): string {
@@ -276,7 +382,26 @@ export class CheckInsComponent {
       checkinDeadlineAt,
       checkinAllowed: allowed,
       checkinReason: reason,
+      repescagem: this.readRepescagem(value['repescagem']),
     };
+  }
+
+  private readRepescagem(
+    value: unknown,
+  ): TournamentListItem['repescagem'] {
+    if (!this.isRecord(value)) return null;
+
+    const roleRaw = typeof value['role'] === 'string' ? value['role'].trim().toLowerCase() : '';
+    if (roleRaw !== 'flex' && roleRaw !== 'tank' && roleRaw !== 'dps' && roleRaw !== 'support') {
+      return null;
+    }
+
+    const slots = Number(value['slots']);
+    if (!Number.isInteger(slots) || slots < 1) return null;
+
+    const checkedIn = Math.max(0, Math.floor(Number(value['checkedIn']) || 0));
+
+    return { role: roleRaw as RepescagemRole, slots, checkedIn };
   }
 
   private resolveCheckinAvailability(data: {

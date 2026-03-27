@@ -1,0 +1,782 @@
+<div class="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
+
+  <!-- Hero -->
+  <div class="mb-12 text-center">
+    <ow-badge variant="orange">Guia completo</ow-badge>
+    <h1 class="mt-4 text-4xl font-black leading-tight text-(--ow-gray-900) lg:text-5xl">
+      Como funciona a <span class="text-(--ow-orange)">Copa Nova Era</span>
+    </h1>
+    <p class="mt-4 text-lg text-(--ow-gray-500)">
+      Da inscrição ao chaveamento: tudo que você precisa saber antes de jogar.
+    </p>
+  </div>
+
+  <!-- Tabs: Competidor / Streamer / Admin -->
+  <ow-tabs>
+
+    <!-- ============================= COMPETIDOR ============================= -->
+    <ow-tab label="Competidor">
+
+      <!-- O que é a Copa -->
+      <section class="space-y-4">
+        <h2 class="text-2xl font-black text-(--ow-gray-900)">O que é a Copa Nova Era?</h2>
+        <p class="text-(--ow-gray-600) leading-relaxed">
+          A Copa Nova Era é um torneio comunitário de Overwatch organizado pelo
+          <strong>@Overdog</strong> e <strong>@Overbee</strong>, com transmissão ao vivo pelo
+          <strong>@mano_xand</strong> na Twitch. Os times são formados por sorteio, misturando jogadores
+          novos com veteranos. Você não precisa chegar com um grupo.
+        </p>
+      </section>
+
+      <ow-divider class="my-8" />
+
+      <!-- Como participar -->
+      <section class="space-y-6">
+        <h2 class="text-2xl font-black text-(--ow-gray-900)">Como participar</h2>
+
+        <div class="grid gap-4 sm:grid-cols-3">
+
+          <ow-card>
+            <div class="flex flex-col gap-3">
+              <div class="flex h-10 w-10 items-center justify-center rounded-full bg-[rgba(240,99,20,0.12)] text-lg font-black text-(--ow-orange)">1</div>
+              <h3 class="font-extrabold text-(--ow-gray-900)">Crie sua conta</h3>
+              <p class="text-sm text-(--ow-gray-500) leading-relaxed">
+                Acesse a página de <a routerLink="/login" class="text-(--ow-orange) underline underline-offset-2">Login</a> e
+                cadastre-se com seu e-mail e senha. Após o cadastro você terá acesso à área do
+                <strong>Watchpoint</strong>.
+              </p>
+            </div>
+          </ow-card>
+
+          <ow-card>
+            <div class="flex flex-col gap-3">
+              <div class="flex h-10 w-10 items-center justify-center rounded-full bg-[rgba(240,99,20,0.12)] text-lg font-black text-(--ow-orange)">2</div>
+              <h3 class="font-extrabold text-(--ow-gray-900)">Faça o check-in</h3>
+              <p class="text-sm text-(--ow-gray-500) leading-relaxed">
+                Dentro do Watchpoint, acesse <strong>Check-ins</strong>. Selecione o torneio, escolha
+                sua <strong>role</strong> (Tanque, Dano ou Suporte) e confirme sua inscrição antes do
+                prazo.
+              </p>
+            </div>
+          </ow-card>
+
+          <ow-card>
+            <div class="flex flex-col gap-3">
+              <div class="flex h-10 w-10 items-center justify-center rounded-full bg-[rgba(240,99,20,0.12)] text-lg font-black text-(--ow-orange)">3</div>
+              <h3 class="font-extrabold text-(--ow-gray-900)">Aguarde o sorteio</h3>
+              <p class="text-sm text-(--ow-gray-500) leading-relaxed">
+                Com o check-in fechado, a organização sorteia os times e monta o chaveamento. O sorteio
+                rola ao vivo no canal do <strong>@mano_xand</strong>, então vale acompanhar.
+              </p>
+            </div>
+          </ow-card>
+
+        </div>
+      </section>
+
+      <ow-divider class="my-8" />
+
+      <!-- Roles -->
+      <section class="space-y-4">
+        <h2 class="text-2xl font-black text-(--ow-gray-900)">Roles disponíveis</h2>
+        <p class="text-(--ow-gray-600) leading-relaxed">
+          No momento do check-in você informa qual função deseja jogar. O número de vagas por role
+          é definido pela organização ao criar o torneio (soma total = 8 por time).
+        </p>
+
+        <div class="grid gap-4 sm:grid-cols-3">
+
+          <ow-card>
+            <div class="flex items-center gap-3">
+              <img src="/imgs/icone-tanque.svg" alt="Tanque" class="h-8 w-8">
+              <div>
+                <p class="font-extrabold text-(--ow-gray-900)">Tanque</p>
+                <p class="text-xs text-(--ow-gray-500)">Protege e cria espaço para o time</p>
+              </div>
+            </div>
+          </ow-card>
+
+          <ow-card>
+            <div class="flex items-center gap-3">
+              <img src="/imgs/icone-dano.svg" alt="Dano" class="h-8 w-8">
+              <div>
+                <p class="font-extrabold text-(--ow-gray-900)">Dano</p>
+                <p class="text-xs text-(--ow-gray-500)">Elimina adversários e pressiona objetivos</p>
+              </div>
+            </div>
+          </ow-card>
+
+          <ow-card>
+            <div class="flex items-center gap-3">
+              <img src="/imgs/icone-suporte.svg" alt="Suporte" class="h-8 w-8">
+              <div>
+                <p class="font-extrabold text-(--ow-gray-900)">Suporte</p>
+                <p class="text-xs text-(--ow-gray-500)">Cura os aliados e potencializa as jogadas do time</p>
+              </div>
+            </div>
+          </ow-card>
+
+        </div>
+      </section>
+
+      <ow-divider class="my-8" />
+
+      <!-- Status do Torneio -->
+      <section class="space-y-4">
+        <h2 class="text-2xl font-black text-(--ow-gray-900)">Ciclo de vida do torneio</h2>
+        <p class="text-(--ow-gray-600) leading-relaxed">
+          Os status mudam conforme o torneio avança. Aqui está o que cada um significa:
+        </p>
+
+        <div class="space-y-3">
+
+          <div class="flex items-start gap-4 rounded-md border border-(--ow-gray-200) p-4">
+            <ow-badge variant="gray">Rascunho</ow-badge>
+            <p class="text-sm text-(--ow-gray-600) leading-relaxed">
+              O torneio foi criado mas ainda não está visível. Nenhum check-in é possível aqui.
+            </p>
+          </div>
+
+          <div class="flex items-start gap-4 rounded-md border border-(--ow-gray-200) p-4">
+            <ow-badge variant="blue">Publicado</ow-badge>
+            <p class="text-sm text-(--ow-gray-600) leading-relaxed">
+              O torneio aparece publicamente. Para torneios <strong>Random</strong>, o check-in individual
+              já está liberado nessa fase. Fique de olho no prazo.
+            </p>
+          </div>
+
+          <div class="flex items-start gap-4 rounded-md border border-(--ow-gray-200) p-4">
+            <ow-badge variant="yellow">Check-in</ow-badge>
+            <p class="text-sm text-(--ow-gray-600) leading-relaxed">
+              Fase oficial de check-in. Nos torneios <strong>Closed</strong>, o capitão faz o
+              check-in pelo time inteiro aqui.
+            </p>
+          </div>
+
+          <div class="flex items-start gap-4 rounded-md border border-(--ow-gray-200) p-4">
+            <ow-badge variant="gray">Bloqueado</ow-badge>
+            <p class="text-sm text-(--ow-gray-600) leading-relaxed">
+              Inscrições encerradas. A organização está definindo os times e preparando o chaveamento.
+              Nada mais a fazer por aqui.
+            </p>
+          </div>
+
+          <div class="flex items-start gap-4 rounded-md border border-(--ow-gray-200) p-4">
+            <ow-badge variant="orange">Em andamento</ow-badge>
+            <p class="text-sm text-(--ow-gray-600) leading-relaxed">
+              As partidas já estão rolando. O chaveamento fica público em
+              <a [routerLink]="['/torneio']" class="text-(--ow-orange) underline underline-offset-2">Chaveamento</a>, sem precisar de login.
+            </p>
+          </div>
+
+          <div class="flex items-start gap-4 rounded-md border border-(--ow-gray-200) p-4">
+            <ow-badge variant="green">Finalizado</ow-badge>
+            <p class="text-sm text-(--ow-gray-600) leading-relaxed">
+              O torneio terminou. Resultados e troféus ficam salvos na plataforma.
+            </p>
+          </div>
+
+        </div>
+      </section>
+
+      <ow-divider class="my-8" />
+
+      <!-- Tipos de torneio -->
+      <section class="space-y-4">
+        <h2 class="text-2xl font-black text-(--ow-gray-900)">Tipos de torneio</h2>
+
+        <div class="grid gap-6 sm:grid-cols-2">
+
+          <ow-card>
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <h3 class="font-extrabold text-(--ow-gray-900) text-lg">Random</h3>
+                <ow-badge variant="orange">Sorteio</ow-badge>
+              </div>
+              <p class="text-sm text-(--ow-gray-600) leading-relaxed">
+                Cada jogador faz check-in individualmente, escolhendo a role que vai jogar. Depois que
+                o prazo fecha, a organização realiza o <strong>sorteio dos times</strong> ao vivo,
+                misturando veteranos com jogadores novos. Funciona bem se você está chegando sozinho.
+              </p>
+              <ul class="space-y-1 text-sm text-(--ow-gray-600)">
+                <li class="flex items-start gap-2"><span class="mt-0.5 text-(--ow-orange)">&#10003;</span> Check-in individual por role</li>
+                <li class="flex items-start gap-2"><span class="mt-0.5 text-(--ow-orange)">&#10003;</span> Times formados pela organização</li>
+                <li class="flex items-start gap-2"><span class="mt-0.5 text-(--ow-orange)">&#10003;</span> Vagas definidas por role (tank/dps/suporte)</li>
+                <li class="flex items-start gap-2"><span class="mt-0.5 text-(--ow-orange)">&#10003;</span> Repescagem disponível (quando configurada)</li>
+              </ul>
+            </div>
+          </ow-card>
+
+          <ow-card>
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <h3 class="font-extrabold text-(--ow-gray-900) text-lg">Closed</h3>
+                <ow-badge variant="blue">Time fechado</ow-badge>
+              </div>
+              <p class="text-sm text-(--ow-gray-600) leading-relaxed">
+                Nesse formato, seu grupo chega junto. O capitão cria o time, convida os membros e faz
+                o check-in coletivo na fase certa. Se você já tem uma equipe formada, é por aqui.
+              </p>
+              <ul class="space-y-1 text-sm text-(--ow-gray-600)">
+                <li class="flex items-start gap-2"><span class="mt-0.5 text-(--ow-blue)">&#10003;</span> Capitão cria e gerencia o time</li>
+                <li class="flex items-start gap-2"><span class="mt-0.5 text-(--ow-blue)">&#10003;</span> Check-in do time completo</li>
+                <li class="flex items-start gap-2"><span class="mt-0.5 text-(--ow-blue)">&#10003;</span> Até 8 membros por time</li>
+                <li class="flex items-start gap-2"><span class="mt-0.5 text-(--ow-blue)">&#10003;</span> Seeding manual ou aleatório no bracket</li>
+              </ul>
+            </div>
+          </ow-card>
+
+        </div>
+      </section>
+
+      <ow-divider class="my-8" />
+
+      <!-- Repescagem -->
+      <section class="space-y-4">
+        <h2 class="text-2xl font-black text-(--ow-gray-900)">Repescagem</h2>
+        <p class="text-(--ow-gray-600) leading-relaxed">
+          Alguns torneios <strong>Random</strong> oferecem repescagem. Quando ativada, aparecem vagas
+          extras para uma role específica: <em>Flex, Tanque, Dano ou Suporte</em>.
+        </p>
+        <p class="text-(--ow-gray-600) leading-relaxed">
+          Se a sua role lotou ou você perdeu o check-in principal, vale checar se tem repescagem aberta
+          nos <strong>Check-ins</strong> do Watchpoint. O processo é o mesmo: seleciona o torneio e
+          confirma.
+        </p>
+      </section>
+
+      <ow-divider class="my-8" />
+
+      <!-- Chaveamento público -->
+      <section class="space-y-4">
+        <h2 class="text-2xl font-black text-(--ow-gray-900)">Acompanhando o chaveamento</h2>
+        <p class="text-(--ow-gray-600) leading-relaxed">
+          Com o torneio em andamento, o chaveamento fica disponível em
+          <a routerLink="/torneio" class="text-(--ow-orange) underline underline-offset-2">Chaveamento</a>,
+          sem precisar de login. Dá para acompanhar:
+        </p>
+        <ul class="space-y-2 text-(--ow-gray-600) text-sm">
+          <li class="flex items-start gap-2"><span class="text-(--ow-orange) font-bold">&#9658;</span> Todos os confrontos do <strong>Winners Bracket</strong></li>
+          <li class="flex items-start gap-2"><span class="text-(--ow-orange) font-bold">&#9658;</span> Todos os confrontos do <strong>Losers Bracket</strong></li>
+          <li class="flex items-start gap-2"><span class="text-(--ow-orange) font-bold">&#9658;</span> A <strong>Grande Final</strong> entre os líderes de cada chave</li>
+          <li class="flex items-start gap-2"><span class="text-(--ow-orange) font-bold">&#9658;</span> Logos e nomes dos times em cada partida</li>
+          <li class="flex items-start gap-2"><span class="text-(--ow-orange) font-bold">&#9658;</span> Placar e vencedor de cada jogo já realizado</li>
+        </ul>
+      </section>
+
+    </ow-tab>
+
+    <!-- ============================= STREAMER ============================= -->
+    <ow-tab label="Streamer">
+
+      <section class="space-y-4">
+        <h2 class="text-2xl font-black text-(--ow-gray-900)">Área do Watchpoint</h2>
+        <p class="text-(--ow-gray-600) leading-relaxed">
+          O <strong>Watchpoint</strong> é a área logada da plataforma. Streamers e admins encontram
+          aqui as ferramentas de transmissão, acompanhamento de check-ins e gerenciamento do torneio.
+          Para acessar, é só fazer login.
+        </p>
+      </section>
+
+      <ow-divider class="my-8" />
+
+      <!-- Dashboard -->
+      <section class="space-y-4">
+        <h2 class="text-2xl font-black text-(--ow-gray-900)">Dashboard</h2>
+        <p class="text-(--ow-gray-600) leading-relaxed">
+          A primeira tela que aparece no Watchpoint mostra a situação atual do torneio:
+        </p>
+        <div class="grid gap-4 sm:grid-cols-3">
+          <ow-card>
+            <div class="space-y-1">
+              <p class="font-extrabold text-(--ow-gray-900)">Vagas por Role</p>
+              <p class="text-sm text-(--ow-gray-500)">Total, preenchidas e disponíveis para Tanque, Dano e Suporte com barra de progresso.</p>
+            </div>
+          </ow-card>
+          <ow-card>
+            <div class="space-y-1">
+              <p class="font-extrabold text-(--ow-gray-900)">Repescagem</p>
+              <p class="text-sm text-(--ow-gray-500)">Quantas vagas de repescagem foram usadas e quantas ainda estão abertas.</p>
+            </div>
+          </ow-card>
+          <ow-card>
+            <div class="space-y-1">
+              <p class="font-extrabold text-(--ow-gray-900)">Acesso rápido</p>
+              <p class="text-sm text-(--ow-gray-500)">Atalhos para Ferramentas de Streamer, Check-ins e Chaveamento.</p>
+            </div>
+          </ow-card>
+        </div>
+      </section>
+
+      <ow-divider class="my-8" />
+
+      <!-- Ferramentas de Streamer -->
+      <section class="space-y-6">
+        <h2 class="text-2xl font-black text-(--ow-gray-900)">Ferramentas de Streamer</h2>
+        <p class="text-(--ow-gray-600) leading-relaxed">
+          Acesse em <strong>Watchpoint &rarr; Ferramentas de Streamer</strong>. São ferramentas
+          pensadas para usar ao vivo durante a transmissão:
+        </p>
+
+        <div class="space-y-4">
+
+          <!-- Sorteio -->
+          <ow-card>
+            <div class="space-y-3">
+              <div class="flex items-center gap-3">
+                <ow-badge variant="orange">Sorteio</ow-badge>
+                <h3 class="font-extrabold text-(--ow-gray-900)">Roleta de Sorteio</h3>
+              </div>
+              <p class="text-sm text-(--ow-gray-600) leading-relaxed">
+                Uma roleta animada com os jogadores inscritos, para sortear os times ao vivo em torneios
+                do tipo <strong>Random</strong>. O resultado fica salvo na sessão, então se a tela fechar
+                sem querer você consegue continuar do ponto onde parou.
+              </p>
+              <p class="text-sm text-(--ow-gray-600)">
+                Acesse a Roleta, carregue os participantes e inicie. Conforme os jogadores saem, é só
+                adicioná-los ao time correspondente.
+              </p>
+            </div>
+          </ow-card>
+
+          <!-- Veto de Mapas -->
+          <ow-card>
+            <div class="space-y-3">
+              <div class="flex items-center gap-3">
+                <ow-badge variant="blue">Em breve</ow-badge>
+                <h3 class="font-extrabold text-(--ow-gray-900)">Veto de Mapas</h3>
+              </div>
+              <p class="text-sm text-(--ow-gray-600) leading-relaxed">
+                Ferramenta para o veto de mapas entre dois times. Os times se revezam banindo da pool
+                até sobrar o mapa da partida. Fica bacana exibir na stream porque o público vê tudo
+                acontecendo em tempo real.
+              </p>
+            </div>
+          </ow-card>
+
+          <!-- Banimento de Heróis -->
+          <ow-card>
+            <div class="space-y-3">
+              <div class="flex items-center gap-3">
+                <ow-badge variant="red">Ao vivo</ow-badge>
+                <h3 class="font-extrabold text-(--ow-gray-900)">Banimento de Heróis</h3>
+              </div>
+              <p class="text-sm text-(--ow-gray-600) leading-relaxed">
+                Sistema de banimento de heróis antes das partidas. Como funciona:
+              </p>
+              <ol class="space-y-2 text-sm text-(--ow-gray-600) list-decimal pl-5">
+                <li>Informe os nomes dos dois times e o número de bans por time.</li>
+                <li>Os times se alternam clicando nos heróis que querem banir, com timer por escolha.</li>
+                <li>Todos os heróis aparecem organizados por role e sub-role, com busca.</li>
+                <li>Heróis banidos ficam marcados com ícone de proibido no painel de cada time, em tempo real.</li>
+                <li>Terminou os bans? A tela exibe um resumo com todos os heróis fora do jogo.</li>
+              </ol>
+            </div>
+          </ow-card>
+
+          <!-- Coin Flip -->
+          <ow-card>
+            <div class="space-y-3">
+              <div class="flex items-center gap-3">
+                <ow-badge variant="yellow">Sorteio</ow-badge>
+                <h3 class="font-extrabold text-(--ow-gray-900)">Coin Flip</h3>
+              </div>
+              <p class="text-sm text-(--ow-gray-600) leading-relaxed">
+                Uma moeda animada para resolver quem escolhe primeiro: lado, mapa, o que for.
+                Rápido e visualmente agradável para a stream.
+              </p>
+            </div>
+          </ow-card>
+
+        </div>
+      </section>
+
+      <ow-divider class="my-8" />
+
+      <!-- Check-ins por torneio -->
+      <section class="space-y-4">
+        <h2 class="text-2xl font-black text-(--ow-gray-900)">Check-ins por Torneio</h2>
+        <p class="text-(--ow-gray-600) leading-relaxed">
+          Em <strong>Watchpoint &rarr; Check-ins por Torneio</strong> você vê a lista completa de
+          quem está inscrito num torneio, com filtro por role e status. Serve bem para conferir antes
+          de começar o sorteio.
+        </p>
+      </section>
+
+      <ow-divider class="my-8" />
+
+      <!-- Chaveamento (streamer) -->
+      <section class="space-y-4">
+        <h2 class="text-2xl font-black text-(--ow-gray-900)">Registrar resultados no chaveamento</h2>
+        <p class="text-(--ow-gray-600) leading-relaxed">
+          Streamers e admins podem registrar resultados diretamente no chaveamento. Vai em
+          <strong>Watchpoint &rarr; Torneios &rarr; Chave</strong>, clica numa partida com status
+          <strong>Pronto</strong> ou <strong>Em andamento</strong> e abre o formulário.
+        </p>
+        <p class="text-(--ow-gray-600) leading-relaxed">
+          Informe o vencedor e o placar se quiser (ex.: 2&nbsp;×&nbsp;1). Salvou? O sistema já
+          atualiza o chaveamento: vencedor segue no Winners, perdedor cai para o Losers.
+        </p>
+      </section>
+
+      <ow-divider class="my-8" />
+
+      <!-- Troféus -->
+      <section class="space-y-4">
+        <h2 class="text-2xl font-black text-(--ow-gray-900)">Troféus</h2>
+        <p class="text-(--ow-gray-600) leading-relaxed">
+          Em <strong>Watchpoint &rarr; Troféus</strong> você consulta os prêmios dos times.
+          Tem filtro por time em <strong>Troféus &rarr; Time</strong>.
+        </p>
+      </section>
+
+    </ow-tab>
+
+    <!-- ============================= ADMIN ============================= -->
+    <ow-tab label="Admin">
+
+      <section class="space-y-4">
+        <h2 class="text-2xl font-black text-(--ow-gray-900)">Painel Administrativo</h2>
+        <p class="text-(--ow-gray-600) leading-relaxed">
+          Admins fazem tudo que streamers fazem, mais o controle do torneio em si: criação, mudança
+          de status e configurações gerais.
+        </p>
+      </section>
+
+      <ow-divider class="my-8" />
+
+      <!-- Criar torneio -->
+      <section class="space-y-4">
+        <h2 class="text-2xl font-black text-(--ow-gray-900)">Criar e editar torneios</h2>
+        <p class="text-(--ow-gray-600) leading-relaxed">
+          Acesse <strong>Watchpoint &rarr; Novo Torneio</strong>. O formulário requer:
+        </p>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm border-collapse">
+            <thead>
+              <tr class="border-b-2 border-(--ow-gray-200)">
+                <th class="py-2 pr-4 text-left font-extrabold text-(--ow-gray-900)">Campo</th>
+                <th class="py-2 pr-4 text-left font-extrabold text-(--ow-gray-900)">Descrição</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-(--ow-gray-200)">
+              <tr>
+                <td class="py-2 pr-4 font-semibold text-(--ow-gray-900)">Nome</td>
+                <td class="py-2 pr-4 text-(--ow-gray-600)">Nome do torneio exibido ao público.</td>
+              </tr>
+              <tr>
+                <td class="py-2 pr-4 font-semibold text-(--ow-gray-900)">Descrição</td>
+                <td class="py-2 pr-4 text-(--ow-gray-600)">Descrição opcional (máx. 240 caracteres).</td>
+              </tr>
+              <tr>
+                <td class="py-2 pr-4 font-semibold text-(--ow-gray-900)">Tipo</td>
+                <td class="py-2 pr-4 text-(--ow-gray-600)"><strong>Random</strong> (sorteio) ou <strong>Closed</strong> (times pré-formados).</td>
+              </tr>
+              <tr>
+                <td class="py-2 pr-4 font-semibold text-(--ow-gray-900)">Máx. times</td>
+                <td class="py-2 pr-4 text-(--ow-gray-600)">Deve ser potência de 2: <strong>4, 8, 16 ou 32</strong> (define o tamanho do bracket).</td>
+              </tr>
+              <tr>
+                <td class="py-2 pr-4 font-semibold text-(--ow-gray-900)">Data de início</td>
+                <td class="py-2 pr-4 text-(--ow-gray-600)">Data e hora de início das partidas.</td>
+              </tr>
+              <tr>
+                <td class="py-2 pr-4 font-semibold text-(--ow-gray-900)">Prazo check-in</td>
+                <td class="py-2 pr-4 text-(--ow-gray-600)">Deve ser <strong>antes</strong> da data de início. Após este prazo o check-in fecha automaticamente.</td>
+              </tr>
+              <tr>
+                <td class="py-2 pr-4 font-semibold text-(--ow-gray-900)">Slots por role</td>
+                <td class="py-2 pr-4 text-(--ow-gray-600)">Apenas para <strong>Random</strong>: vagas de Tanque + Dano + Suporte devem somar exatamente <strong>8</strong>.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p class="text-sm text-(--ow-gray-500)">
+          Para editar um torneio existente, acesse <strong>Torneios</strong> na listagem e clique em
+          <em>Editar</em>. As mesmas validações se aplicam.
+        </p>
+      </section>
+
+      <ow-divider class="my-8" />
+
+      <!-- Gerenciar status -->
+      <section class="space-y-4">
+        <h2 class="text-2xl font-black text-(--ow-gray-900)">Gerenciar status do torneio</h2>
+        <p class="text-(--ow-gray-600) leading-relaxed">
+          Em <strong>Watchpoint &rarr; Torneios &rarr; Status</strong> o admin muda a fase do torneio.
+          A ordem é sempre essa:
+        </p>
+
+        <div class="flex flex-wrap gap-2 items-center text-sm">
+          <ow-badge variant="gray">Rascunho</ow-badge>
+          <span class="text-(--ow-gray-400)">&rarr;</span>
+          <ow-badge variant="blue">Publicado</ow-badge>
+          <span class="text-(--ow-gray-400)">&rarr;</span>
+          <ow-badge variant="yellow">Check-in</ow-badge>
+          <span class="text-(--ow-gray-400)">&rarr;</span>
+          <ow-badge variant="gray">Bloqueado</ow-badge>
+          <span class="text-(--ow-gray-400)">&rarr;</span>
+          <ow-badge variant="orange">Em andamento</ow-badge>
+          <span class="text-(--ow-gray-400)">&rarr;</span>
+          <ow-badge variant="green">Finalizado</ow-badge>
+        </div>
+
+        <p class="text-sm text-(--ow-gray-500)">
+          Um torneio também pode ser <ow-badge variant="red">Cancelado</ow-badge> a qualquer momento.
+          O bracket só pode ser gerado quando o torneio está em <strong>Em andamento</strong>.
+        </p>
+      </section>
+
+      <ow-divider class="my-8" />
+
+      <!-- Repescagem (admin) -->
+      <section class="space-y-4">
+        <h2 class="text-2xl font-black text-(--ow-gray-900)">Configurar repescagem</h2>
+        <p class="text-(--ow-gray-600) leading-relaxed">
+          Em <strong>Watchpoint &rarr; Torneios &rarr; Repescagem</strong> você define a role e o
+          número de vagas. Configurou? Aparece automaticamente para os competidores nos Check-ins.
+        </p>
+        <p class="text-(--ow-gray-600) leading-relaxed">
+          Pode ser <strong>Flex</strong> (aceita qualquer role), <strong>Tanque</strong>,
+          <strong>Dano</strong> ou <strong>Suporte</strong>. Para remover, é só clicar em
+          <em>Remover repescagem</em>.
+        </p>
+      </section>
+
+      <ow-divider class="my-8" />
+
+      <!-- Gerar bracket -->
+      <section class="space-y-4">
+        <h2 class="text-2xl font-black text-(--ow-gray-900)">Gerar o chaveamento</h2>
+        <p class="text-(--ow-gray-600) leading-relaxed">
+          Com o torneio em andamento, vá em
+          <strong>Watchpoint &rarr; Torneios &rarr; Chave</strong>. Dois modos de seeding disponíveis:
+        </p>
+
+        <div class="grid gap-4 sm:grid-cols-2">
+
+          <ow-card>
+            <div class="space-y-2">
+              <h3 class="font-extrabold text-(--ow-gray-900)">Aleatório</h3>
+              <p class="text-sm text-(--ow-gray-600) leading-relaxed">
+                O sistema posiciona os times aleatoriamente. Para torneios <strong>Random</strong>,
+                você seleciona os times sorteados na lista e consegue ver o preview dos confrontos
+                da primeira rodada antes de confirmar.
+              </p>
+            </div>
+          </ow-card>
+
+          <ow-card>
+            <div class="space-y-2">
+              <h3 class="font-extrabold text-(--ow-gray-900)">Manual</h3>
+              <p class="text-sm text-(--ow-gray-600) leading-relaxed">
+                Você define a ordem das sementes manualmente. Dá para digitar os IDs ou arrastar os
+                times na tela de preview. Útil para separar os favoritos e garantir que só se
+                encontrem nas fases finais.
+              </p>
+            </div>
+          </ow-card>
+
+        </div>
+
+        <p class="text-sm text-(--ow-gray-500)">
+          O chaveamento pode ser excluído e regerado. Assim que está pronto, aparece automaticamente
+          no visualizador público em <a routerLink="/torneio" class="text-(--ow-orange) underline underline-offset-2">/torneio</a> e
+          <a routerLink="/torneios/:id" class="text-(--ow-orange) underline underline-offset-2">/torneios/:id</a>.
+        </p>
+      </section>
+
+      <ow-divider class="my-8" />
+
+      <!-- Times -->
+      <section class="space-y-4">
+        <h2 class="text-2xl font-black text-(--ow-gray-900)">Gerenciar times</h2>
+        <p class="text-(--ow-gray-600) leading-relaxed">
+          Em <strong>Watchpoint &rarr; Times</strong> admins veem todos os times. Competidores
+          veem apenas os seus. Cada time exibe:
+        </p>
+        <ul class="space-y-1 text-sm text-(--ow-gray-600) list-disc pl-5">
+          <li>Nome, logo e categoria (Random ou Closed)</li>
+          <li>Lista de membros e papel de cada um</li>
+          <li>Status de check-in no torneio atual</li>
+          <li>Convites pendentes para novos membros</li>
+        </ul>
+      </section>
+
+      <ow-divider class="my-8" />
+
+      <!-- Usuários -->
+      <section class="space-y-4">
+        <h2 class="text-2xl font-black text-(--ow-gray-900)">Gerenciar usuários</h2>
+        <p class="text-(--ow-gray-600) leading-relaxed">
+          Só admins têm acesso a isso. Em <strong>Watchpoint &rarr; Usuários</strong> você vê todos
+          os usuários cadastrados, com role e dados de acesso.
+        </p>
+      </section>
+
+    </ow-tab>
+
+    <!-- ============================= CHAVEAMENTO ============================= -->
+    <ow-tab label="Chaveamento">
+
+      <section class="space-y-4">
+        <h2 class="text-2xl font-black text-(--ow-gray-900)">Dupla Eliminação</h2>
+        <p class="text-(--ow-gray-600) leading-relaxed">
+          A Copa usa <strong>Dupla Eliminação</strong>: um time só está fora depois de perder duas
+          vezes. Se você perder uma partida, ainda tem jogo.
+        </p>
+      </section>
+
+      <ow-divider class="my-8" />
+
+      <!-- Como funciona -->
+      <section class="space-y-6">
+        <h2 class="text-2xl font-black text-(--ow-gray-900)">Como a chave funciona</h2>
+
+        <div class="space-y-4">
+
+          <ow-card>
+            <div class="space-y-3">
+              <div class="flex items-center gap-3">
+                <ow-badge variant="orange">WB</ow-badge>
+                <h3 class="font-extrabold text-(--ow-gray-900)">Winners Bracket (Chave dos Vencedores)</h3>
+              </div>
+              <p class="text-sm text-(--ow-gray-600) leading-relaxed">
+                Todos os times entram aqui. Venceu? Segue no WB. Perdeu? Cai para o Losers,
+                mas <strong>não está eliminado</strong> ainda.
+              </p>
+            </div>
+          </ow-card>
+
+          <ow-card>
+            <div class="space-y-3">
+              <div class="flex items-center gap-3">
+                <ow-badge variant="blue">LB</ow-badge>
+                <h3 class="font-extrabold text-(--ow-gray-900)">Losers Bracket (Chave dos Perdedores)</h3>
+              </div>
+              <p class="text-sm text-(--ow-gray-600) leading-relaxed">
+                Times que caíram do WB entram aqui. No LB, uma derrota é eliminação definitiva.
+                Quem sobreviver até o final garante vaga na Grande Final. Por isso o LB tem mais
+                rodadas que o WB.
+              </p>
+            </div>
+          </ow-card>
+
+          <ow-card>
+            <div class="space-y-3">
+              <div class="flex items-center gap-3">
+                <ow-badge variant="green">GF</ow-badge>
+                <h3 class="font-extrabold text-(--ow-gray-900)">Grande Final</h3>
+              </div>
+              <p class="text-sm text-(--ow-gray-600) leading-relaxed">
+                O líder do <strong>WB</strong>, que chegou sem nenhuma derrota, enfrenta o líder do
+                <strong>LB</strong>. Uma partida, um campeão. Quem veio pelo WB chega com essa
+                vantagem: nunca perdeu.
+              </p>
+            </div>
+          </ow-card>
+
+        </div>
+      </section>
+
+      <ow-divider class="my-8" />
+
+      <!-- Exemplo visual -->
+      <section class="space-y-4">
+        <h2 class="text-2xl font-black text-(--ow-gray-900)">Exemplo com 4 times</h2>
+        <p class="text-sm text-(--ow-gray-500)">
+          Caminho possível de um time com 4 participantes:
+        </p>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm border-collapse min-w-[500px]">
+            <thead>
+              <tr class="border-b-2 border-(--ow-gray-200)">
+                <th class="py-2 pr-4 text-left font-extrabold text-(--ow-gray-900)">Fase</th>
+                <th class="py-2 pr-4 text-left font-extrabold text-(--ow-gray-900)">Resultado</th>
+                <th class="py-2 text-left font-extrabold text-(--ow-gray-900)">O que acontece</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-(--ow-gray-200) text-(--ow-gray-600)">
+              <tr>
+                <td class="py-2 pr-4 font-semibold">WB Rodada 1</td>
+                <td class="py-2 pr-4"><ow-badge variant="orange">Vence</ow-badge></td>
+                <td class="py-2">Avança para a Semi do WB</td>
+              </tr>
+              <tr>
+                <td class="py-2 pr-4 font-semibold">WB Rodada 1</td>
+                <td class="py-2 pr-4"><ow-badge variant="gray">Perde</ow-badge></td>
+                <td class="py-2">Cai para o Losers Bracket (1ª derrota)</td>
+              </tr>
+              <tr>
+                <td class="py-2 pr-4 font-semibold">LB Rodada 1</td>
+                <td class="py-2 pr-4"><ow-badge variant="orange">Vence</ow-badge></td>
+                <td class="py-2">Avança no Losers Bracket</td>
+              </tr>
+              <tr>
+                <td class="py-2 pr-4 font-semibold">LB Rodada 1</td>
+                <td class="py-2 pr-4"><ow-badge variant="red">Perde</ow-badge></td>
+                <td class="py-2">Eliminado (2ª derrota)</td>
+              </tr>
+              <tr>
+                <td class="py-2 pr-4 font-semibold">LB Final</td>
+                <td class="py-2 pr-4"><ow-badge variant="orange">Vence</ow-badge></td>
+                <td class="py-2">Classifica para a Grande Final</td>
+              </tr>
+              <tr>
+                <td class="py-2 pr-4 font-semibold">Grande Final</td>
+                <td class="py-2 pr-4"><ow-badge variant="green">Vence</ow-badge></td>
+                <td class="py-2">Campeão da Copa Nova Era!</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <ow-divider class="my-8" />
+
+      <!-- Seeding -->
+      <section class="space-y-4">
+        <h2 class="text-2xl font-black text-(--ow-gray-900)">Seeding (posicionamento no bracket)</h2>
+        <p class="text-(--ow-gray-600) leading-relaxed">
+          O seeding é o posicionamento dos times no bracket. Define quem enfrenta quem logo de cara.
+        </p>
+        <div class="grid gap-4 sm:grid-cols-2">
+          <ow-card>
+            <div class="space-y-2">
+              <p class="font-extrabold text-(--ow-gray-900)">Aleatório</p>
+              <p class="text-sm text-(--ow-gray-600)">Distribuição aleatória. Nenhum time tem vantagem na montagem do bracket.</p>
+            </div>
+          </ow-card>
+          <ow-card>
+            <div class="space-y-2">
+              <p class="font-extrabold text-(--ow-gray-900)">Manual</p>
+              <p class="text-sm text-(--ow-gray-600)">O admin define a semente de cada time: seed 1 vs seed 2, seed 3 vs seed 4, e assim por diante. Dá para separar os favoritos e garantir que só se encontrem nas fases finais.</p>
+            </div>
+          </ow-card>
+        </div>
+        <p class="text-sm text-(--ow-gray-500)">
+          O bracket funciona com <strong>4, 8, 16 ou 32 times</strong>. Sempre potência de 2,
+          para o chaveamento ficar simétrico.
+        </p>
+      </section>
+
+    </ow-tab>
+
+  </ow-tabs>
+
+  <!-- Links úteis -->
+  <div class="mt-12 rounded-md border border-(--ow-gray-200) bg-(--ow-gray-100) p-6">
+    <h2 class="mb-4 text-lg font-extrabold text-(--ow-gray-900)">Links uteis</h2>
+    <div class="flex flex-wrap gap-3">
+      <a routerLink="/login" class="inline-flex items-center gap-1.5 rounded-md border border-(--ow-gray-300) bg-white px-4 py-2 text-sm font-semibold text-(--ow-gray-700) transition-colors hover:border-(--ow-orange) hover:text-(--ow-orange)">Login / Cadastro</a>
+      <a routerLink="/torneio" class="inline-flex items-center gap-1.5 rounded-md border border-(--ow-gray-300) bg-white px-4 py-2 text-sm font-semibold text-(--ow-gray-700) transition-colors hover:border-(--ow-orange) hover:text-(--ow-orange)">Chaveamento</a>
+      <a routerLink="/watchpoint" class="inline-flex items-center gap-1.5 rounded-md border border-(--ow-gray-300) bg-white px-4 py-2 text-sm font-semibold text-(--ow-gray-700) transition-colors hover:border-(--ow-orange) hover:text-(--ow-orange)">Watchpoint</a>
+      <a routerLink="/duvidas-frequentes" class="inline-flex items-center gap-1.5 rounded-md border border-(--ow-gray-300) bg-white px-4 py-2 text-sm font-semibold text-(--ow-gray-700) transition-colors hover:border-(--ow-orange) hover:text-(--ow-orange)">Duvidas Frequentes</a>
+      <a routerLink="/regras" class="inline-flex items-center gap-1.5 rounded-md border border-(--ow-gray-300) bg-white px-4 py-2 text-sm font-semibold text-(--ow-gray-700) transition-colors hover:border-(--ow-orange) hover:text-(--ow-orange)">Regras de Conduta</a>
+    </div>
+  </div>
+
+</div>

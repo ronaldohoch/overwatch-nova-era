@@ -5,6 +5,7 @@ import { ButtonsComponent } from '../../../../shared/buttons/buttons';
 
 const PROFILE_FIELDS = ['displayName', 'email', 'whatsapp'] as const;
 const PASSWORD_FIELDS = ['currentPassword', 'newPassword', 'confirmPassword'] as const;
+const MAX_STREAMER_LINKS = 5;
 
 type ProfileField = (typeof PROFILE_FIELDS)[number];
 type PasswordField = (typeof PASSWORD_FIELDS)[number];
@@ -68,6 +69,19 @@ export class MeusDadosComponent {
   readonly passwordStatus = signal<SubmitStatus | null>(null);
   readonly profilePending = signal(false);
   readonly passwordPending = signal(false);
+
+  // Role upgrade request
+  readonly streamerLinks = signal<string[]>(['']);
+  readonly roleRequestPending = signal(false);
+  readonly roleRequestMessage = signal<string | null>(null);
+  readonly roleRequestStatus = signal<SubmitStatus | null>(null);
+  readonly roleRequestSubmitted = signal(false);
+
+  readonly isCompetidor = computed(() => this.auth.userRole() === 'competidor');
+  readonly canAddLink = computed(() => this.streamerLinks().length < MAX_STREAMER_LINKS);
+  readonly canSubmitRoleRequest = computed(() =>
+    this.auth.isAuthenticated() && this.streamerLinks().some((l) => l.trim().length > 0),
+  );
 
   readonly profileErrors = computed<ProfileErrors>(() => this.validateProfile(this.profileForm()));
   readonly passwordErrors = computed<PasswordErrors>(() => this.validatePassword(this.passwordForm()));
@@ -185,6 +199,57 @@ export class MeusDadosComponent {
       this.passwordStatus.set('error');
     } finally {
       this.passwordPending.set(false);
+    }
+  }
+
+  updateStreamerLink(index: number, value: string): void {
+    this.streamerLinks.update((links) => links.map((l, i) => (i === index ? value : l)));
+  }
+
+  addStreamerLink(): void {
+    if (!this.canAddLink()) return;
+    this.streamerLinks.update((links) => [...links, '']);
+  }
+
+  removeStreamerLink(index: number): void {
+    this.streamerLinks.update((links) => {
+      const updated = links.filter((_, i) => i !== index);
+      return updated.length === 0 ? [''] : updated;
+    });
+  }
+
+  async onRequestRoleUpgrade(event: Event): Promise<void> {
+    event.preventDefault();
+    this.roleRequestSubmitted.set(true);
+    this.roleRequestMessage.set(null);
+    this.roleRequestStatus.set(null);
+
+    if (!this.auth.isAuthenticated()) {
+      this.roleRequestMessage.set('Sua sessão expirou. Faça login novamente.');
+      this.roleRequestStatus.set('error');
+      return;
+    }
+
+    const links = this.streamerLinks().map((l) => l.trim()).filter(Boolean);
+    if (links.length === 0) {
+      this.roleRequestMessage.set('Informe ao menos um link de streamer.');
+      this.roleRequestStatus.set('error');
+      return;
+    }
+
+    this.roleRequestPending.set(true);
+
+    try {
+      await this.auth.requestRoleUpgrade(links);
+      this.roleRequestMessage.set('Solicitação enviada! Nossa equipe irá avaliar seu pedido em breve.');
+      this.roleRequestStatus.set('success');
+      this.streamerLinks.set(['']);
+      this.roleRequestSubmitted.set(false);
+    } catch (error: unknown) {
+      this.roleRequestMessage.set(this.resolveError(error, 'Não foi possível enviar a solicitação.'));
+      this.roleRequestStatus.set('error');
+    } finally {
+      this.roleRequestPending.set(false);
     }
   }
 

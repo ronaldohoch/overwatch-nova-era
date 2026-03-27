@@ -81,3 +81,77 @@
     </p>
   }
 </section>
+
+<section class="my-8 space-y-4">
+  <div class="space-y-1">
+    <h2 class="text-2xl font-black text-(--ow-gray-900)">Check-in — Repescagem</h2>
+    <p class="text-(--ow-gray-500)">
+      Inscreva-se na repescagem de um torneio ativo.
+    </p>
+  </div>
+
+  @if (!auth.isAuthenticated()) {
+    <p class="text-sm font-medium text-red-600">
+      Faça login para realizar check-in na repescagem.
+    </p>
+  }
+
+  @if (auth.isAuthenticated() && repescagemTournamentOptions().length === 0 && !loadingTournaments()) {
+    <p class="text-sm font-medium text-(--ow-gray-600)">
+      Nenhum torneio com repescagem disponível no momento.
+    </p>
+  }
+
+  @if (auth.isAuthenticated() && repescagemTournamentOptions().length > 0) {
+    <form class="space-y-4" novalidate (submit)="onRepescagemSubmit($event)">
+      <div class="space-y-1.5">
+        <label for="repescagem-torneio" class="text-sm font-semibold text-(--ow-gray-700)">
+          Torneio
+        </label>
+        <select
+          id="repescagem-torneio"
+          class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
+          [value]="selectedRepescagemTournamentId()"
+          (change)="onRepescagemTournamentChange($any($event.target).value)"
+        >
+          <option value="">Selecione um torneio</option>
+          @for (tournament of repescagemTournamentOptions(); track tournament.id) {
+            <option [value]="tournament.id">{{ formatRepescagemTournamentLabel(tournament) }}</option>
+          }
+        </select>
+      </div>
+
+      @if (selectedRepescagemTournament()?.repescagem; as repescagem) {
+        <p class="text-sm text-(--ow-gray-600)">
+          Role da repescagem:
+          <span class="font-semibold">{{ repescagemRoleLabel(repescagem.role) }}</span>
+        </p>
+        <p class="text-sm text-(--ow-gray-600)">
+          Vagas disponíveis:
+          <span class="font-semibold">{{ repescagem.slots - repescagem.checkedIn }}</span>
+          de {{ repescagem.slots }}
+        </p>
+      }
+
+      <div class="flex justify-end">
+        <ow-btn [disabled]="!canSubmitRepescagem() || submittingRepescagem()" type="submit">
+          @if (submittingRepescagem()) {
+            Enviando...
+          } @else {
+            Confirmar check-in de repescagem
+          }
+        </ow-btn>
+      </div>
+    </form>
+  }
+
+  @if (repescagemMessage(); as message) {
+    <p
+      class="text-sm font-medium"
+      [class.text-green-700]="repescagemStatus() === 'success'"
+      [class.text-red-600]="repescagemStatus() === 'error'"
+    >
+      {{ message }}
+    </p>
+  }
+</section>

@@ -14,6 +14,7 @@ export interface StoredMatch {
   readonly team2Score: number | null;
   readonly winnerId: string | null;
   readonly loserId: string | null;
+  readonly walkover?: boolean;
   readonly status: MatchStatus;
   readonly createdAt: string;
   readonly updatedAt: string;
