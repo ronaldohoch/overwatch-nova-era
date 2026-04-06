@@ -1,3 +1,4 @@
+import { CdkDragDrop, CdkDrag, CdkDragPlaceholder, CdkDropList, CdkDropListGroup } from '@angular/cdk/drag-drop';
 import { Component, computed, input, output } from '@angular/core';
 import { MatchCardComponent, TeamDisplay } from '../../components/match-card/match-card.component';
 import { Bracket, BracketMatch } from '../brackets.service';
@@ -14,14 +15,16 @@ const BASE_SLOT_PX = 160;
 
 @Component({
   selector: 'app-double-elimination',
-  imports: [MatchCardComponent],
+  imports: [CdkDrag, CdkDragPlaceholder, CdkDropList, CdkDropListGroup, MatchCardComponent],
   templateUrl: './double-elimination.component.html',
 })
 export class DoubleEliminationComponent {
   bracket = input.required<Bracket>();
   teams = input<Record<string, TeamDisplay>>({});
   canReport = input(false);
+  canReorder = input(false);
   readonly reportRequested = output<BracketMatch>();
+  readonly seedSwapped = output<{ seed1: number; seed2: number }>();
 
   // ── Agrupamentos internos ─────────────────────────────────
 
@@ -89,6 +92,36 @@ export class DoubleEliminationComponent {
 
   onReportRequested(match: BracketMatch): void {
     this.reportRequested.emit(match);
+  }
+
+  /** Retorna true se a partida pertence à WB R1 e pode ser reordenada. */
+  isReorderableMatch(match: BracketMatch): boolean {
+    if (!this.canReorder()) return false;
+    if (match.side !== 'winners' || match.round !== 1) return false;
+    return match.status === 'pending' || match.status === 'ready';
+  }
+
+  /** Handler do CDK drop — emite swap se os seeds forem diferentes. */
+  onSeedDrop(event: CdkDragDrop<number, number, number>): void {
+    const sourceSeed = event.item.data;
+    const targetSeed = event.container.data;
+    if (sourceSeed !== targetSeed) {
+      this.seedSwapped.emit({ seed1: sourceSeed, seed2: targetSeed });
+    }
+  }
+
+  /** Nome do time pelo ID (fallback "A definir"). */
+  teamDisplayName(teamId: string | null): string {
+    if (!teamId) return 'A definir';
+    return this.teams()[teamId]?.name ?? 'A definir';
+  }
+
+  /** Iniciais para fallback de logo. */
+  teamDisplayInitials(teamId: string | null): string {
+    if (!teamId) return '??';
+    const team = this.teams()[teamId];
+    if (!team?.name) return '??';
+    return team.name.trim().substring(0, 2).toUpperCase();
   }
 
   // ── Helpers privados ──────────────────────────────────────

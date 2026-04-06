@@ -112,6 +112,14 @@ export class BracketsService {
     );
   }
 
+  async updateSeeds(tournamentId: string, seedMap: Record<number, string>): Promise<void> {
+    await firstValueFrom(
+      this.http.patch<void>(`${this.apiUrl}/${tournamentId}/seeds`, { seedMap }, {
+        headers: this.authHeaders(),
+      }),
+    );
+  }
+
   async deleteBracket(tournamentId: string): Promise<void> {
     await firstValueFrom(
       this.http.delete<void>(`${this.apiUrl}/${tournamentId}`, {

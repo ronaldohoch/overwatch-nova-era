@@ -25,19 +25,132 @@
     </div>
 
     <!-- Colunas de partidas (altura controlada para alinhamento) -->
-    <div class="flex gap-4" [style.height]="wbSectionHeightPx()">
+    <div class="flex gap-4" [style.height]="wbSectionHeightPx()" cdkDropListGroup>
       @for (rd of wbRounds(); track rd.round) {
         <div class="flex w-72 shrink-0 flex-col gap-4">
           @for (match of rd.matches; track match.matchNumber) {
             <div class="flex items-center justify-center" [style.height]="rd.slotHeightPx">
-              <app-match-card
-                [match]="match"
-                [team1]="getTeam(match.team1Id)"
-                [team2]="getTeam(match.team2Id)"
-                [label]="'Jogo ' + match.matchNumber"
-                [canReport]="canReport()"
-                (reportRequested)="onReportRequested($event)"
-              />
+
+              @if (isReorderableMatch(match)) {
+                <!-- Card com drag-drop (WB R1 apenas, admin) -->
+                <div
+                  class="bg-(--ow-white) border border-(--ow-gray-200) min-w-70 overflow-hidden
+                         shadow-[0_2px_12px_rgba(0,0,0,0.08)]
+                         [clip-path:polygon(5%_0,100%_0,100%_95%,95%_100%,0_100%,0_5%)]"
+                >
+                  <!-- Header -->
+                  <div
+                    class="bg-(--ow-gray-100) px-4 py-2.5 flex justify-between items-center
+                           text-[0.72rem] font-bold text-(--ow-gray-500) uppercase tracking-widest"
+                  >
+                    <span>Jogo {{ match.matchNumber }}</span>
+                    <span class="text-[0.6rem] font-bold text-(--ow-blue) tracking-wider">
+                      ARRASTAR PARA TROCAR
+                    </span>
+                  </div>
+
+                  <!-- Team 1 slot (draggable) -->
+                  <div
+                    cdkDropList
+                    [cdkDropListData]="match.slot1.ref"
+                    (cdkDropListDropped)="onSeedDrop($event)"
+                    class="border-b border-(--ow-gray-100)"
+                  >
+                    <div
+                      cdkDrag
+                      [cdkDragData]="match.slot1.ref"
+                      class="flex justify-between items-center px-[18px] py-[14px] cursor-grab active:cursor-grabbing
+                             hover:bg-[rgba(240,99,20,0.04)] transition-colors duration-200"
+                    >
+                      <div class="flex items-center gap-3">
+                        @if (getTeam(match.team1Id)?.logoUrl) {
+                          <img
+                            [src]="getTeam(match.team1Id)!.logoUrl!"
+                            [alt]="teamDisplayName(match.team1Id)"
+                            class="w-8 h-8 object-contain
+                                   [clip-path:polygon(20%_0,100%_0,100%_80%,80%_100%,0_100%,0_20%)]"
+                          />
+                        } @else {
+                          <div
+                            class="w-8 h-8 flex items-center justify-center shrink-0
+                                   bg-(--ow-gray-100) text-(--ow-orange) text-[0.65rem] font-black
+                                   [clip-path:polygon(20%_0,100%_0,100%_80%,80%_100%,0_100%,0_20%)]"
+                          >
+                            {{ teamDisplayInitials(match.team1Id) }}
+                          </div>
+                        }
+                        <span class="font-bold text-[0.95rem] text-(--ow-gray-700)">
+                          {{ teamDisplayName(match.team1Id) }}
+                        </span>
+                      </div>
+                      <!-- Grip icon -->
+                      <svg class="w-4 h-4 text-(--ow-gray-300)" fill="currentColor" viewBox="0 0 24 24">
+                        <circle cx="9" cy="5" r="1.5"/><circle cx="15" cy="5" r="1.5"/>
+                        <circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/>
+                        <circle cx="9" cy="19" r="1.5"/><circle cx="15" cy="19" r="1.5"/>
+                      </svg>
+
+                      <!-- CDK drag placeholder -->
+                      <div *cdkDragPlaceholder class="bg-(--ow-orange)/10 border-2 border-dashed border-(--ow-orange) rounded h-[52px]"></div>
+                    </div>
+                  </div>
+
+                  <!-- Team 2 slot (draggable) -->
+                  <div
+                    cdkDropList
+                    [cdkDropListData]="match.slot2.ref"
+                    (cdkDropListDropped)="onSeedDrop($event)"
+                  >
+                    <div
+                      cdkDrag
+                      [cdkDragData]="match.slot2.ref"
+                      class="flex justify-between items-center px-[18px] py-[14px] cursor-grab active:cursor-grabbing
+                             hover:bg-[rgba(240,99,20,0.04)] transition-colors duration-200"
+                    >
+                      <div class="flex items-center gap-3">
+                        @if (getTeam(match.team2Id)?.logoUrl) {
+                          <img
+                            [src]="getTeam(match.team2Id)!.logoUrl!"
+                            [alt]="teamDisplayName(match.team2Id)"
+                            class="w-8 h-8 object-contain
+                                   [clip-path:polygon(20%_0,100%_0,100%_80%,80%_100%,0_100%,0_20%)]"
+                          />
+                        } @else {
+                          <div
+                            class="w-8 h-8 flex items-center justify-center shrink-0
+                                   bg-(--ow-gray-100) text-(--ow-orange) text-[0.65rem] font-black
+                                   [clip-path:polygon(20%_0,100%_0,100%_80%,80%_100%,0_100%,0_20%)]"
+                          >
+                            {{ teamDisplayInitials(match.team2Id) }}
+                          </div>
+                        }
+                        <span class="font-bold text-[0.95rem] text-(--ow-gray-700)">
+                          {{ teamDisplayName(match.team2Id) }}
+                        </span>
+                      </div>
+                      <!-- Grip icon -->
+                      <svg class="w-4 h-4 text-(--ow-gray-300)" fill="currentColor" viewBox="0 0 24 24">
+                        <circle cx="9" cy="5" r="1.5"/><circle cx="15" cy="5" r="1.5"/>
+                        <circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/>
+                        <circle cx="9" cy="19" r="1.5"/><circle cx="15" cy="19" r="1.5"/>
+                      </svg>
+
+                      <!-- CDK drag placeholder -->
+                      <div *cdkDragPlaceholder class="bg-(--ow-orange)/10 border-2 border-dashed border-(--ow-orange) rounded h-[52px]"></div>
+                    </div>
+                  </div>
+                </div>
+              } @else {
+                <app-match-card
+                  [match]="match"
+                  [team1]="getTeam(match.team1Id)"
+                  [team2]="getTeam(match.team2Id)"
+                  [label]="'Jogo ' + match.matchNumber"
+                  [canReport]="canReport()"
+                  (reportRequested)="onReportRequested($event)"
+                />
+              }
+
             </div>
           }
         </div>

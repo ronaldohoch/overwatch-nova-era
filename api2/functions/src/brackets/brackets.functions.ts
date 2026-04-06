@@ -67,6 +67,22 @@ app.patch(
   },
 );
 
+// PATCH /brackets/:tournamentId/seeds — Reordena seeds (admin)
+app.patch(
+  '/:tournamentId/seeds',
+  requireAuth,
+  rolesMiddleware([UserRole.ADMIN]),
+  async (req, res) => {
+    try {
+      await bracketsSvc.updateSeeds(req.params.tournamentId, req.body?.seedMap);
+      res.status(200).json({ message: 'Seeds atualizados com sucesso.' });
+    } catch (error: unknown) {
+      logger.error(`Erro ao atualizar seeds do torneio ${req.params.tournamentId}:`, error);
+      sendError(res, error, 400, 'Bad request');
+    }
+  },
+);
+
 // DELETE /brackets/:tournamentId — Remove bracket (admin)
 app.delete('/:tournamentId', requireAuth, rolesMiddleware([UserRole.ADMIN]), async (req, res) => {
   try {

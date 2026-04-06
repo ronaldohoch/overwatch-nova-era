@@ -27,6 +27,15 @@
           Ver página pública
         </ow-btn>
       }
+      @if (state() === 'loaded' && canReorderSeeds()) {
+        <ow-btn
+          [variant]="editingSeeds() ? 'primary' : 'ghost'"
+          size="sm"
+          (click)="editingSeeds.set(!editingSeeds())"
+        >
+          {{ editingSeeds() ? 'Concluir edição' : 'Editar seeds' }}
+        </ow-btn>
+      }
       @if (state() === 'loaded' && isAdmin()) {
         <ow-btn variant="danger" size="sm" (click)="deleteBracket()">
           Excluir chave
@@ -390,13 +399,41 @@
       </div>
     }
 
+    <!-- Mensagem de reordenamento de seeds -->
+    @if (reorderMessage()) {
+      <div
+        class="rounded border p-4 text-sm font-semibold"
+        [class.border-green-300]="reorderMessage()!.ok"
+        [class.bg-green-50]="reorderMessage()!.ok"
+        [class.text-green-800]="reorderMessage()!.ok"
+        [class.border-red-300]="!reorderMessage()!.ok"
+        [class.bg-red-50]="!reorderMessage()!.ok"
+        [class.text-red-800]="!reorderMessage()!.ok"
+      >
+        {{ reorderMessage()!.text }}
+        <button
+          type="button"
+          class="ml-4 font-bold underline text-xs"
+          (click)="reorderMessage.set(null)"
+        >Fechar</button>
+      </div>
+    }
+
+    @if (reorderingSeeds()) {
+      <div class="text-center py-2 text-(--ow-gray-500) font-semibold text-sm animate-pulse">
+        Atualizando seeds...
+      </div>
+    }
+
     <!-- Chaveamento visual -->
     <div>
       <app-double-elimination
         [bracket]="bracket()!"
         [teams]="teams()"
         [canReport]="isAdminOrStreamer()"
+        [canReorder]="editingSeeds() && canReorderSeeds()"
         (reportRequested)="onMatchReportRequested($event)"
+        (seedSwapped)="onSeedSwapped($event)"
       />
     </div>
 

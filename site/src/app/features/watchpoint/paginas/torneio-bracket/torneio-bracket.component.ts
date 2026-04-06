@@ -141,6 +141,11 @@ export class TorneioBracketComponent {
     return winnerId === match.team1Id || winnerId === match.team2Id;
   });
 
+  readonly canReorderSeeds = computed(() => this.isAdmin() && this.bracket()?.status === 'running');
+  readonly editingSeeds = signal(false);
+  readonly reorderingSeeds = signal(false);
+  readonly reorderMessage = signal<{ text: string; ok: boolean } | null>(null);
+
   readonly bracketStatusLabel = computed(() => {
     const b = this.bracket();
     if (!b) return '';
@@ -363,6 +368,36 @@ export class TorneioBracketComponent {
 
   onMatchReportRequested(match: BracketMatch): void {
     this.openReportForm(match);
+  }
+
+  async onSeedSwapped(event: { seed1: number; seed2: number }): Promise<void> {
+    if (!this.tournamentId || this.reorderingSeeds()) return;
+
+    const currentBracket = this.bracket();
+    if (!currentBracket) return;
+
+    const currentSeedMap = { ...currentBracket.seedMap };
+    const temp = currentSeedMap[event.seed1];
+    currentSeedMap[event.seed1] = currentSeedMap[event.seed2];
+    currentSeedMap[event.seed2] = temp;
+
+    this.reorderingSeeds.set(true);
+    this.reorderMessage.set(null);
+
+    try {
+      await this.bracketsService.updateSeeds(this.tournamentId, currentSeedMap);
+      const updated = await this.bracketsService.getBracket(this.tournamentId);
+      this.bracket.set(updated);
+      await this.loadTeams(updated);
+      this.reorderMessage.set({ text: 'Seeds atualizados com sucesso.', ok: true });
+    } catch (error: unknown) {
+      this.reorderMessage.set({
+        text: this.resolveError(error, 'Não foi possível reordenar os seeds.'),
+        ok: false,
+      });
+    } finally {
+      this.reorderingSeeds.set(false);
+    }
   }
 
   closeReportForm(): void {

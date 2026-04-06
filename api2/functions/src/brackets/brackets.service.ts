@@ -367,6 +367,88 @@ export class BracketsService {
   }
 
   // ──────────────────────────────────────────────────────────
+  // UPDATE SEEDS
+  // ──────────────────────────────────────────────────────────
+
+  async updateSeeds(tournamentId: string, newSeedMap: Record<number, string>) {
+    const bracketRef = this.bracketsCollection.doc(tournamentId);
+    const bracketSnap = await bracketRef.get();
+    if (!bracketSnap.exists) throw new Error(`Bracket do torneio ${tournamentId} não encontrado.`);
+
+    const bracket = bracketSnap.data() as StoredBracket;
+    if (bracket.status !== 'running') {
+      throw new Error('Só é possível reordenar seeds enquanto o bracket está em andamento.');
+    }
+
+    // Valida que o novo seedMap tem o mesmo tamanho
+    const newEntries = Object.entries(newSeedMap);
+    if (newEntries.length !== bracket.teamCount) {
+      throw new Error(`seedMap deve conter exatamente ${bracket.teamCount} entries (recebeu ${newEntries.length}).`);
+    }
+
+    // Valida que contém exatamente os mesmos teamIds (apenas reordenados)
+    const oldIds = new Set(Object.values(bracket.seedMap));
+    const newIds = new Set(Object.values(newSeedMap));
+    if (oldIds.size !== newIds.size || [...oldIds].some((id) => !newIds.has(id))) {
+      throw new Error('O novo seedMap deve conter exatamente os mesmos times do seedMap atual.');
+    }
+
+    // Valida que todas as keys são seeds válidos (1..teamCount)
+    for (const [key, value] of newEntries) {
+      const seedNum = Number(key);
+      if (!Number.isInteger(seedNum) || seedNum < 1 || seedNum > bracket.teamCount) {
+        throw new Error(`Seed inválido: ${key}. Deve ser entre 1 e ${bracket.teamCount}.`);
+      }
+      if (typeof value !== 'string' || !value.trim()) {
+        throw new Error(`teamId inválido para seed ${key}.`);
+      }
+    }
+
+    // Carrega partidas da WB R1
+    const allMatchesSnap = await this.matchesCol(tournamentId).get();
+    const wbR1Matches = allMatchesSnap.docs
+      .map((d) => ({ ref: d.ref, data: d.data() as StoredMatch }))
+      .filter((m) => m.data.side === 'winners' && m.data.round === 1);
+
+    // Valida que nenhuma partida da WB R1 foi reportada ou está em andamento
+    for (const m of wbR1Matches) {
+      if (m.data.status === 'finished' || m.data.status === 'running') {
+        throw new Error(
+          `A partida ${m.data.matchNumber} já foi reportada ou está em andamento. Não é possível reordenar.`,
+        );
+      }
+    }
+
+    // Normaliza seedMap com keys numéricas
+    const normalizedSeedMap: Record<number, string> = {};
+    for (const [key, value] of newEntries) {
+      normalizedSeedMap[Number(key)] = (value as string).trim();
+    }
+
+    const now = new Date().toISOString();
+    const batch = firestore.batch();
+
+    // Atualiza seedMap no bracket
+    batch.update(bracketRef, { seedMap: normalizedSeedMap, updatedAt: now });
+
+    // Re-resolve team1Id/team2Id nas partidas da WB R1
+    for (const { ref, data: m } of wbR1Matches) {
+      const newTeam1Id = m.slot1.type === 'seed' ? (normalizedSeedMap[m.slot1.ref] ?? null) : m.team1Id;
+      const newTeam2Id = m.slot2.type === 'seed' ? (normalizedSeedMap[m.slot2.ref] ?? null) : m.team2Id;
+      const newStatus: MatchStatus = newTeam1Id && newTeam2Id ? 'ready' : 'pending';
+
+      batch.update(ref, {
+        team1Id: newTeam1Id,
+        team2Id: newTeam2Id,
+        status: newStatus,
+        updatedAt: now,
+      });
+    }
+
+    await batch.commit();
+  }
+
+  // ──────────────────────────────────────────────────────────
   // DELETE
   // ──────────────────────────────────────────────────────────
 

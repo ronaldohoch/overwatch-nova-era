@@ -3,8 +3,9 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { firstValueFrom } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 // import { ButtonsComponent } from '../../../../shared/buttons/buttons';
-import { StatsCardComponent } from './components/stats-card/stats-card.component';
-import { ButtonsComponent } from "../../../../shared/buttons/buttons";
+// import { StatsCardComponent } from './components/stats-card/stats-card.component';
+// import { ButtonsComponent } from "../../../../shared/buttons/buttons";
+import { ProximasPartidasComponent } from "../../../pagina-inicial/components/proximas-partidas/proximas-partidas.component";
 
 type RoleCardModel = Readonly<{
   id: 'tank' | 'dps' | 'support';
@@ -39,7 +40,7 @@ type ApiResponse = Readonly<{
 @Component({
   selector: 'app-dashboard',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [StatsCardComponent, ButtonsComponent],
+  imports: [/*StatsCardComponent, ButtonsComponent,*/ ProximasPartidasComponent],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
 })
