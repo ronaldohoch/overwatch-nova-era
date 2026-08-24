@@ -54,6 +54,18 @@ export default [
           ),
       },
       {
+        path: 'torneios/:id/times',
+        title: 'Copa Overwatch Nova Era - Times do Torneio',
+        canActivate: [routeAccessGuard],
+        data: {
+          access: ['admin', 'streamer'],
+        },
+        loadComponent: () =>
+          import('./paginas/torneio-times/torneio-times.component').then(
+            (m) => m.TorneioTimesComponent,
+          ),
+      },
+      {
         path: 'torneios/:id/status',
         title: 'Copa Overwatch Nova Era - Alterar Status de Torneio',
         canActivate: [routeAccessGuard],

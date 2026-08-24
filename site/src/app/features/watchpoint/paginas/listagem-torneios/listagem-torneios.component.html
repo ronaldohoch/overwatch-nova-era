@@ -1,10 +1,10 @@
 <div class="my-8">
   <div class="flex justify-between gap-4">
     <div class="py-2">
-      <h1 class="text-4xl font-black leading-tight text-(--ow-gray-900) lg:text-5xl">
+      <h1 class="text-4xl font-black leading-tight text-(--ow-text) lg:text-5xl">
         Lista de torneios
       </h1>
-      <p class="text-(--ow-gray-500)">
+      <p class="text-(--ow-text-muted)">
         Todos os torneios cadastrados
       </p>
     </div>
@@ -15,11 +15,11 @@
 
   <div class="py-2">
     @if (loading()) {
-      <p class="text-sm font-medium text-(--ow-gray-600)">Carregando torneios...</p>
+      <p class="text-sm font-medium text-(--ow-text)">Carregando torneios...</p>
     }
 
     @if (!loading() && tournaments().length === 0) {
-      <p class="text-sm font-medium text-(--ow-gray-600)">Nenhum torneio encontrado.</p>
+      <p class="text-sm font-medium text-(--ow-text)">Nenhum torneio encontrado.</p>
     }
 
     @for (tournament of tournaments(); track tournament.trackKey) {
@@ -69,13 +69,20 @@
           }
           @if (tournament.teamMode === 'random') {
             <ow-btn variant="blue-mini" href="/watchpoint/check-in-by-tournament">Ver Check-ins</ow-btn>
+          } @else if (tournament.id && canManageBracket()) {
+            <ow-btn
+              variant="blue-mini"
+              [routerLink]="['/watchpoint/torneios', tournament.id, 'times']"
+            >
+              Times do torneio
+            </ow-btn>
           }
         </div>
       </ow-schedule-item>
     }
 
     @if (message(); as message) {
-      <p class="text-sm font-medium text-red-600">{{ message }}</p>
+      <p class="text-sm font-medium text-(--ow-alert-error-text)">{{ message }}</p>
     }
   </div>
 </div>

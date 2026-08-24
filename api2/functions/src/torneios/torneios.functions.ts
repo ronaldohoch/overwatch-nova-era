@@ -165,13 +165,32 @@ app.post('/:id/teams', requireAuth, async (req, res) => {
   }
 });
 
-// CLOSED: check-in do time
+// CLOSED: listar times inscritos (admin/streamer)
+app.get(
+  '/:id/teams',
+  requireAuth,
+  rolesMiddleware([UserRole.ADMIN, UserRole.STREAMER]),
+  async (req, res) => {
+    try {
+      const teams = await torneiosSvc.listTournamentTeams(req.params.id);
+      res.status(200).json(teams);
+    } catch (error: unknown) {
+      logger.error(`Erro ao listar times do torneio ${req.params.id}:`, error);
+      sendError(res, error, 400, 'Bad request');
+    }
+  },
+);
+
+// CLOSED: check-in do time (capitao faz o proprio; admin inscreve qualquer time)
 app.post('/:id/teams/:teamId/checkin', requireAuth, async (req, res) => {
   try {
     const uid = getUid(req);
     if (!uid) return res.status(401).json({ statusCode: 401, message: 'Unauthorized' });
 
-    const team = await torneiosSvc.checkinClosedTeam(req.params.id, req.params.teamId, uid);
+    const team = await torneiosSvc.checkinClosedTeam(req.params.id, req.params.teamId, {
+      uid,
+      role: getRole(req),
+    });
     res.status(200).json(team);
     return;
   } catch (error: unknown) {
@@ -180,6 +199,22 @@ app.post('/:id/teams/:teamId/checkin', requireAuth, async (req, res) => {
     return;
   }
 });
+
+// CLOSED: remover time do torneio (admin)
+app.delete(
+  '/:id/teams/:teamId/checkin',
+  requireAuth,
+  rolesMiddleware([UserRole.ADMIN]),
+  async (req, res) => {
+    try {
+      const result = await torneiosSvc.removeClosedTeamCheckin(req.params.id, req.params.teamId);
+      res.status(200).json(result);
+    } catch (error: unknown) {
+      logger.error(`Erro ao remover o time ${req.params.teamId} do torneio ${req.params.id}:`, error);
+      sendError(res, error, 400, 'Bad request');
+    }
+  },
+);
 
 // RANDOM: lock + draw (admin)
 app.post(

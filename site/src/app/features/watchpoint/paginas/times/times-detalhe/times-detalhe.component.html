@@ -1,10 +1,10 @@
 ﻿<div class="my-8 space-y-6">
   <div class="flex flex-wrap items-start justify-between gap-4">
     <div class="space-y-2">
-      <h1 class="text-4xl font-black leading-tight text-(--ow-gray-900) lg:text-5xl">
+      <h1 class="text-4xl font-black leading-tight text-(--ow-text) lg:text-5xl">
         Gestão do time
       </h1>
-      <p class="text-(--ow-gray-500)">
+      <p class="text-(--ow-text-muted)">
         Acompanhe integrantes, capitão, torneios e troféus do time.
       </p>
     </div>
@@ -15,24 +15,24 @@
   </div>
 
   @if (!hasTeamId()) {
-    <p class="text-sm font-medium text-red-600">Time inválido.</p>
+    <p class="text-sm font-medium text-(--ow-alert-error-text)">Time inválido.</p>
   } @else {
     @if (loadingMessage(); as loadingMessage) {
-      <p class="text-sm font-medium text-red-600">{{ loadingMessage }}</p>
+      <p class="text-sm font-medium text-(--ow-alert-error-text)">{{ loadingMessage }}</p>
     }
 
     <div class="grid gap-4 xl:grid-cols-3">
       <ow-card cardClass="h-full">
         <div class="space-y-3">
-          <h2 class="text-xl font-black text-(--ow-gray-900)">Logo do time</h2>
+          <h2 class="text-xl font-black text-(--ow-text)">Logo do time</h2>
 
           <div class="flex flex-col gap-[0.55rem]">
             <div
-              class="flex items-center justify-center w-full aspect-square border-2 border-dashed border-[rgba(240,99,20,0.45)] rounded-[0.9rem] text-(--ow-orange-dark) text-[1.4rem] font-black tracking-[0.08em] uppercase"
-              style="background: radial-gradient(circle at top right, rgba(240, 99, 20, 0.22), transparent 62%), #fff7f1"
+              class="flex items-center justify-center w-full aspect-square border-2 border-dashed border-(--ow-orange) rounded-[0.9rem] text-(--ow-orange-dark) text-[1.4rem] font-black tracking-[0.08em] uppercase"
+              style="background: radial-gradient(circle at top right, rgba(240, 99, 20, 0.22), transparent 62%), var(--ow-surface-raised)"
             >
               @if (team()?.logoUrl; as logoUrl) {
-                <img [src]="logoUrl" alt="Logo do time" class="w-full h-full rounded-[0.85rem] object-contain bg-white p-[0.45rem]" />
+                <img [src]="logoUrl" alt="Logo do time" class="w-full h-full rounded-[0.85rem] object-contain bg-(--ow-surface) p-[0.45rem]" />
               } @else {
                 {{ teamLogoFallbackLabel() }}
               }
@@ -40,20 +40,20 @@
           </div>
 
           @if (canEditTeamData()) {
-            <form class="space-y-3 border-t border-(--ow-gray-200) pt-3" novalidate (submit)="onUploadTeamLogo($event)">
-              <label class="flex flex-col gap-2 text-sm font-semibold text-(--ow-gray-700)">
+            <form class="space-y-3 border-t border-(--ow-border) pt-3" novalidate (submit)="onUploadTeamLogo($event)">
+              <label class="flex flex-col gap-2 text-sm font-semibold text-(--ow-text)">
                 Arquivo da logo (.png ou .webp)
                 <input
                   type="file"
                   accept=".png,.webp,image/png,image/webp"
-                  class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2 text-(--ow-gray-900)"
+                  class="w-full rounded-md border border-(--ow-border-strong) bg-(--ow-surface) px-3 py-2 text-(--ow-text)"
                   [disabled]="uploadingLogo() || removingLogo()"
                   (change)="onSelectLogoFile($event)"
                 />
               </label>
 
               @if (selectedLogoFileLabel(); as selectedLogoFileLabel) {
-                <p class="text-xs text-(--ow-gray-600)">
+                <p class="text-xs text-(--ow-text)">
                   Selecionado: {{ selectedLogoFileLabel }}
                 </p>
               }
@@ -84,13 +84,13 @@
           }
 
           @if (uploadLogoMessage(); as uploadLogoMessage) {
-            <p class="text-sm font-medium" [class.text-red-600]="uploadLogoError()" [class.text-green-700]="!uploadLogoError()">
+            <p class="text-sm font-medium" [class.text-(--ow-alert-error-text)]="uploadLogoError()" [class.text-(--ow-alert-success-text)]="!uploadLogoError()">
               {{ uploadLogoMessage }}
             </p>
           }
 
           @if (removeLogoMessage(); as removeLogoMessage) {
-            <p class="text-sm font-medium" [class.text-red-600]="removeLogoError()" [class.text-green-700]="!removeLogoError()">
+            <p class="text-sm font-medium" [class.text-(--ow-alert-error-text)]="removeLogoError()" [class.text-(--ow-alert-success-text)]="!removeLogoError()">
               {{ removeLogoMessage }}
             </p>
           }
@@ -99,24 +99,24 @@
 
       <ow-card cardClass="h-full">
         <div class="space-y-3">
-          <h2 class="text-xl font-black text-(--ow-gray-900)">Resumo do time</h2>
+          <h2 class="text-xl font-black text-(--ow-text)">Resumo do time</h2>
 
           @if (team(); as team) {
-            <div class="space-y-2 text-sm text-(--ow-gray-700)">
+            <div class="space-y-2 text-sm text-(--ow-text)">
               <p>
-                <span class="font-semibold text-(--ow-gray-900)">Nome:</span>
+                <span class="font-semibold text-(--ow-text)">Nome:</span>
                 {{ team.name }}
               </p>
               <p>
-                <span class="font-semibold text-(--ow-gray-900)">Categoria:</span>
+                <span class="font-semibold text-(--ow-text)">Categoria:</span>
                 {{ team.categoryLabel }}
               </p>
               <p>
-                <span class="font-semibold text-(--ow-gray-900)">Descrição:</span>
+                <span class="font-semibold text-(--ow-text)">Descrição:</span>
                 {{ team.description || 'Não informada' }}
               </p>
               <p>
-                <span class="font-semibold text-(--ow-gray-900)">Grupo WhatsApp:</span>
+                <span class="font-semibold text-(--ow-text)">Grupo WhatsApp:</span>
                 @if (team.groupLink) {
                   <a
                     [href]="team.groupLink"
@@ -131,56 +131,56 @@
                 }
               </p>
               <p>
-                <span class="font-semibold text-(--ow-gray-900)">Capitão:</span>
+                <span class="font-semibold text-(--ow-text)">Capitão:</span>
                 {{ team.captainName }}
               </p>
               <p>
-                <span class="font-semibold text-(--ow-gray-900)">Integrantes:</span>
+                <span class="font-semibold text-(--ow-text)">Integrantes:</span>
                 {{ team.membersCount }}/8
               </p>
               <p>
-                <span class="font-semibold text-(--ow-gray-900)">Criado em:</span>
+                <span class="font-semibold text-(--ow-text)">Criado em:</span>
                 {{ team.createdAtLabel }}
               </p>
             </div>
 
             @if (canEditTeamData()) {
-              <div class="mt-4 my-3 border-t border-(--ow-gray-200) pt-3">
-                <h3 class="text-sm font-black uppercase tracking-wide text-(--ow-gray-900)">
+              <div class="mt-4 my-3 border-t border-(--ow-border) pt-3">
+                <h3 class="text-sm font-black uppercase tracking-wide text-(--ow-text)">
                   Editar dados do time
                 </h3>
 
                 <form class="my-3" novalidate (submit)="onUpdateTeamData($event)">
-                  <label class="flex flex-col gap-2 text-sm font-semibold text-(--ow-gray-700)">
+                  <label class="flex flex-col gap-2 text-sm font-semibold text-(--ow-text)">
                     Nome do time
                     <input
                       type="text"
                       placeholder="Nome do time"
-                      class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
+                      class="w-full rounded-md border border-(--ow-border-strong) bg-(--ow-surface) px-3 py-2.5 text-(--ow-text) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
                       [value]="editTeamName()"
                       [disabled]="updatingTeamData()"
                       (input)="updateTeamName($any($event.target).value)"
                     />
                   </label>
 
-                  <label class="flex flex-col gap-2 text-sm font-semibold text-(--ow-gray-700)">
+                  <label class="flex flex-col gap-2 text-sm font-semibold text-(--ow-text)">
                     Descrição
                     <textarea
                       rows="3"
                       placeholder="Descrição do time"
-                      class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
+                      class="w-full rounded-md border border-(--ow-border-strong) bg-(--ow-surface) px-3 py-2.5 text-(--ow-text) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
                       [value]="editTeamDescription()"
                       [disabled]="updatingTeamData()"
                       (input)="updateTeamDescription($any($event.target).value)"
                     ></textarea>
                   </label>
 
-                  <label class="flex flex-col gap-2 text-sm font-semibold text-(--ow-gray-700)">
+                  <label class="flex flex-col gap-2 text-sm font-semibold text-(--ow-text)">
                     Link do grupo WhatsApp
                     <input
                       type="text"
                       placeholder="https://..."
-                      class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
+                      class="w-full rounded-md border border-(--ow-border-strong) bg-(--ow-surface) px-3 py-2.5 text-(--ow-text) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
                       [value]="editTeamGroupLink()"
                       [disabled]="updatingTeamData()"
                       (input)="updateTeamGroupLink($any($event.target).value)"
@@ -201,8 +201,8 @@
                 @if (updateTeamDataMessage(); as updateTeamDataMessage) {
                   <p
                     class="text-sm font-medium"
-                    [class.text-red-600]="updateTeamDataError()"
-                    [class.text-green-700]="!updateTeamDataError()"
+                    [class.text-(--ow-alert-error-text)]="updateTeamDataError()"
+                    [class.text-(--ow-alert-success-text)]="!updateTeamDataError()"
                   >
                     {{ updateTeamDataMessage }}
                   </p>
@@ -210,25 +210,25 @@
               </div>
             }
           } @else {
-            <p class="text-sm text-(--ow-gray-600)">Carregando dados do time...</p>
+            <p class="text-sm text-(--ow-text)">Carregando dados do time...</p>
           }
         </div>
       </ow-card>
 
       <ow-card cardClass="h-full">
         <div class="space-y-3">
-          <h2 class="text-xl font-black text-(--ow-gray-900)">Adicionar integrante</h2>
-          <p class="text-sm text-(--ow-gray-600)">
+          <h2 class="text-xl font-black text-(--ow-text)">Adicionar integrante</h2>
+          <p class="text-sm text-(--ow-text)">
             A adição é feita pela battletag cadastrada no site.
           </p>
 
           <form class="space-y-3" novalidate (submit)="onAddMember($event)">
-            <label class="flex flex-col gap-2 text-sm font-semibold text-(--ow-gray-700)">
+            <label class="flex flex-col gap-2 text-sm font-semibold text-(--ow-text)">
               Battletag do usuário
               <input
                 type="text"
                 placeholder="Ex: Jogador#1234"
-                class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
+                class="w-full rounded-md border border-(--ow-border-strong) bg-(--ow-surface) px-3 py-2.5 text-(--ow-text) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
                 [value]="addMemberBattletag()"
                 [disabled]="addingMember()"
                 (input)="updateBattletag($any($event.target).value)"
@@ -247,7 +247,7 @@
           </form>
 
           @if (addMemberMessage(); as addMemberMessage) {
-            <p class="text-sm font-medium" [class.text-red-600]="addMemberError()" [class.text-green-700]="!addMemberError()">
+            <p class="text-sm font-medium" [class.text-(--ow-alert-error-text)]="addMemberError()" [class.text-(--ow-alert-success-text)]="!addMemberError()">
               {{ addMemberMessage }}
             </p>
           }
@@ -256,34 +256,34 @@
     </div>
 
     <div class="space-y-4">
-      <h2 class="text-xl font-black text-(--ow-gray-900)">Integrantes</h2>
+      <h2 class="text-xl font-black text-(--ow-text)">Integrantes</h2>
 
       @if (promoteCaptainMessage(); as promoteCaptainMessage) {
-        <p class="text-sm font-medium" [class.text-red-600]="promoteCaptainError()" [class.text-green-700]="!promoteCaptainError()">
+        <p class="text-sm font-medium" [class.text-(--ow-alert-error-text)]="promoteCaptainError()" [class.text-(--ow-alert-success-text)]="!promoteCaptainError()">
           {{ promoteCaptainMessage }}
         </p>
       }
 
       @if (removeMemberMessage(); as removeMemberMessage) {
-        <p class="text-sm font-medium" [class.text-red-600]="removeMemberError()" [class.text-green-700]="!removeMemberError()">
+        <p class="text-sm font-medium" [class.text-(--ow-alert-error-text)]="removeMemberError()" [class.text-(--ow-alert-success-text)]="!removeMemberError()">
           {{ removeMemberMessage }}
         </p>
       }
 
       @if (loadingMembers()) {
-        <p class="text-sm text-(--ow-gray-600)">Carregando integrantes...</p>
+        <p class="text-sm text-(--ow-text)">Carregando integrantes...</p>
       } @else if (members().length === 0) {
-        <p class="text-sm text-(--ow-gray-600)">Nenhum integrante encontrado.</p>
+        <p class="text-sm text-(--ow-text)">Nenhum integrante encontrado.</p>
       } @else {
         <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
           @for (member of members(); track member.trackKey) {
-            <article class="rounded-lg border border-(--ow-gray-200) bg-white p-3">
+            <article class="rounded-lg border border-(--ow-border) bg-(--ow-surface) p-3">
               <div class="flex items-center justify-between gap-2">
                 <div class="flex min-w-0 items-center gap-2">
                   @if (canRemoveMember(member) || isRemovingMember(member)) {
                     <button
                       type="button"
-                      class="w-5 h-5 border border-[#f2b6b6] rounded-full bg-white text-[#c62828] text-xs font-extrabold leading-none inline-flex items-center justify-center cursor-pointer transition-all duration-150 ease-in hover:bg-[#fdecec] hover:border-[#e68a8a] disabled:opacity-55 disabled:cursor-not-allowed"
+                      class="w-5 h-5 border border-(--ow-red) rounded-full bg-(--ow-surface) text-(--ow-alert-error-text) text-xs font-extrabold leading-none inline-flex items-center justify-center cursor-pointer transition-all duration-150 ease-in hover:bg-(--ow-alert-error-bg) hover:border-(--ow-red-dark) disabled:opacity-55 disabled:cursor-not-allowed"
                       [disabled]="!canRemoveMember(member)"
                       [attr.aria-label]="'Remover integrante ' + member.displayName"
                       title="Remover integrante"
@@ -293,17 +293,17 @@
                     </button>
                   }
 
-                  <h3 class="truncate text-sm font-black uppercase text-(--ow-gray-900)">
+                  <h3 class="truncate text-sm font-black uppercase text-(--ow-text)">
                     {{ member.displayName }}
                   </h3>
                 </div>
                 @if (member.isCaptain) {
-                  <span class="inline-flex items-center justify-center py-[0.2rem] px-[0.6rem] rounded-full text-[0.7rem] font-extrabold tracking-[0.04em] uppercase bg-[rgba(240,99,20,0.14)] text-(--ow-orange-dark)">Capitão</span>
+                  <span class="inline-flex items-center justify-center py-[0.2rem] px-[0.6rem] rounded-full text-[0.7rem] font-extrabold tracking-[0.04em] uppercase bg-(--ow-orange-tint-strong) text-(--ow-orange-dark)">Capitão</span>
                 }
               </div>
 
-              <p class="mt-2 text-sm font-semibold text-(--ow-gray-700)">{{ member.battletag }}</p>
-              <p class="mt-1 text-xs text-(--ow-gray-500)">Entrou em {{ member.joinedAtLabel }}</p>
+              <p class="mt-2 text-sm font-semibold text-(--ow-text)">{{ member.battletag }}</p>
+              <p class="mt-1 text-xs text-(--ow-text-muted)">Entrou em {{ member.joinedAtLabel }}</p>
 
               @if (canPromoteMember(member) || isPromotingMember(member) || canOpenContactModal()) {
                 <div class="mt-3 flex flex-wrap justify-end gap-2">
@@ -338,24 +338,88 @@
     <!-- <ow-card>
     </ow-card> -->
 
+    @if (canCheckinTeam()) {
+      <ow-card>
+        <div class="space-y-4">
+          <div class="space-y-1">
+            <h2 class="text-xl font-black text-(--ow-text)">Check-in em torneios</h2>
+            <p class="text-xs text-(--ow-text)">
+              Torneios de times fechados com o check-in aberto. Somente o capitão do time ou um admin
+              pode confirmar a participação.
+            </p>
+          </div>
+
+          @if (teamCheckinMessage(); as teamCheckinMessage) {
+            <p
+              class="text-sm font-medium"
+              [class.text-(--ow-alert-error-text)]="teamCheckinError()"
+              [class.text-(--ow-alert-success-text)]="!teamCheckinError()"
+            >
+              {{ teamCheckinMessage }}
+            </p>
+          }
+
+          @if (loadingOpenTournaments()) {
+            <p class="text-sm text-(--ow-text)">Carregando torneios disponíveis...</p>
+          } @else if (availableTournaments().length === 0) {
+            <p class="text-sm text-(--ow-text)">
+              Nenhum torneio com check-in aberto para este time no momento.
+            </p>
+          } @else {
+            <div class="space-y-3">
+              @for (tournament of availableTournaments(); track tournament.id) {
+                <article
+                  class="flex flex-col gap-3 rounded-lg border border-(--ow-border) bg-(--ow-surface) p-3 sm:flex-row sm:items-center sm:justify-between"
+                >
+                  <div>
+                    <p class="text-sm font-black uppercase text-(--ow-text)">{{ tournament.name }}</p>
+                    <p class="mt-1 text-xs text-(--ow-text)">{{ tournament.statusLabel }}</p>
+                    <p class="mt-1 text-xs text-(--ow-text-muted)">
+                      Início: {{ tournament.startAtLabel }} / Check-in até:
+                      {{ tournament.checkinDeadlineLabel }}
+                    </p>
+                  </div>
+
+                  <ow-btn
+                    type="button"
+                    [disabled]="checkingInTournamentId() !== null"
+                    (click)="onTeamCheckin(tournament)"
+                  >
+                    @if (isCheckingInTournament(tournament)) {
+                      Enviando check-in...
+                    } @else {
+                      Fazer check-in
+                    }
+                  </ow-btn>
+                </article>
+              }
+            </div>
+          }
+        </div>
+      </ow-card>
+    }
+
     <div class="grid gap-4 xl:grid-cols-2">
       <ow-card>
         <div class="space-y-4">
-          <h2 class="text-xl font-black text-(--ow-gray-900)">Torneios em que participa</h2>
+          <h2 class="text-xl font-black text-(--ow-text)">Torneios em que participa</h2>
 
           @if (loadingTournaments()) {
-            <p class="text-sm text-(--ow-gray-600)">Carregando torneios...</p>
+            <p class="text-sm text-(--ow-text)">Carregando torneios...</p>
           } @else if (activeTournaments().length === 0) {
-            <p class="text-sm text-(--ow-gray-600)">Este time ainda não participa de torneios ativos.</p>
+            <p class="text-sm text-(--ow-text)">Este time ainda não participa de torneios ativos.</p>
           } @else {
             <div class="space-y-3">
               @for (tournament of activeTournaments(); track tournament.id) {
-                <article class="rounded-lg border border-(--ow-gray-200) bg-white p-3">
-                  <p class="text-sm font-black uppercase text-(--ow-gray-900)">{{ tournament.name }}</p>
-                  <p class="mt-1 text-xs text-(--ow-gray-600)">
+                <article class="rounded-lg border border-(--ow-border) bg-(--ow-surface) p-3">
+                  <p class="text-sm font-black uppercase text-(--ow-text)">{{ tournament.name }}</p>
+                  <p class="mt-1 text-xs text-(--ow-text)">
                     {{ tournament.statusLabel }} / {{ tournament.teamModeLabel }}, {{ tournament.checkedInLabel }}
                   </p>
-                  <p class="mt-1 text-xs text-(--ow-gray-500)">Início: {{ tournament.startAtLabel }}</p>
+                  @if (tournament.checkedInByLabel; as checkedInByLabel) {
+                    <p class="mt-1 text-xs text-(--ow-text-muted)">{{ checkedInByLabel }}</p>
+                  }
+                  <p class="mt-1 text-xs text-(--ow-text-muted)">Início: {{ tournament.startAtLabel }}</p>
                 </article>
               }
             </div>
@@ -365,21 +429,24 @@
 
       <ow-card>
         <div class="space-y-4">
-          <h2 class="text-xl font-black text-(--ow-gray-900)">Torneios em que participou</h2>
+          <h2 class="text-xl font-black text-(--ow-text)">Torneios em que participou</h2>
 
           @if (loadingTournaments()) {
-            <p class="text-sm text-(--ow-gray-600)">Carregando histórico...</p>
+            <p class="text-sm text-(--ow-text)">Carregando histórico...</p>
           } @else if (pastTournaments().length === 0) {
-            <p class="text-sm text-(--ow-gray-600)">Nenhum histórico de participação finalizada.</p>
+            <p class="text-sm text-(--ow-text)">Nenhum histórico de participação finalizada.</p>
           } @else {
             <div class="space-y-3">
               @for (tournament of pastTournaments(); track tournament.id) {
-                <article class="rounded-lg border border-(--ow-gray-200) bg-white p-3">
-                  <p class="text-sm font-black uppercase text-(--ow-gray-900)">{{ tournament.name }}</p>
-                  <p class="mt-1 text-xs text-(--ow-gray-600)">
+                <article class="rounded-lg border border-(--ow-border) bg-(--ow-surface) p-3">
+                  <p class="text-sm font-black uppercase text-(--ow-text)">{{ tournament.name }}</p>
+                  <p class="mt-1 text-xs text-(--ow-text)">
                     {{ tournament.statusLabel }} - {{ tournament.teamModeLabel }}, {{ tournament.checkedInLabel }}
                   </p>
-                  <p class="mt-1 text-xs text-(--ow-gray-500)">Início: {{ tournament.startAtLabel }}</p>
+                  @if (tournament.checkedInByLabel; as checkedInByLabel) {
+                    <p class="mt-1 text-xs text-(--ow-text-muted)">{{ checkedInByLabel }}</p>
+                  }
+                  <p class="mt-1 text-xs text-(--ow-text-muted)">Início: {{ tournament.startAtLabel }}</p>
                 </article>
               }
             </div>
@@ -390,22 +457,22 @@
 
     <ow-card>
       <div class="space-y-4">
-        <h2 class="text-xl font-black text-(--ow-gray-900)">Troféus</h2>
+        <h2 class="text-xl font-black text-(--ow-text)">Troféus</h2>
 
         @if (loadingTournaments()) {
-          <p class="text-sm text-(--ow-gray-600)">Carregando troféus...</p>
+          <p class="text-sm text-(--ow-text)">Carregando troféus...</p>
         } @else if (trophies().length === 0) {
-          <p class="text-sm text-(--ow-gray-600)">Nenhum troféu registrado para este time.</p>
+          <p class="text-sm text-(--ow-text)">Nenhum troféu registrado para este time.</p>
         } @else {
           <div class="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
             @for (trophy of trophies(); track trophy.trackKey) {
               <article
-                class="flex flex-col gap-[0.4rem] border border-(--ow-gray-200) rounded-xl p-3"
-                style="background: radial-gradient(circle at top right, rgba(255, 193, 7, 0.2), transparent 60%), #fff"
+                class="flex flex-col gap-[0.4rem] border border-(--ow-border) rounded-xl p-3"
+                style="background: radial-gradient(circle at top right, rgba(255, 193, 7, 0.2), transparent 60%), var(--ow-surface-raised)"
               >
                 <span class="text-2xl">{{ trophy.icon }}</span>
-                <p class="text-sm font-black uppercase text-(--ow-gray-900)">{{ trophy.label }}</p>
-                <p class="text-xs text-(--ow-gray-600)">{{ trophy.tournamentName }}</p>
+                <p class="text-sm font-black uppercase text-(--ow-text)">{{ trophy.label }}</p>
+                <p class="text-xs text-(--ow-text)">{{ trophy.tournamentName }}</p>
               </article>
             }
           </div>
@@ -414,15 +481,15 @@
     </ow-card>
 
     @if (isCurrentUserMember() || leaveTeamMessage()) {
-      <div class="bg-white mt-8">
-        <div class="p-4 bg-[#ea433514] border-[#ea4335] border-l-4">
-          <h2 class="text-xl font-black text-[#c5221f]">Sair do time</h2>
-          <p class="text-sm text-[#c5221f]">
+      <div class="bg-(--ow-surface) mt-8">
+        <div class="p-4 bg-(--ow-alert-error-bg) border-(--ow-red) border-l-4">
+          <h2 class="text-xl font-black text-(--ow-red-dark)">Sair do time</h2>
+          <p class="text-sm text-(--ow-red-dark)">
             Ao sair, você deixa de participar deste time e perde acesso à gestão dele.
           </p>
 
           @if (leaveTeamMessage(); as leaveTeamMessage) {
-            <p class="text-sm font-medium" [class.text-red-600]="leaveTeamError()" [class.text-green-700]="!leaveTeamError()">
+            <p class="text-sm font-medium" [class.text-(--ow-alert-error-text)]="leaveTeamError()" [class.text-(--ow-alert-success-text)]="!leaveTeamError()">
               {{ leaveTeamMessage }}
             </p>
           }
@@ -445,16 +512,16 @@
 </div>
 
 @if (contactModalMember(); as contactMember) {
-  <div class="fixed inset-0 z-60 bg-[rgba(17,24,39,0.58)] flex items-center justify-center p-4" (click)="closeContactModal()">
-    <div class="w-[min(32rem,100%)] rounded-[0.85rem] border border-(--ow-gray-200) bg-white p-4 shadow-[0_22px_44px_rgba(15,23,42,0.3)]" (click)="$event.stopPropagation()">
+  <div class="fixed inset-0 z-60 bg-(--ow-overlay) flex items-center justify-center p-4" (click)="closeContactModal()">
+    <div class="w-[min(32rem,100%)] rounded-[0.85rem] border border-(--ow-border) bg-(--ow-surface) p-4 shadow-[0_22px_44px_rgba(15,23,42,0.3)]" (click)="$event.stopPropagation()">
       <div class="flex items-start justify-between gap-3">
         <div>
-          <h3 class="text-lg font-black text-(--ow-gray-900)">Contato do integrante</h3>
-          <p class="text-sm text-(--ow-gray-600)">{{ contactMember.displayName }}</p>
+          <h3 class="text-lg font-black text-(--ow-text)">Contato do integrante</h3>
+          <p class="text-sm text-(--ow-text)">{{ contactMember.displayName }}</p>
         </div>
         <button
           type="button"
-          class="w-[1.7rem] h-[1.7rem] border border-(--ow-gray-300) rounded-full bg-white text-(--ow-gray-700) text-xs font-black inline-flex items-center justify-center cursor-pointer hover:bg-(--ow-gray-100)"
+          class="w-[1.7rem] h-[1.7rem] border border-(--ow-border-strong) rounded-full bg-(--ow-surface) text-(--ow-text) text-xs font-black inline-flex items-center justify-center cursor-pointer hover:bg-(--ow-surface-sunken)"
           aria-label="Fechar modal de contato"
           (click)="closeContactModal()"
         >
@@ -462,10 +529,10 @@
         </button>
       </div>
 
-      <div class="mt-4 space-y-2 text-sm text-(--ow-gray-700)">
-        <p><span class="font-semibold text-(--ow-gray-900)">Battletag:</span> {{ contactMember.battletag }}</p>
-        <p><span class="font-semibold text-(--ow-gray-900)">WhatsApp:</span> {{ contactMember.whatsapp || 'Não informado' }}</p>
-        <p><span class="font-semibold text-(--ow-gray-900)">Email:</span> {{ contactMember.email || 'Não informado' }}</p>
+      <div class="mt-4 space-y-2 text-sm text-(--ow-text)">
+        <p><span class="font-semibold text-(--ow-text)">Battletag:</span> {{ contactMember.battletag }}</p>
+        <p><span class="font-semibold text-(--ow-text)">WhatsApp:</span> {{ contactMember.whatsapp || 'Não informado' }}</p>
+        <p><span class="font-semibold text-(--ow-text)">Email:</span> {{ contactMember.email || 'Não informado' }}</p>
       </div>
 
       <div class="mt-5 flex justify-end">

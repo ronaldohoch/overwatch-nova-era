@@ -1,0 +1,171 @@
+<div class="my-8 space-y-6">
+  <div class="flex flex-wrap items-start justify-between gap-4">
+    <div class="space-y-2">
+      <h1 class="text-4xl font-black leading-tight text-(--ow-text) lg:text-5xl">
+        Times do torneio
+      </h1>
+      <p class="text-(--ow-text-muted)">
+        Confira os times com check-in e inscreva times manualmente.
+      </p>
+    </div>
+
+    <div class="flex flex-wrap gap-3">
+      <ow-btn variant="secondary-mini" href="/watchpoint/torneios">Voltar para torneios</ow-btn>
+    </div>
+  </div>
+
+  @if (!hasTournamentId()) {
+    <p class="text-sm font-medium text-(--ow-alert-error-text)">Torneio inválido.</p>
+  } @else {
+    @if (loadingMessage(); as loadingMessage) {
+      <p class="text-sm font-medium text-(--ow-alert-error-text)">{{ loadingMessage }}</p>
+    }
+
+    <ow-card>
+      <div class="space-y-2">
+        @if (tournament(); as tournament) {
+          <h2 class="text-xl font-black text-(--ow-text)">{{ tournament.name }}</h2>
+          <p class="text-sm text-(--ow-text)">
+            {{ tournament.statusLabel }} / {{ tournament.teamModeLabel }}
+          </p>
+          <p class="text-xs text-(--ow-text-muted)">
+            Check-in até: {{ tournament.checkinDeadlineLabel }}
+          </p>
+          <p class="text-xs font-semibold text-(--ow-text)">{{ slotsLabel() }}</p>
+        } @else if (loadingTournament()) {
+          <p class="text-sm text-(--ow-text)">Carregando torneio...</p>
+        }
+
+        @if (isRandomTournament()) {
+          <p class="text-sm font-medium text-(--ow-alert-error-text)">
+            Este torneio usa times sorteados. Os times são formados pelo sorteio, e não por check-in
+            de time.
+          </p>
+        }
+      </div>
+    </ow-card>
+
+    @if (actionMessage(); as actionMessage) {
+      <p
+        class="text-sm font-medium"
+        [class.text-(--ow-alert-error-text)]="actionError()"
+        [class.text-(--ow-alert-success-text)]="!actionError()"
+      >
+        {{ actionMessage }}
+      </p>
+    }
+
+    <ow-card>
+      <div class="space-y-4">
+        <h2 class="text-xl font-black text-(--ow-text)">Times inscritos</h2>
+
+        @if (loadingTeams()) {
+          <p class="text-sm text-(--ow-text)">Carregando times inscritos...</p>
+        } @else if (tournamentTeams().length === 0) {
+          <p class="text-sm text-(--ow-text)">Nenhum time inscrito neste torneio.</p>
+        } @else {
+          <div class="space-y-3">
+            @for (team of tournamentTeams(); track team.teamId) {
+              <article
+                class="flex flex-col gap-3 rounded-lg border border-(--ow-border) bg-(--ow-surface) p-3 sm:flex-row sm:items-center sm:justify-between"
+              >
+                <div>
+                  <p class="text-sm font-black uppercase text-(--ow-text)">
+                    {{ team.name }}
+                    @if (team.tag) {
+                      <span class="text-(--ow-text-muted)">[{{ team.tag }}]</span>
+                    }
+                  </p>
+                  <p class="mt-1 text-xs text-(--ow-text)">
+                    {{ team.checkedIn ? 'Check-in realizado' : 'Sem check-in' }} /
+                    {{ team.sourceLabel }} / {{ team.membersCount }} integrante(s)
+                  </p>
+                  <p class="mt-1 text-xs text-(--ow-text-muted)">
+                    Check-in por: {{ team.checkedInByLabel }} em {{ team.checkedInAtLabel }}
+                  </p>
+                </div>
+
+                @if (isAdmin()) {
+                  <ow-btn
+                    type="button"
+                    variant="danger"
+                    [disabled]="pendingTeamId() !== null"
+                    (click)="onRemoveTeam(team)"
+                  >
+                    @if (isPendingTeam(team.teamId)) {
+                      Removendo...
+                    } @else {
+                      Remover do torneio
+                    }
+                  </ow-btn>
+                }
+              </article>
+            }
+          </div>
+        }
+      </div>
+    </ow-card>
+
+    @if (isAdmin() && !isRandomTournament()) {
+      <ow-card>
+        <div class="space-y-4">
+          <div class="space-y-1">
+            <h2 class="text-xl font-black text-(--ow-text)">Adicionar time ao torneio</h2>
+            <p class="text-xs text-(--ow-text)">
+              O time é inscrito já com o check-in registrado no seu usuário de admin.
+            </p>
+          </div>
+
+          <label class="flex flex-col gap-2 text-sm font-semibold text-(--ow-text)">
+            Buscar time
+            <input
+              type="text"
+              placeholder="Nome, tag ou capitão"
+              class="w-full rounded-md border border-(--ow-border-strong) bg-(--ow-surface) px-3 py-2.5 text-(--ow-text) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
+              [value]="search()"
+              (input)="updateSearch($any($event.target).value)"
+            />
+          </label>
+
+          @if (loadingGlobalTeams()) {
+            <p class="text-sm text-(--ow-text)">Carregando times cadastrados...</p>
+          } @else if (selectableTeams().length === 0) {
+            <p class="text-sm text-(--ow-text)">Nenhum time disponível para adicionar.</p>
+          } @else {
+            <div class="space-y-3">
+              @for (team of selectableTeams(); track team.id) {
+                <article
+                  class="flex flex-col gap-3 rounded-lg border border-(--ow-border) bg-(--ow-surface) p-3 sm:flex-row sm:items-center sm:justify-between"
+                >
+                  <div>
+                    <p class="text-sm font-black uppercase text-(--ow-text)">
+                      {{ team.name }}
+                      @if (team.tag) {
+                        <span class="text-(--ow-text-muted)">[{{ team.tag }}]</span>
+                      }
+                    </p>
+                    <p class="mt-1 text-xs text-(--ow-text)">
+                      Capitão: {{ team.captainName }} / {{ team.membersCount }} integrante(s)
+                    </p>
+                  </div>
+
+                  <ow-btn
+                    type="button"
+                    [disabled]="pendingTeamId() !== null"
+                    (click)="onAddTeam(team)"
+                  >
+                    @if (isPendingTeam(team.id)) {
+                      Adicionando...
+                    } @else {
+                      Adicionar ao torneio
+                    }
+                  </ow-btn>
+                </article>
+              }
+            </div>
+          }
+        </div>
+      </ow-card>
+    }
+  }
+</div>

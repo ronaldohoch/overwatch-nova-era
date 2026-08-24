@@ -10,6 +10,9 @@ import {
   CheckinRoleFilter,
   RandomCheckinAvailabilityByRole,
   RoleSlots,
+  TeamCheckinActor,
+  TeamCheckinActorRole,
+  TournamentTeamCheckin,
 } from './interfaces';
 
 const ROSTER_MAX_PER_TEAM = 8;
@@ -487,11 +490,39 @@ export class TorneiosService {
     return { id: team.id, ...team.data() };
   }
 
-  async checkinClosedTeam(tournamentId: string, teamId: string, uid: string) {
+  private resolveTeamCheckinActorRole(actor: TeamCheckinActor): TeamCheckinActorRole {
+    const role = String(actor?.role || '').trim().toLowerCase();
+    return role === 'admin' ? 'admin' : 'captain';
+  }
+
+  private async resolveActorName(uid: string): Promise<string | null> {
+    const profile = await this.getUserProfile(uid);
+    const displayName = String(profile?.displayName || '').trim();
+    const battletag = String(profile?.battletag || '').trim();
+    return displayName || battletag || null;
+  }
+
+  /**
+   * Registra o check-in de um time no torneio.
+   * O capitao faz o proprio check-in dentro da janela de check-in.
+   * O admin pode inscrever qualquer time enquanto o torneio nao estiver encerrado.
+   * Em ambos os casos fica gravado o uid e o papel de quem executou a acao.
+   */
+  async checkinClosedTeam(tournamentId: string, teamId: string, actor: TeamCheckinActor) {
+    const uid = String(actor?.uid || '').trim();
+    if (!uid) throw new Error('Usuario invalido para check-in de time');
+
+    const actorRole = this.resolveTeamCheckinActorRole(actor);
+    const isAdmin = actorRole === 'admin';
+    const actorName = await this.resolveActorName(uid);
+
     const tRef = this.torneiosCollection.doc(tournamentId);
     const tournamentTeamRef = this.teamsCol(tournamentId).doc(teamId);
     const globalTeamRef = this.globalTeamsCollection.doc(teamId);
     const globalTeamMemberRef = this.globalTeamMembersCol(teamId).doc(uid);
+
+    let alreadyCheckedIn = false;
+    let trophyUid = uid;
 
     await firestore.runTransaction(async (tx) => {
       const tSnap = await tx.get(tRef);
@@ -502,12 +533,18 @@ export class TorneiosService {
         throw new Error('Times so podem fazer check-in em torneios nao random');
       }
 
-      if (!(t.status === 'published' || t.status === 'checkin')) {
-        throw new Error('Check-in fechado');
-      }
+      if (isAdmin) {
+        if (t.status === 'finished' || t.status === 'canceled') {
+          throw new Error('Torneio encerrado: nao e possivel adicionar times');
+        }
+      } else {
+        if (!(t.status === 'published' || t.status === 'checkin')) {
+          throw new Error('Check-in fechado');
+        }
 
-      const now = Date.now();
-      if (new Date(t.checkinDeadlineAt).getTime() < now) throw new Error('Prazo de check-in encerrado');
+        const now = Date.now();
+        if (new Date(t.checkinDeadlineAt).getTime() < now) throw new Error('Prazo de check-in encerrado');
+      }
 
       const [tournamentTeamSnap, globalTeamSnap, globalTeamMemberSnap] = await Promise.all([
         tx.get(tournamentTeamRef),
@@ -518,6 +555,14 @@ export class TorneiosService {
       const checkedInTeams = Number(t.counters?.checkedInTeams ?? 0);
       const maxTeams = Number(t.maxTeams);
 
+      const checkinMetadata = {
+        checkedIn: true,
+        checkedInAt: new Date().toISOString(),
+        checkedInByUid: uid,
+        checkedInByRole: actorRole,
+        checkedInByName: actorName,
+      };
+
       if (globalTeamSnap.exists) {
         const globalTeam = (globalTeamSnap.data() ?? {}) as Record<string, unknown>;
         const captainUid = String(globalTeam['captainUid'] ?? '').trim();
@@ -526,17 +571,24 @@ export class TorneiosService {
           throw new Error('Este time nao possui capitao no momento');
         }
 
-        if (!globalTeamMemberSnap.exists) {
-          throw new Error('Voce nao faz parte do time informado');
-        }
+        trophyUid = captainUid;
 
-        if (captainUid !== uid) {
-          throw new Error('Apenas o capitao pode fazer check-in do time');
+        if (!isAdmin) {
+          if (!globalTeamMemberSnap.exists) {
+            throw new Error('Voce nao faz parte do time informado');
+          }
+
+          if (captainUid !== uid) {
+            throw new Error('Apenas o capitao ou um admin pode fazer check-in do time');
+          }
         }
 
         if (tournamentTeamSnap.exists) {
           const currentCheckin = (tournamentTeamSnap.data() ?? {}) as Record<string, unknown>;
-          if (currentCheckin['checkedIn']) return;
+          if (currentCheckin['checkedIn']) {
+            alreadyCheckedIn = true;
+            return;
+          }
         }
 
         if (checkedInTeams >= maxTeams) {
@@ -553,9 +605,7 @@ export class TorneiosService {
             captainUid,
             membersCount: Number(globalTeam['membersCount'] ?? 0),
             source: 'global_team',
-            checkedIn: true,
-            checkedInAt: new Date().toISOString(),
-            checkedInByUid: uid,
+            ...checkinMetadata,
           },
           { merge: true },
         );
@@ -563,21 +613,23 @@ export class TorneiosService {
         if (!tournamentTeamSnap.exists) throw new Error('Time nao encontrado');
         const tournamentTeam = (tournamentTeamSnap.data() ?? {}) as Record<string, unknown>;
 
-        if (tournamentTeam['captainUid'] !== uid) {
-          throw new Error('Apenas o capitao pode fazer check-in do time');
+        const captainUid = String(tournamentTeam['captainUid'] ?? '').trim();
+        if (captainUid) trophyUid = captainUid;
+
+        if (!isAdmin && captainUid !== uid) {
+          throw new Error('Apenas o capitao ou um admin pode fazer check-in do time');
         }
 
-        if (tournamentTeam['checkedIn']) return;
+        if (tournamentTeam['checkedIn']) {
+          alreadyCheckedIn = true;
+          return;
+        }
 
         if (checkedInTeams >= maxTeams) {
           throw new Error('Limite de check-in de times atingido');
         }
 
-        tx.update(tournamentTeamRef, {
-          checkedIn: true,
-          checkedInAt: new Date().toISOString(),
-          checkedInByUid: uid,
-        });
+        tx.update(tournamentTeamRef, checkinMetadata);
       }
 
       tx.update(tRef, {
@@ -586,22 +638,124 @@ export class TorneiosService {
       });
     });
 
-    try {
-      await grantAutomaticTrophiesForEvent('tournament_closed_team_checkin', {
-        userUid: uid,
-        teamId,
-        reason: 'Check-in de time em torneio fechado.',
-        metadata: {
-          tournamentId,
+    if (!alreadyCheckedIn) {
+      try {
+        await grantAutomaticTrophiesForEvent('tournament_closed_team_checkin', {
+          userUid: trophyUid,
           teamId,
-        },
-      });
-    } catch (error) {
-      console.error('[trofeus] Falha ao conceder trofeu automatico (closed team checkin):', error);
+          reason: 'Check-in de time em torneio fechado.',
+          metadata: {
+            tournamentId,
+            teamId,
+            checkedInByUid: uid,
+            checkedInByRole: actorRole,
+          },
+        });
+      } catch (error) {
+        console.error('[trofeus] Falha ao conceder trofeu automatico (closed team checkin):', error);
+      }
     }
 
     const updated = await tournamentTeamRef.get();
     return { id: updated.id, ...updated.data() };
+  }
+
+  /** Lista os times inscritos no torneio, com o autor de cada check-in. */
+  async listTournamentTeams(tournamentId: string): Promise<TournamentTeamCheckin[]> {
+    const tournamentSnapshot = await this.torneiosCollection.doc(tournamentId).get();
+    if (!tournamentSnapshot.exists) throw new Error('Torneio nao encontrado');
+
+    const snapshot = await this.teamsCol(tournamentId).get();
+    const rows = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      data: (doc.data() ?? {}) as Record<string, unknown>,
+    }));
+
+    const missingNameUids = Array.from(
+      new Set(
+        rows
+          .filter((row) => !row.data['checkedInByName'])
+          .map((row) => String(row.data['checkedInByUid'] ?? '').trim())
+          .filter((value) => !!value),
+      ),
+    );
+
+    const nameByUid = new Map<string, string | null>();
+    for (const missingUid of missingNameUids) {
+      nameByUid.set(missingUid, await this.resolveActorName(missingUid));
+    }
+
+    const teams = rows.map((row) => {
+      const data = row.data;
+      const checkedInByUid = String(data['checkedInByUid'] ?? '').trim() || null;
+      const rawRole = String(data['checkedInByRole'] ?? '').trim().toLowerCase();
+      const storedName =
+        typeof data['checkedInByName'] === 'string' && data['checkedInByName'].trim()
+          ? (data['checkedInByName'] as string).trim()
+          : null;
+
+      return {
+        id: row.id,
+        teamId: String(data['teamId'] ?? row.id),
+        name: (data['name'] as string | null) ?? null,
+        tag: (data['tag'] as string | null) ?? null,
+        captainUid: String(data['captainUid'] ?? '').trim() || null,
+        membersCount: this.toNonNegativeInt(data['membersCount']),
+        source: String(data['source'] ?? 'tournament_team'),
+        checkedIn: data['checkedIn'] === true,
+        checkedInAt: (data['checkedInAt'] as string | null) ?? null,
+        checkedInByUid,
+        checkedInByRole:
+          rawRole === 'admin' || rawRole === 'captain' ? (rawRole as TeamCheckinActorRole) : null,
+        checkedInByName: storedName ?? (checkedInByUid ? nameByUid.get(checkedInByUid) ?? null : null),
+      } satisfies TournamentTeamCheckin;
+    });
+
+    return teams.sort((a, b) => {
+      const aTime = new Date(String(a.checkedInAt ?? '')).getTime();
+      const bTime = new Date(String(b.checkedInAt ?? '')).getTime();
+      if (Number.isFinite(aTime) && Number.isFinite(bTime) && aTime !== bTime) return bTime - aTime;
+      return (a.name ?? '').localeCompare(b.name ?? '', 'pt-BR');
+    });
+  }
+
+  /** Remove o time do torneio (desfaz o check-in). Apenas admin. */
+  async removeClosedTeamCheckin(tournamentId: string, teamId: string) {
+    const tRef = this.torneiosCollection.doc(tournamentId);
+    const tournamentTeamRef = this.teamsCol(tournamentId).doc(teamId);
+
+    await firestore.runTransaction(async (tx) => {
+      const [tSnap, teamSnap] = await Promise.all([tx.get(tRef), tx.get(tournamentTeamRef)]);
+
+      if (!tSnap.exists) throw new Error('Torneio nao encontrado');
+      if (!teamSnap.exists) throw new Error('Time nao esta inscrito neste torneio');
+
+      const t: any = tSnap.data();
+      if (t.status === 'finished' || t.status === 'canceled') {
+        throw new Error('Torneio encerrado: nao e possivel remover times');
+      }
+
+      const team = (teamSnap.data() ?? {}) as Record<string, unknown>;
+      const wasCheckedIn = team['checkedIn'] === true;
+      const wasCreatedInTournament = String(team['source'] ?? '') !== 'global_team';
+
+      const tournamentUpdate: Record<string, unknown> = {
+        updatedAt: FieldValue.serverTimestamp(),
+      };
+
+      if (wasCheckedIn && this.toNonNegativeInt(t.counters?.checkedInTeams) > 0) {
+        tournamentUpdate['counters.checkedInTeams'] = FieldValue.increment(-1);
+      }
+
+      if (wasCreatedInTournament && this.toNonNegativeInt(t.counters?.registeredTeams) > 0) {
+        tournamentUpdate['counters.registeredTeams'] = FieldValue.increment(-1);
+      }
+
+      tx.delete(tournamentTeamRef);
+      tx.update(tRef, tournamentUpdate);
+    });
+
+    return { tournamentId, teamId, removed: true };
   }
 
   // ---------- RANDOM: lock + draw ----------

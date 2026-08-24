@@ -46,12 +46,22 @@ type TeamTournamentItem = Readonly<{
   name: string;
   status: string;
   statusLabel: string;
+  checkedIn: boolean;
   checkedInLabel: string;
+  checkedInByLabel: string | null;
   teamModeLabel: string;
   participationScope: ParticipationScope;
   participationLabel: string;
   startAtLabel: string;
   trophyLabels: readonly string[];
+}>;
+
+type OpenTournamentItem = Readonly<{
+  id: string;
+  name: string;
+  statusLabel: string;
+  startAtLabel: string;
+  checkinDeadlineLabel: string;
 }>;
 
 type TeamTrophyItem = Readonly<{
@@ -75,17 +85,24 @@ export class TimesDetalheComponent {
   readonly auth = inject(AuthService);
 
   private readonly timesApiUrl = `${environment.apiURLTimes}`;
+  private readonly torneiosApiUrl = `${environment.apiURLTorneios}`;
   private readonly teamId = (this.route.snapshot.paramMap.get('id') ?? '').trim();
 
   readonly team = signal<TeamDetail | null>(null);
   readonly members = signal<readonly TeamMemberItem[]>([]);
   readonly tournaments = signal<readonly TeamTournamentItem[]>([]);
+  readonly openTournaments = signal<readonly OpenTournamentItem[]>([]);
   readonly trophies = signal<readonly TeamTrophyItem[]>([]);
 
   readonly loadingTeam = signal(false);
   readonly loadingMembers = signal(false);
   readonly loadingTournaments = signal(false);
+  readonly loadingOpenTournaments = signal(false);
   readonly loadingMessage = signal<string | null>(null);
+
+  readonly checkingInTournamentId = signal<string | null>(null);
+  readonly teamCheckinMessage = signal<string | null>(null);
+  readonly teamCheckinError = signal(false);
 
   readonly addMemberBattletag = signal('');
   readonly addingMember = signal(false);
@@ -169,6 +186,19 @@ export class TimesDetalheComponent {
     if (!this.hasTeamId()) return false;
     if (!this.isAdmin()) return false;
     return this.team()?.category === 'random';
+  });
+
+  readonly canCheckinTeam = computed(
+    () => this.hasTeamId() && (this.isCurrentUserCaptain() || this.isAdmin()),
+  );
+  readonly availableTournaments = computed(() => {
+    const joinedIds = new Set(
+      this.tournaments()
+        .filter((tournament) => tournament.checkedIn)
+        .map((tournament) => tournament.id),
+    );
+
+    return this.openTournaments().filter((tournament) => !joinedIds.has(tournament.id));
   });
 
   readonly activeTournaments = computed(() =>
@@ -595,6 +625,46 @@ export class TimesDetalheComponent {
     }
   }
 
+  isCheckingInTournament(tournament: OpenTournamentItem): boolean {
+    return this.checkingInTournamentId() === tournament.id;
+  }
+
+  async onTeamCheckin(tournament: OpenTournamentItem): Promise<void> {
+    this.teamCheckinMessage.set(null);
+    this.teamCheckinError.set(false);
+
+    if (!this.canCheckinTeam()) {
+      this.teamCheckinMessage.set('Apenas o capitão do time ou um admin pode fazer o check-in.');
+      this.teamCheckinError.set(true);
+      return;
+    }
+
+    if (this.checkingInTournamentId()) return;
+
+    this.checkingInTournamentId.set(tournament.id);
+
+    try {
+      await firstValueFrom(
+        this.http.post<unknown>(
+          `${this.torneiosApiUrl}/${encodeURIComponent(tournament.id)}/teams/${encodeURIComponent(this.teamId)}/checkin`,
+          {},
+        ),
+      );
+
+      this.teamCheckinMessage.set(`Check-in realizado em ${tournament.name}.`);
+      this.teamCheckinError.set(false);
+
+      await Promise.all([this.loadTournaments(), this.loadOpenTournaments()]);
+    } catch (error: unknown) {
+      this.teamCheckinMessage.set(
+        this.resolveError(error, 'Não foi possível realizar o check-in do time.'),
+      );
+      this.teamCheckinError.set(true);
+    } finally {
+      this.checkingInTournamentId.set(null);
+    }
+  }
+
   private async loadPage(): Promise<void> {
     this.loadingMessage.set(null);
 
@@ -603,13 +673,19 @@ export class TimesDetalheComponent {
       this.syncTeamDataForm(null);
       this.members.set([]);
       this.tournaments.set([]);
+      this.openTournaments.set([]);
       this.trophies.set([]);
       this.loadingMessage.set('Time inválido.');
       return;
     }
 
     try {
-      await Promise.all([this.loadTeam(), this.loadMembers(), this.loadTournaments()]);
+      await Promise.all([
+        this.loadTeam(),
+        this.loadMembers(),
+        this.loadTournaments(),
+        this.loadOpenTournaments(),
+      ]);
     } catch (error: unknown) {
       this.loadingMessage.set(this.resolveError(error, 'Não foi possível carregar os dados do time.'));
     }
@@ -684,6 +760,58 @@ export class TimesDetalheComponent {
     } finally {
       this.loadingTournaments.set(false);
     }
+  }
+
+  /** Torneios de times fechados com janela de check-in aberta. */
+  private async loadOpenTournaments(): Promise<void> {
+    if (!this.hasTeamId()) {
+      this.openTournaments.set([]);
+      return;
+    }
+
+    this.loadingOpenTournaments.set(true);
+
+    try {
+      const response = await firstValueFrom(this.http.get<unknown>(this.torneiosApiUrl));
+      const now = Date.now();
+
+      const tournaments = this.readRecords(response, ['tournaments', 'data', 'items', 'results'])
+        .filter((item) => this.isOpenForTeamCheckin(item, now))
+        .map((item) => this.toOpenTournamentItem(item))
+        .filter((item) => !!item.id);
+
+      this.openTournaments.set(tournaments);
+    } catch {
+      this.openTournaments.set([]);
+    } finally {
+      this.loadingOpenTournaments.set(false);
+    }
+  }
+
+  private isOpenForTeamCheckin(value: RawRecord, now: number): boolean {
+    const teamMode = (this.readString(value, 'teamMode') ?? '').toLowerCase();
+    if (teamMode === 'random') return false;
+
+    const status = (this.readString(value, 'status') ?? '').toLowerCase();
+    if (status !== 'published' && status !== 'checkin') return false;
+
+    const deadline = this.readString(value, 'checkinDeadlineAt');
+    if (!deadline) return false;
+
+    const parsed = new Date(deadline).getTime();
+    return Number.isFinite(parsed) && parsed >= now;
+  }
+
+  private toOpenTournamentItem(value: RawRecord): OpenTournamentItem {
+    const status = (this.readString(value, 'status') ?? 'desconhecido').toLowerCase();
+
+    return {
+      id: this.readString(value, 'id') ?? '',
+      name: this.readString(value, 'name') ?? 'Torneio sem nome',
+      statusLabel: this.toStatusLabel(status),
+      startAtLabel: this.toDateTimeLabel(this.readString(value, 'startAt')),
+      checkinDeadlineLabel: this.toDateTimeLabel(this.readString(value, 'checkinDeadlineAt')),
+    };
   }
 
   private readTeam(value: unknown): RawRecord | null {
@@ -793,13 +921,16 @@ export class TimesDetalheComponent {
   private toTournamentItem(value: RawRecord): TeamTournamentItem {
     const status = (this.readString(value, 'status') ?? 'desconhecido').toLowerCase();
     const participationScope = this.readParticipationScope(value, status);
+    const checkedIn = this.readBoolean(value['checkedIn']) ?? false;
 
     return {
       id: this.readString(value, 'id') ?? '',
       name: this.readString(value, 'name') ?? 'Torneio sem nome',
       status,
       statusLabel: this.toStatusLabel(status),
-      checkedInLabel: this.readBoolean(value['checkedIn']) ? 'Check-in realizado' : 'Sem check-in',
+      checkedIn,
+      checkedInLabel: checkedIn ? 'Check-in realizado' : 'Sem check-in',
+      checkedInByLabel: this.toCheckedInByLabel(value, checkedIn),
       teamModeLabel: this.toTeamModeLabel(this.readString(value, 'teamMode')),
       participationScope,
       participationLabel:
@@ -844,6 +975,20 @@ export class TimesDetalheComponent {
     const raw = (this.readString(value, 'participationScope') ?? '').toLowerCase();
     if (raw === 'participa' || raw === 'participou') return raw;
     return status === 'finished' || status === 'canceled' ? 'participou' : 'participa';
+  }
+
+  /** Mostra quem registrou o check-in do time: o capitão ou um admin. */
+  private toCheckedInByLabel(value: RawRecord, checkedIn: boolean): string | null {
+    if (!checkedIn) return null;
+
+    const who = this.readString(value, 'checkedInByName') ?? this.readString(value, 'checkedInByUid');
+    if (!who) return null;
+
+    const role = (this.readString(value, 'checkedInByRole') ?? '').toLowerCase();
+    if (role === 'admin') return `Check-in feito por ${who} (admin)`;
+    if (role === 'captain') return `Check-in feito por ${who} (capitão)`;
+
+    return `Check-in feito por ${who}`;
   }
 
   private toTeamModeLabel(value: string | null): string {
