@@ -2,22 +2,12 @@
 <section class="mt-8 overflow-hidden bg-[image:var(--ow-panel-invert)] [clip-path:polygon(3%_0,100%_0,100%_96%,97%_100%,0_100%,0_4%)]">
   <div class="relative flex flex-col-reverse items-center gap-10 px-6 py-16 sm:px-10 sm:py-20 lg:flex-row lg:justify-between lg:py-28">
     <div class="max-w-xl text-center lg:text-left">
-      <div class="mb-6 flex flex-wrap justify-center gap-2 lg:justify-start">
-        <ow-badge variant="orange">100% Online</ow-badge>
-        <ow-badge variant="blue">Overwatch</ow-badge>
-      </div>
-
       <h1 class="text-5xl font-black leading-none tracking-tight text-(--ow-on-accent) sm:text-6xl">
         STG <span class="text-(--ow-orange)">Esports</span>
       </h1>
 
       <p class="mt-5 text-xl font-bold uppercase tracking-[0.12em] text-(--ow-gray-300)">
         Conectando comunidades através dos esports
-      </p>
-
-      <p class="mt-6 text-lg leading-relaxed text-(--ow-gray-400)">
-        Mais do que realizar campeonatos, nosso objetivo é criar experiências competitivas que
-        conectem pessoas e fortaleçam as comunidades dos jogos que amamos.
       </p>
 
       <div class="mt-9 flex flex-col gap-4 sm:flex-row sm:justify-center lg:justify-start">
@@ -36,88 +26,56 @@
   </div>
 </section>
 
-<!-- ─── Origem ─── -->
+<!-- ─── A STG ─── -->
 <section class="py-16 sm:py-20">
-  <div class="mx-auto max-w-3xl">
-    <p class="mb-2 text-center text-sm font-bold uppercase tracking-widest text-(--ow-orange-text)">
-      Nossa origem
-    </p>
-    <ow-section-title>Como <span class="text-(--ow-orange-text)">nascemos</span></ow-section-title>
-
+  <div class="mx-auto max-w-3xl space-y-8">
     <p class="text-lg leading-relaxed text-(--ow-text)">
       A STG Esports nasceu a partir da iniciativa da gestão da SG Jundiaí, de aproximar cada vez
       mais o público gamer do cenário competitivo, criando oportunidades para jogadores, equipes e
       comunidades participarem de competições organizadas e acessíveis.
     </p>
+
+    <p class="border-l-4 border-(--ow-orange) pl-6 text-2xl font-bold leading-snug text-(--ow-text) sm:text-[1.75rem]">
+      Mais do que realizar campeonatos, nosso objetivo é criar experiências competitivas que
+      conectem pessoas e fortaleçam as comunidades dos jogos que amamos.
+    </p>
+
+    <p class="text-lg leading-relaxed text-(--ow-text)">
+      Ao longo desse projeto, já realizamos e sediamos campeonatos presenciais em nossa estrutura,
+      proporcionando aos jogadores a experiência de competir em um ambiente preparado para receber
+      o cenário competitivo. Esses eventos nos permitiram conhecer de perto diferentes comunidades,
+      equipes e jogadores, além de entender as necessidades de quem participa e acompanha os
+      esports.
+    </p>
+
+    <p class="text-lg leading-relaxed text-(--ow-text)">
+      Agora, ampliamos esse projeto também para o cenário online, permitindo que equipes de
+      diferentes regiões possam participar das nossas competições sem precisar estar fisicamente em
+      nossa estrutura.
+    </p>
   </div>
 </section>
 
-<!-- ─── Trajetória ─── -->
-<section class="border-t border-(--ow-border) py-16 sm:py-20">
-  <p class="mb-2 text-center text-sm font-bold uppercase tracking-widest text-(--ow-orange-text)">
-    Trajetória
+<!-- ─── A virada ─── -->
+<section class="border-y border-(--ow-border) py-16 text-center sm:py-20">
+  <p class="mx-auto max-w-4xl text-3xl font-black leading-tight tracking-tight text-(--ow-text) sm:text-4xl">
+    E é nesse movimento que chegamos ao Overwatch.
   </p>
-  <ow-section-title>Do presencial ao <span class="text-(--ow-orange-text)">online</span></ow-section-title>
-
-  <ol class="mx-auto mt-12 max-w-4xl">
-    @for (etapa of etapas; track etapa.numero; let last = $last) {
-      <li class="relative flex gap-6 pb-12 last:pb-0">
-        @if (!last) {
-          <span
-            class="absolute left-[27px] top-16 bottom-0 w-[2px] bg-(--ow-border)"
-            aria-hidden="true"
-          ></span>
-        }
-
-        <span
-          class="relative z-10 flex h-14 w-14 shrink-0 items-center justify-center bg-[image:var(--gradient-orange)] text-lg font-black text-(--ow-on-accent) [clip-path:polygon(20%_0,100%_0,80%_100%,0_100%)]"
-        >
-          {{ etapa.numero }}
-        </span>
-
-        <div class="pt-1">
-          <h3 class="text-2xl font-black uppercase tracking-wide text-(--ow-text)">
-            {{ etapa.titulo }}
-          </h3>
-          <p class="mt-3 text-lg leading-relaxed text-(--ow-text)">{{ etapa.texto }}</p>
-        </div>
-      </li>
-    }
-  </ol>
 </section>
 
 <!-- ─── O campeonato ─── -->
-<section class="border-t border-(--ow-border) py-16 sm:py-20">
-  <p class="mb-2 text-center text-sm font-bold uppercase tracking-widest text-(--ow-orange-text)">
-    O campeonato
+<section class="py-16 sm:py-20">
+  <p class="mx-auto max-w-3xl text-lg leading-relaxed text-(--ow-text)">
+    Estamos abraçando a comunidade competitiva de Overwatch com um campeonato 100% online, pensado
+    para reunir equipes de diferentes partes do Brasil e proporcionar uma experiência competitiva
+    organizada, acessível e voltada para a integração do cenário nacional.
   </p>
-  <ow-section-title>Uma nova <span class="text-(--ow-orange-text)">etapa</span></ow-section-title>
-
-  <div class="mx-auto grid max-w-5xl grid-cols-1 gap-6 sm:grid-cols-3">
-    @for (destaque of destaques; track destaque.titulo) {
-      <ow-card>
-        <h3 class="text-xl font-black uppercase tracking-wide text-(--ow-text)">
-          {{ destaque.titulo }}
-        </h3>
-        <p class="mt-2 text-base leading-relaxed text-(--ow-text-muted)">{{ destaque.texto }}</p>
-      </ow-card>
-    }
-  </div>
 </section>
 
 <!-- ─── Parceria ─── -->
 <section class="border-t border-(--ow-border) py-16 sm:py-20">
-  <p class="mb-2 text-center text-sm font-bold uppercase tracking-widest text-(--ow-orange-text)">
-    Parceria
-  </p>
-  <ow-section-title>STG <span class="text-(--ow-orange-text)">×</span> Copa Nova Era</ow-section-title>
-
   <div class="mx-auto flex max-w-md items-center justify-center gap-6 sm:gap-10">
-    <img
-      src="/imgs/logo-stg.png"
-      alt="Logo STG Esports"
-      class="h-20 w-auto object-contain sm:h-24"
-    />
+    <img src="/imgs/logo-stg.png" alt="Logo STG Esports" class="h-20 w-auto object-contain sm:h-24" />
     <span class="text-3xl font-black text-(--ow-orange-text)" aria-hidden="true">×</span>
     <img
       src="/imgs/logo-nova-era-low-res.webp"
@@ -148,13 +106,12 @@
   </div>
 </section>
 
-<!-- ─── CTA final ─── -->
+<!-- ─── Chamada final ─── -->
 <section class="mb-12 overflow-hidden bg-[image:var(--ow-panel-invert-soft)] px-6 py-16 text-center [clip-path:polygon(3%_0,100%_0,100%_96%,97%_100%,0_100%,0_4%)] sm:px-10 sm:py-20">
-  <h2 class="mx-auto max-w-3xl text-3xl font-black leading-tight text-(--ow-on-accent) sm:text-4xl">
+  <p class="mx-auto max-w-3xl text-3xl font-black leading-tight text-(--ow-on-accent) sm:text-4xl">
     Seja você uma equipe já consolidada ou um grupo de jogadores buscando seu espaço, este
-    campeonato é um convite para fazer parte dessa
-    <span class="text-(--ow-orange)">nova etapa da STG</span>.
-  </h2>
+    campeonato é um convite para fazer parte dessa nova etapa da STG.
+  </p>
 
   <div class="mt-10 flex flex-col gap-4 sm:flex-row sm:justify-center">
     <ow-btn variant="primary" size="lg" href="/login">Inscreva-se agora</ow-btn>
