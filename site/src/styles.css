@@ -85,11 +85,6 @@
   --ow-border: #2a2a2e;
   --ow-border-strong: #3c4043;
 
-  /* Painel invertido: o fundo some e funde com a pagina, que ja e preta.
-     'none' e nao 'transparent' porque o valor alimenta background-image. */
-  --ow-panel-invert: none;
-  --ow-panel-invert-soft: none;
-
   /* Grade diagonal de fundo. Faz parte da identidade visual da marca e
      aparece nos dois temas. */
   --ow-grid: #2a2a2e;
@@ -155,10 +150,6 @@
   /* Bordas */
   --ow-border: #e8eaed;
   --ow-border-strong: #dadce0;
-
-  /* Painel invertido (hero STG, CTA de marca): bloco escuro sobre pagina clara */
-  --ow-panel-invert: linear-gradient(135deg, #111111 0%, #1a1a1a 55%, #202124 100%);
-  --ow-panel-invert-soft: linear-gradient(135deg, #111111 0%, #202124 100%);
 
   /* Grade diagonal de fundo */
   --ow-grid: #e5e7eb;
