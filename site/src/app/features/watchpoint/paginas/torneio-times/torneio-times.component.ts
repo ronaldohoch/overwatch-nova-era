@@ -26,8 +26,8 @@ type TournamentTeamItem = Readonly<{
   tag: string | null;
   membersCount: number;
   checkedIn: boolean;
-  checkedInAtLabel: string;
-  checkedInByLabel: string;
+  /** Nulo quando o time nao passou por check-in ou o registro nao guardou a autoria. */
+  checkinAuthorLabel: string | null;
   sourceLabel: string;
 }>;
 
@@ -36,6 +36,7 @@ type GlobalTeamItem = Readonly<{
   name: string;
   tag: string | null;
   captainName: string;
+  hasCaptain: boolean;
   membersCount: number;
 }>;
 
@@ -65,8 +66,10 @@ export class TorneioTimesComponent {
 
   readonly search = signal('');
   readonly pendingTeamId = signal<string | null>(null);
+  /** Confirmacao da ultima acao concluida, exibida no topo da pagina. */
   readonly actionMessage = signal<string | null>(null);
-  readonly actionError = signal(false);
+  /** Erro da ultima acao, exibido no card do time que a originou. */
+  readonly teamError = signal<{ teamId: string; message: string } | null>(null);
 
   readonly hasTournamentId = computed(() => !!this.tournamentId);
   readonly isAdmin = computed(() => this.auth.userRole() === 'admin');
@@ -112,13 +115,33 @@ export class TorneioTimesComponent {
     return this.pendingTeamId() === teamId;
   }
 
+  errorForTeam(teamId: string): string | null {
+    const current = this.teamError();
+    return current?.teamId === teamId ? current.message : null;
+  }
+
+  /** Time sem capitão não pode ser inscrito: o check-in exige um capitão definido. */
+  canAddTeam(team: GlobalTeamItem): boolean {
+    return this.isAdmin() && team.hasCaptain && this.pendingTeamId() === null;
+  }
+
   async onAddTeam(team: GlobalTeamItem): Promise<void> {
     this.actionMessage.set(null);
-    this.actionError.set(false);
+    this.teamError.set(null);
 
     if (!this.isAdmin()) {
-      this.actionMessage.set('Apenas admin pode adicionar times ao torneio.');
-      this.actionError.set(true);
+      this.teamError.set({
+        teamId: team.id,
+        message: 'Apenas admin pode adicionar times ao torneio.',
+      });
+      return;
+    }
+
+    if (!team.hasCaptain) {
+      this.teamError.set({
+        teamId: team.id,
+        message: 'Defina um capitão para o time antes de inscrevê-lo no torneio.',
+      });
       return;
     }
 
@@ -135,12 +158,13 @@ export class TorneioTimesComponent {
       );
 
       this.actionMessage.set(`${team.name} adicionado ao torneio com check-in.`);
-      this.actionError.set(false);
 
       await Promise.all([this.loadTournament(), this.loadTournamentTeams()]);
     } catch (error: unknown) {
-      this.actionMessage.set(this.resolveError(error, 'Não foi possível adicionar o time.'));
-      this.actionError.set(true);
+      this.teamError.set({
+        teamId: team.id,
+        message: this.resolveError(error, 'Não foi possível adicionar o time.'),
+      });
     } finally {
       this.pendingTeamId.set(null);
     }
@@ -148,11 +172,13 @@ export class TorneioTimesComponent {
 
   async onRemoveTeam(team: TournamentTeamItem): Promise<void> {
     this.actionMessage.set(null);
-    this.actionError.set(false);
+    this.teamError.set(null);
 
     if (!this.isAdmin()) {
-      this.actionMessage.set('Apenas admin pode remover times do torneio.');
-      this.actionError.set(true);
+      this.teamError.set({
+        teamId: team.teamId,
+        message: 'Apenas admin pode remover times do torneio.',
+      });
       return;
     }
 
@@ -168,12 +194,13 @@ export class TorneioTimesComponent {
       );
 
       this.actionMessage.set(`${team.name} removido do torneio.`);
-      this.actionError.set(false);
 
       await Promise.all([this.loadTournament(), this.loadTournamentTeams()]);
     } catch (error: unknown) {
-      this.actionMessage.set(this.resolveError(error, 'Não foi possível remover o time.'));
-      this.actionError.set(true);
+      this.teamError.set({
+        teamId: team.teamId,
+        message: this.resolveError(error, 'Não foi possível remover o time.'),
+      });
     } finally {
       this.pendingTeamId.set(null);
     }
@@ -264,10 +291,6 @@ export class TorneioTimesComponent {
 
   private toTournamentTeamItem(value: RawRecord): TournamentTeamItem {
     const checkedIn = value['checkedIn'] === true;
-    const who =
-      this.readString(value, 'checkedInByName') ?? this.readString(value, 'checkedInByUid');
-    const role = (this.readString(value, 'checkedInByRole') ?? '').toLowerCase();
-    const roleLabel = role === 'admin' ? ' (admin)' : role === 'captain' ? ' (capitão)' : '';
     const source = this.readString(value, 'source') ?? '';
 
     return {
@@ -276,13 +299,34 @@ export class TorneioTimesComponent {
       tag: this.readString(value, 'tag'),
       membersCount: this.readInteger(value['membersCount']) ?? 0,
       checkedIn,
-      checkedInAtLabel: this.toDateTimeLabel(this.readString(value, 'checkedInAt')),
-      checkedInByLabel: checkedIn && who ? `${who}${roleLabel}` : 'Não informado',
+      checkinAuthorLabel: this.toCheckinAuthorLabel(value, checkedIn),
       sourceLabel: source === 'global_team' ? 'Time cadastrado' : 'Time criado no torneio',
     };
   }
 
+  /**
+   * Times sorteados e check-ins anteriores a este recurso nao guardam autoria,
+   * entao nesses casos a linha nao é exibida com placeholders vazios.
+   */
+  private toCheckinAuthorLabel(value: RawRecord, checkedIn: boolean): string | null {
+    if (!checkedIn) return null;
+
+    const who =
+      this.readString(value, 'checkedInByName') ?? this.readString(value, 'checkedInByUid');
+    if (!who) return 'Autoria do check-in não registrada';
+
+    const role = (this.readString(value, 'checkedInByRole') ?? '').toLowerCase();
+    const roleLabel = role === 'admin' ? ' (admin)' : role === 'captain' ? ' (capitão)' : '';
+    const at = this.readString(value, 'checkedInAt');
+
+    return at
+      ? `Check-in por: ${who}${roleLabel} em ${this.toDateTimeLabel(at)}`
+      : `Check-in por: ${who}${roleLabel}`;
+  }
+
   private toGlobalTeamItem(value: RawRecord): GlobalTeamItem {
+    const captainUid = this.readString(value, 'captainUid');
+
     return {
       id: this.readString(value, 'id') ?? '',
       name: this.readString(value, 'name') ?? 'Time sem nome',
@@ -291,6 +335,7 @@ export class TorneioTimesComponent {
         this.readString(value, 'captainName') ??
         this.readString(value, 'captainDisplayName') ??
         'Sem capitão definido',
+      hasCaptain: !!captainUid,
       membersCount: this.readInteger(value['membersCount']) ?? 0,
     };
   }

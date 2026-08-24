@@ -46,13 +46,7 @@
     </ow-card>
 
     @if (actionMessage(); as actionMessage) {
-      <p
-        class="text-sm font-medium"
-        [class.text-(--ow-alert-error-text)]="actionError()"
-        [class.text-(--ow-alert-success-text)]="!actionError()"
-      >
-        {{ actionMessage }}
-      </p>
+      <p class="text-sm font-medium text-(--ow-alert-success-text)">{{ actionMessage }}</p>
     }
 
     <ow-card>
@@ -80,9 +74,15 @@
                     {{ team.checkedIn ? 'Check-in realizado' : 'Sem check-in' }} /
                     {{ team.sourceLabel }} / {{ team.membersCount }} integrante(s)
                   </p>
-                  <p class="mt-1 text-xs text-(--ow-text-muted)">
-                    Check-in por: {{ team.checkedInByLabel }} em {{ team.checkedInAtLabel }}
-                  </p>
+                  @if (team.checkinAuthorLabel; as checkinAuthorLabel) {
+                    <p class="mt-1 text-xs text-(--ow-text-muted)">{{ checkinAuthorLabel }}</p>
+                  }
+
+                  @if (errorForTeam(team.teamId); as teamError) {
+                    <p class="mt-2 text-xs font-medium text-(--ow-alert-error-text)">
+                      {{ teamError }}
+                    </p>
+                  }
                 </div>
 
                 @if (isAdmin()) {
@@ -147,11 +147,23 @@
                     <p class="mt-1 text-xs text-(--ow-text)">
                       Capitão: {{ team.captainName }} / {{ team.membersCount }} integrante(s)
                     </p>
+
+                    @if (!team.hasCaptain) {
+                      <p class="mt-1 text-xs font-medium text-(--ow-alert-error-text)">
+                        Defina um capitão para o time antes de inscrevê-lo no torneio.
+                      </p>
+                    }
+
+                    @if (errorForTeam(team.id); as teamError) {
+                      <p class="mt-2 text-xs font-medium text-(--ow-alert-error-text)">
+                        {{ teamError }}
+                      </p>
+                    }
                   </div>
 
                   <ow-btn
                     type="button"
-                    [disabled]="pendingTeamId() !== null"
+                    [disabled]="!canAddTeam(team)"
                     (click)="onAddTeam(team)"
                   >
                     @if (isPendingTeam(team.id)) {
