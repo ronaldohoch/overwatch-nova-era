@@ -19,14 +19,14 @@ export class AvataresGrupoCodeComponent {
     <ow-avatar initials="BL" color="red"    [grouped]="true" />
 
     <!-- Contador de excedentes -->
-    <div class="w-9 h-9 rounded-full bg-[#f1f3f4] border-2 border-white
+    <div class="w-9 h-9 rounded-full bg-(--ow-surface-sunken) border-2 border-(--ow-surface)
       flex items-center justify-center text-[0.72rem] font-extrabold
-      text-[#5f6368] -ml-2 ring-2 ring-white">
+      text-(--ow-text-muted) -ml-2 ring-2 ring-(--ow-bg)">
       +8
     </div>
   </ow-avatar-group>
 
-  <span class="text-[0.875rem] text-[#5f6368] font-semibold">12 times inscritos</span>
+  <span class="text-[0.875rem] text-(--ow-text-muted) font-semibold">12 times inscritos</span>
 
 </div>
 

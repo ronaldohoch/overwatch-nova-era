@@ -194,15 +194,15 @@ export class TorneiosStatusComponent {
     const base =
       'inline-flex items-center rounded px-3 py-1 text-xs font-bold uppercase tracking-wider';
 
-    if (status === 'running') return `${base} bg-[color:var(--ow-blue)] text-white`;
-    if (status === 'finished') return `${base} bg-green-700 text-white`;
-    if (status === 'canceled') return `${base} bg-red-600 text-white`;
-    if (status === 'checkin') return `${base} bg-[color:var(--ow-orange)] text-white`;
-    if (status === 'locked') return `${base} bg-[color:var(--ow-gray-700)] text-white`;
-    if (status === 'published') return `${base} bg-[color:var(--ow-blue-dark)] text-white`;
-    if (status === 'draft') return `${base} bg-[color:var(--ow-gray-500)] text-white`;
+    if (status === 'running') return `${base} bg-(--ow-blue) text-(--ow-on-accent)`;
+    if (status === 'finished') return `${base} bg-(--ow-green) text-(--ow-on-accent)`;
+    if (status === 'canceled') return `${base} bg-(--ow-red) text-(--ow-on-accent)`;
+    if (status === 'checkin') return `${base} bg-(--ow-orange) text-(--ow-on-accent)`;
+    if (status === 'locked') return `${base} bg-(--ow-gray-700) text-(--ow-on-accent)`;
+    if (status === 'published') return `${base} bg-(--ow-blue-dark) text-(--ow-on-accent)`;
+    if (status === 'draft') return `${base} bg-(--ow-gray-500) text-(--ow-on-accent)`;
 
-    return `${base} bg-[color:var(--ow-gray-400)] text-white`;
+    return `${base} bg-(--ow-gray-400) text-(--ow-on-accent)`;
   }
 
   private async loadTournamentDetails(tournamentId: string): Promise<void> {

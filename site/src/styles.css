@@ -1,6 +1,10 @@
 /* You can add global styles to this file, and also import other style files */
 @import "tailwindcss";
 
+/* ============================================================
+   PALETA BRUTA
+   Valores literais da marca. NAO mudam entre temas.
+   ============================================================ */
 :root {
   /* Cores principais Overwatch - Laranja Oficial */
   --ow-orange: #f06314;
@@ -9,8 +13,10 @@
   --ow-blue: #00c3ff;
   --ow-blue-dark: #0099cc;
 
-  /* Tons de cinza para tema claro (baseado na referência) */
+  /* Escala de cinza (referencia fixa - use os tokens semanticos abaixo
+     para qualquer coisa que precise responder ao tema) */
   --ow-white: #ffffff;
+  --ow-black: #000000;
   --ow-gray-50: #f8f9fa;
   --ow-gray-100: #f1f3f4;
   --ow-gray-200: #e8eaed;
@@ -24,19 +30,164 @@
 
   /* Cores de destaque */
   --ow-red: #ea4335;
+  --ow-red-dark: #c5221f;
   --ow-green: #34a853;
+  --ow-green-dark: #2d7d3a;
   --ow-yellow: #fbbc04;
+  --ow-purple: #9333ea;
 
-  /* Gradientes */
-  --gradient-hero: linear-gradient(135deg, #f8f9fa 0%, #ffffff 50%, #f1f3f4 100%);
+  /* Gradientes de marca */
   --gradient-orange: linear-gradient(135deg, #f06314 0%, #d14e0a 100%);
   --gradient-blue: linear-gradient(135deg, #00c3ff 0%, #0099cc 100%);
+  --gradient-red: linear-gradient(135deg, #ea4335 0%, #c5221f 100%);
+  --gradient-green: linear-gradient(135deg, #34a853 0%, #2d7d3a 100%);
+  --gradient-yellow: linear-gradient(135deg, #fbbc04 0%, #e8a800 100%);
+  --gradient-divider: linear-gradient(90deg, transparent, #f06314, transparent);
 
-  /* Sombras sutis para tema claro */
+  /* Texto sobre superficie colorida (laranja/azul/vermelho/verde).
+     Sempre branco, nos dois temas. */
+  --ow-on-accent: #ffffff;
+  /* Para accent CLARO (amarelo), onde branco seria ilegivel. */
+  --ow-on-accent-dark: #202124;
+
+  /* Foco - identico nos dois temas */
+  --ow-focus-ring: rgba(240, 99, 20, 0.35);
+}
+
+/* ============================================================
+   TEMA ESCURO - padrao do site, por isso vive em :root
+   ============================================================ */
+:root,
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  /* Superficies */
+  --ow-bg: #111111;
+  --ow-surface: #1a1a1a;
+  --ow-surface-raised: #202124;
+  --ow-surface-sunken: #0b0b0b;
+
+  /* Texto */
+  --ow-text: #f1f3f4;
+  --ow-text-muted: #9aa0a6;
+  --ow-text-subtle: #868a90;
+
+  /* Bordas */
+  --ow-border: #2a2a2e;
+  --ow-border-strong: #3c4043;
+
+  /* Painel invertido: o fundo some e funde com a pagina, que ja e preta.
+     'none' e nao 'transparent' porque o valor alimenta background-image. */
+  --ow-panel-invert: none;
+  --ow-panel-invert-soft: none;
+
+  /* Grade diagonal de fundo */
+  --ow-grid: #2a2a2e;
+
+  /* Fundo de modal */
+  --ow-overlay: rgba(0, 0, 0, 0.6);
+
+  /* Superficies tingidas de laranja */
+  --ow-orange-tint: rgba(240, 99, 20, 0.07);
+  --ow-orange-tint-strong: rgba(240, 99, 20, 0.18);
+
+  /* Gradiente hero escuro */
+  --gradient-hero: linear-gradient(135deg, #1a1a1a 0%, #111111 50%, #202124 100%);
+
+  /* Sombras - preto sobre preto nao aparece, entao sobem de opacidade */
+  --shadow-orange: 0 4px 20px rgba(240, 99, 20, 0.35);
+  --shadow-blue: 0 4px 20px rgba(0, 195, 255, 0.35);
+  --shadow-card: 0 2px 12px rgba(0, 0, 0, 0.6);
+  --shadow-card-hover: 0 8px 24px rgba(0, 0, 0, 0.75);
+
+  /* Alertas: no escuro o texto sobe de luminosidade, senao some no fundo */
+  --ow-alert-info-bg: rgba(0, 195, 255, 0.12);
+  --ow-alert-info-text: #00c3ff;
+  --ow-alert-success-bg: rgba(52, 168, 83, 0.14);
+  --ow-alert-success-text: #34a853;
+  --ow-alert-warning-bg: rgba(251, 188, 4, 0.14);
+  --ow-alert-warning-text: #fbbc04;
+  --ow-alert-error-bg: rgba(234, 67, 53, 0.14);
+  --ow-alert-error-text: #ff7d72;
+
+  /* Bloco de codigo - Catppuccin Mocha */
+  --ow-code-bg: #1e1e2e;
+  --ow-code-surface: #313244;
+  --ow-code-gutter: #181825;
+  --ow-code-text: #cdd6f4;
+  --ow-code-muted: #6c7086;
+  --ow-code-accent: #a6e3a1;
+}
+
+/* ============================================================
+   TEMA CLARO (opt-in)
+   ============================================================ */
+[data-theme="light"] {
+  color-scheme: light;
+
+  /* Superficies */
+  --ow-bg: #ffffff;
+  --ow-surface: #ffffff;
+  --ow-surface-raised: #f8f9fa;
+  --ow-surface-sunken: #f1f3f4;
+
+  /* Texto */
+  --ow-text: #202124;
+  --ow-text-muted: #5f6368;
+  --ow-text-subtle: #70757b;
+
+  /* Bordas */
+  --ow-border: #e8eaed;
+  --ow-border-strong: #dadce0;
+
+  /* Painel invertido (hero STG, CTA de marca): bloco escuro sobre pagina clara */
+  --ow-panel-invert: linear-gradient(135deg, #111111 0%, #1a1a1a 55%, #202124 100%);
+  --ow-panel-invert-soft: linear-gradient(135deg, #111111 0%, #202124 100%);
+
+  /* Grade diagonal de fundo */
+  --ow-grid: #e5e7eb;
+
+  /* Fundo de modal */
+  --ow-overlay: rgba(17, 17, 17, 0.35);
+
+  /* Superficies tingidas de laranja (linhas de tabela, estados hover) */
+  --ow-orange-tint: rgba(240, 99, 20, 0.04);
+  --ow-orange-tint-strong: rgba(240, 99, 20, 0.12);
+
+  /* Gradiente hero claro */
+  --gradient-hero: linear-gradient(135deg, #f8f9fa 0%, #ffffff 50%, #f1f3f4 100%);
+
+  /* Sombras */
   --shadow-orange: 0 4px 20px rgba(240, 99, 20, 0.25);
   --shadow-blue: 0 4px 20px rgba(0, 195, 255, 0.25);
   --shadow-card: 0 2px 12px rgba(0, 0, 0, 0.08);
   --shadow-card-hover: 0 8px 24px rgba(0, 0, 0, 0.12);
+
+  /* Alertas: texto escuro sobre fundo levemente tingido */
+  --ow-alert-info-bg: rgba(0, 195, 255, 0.08);
+  --ow-alert-info-text: #0b7093;
+  --ow-alert-success-bg: rgba(52, 168, 83, 0.08);
+  --ow-alert-success-text: #2d7d3a;
+  --ow-alert-warning-bg: rgba(251, 188, 4, 0.1);
+  --ow-alert-warning-text: #8a6d00;
+  --ow-alert-error-bg: rgba(234, 67, 53, 0.08);
+  --ow-alert-error-text: #c5221f;
+
+  /* Bloco de codigo - Catppuccin Latte */
+  --ow-code-bg: #eff1f5;
+  --ow-code-surface: #e6e9ef;
+  --ow-code-gutter: #dce0e8;
+  --ow-code-text: #4c4f69;
+  --ow-code-muted: #5c5f70;
+  --ow-code-accent: #40a02b;
+}
+
+/* ============================================================
+   BASE
+   ============================================================ */
+body {
+  background-color: var(--ow-bg);
+  color: var(--ow-text);
 }
 
 /* --- SCROLLBAR CUSTOMIZADA --- */
@@ -45,7 +196,7 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--ow-gray-100);
+  background: var(--ow-surface-sunken);
 }
 
 ::-webkit-scrollbar-thumb {

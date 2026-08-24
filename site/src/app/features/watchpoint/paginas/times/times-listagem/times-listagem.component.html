@@ -1,10 +1,10 @@
 <div class="my-8">
   <div class="flex justify-between gap-4">
     <div class="py-2">
-      <h1 class="text-4xl font-black leading-tight text-(--ow-gray-900) lg:text-5xl">
+      <h1 class="text-4xl font-black leading-tight text-(--ow-text) lg:text-5xl">
         Lista de times
       </h1>
-      <p class="text-(--ow-gray-500)">{{ subtitle() }}</p>
+      <p class="text-(--ow-text-muted)">{{ subtitle() }}</p>
     </div>
 
     @if (isPrivilegedViewer()) {
@@ -17,10 +17,10 @@
   <div class="space-y-3 py-2">
     <div class="grid gap-3 md:grid-cols-2">
       @if (isAdminViewer()) {
-        <label class="flex flex-col gap-2 text-sm font-semibold text-(--ow-gray-700)">
+        <label class="flex flex-col gap-2 text-sm font-semibold text-(--ow-text)">
           Escopo dos times
           <select
-            class="rounded-lg border border-(--ow-gray-300) bg-white px-3 py-2 text-sm font-medium text-(--ow-gray-900)"
+            class="rounded-lg border border-(--ow-border-strong) bg-(--ow-surface) px-3 py-2 text-sm font-medium text-(--ow-text)"
             [value]="adminTeamScopeFilter()"
             [disabled]="loading()"
             (change)="applyAdminTeamScopeFilter($any($event.target).value)"
@@ -31,10 +31,10 @@
         </label>
       }
 
-      <label class="flex flex-col gap-2 text-sm font-semibold text-(--ow-gray-700)">
+      <label class="flex flex-col gap-2 text-sm font-semibold text-(--ow-text)">
         Categoria
         <select
-          class="rounded-lg border border-(--ow-gray-300) bg-white px-3 py-2 text-sm font-medium text-(--ow-gray-900)"
+          class="rounded-lg border border-(--ow-border-strong) bg-(--ow-surface) px-3 py-2 text-sm font-medium text-(--ow-text)"
           [value]="teamCategoryFilter()"
           (change)="applyTeamCategoryFilter($any($event.target).value)"
         >
@@ -46,11 +46,11 @@
     </div>
 
     @if (loading()) {
-      <p class="text-sm font-medium text-(--ow-gray-600)">Carregando times...</p>
+      <p class="text-sm font-medium text-(--ow-text)">Carregando times...</p>
     }
 
     @if (!loading() && filteredTeams().length === 0) {
-      <p class="text-sm font-medium text-(--ow-gray-600)">Nenhum time encontrado.</p>
+      <p class="text-sm font-medium text-(--ow-text)">Nenhum time encontrado.</p>
     }
 
     @if (!loading() && filteredTeams().length > 0) {
@@ -72,30 +72,30 @@
                 </div>
                 <div class="mb-4 flex items-center gap-4">
                   <div class="min-w-0">
-                    <h3 class="truncate text-lg font-black uppercase text-(--ow-gray-900)">
+                    <h3 class="truncate text-lg font-black uppercase text-(--ow-text)">
                       {{ team.name }}
                     </h3>
                   </div>
                 </div>
               </div>
 
-              <div class="mb-4 text-sm text-(--ow-gray-500)">
+              <div class="mb-4 text-sm text-(--ow-text-muted)">
                 <span class="font-bold text-(--ow-orange)">{{ team.membersCount }}/8</span>
                 <span> membros</span>
               </div>
 
               <div class="space-y-2">
-                <!-- <div class="flex items-center gap-2 text-sm text-(--ow-gray-700)">
+                <!-- <div class="flex items-center gap-2 text-sm text-(--ow-text)">
                   <span class="ow-role-icon ow-role-tank">T</span>
                   <span>{{ team.categoryLabel }}</span>
                 </div> -->
-                <div class="flex items-center gap-2 text-sm text-(--ow-gray-700)">
-                  <span class="inline-flex items-center justify-center w-[1.4rem] h-[1.4rem] rounded-full text-[0.7rem] font-extrabold tracking-[0.03em] bg-[rgba(234,67,53,0.14)] text-[#b91c1c]">
+                <div class="flex items-center gap-2 text-sm text-(--ow-text)">
+                  <span class="inline-flex items-center justify-center w-[1.4rem] h-[1.4rem] rounded-full text-[0.7rem] font-extrabold tracking-[0.03em] bg-(--ow-alert-error-bg) text-(--ow-alert-error-text)">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-crown-icon lucide-crown"><path d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z"/><path d="M5 21h14"/></svg>
                   </span>
                   <span>{{ team.roleInTeamLabel }}</span>
                 </div>
-                <!-- <div class="flex items-center gap-2 text-sm text-(--ow-gray-700)">
+                <!-- <div class="flex items-center gap-2 text-sm text-(--ow-text)">
                   <span class="ow-role-icon ow-role-support">S</span>
                   <span>{{ captainStatusLabel(team) }}</span>
                 </div> -->
@@ -107,7 +107,7 @@
     }
 
     @if (message(); as message) {
-      <p class="text-sm font-medium text-red-600">{{ message }}</p>
+      <p class="text-sm font-medium text-(--ow-alert-error-text)">{{ message }}</p>
     }
   </div>
 </div>

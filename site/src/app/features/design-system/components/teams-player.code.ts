@@ -17,8 +17,8 @@ export class TeamsPlayerCodeComponent {
     <ow-player-avatar initials="xS" />
 
     <div class="flex-1">
-      <div class="text-[0.9rem] font-extrabold text-[#111111] mb-0.5">xShadow</div>
-      <div class="text-[0.75rem] text-[#5f6368] mb-1">
+      <div class="text-[0.9rem] font-extrabold text-(--ow-text) mb-0.5">xShadow</div>
+      <div class="text-[0.75rem] text-(--ow-text-muted) mb-1">
         Thunder Hawks • BattleTag: xShadow#9823
       </div>
       <ow-role-badge role="damage">DPS</ow-role-badge>

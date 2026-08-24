@@ -55,7 +55,7 @@ export class TabsComponent implements AfterContentInit {
   readonly activeTab = computed(() => this.tabs()[this.activeIndex()] ?? null);
 
   readonly tablistClass = [
-    'border-b-2 border-[color:var(--ow-gray-200)]',
+    'border-b-2 border-(--ow-border)',
     'flex gap-0',
     'overflow-x-auto',
   ].join(' ');
@@ -69,15 +69,15 @@ export class TabsComponent implements AfterContentInit {
     '[font-family:inherit]',
     'shrink-0 whitespace-nowrap',
     'focus-visible:outline-none',
-    'focus-visible:ring-2 focus-visible:ring-[color:var(--ow-orange)] focus-visible:ring-offset-2 focus-visible:ring-offset-white',
+    'focus-visible:ring-2 focus-visible:ring-(--ow-orange) focus-visible:ring-offset-2 focus-visible:ring-offset-white',
   ].join(' ');
 
-  readonly tabButtonActiveClass = 'text-[color:var(--ow-orange)] shadow-[inset_0_-3px_0_var(--ow-orange)]';
-  readonly tabButtonInactiveClass = 'text-[color:var(--ow-gray-500)] hover:text-[color:var(--ow-orange)]';
+  readonly tabButtonActiveClass = 'text-(--ow-orange) shadow-[inset_0_-3px_0_var(--ow-orange)]';
+  readonly tabButtonInactiveClass = 'text-(--ow-text-muted) hover:text-(--ow-orange)';
   readonly tabButtonDisabledClass =
-    'opacity-40 cursor-not-allowed hover:text-[color:var(--ow-gray-500)]';
+    'opacity-40 cursor-not-allowed hover:text-(--ow-text-muted)';
 
-  readonly panelBaseClass = 'py-6 text-[0.9rem] text-[color:var(--ow-gray-600)]';
+  readonly panelBaseClass = 'py-6 text-[0.9rem] text-(--ow-text)';
 
   ngAfterContentInit(): void {
     this.syncTabs();

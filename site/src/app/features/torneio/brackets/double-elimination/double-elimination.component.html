@@ -18,7 +18,7 @@
     <!-- Rótulos das rodadas -->
     <div class="mb-2 flex gap-4">
       @for (rd of wbRounds(); track rd.round) {
-        <div class="w-72 shrink-0 text-center text-[0.65rem] font-bold uppercase tracking-widest text-(--ow-gray-400)">
+        <div class="w-72 shrink-0 text-center text-[0.65rem] font-bold uppercase tracking-widest text-(--ow-text-subtle)">
           {{ rd.label }}
         </div>
       }
@@ -34,14 +34,14 @@
               @if (isReorderableMatch(match)) {
                 <!-- Card com drag-drop (WB R1 apenas, admin) -->
                 <div
-                  class="bg-(--ow-white) border border-(--ow-gray-200) min-w-70 overflow-hidden
+                  class="bg-(--ow-surface) border border-(--ow-border) min-w-70 overflow-hidden
                          shadow-[0_2px_12px_rgba(0,0,0,0.08)]
                          [clip-path:polygon(5%_0,100%_0,100%_95%,95%_100%,0_100%,0_5%)]"
                 >
                   <!-- Header -->
                   <div
-                    class="bg-(--ow-gray-100) px-4 py-2.5 flex justify-between items-center
-                           text-[0.72rem] font-bold text-(--ow-gray-500) uppercase tracking-widest"
+                    class="bg-(--ow-surface-sunken) px-4 py-2.5 flex justify-between items-center
+                           text-[0.72rem] font-bold text-(--ow-text-muted) uppercase tracking-widest"
                   >
                     <span>Jogo {{ match.matchNumber }}</span>
                     <span class="text-[0.6rem] font-bold text-(--ow-blue) tracking-wider">
@@ -54,13 +54,13 @@
                     cdkDropList
                     [cdkDropListData]="match.slot1.ref"
                     (cdkDropListDropped)="onSeedDrop($event)"
-                    class="border-b border-(--ow-gray-100)"
+                    class="border-b border-(--ow-border)"
                   >
                     <div
                       cdkDrag
                       [cdkDragData]="match.slot1.ref"
                       class="flex justify-between items-center px-[18px] py-[14px] cursor-grab active:cursor-grabbing
-                             hover:bg-[rgba(240,99,20,0.04)] transition-colors duration-200"
+                             hover:bg-(--ow-orange-tint) transition-colors duration-200"
                     >
                       <div class="flex items-center gap-3">
                         @if (getTeam(match.team1Id)?.logoUrl) {
@@ -73,18 +73,18 @@
                         } @else {
                           <div
                             class="w-8 h-8 flex items-center justify-center shrink-0
-                                   bg-(--ow-gray-100) text-(--ow-orange) text-[0.65rem] font-black
+                                   bg-(--ow-surface-sunken) text-(--ow-orange) text-[0.65rem] font-black
                                    [clip-path:polygon(20%_0,100%_0,100%_80%,80%_100%,0_100%,0_20%)]"
                           >
                             {{ teamDisplayInitials(match.team1Id) }}
                           </div>
                         }
-                        <span class="font-bold text-[0.95rem] text-(--ow-gray-700)">
+                        <span class="font-bold text-[0.95rem] text-(--ow-text)">
                           {{ teamDisplayName(match.team1Id) }}
                         </span>
                       </div>
                       <!-- Grip icon -->
-                      <svg class="w-4 h-4 text-(--ow-gray-300)" fill="currentColor" viewBox="0 0 24 24">
+                      <svg class="w-4 h-4 text-(--ow-text-subtle)" fill="currentColor" viewBox="0 0 24 24">
                         <circle cx="9" cy="5" r="1.5"/><circle cx="15" cy="5" r="1.5"/>
                         <circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/>
                         <circle cx="9" cy="19" r="1.5"/><circle cx="15" cy="19" r="1.5"/>
@@ -105,7 +105,7 @@
                       cdkDrag
                       [cdkDragData]="match.slot2.ref"
                       class="flex justify-between items-center px-[18px] py-[14px] cursor-grab active:cursor-grabbing
-                             hover:bg-[rgba(240,99,20,0.04)] transition-colors duration-200"
+                             hover:bg-(--ow-orange-tint) transition-colors duration-200"
                     >
                       <div class="flex items-center gap-3">
                         @if (getTeam(match.team2Id)?.logoUrl) {
@@ -118,18 +118,18 @@
                         } @else {
                           <div
                             class="w-8 h-8 flex items-center justify-center shrink-0
-                                   bg-(--ow-gray-100) text-(--ow-orange) text-[0.65rem] font-black
+                                   bg-(--ow-surface-sunken) text-(--ow-orange) text-[0.65rem] font-black
                                    [clip-path:polygon(20%_0,100%_0,100%_80%,80%_100%,0_100%,0_20%)]"
                           >
                             {{ teamDisplayInitials(match.team2Id) }}
                           </div>
                         }
-                        <span class="font-bold text-[0.95rem] text-(--ow-gray-700)">
+                        <span class="font-bold text-[0.95rem] text-(--ow-text)">
                           {{ teamDisplayName(match.team2Id) }}
                         </span>
                       </div>
                       <!-- Grip icon -->
-                      <svg class="w-4 h-4 text-(--ow-gray-300)" fill="currentColor" viewBox="0 0 24 24">
+                      <svg class="w-4 h-4 text-(--ow-text-subtle)" fill="currentColor" viewBox="0 0 24 24">
                         <circle cx="9" cy="5" r="1.5"/><circle cx="15" cy="5" r="1.5"/>
                         <circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/>
                         <circle cx="9" cy="19" r="1.5"/><circle cx="15" cy="19" r="1.5"/>
@@ -168,7 +168,7 @@
       <!-- Cabeçalho da seção -->
       <div class="mb-3 flex items-center gap-3">
         <span
-          class="shrink-0 text-[0.7rem] font-black uppercase tracking-[0.15em] text-(--ow-gray-500)"
+          class="shrink-0 text-[0.7rem] font-black uppercase tracking-[0.15em] text-(--ow-text-muted)"
         >
           Chave dos Perdedores
         </span>
@@ -178,7 +178,7 @@
       <!-- Rótulos das rodadas -->
       <div class="mb-2 flex gap-4">
         @for (rd of lbRounds(); track rd.round) {
-          <div class="w-72 shrink-0 text-center text-[0.65rem] font-bold uppercase tracking-widest text-(--ow-gray-400)">
+          <div class="w-72 shrink-0 text-center text-[0.65rem] font-bold uppercase tracking-widest text-(--ow-text-subtle)">
             {{ rd.label }}
           </div>
         }

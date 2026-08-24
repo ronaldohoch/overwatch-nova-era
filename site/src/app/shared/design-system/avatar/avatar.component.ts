@@ -4,11 +4,11 @@ export type OwAvatarColor = 'orange' | 'blue' | 'green' | 'red' | 'gray';
 export type OwRoleBadge = 'tank' | 'damage' | 'support' | 'flex';
 
 const COLOR_MAP: Record<OwAvatarColor, string> = {
-  orange: 'bg-[#f06314]',
-  blue: 'bg-[#00c3ff]',
-  green: 'bg-[#34a853]',
-  red: 'bg-[#ea4335]',
-  gray: 'bg-[#f1f3f4] text-[#5f6368] text-[0.7rem]',
+  orange: 'bg-(--ow-orange)',
+  blue: 'bg-(--ow-blue)',
+  green: 'bg-(--ow-green)',
+  red: 'bg-(--ow-red)',
+  gray: 'bg-(--ow-surface-sunken) text-(--ow-text-muted) text-[0.7rem]',
 };
 
 /* ─── Avatar Individual ─── */
@@ -37,9 +37,9 @@ export class AvatarComponent {
     const colorCls = COLOR_MAP[this.color()] ?? COLOR_MAP.orange;
     const margin = this.grouped() ? '-ml-[10px] first:ml-0' : '';
     return [
-      'w-11 h-11 rounded-full border-2 border-white',
+      'w-11 h-11 rounded-full border-2 border-(--ow-surface)',
       'flex items-center justify-center',
-      'font-extrabold text-[0.78rem] text-white shrink-0',
+      'font-extrabold text-[0.78rem] text-(--ow-on-accent) shrink-0',
       colorCls,
       margin,
     ]
@@ -63,7 +63,7 @@ export class AvatarGroupComponent {}
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div
-      class="w-14 h-14 rounded-full border-2 border-[#f06314] bg-[#f1f3f4] flex items-center justify-center font-extrabold text-[#f06314] text-[1.2rem]"
+      class="w-14 h-14 rounded-full border-2 border-(--ow-orange) bg-(--ow-surface-sunken) flex items-center justify-center font-extrabold text-(--ow-orange) text-[1.2rem]"
     >
       @if (src()) {
         <img [src]="src()" [alt]="initials()" class="w-full h-full object-cover rounded-full" />
@@ -90,10 +90,10 @@ export class RoleBadgeComponent {
   readonly role = input.required<OwRoleBadge>();
 
   private readonly ROLE_VARIANTS: Record<OwRoleBadge, string> = {
-    tank: 'bg-[#00c3ff] text-white',
-    damage: 'bg-[#ea4335] text-white',
-    support: 'bg-[#34a853] text-white',
-    flex: 'bg-[#fbbc04] text-[#202124]',
+    tank: 'bg-(--ow-blue) text-(--ow-on-accent)',
+    damage: 'bg-(--ow-red) text-(--ow-on-accent)',
+    support: 'bg-(--ow-green) text-(--ow-on-accent)',
+    flex: 'bg-(--ow-yellow) text-(--ow-on-accent-dark)',
   };
 
   readonly classes = computed(

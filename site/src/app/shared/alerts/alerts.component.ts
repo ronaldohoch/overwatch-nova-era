@@ -33,10 +33,10 @@ export class AlertsComponent {
   ].join(' ');
 
   readonly containerVariantClass: Record<OwAlertVariant, string> = {
-    info: 'bg-[rgba(0,195,255,0.08)] border-[color:var(--ow-blue)] text-[color:var(--ow-blue-dark)]',
-    success: 'bg-[rgba(52,168,83,0.08)] border-[color:var(--ow-green)] text-[#2d7d3a]',
-    warning: 'bg-[rgba(251,188,4,0.1)] border-[color:var(--ow-yellow)] text-[#8a6d00]',
-    error: 'bg-[rgba(234,67,53,0.08)] border-[color:var(--ow-red)] text-[#c5221f]',
+    info: 'bg-(--ow-alert-info-bg) border-(--ow-blue) text-(--ow-alert-info-text)',
+    success: 'bg-(--ow-alert-success-bg) border-(--ow-green) text-(--ow-alert-success-text)',
+    warning: 'bg-(--ow-alert-warning-bg) border-(--ow-yellow) text-(--ow-alert-warning-text)',
+    error: 'bg-(--ow-alert-error-bg) border-(--ow-red) text-(--ow-alert-error-text)',
   };
 
   readonly iconWrapperClass = 'shrink-0 mt-px';

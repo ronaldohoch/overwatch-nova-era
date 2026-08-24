@@ -4,9 +4,9 @@
   @if (state() === 'loading') {
     <div class="flex flex-col items-center justify-center py-24 gap-4">
       <div
-        class="h-10 w-10 animate-spin rounded-full border-4 border-(--ow-gray-200) border-t-(--ow-orange)"
+        class="h-10 w-10 animate-spin rounded-full border-4 border-(--ow-border) border-t-(--ow-orange)"
       ></div>
-      <p class="text-sm font-semibold uppercase tracking-widest text-(--ow-gray-500)">
+      <p class="text-sm font-semibold uppercase tracking-widest text-(--ow-text-muted)">
         Carregando torneio...
       </p>
     </div>
@@ -15,16 +15,16 @@
   <!-- Torneio não encontrado -->
   @if (state() === 'not-found') {
     <div class="flex flex-col items-center justify-center py-24 gap-3 text-center">
-      <p class="text-[2rem] font-black uppercase tracking-wider text-(--ow-gray-300)">404</p>
-      <p class="text-lg font-bold text-(--ow-gray-600)">Torneio não encontrado.</p>
-      <p class="text-sm text-(--ow-gray-400)">Verifique o link ou tente novamente.</p>
+      <p class="text-[2rem] font-black uppercase tracking-wider text-(--ow-text-subtle)">404</p>
+      <p class="text-lg font-bold text-(--ow-text)">Torneio não encontrado.</p>
+      <p class="text-sm text-(--ow-text-subtle)">Verifique o link ou tente novamente.</p>
     </div>
   }
 
   <!-- Erro genérico -->
   @if (state() === 'error') {
-    <div class="rounded border border-red-300 bg-red-50 p-6 text-center">
-      <p class="font-semibold text-red-600">{{ errorMessage() ?? 'Ocorreu um erro inesperado.' }}</p>
+    <div class="rounded border border-(--ow-red) bg-(--ow-alert-error-bg) p-6 text-center">
+      <p class="font-semibold text-(--ow-alert-error-text)">{{ errorMessage() ?? 'Ocorreu um erro inesperado.' }}</p>
     </div>
   }
 
@@ -35,7 +35,7 @@
     <div class="space-y-3">
       <div class="flex flex-wrap items-start justify-between gap-3">
         <h1
-          class="relative pb-[10px] text-[1.6rem] font-black uppercase tracking-[0.08em] text-(--ow-gray-900) md:text-[2rem] after:absolute after:bottom-0 after:left-0 after:block after:h-1 after:w-16 after:bg-(--ow-orange) after:content-[''] after:[clip-path:polygon(10%_0,90%_0,100%_100%,0_100%)]"
+          class="relative pb-[10px] text-[1.6rem] font-black uppercase tracking-[0.08em] text-(--ow-text) md:text-[2rem] after:absolute after:bottom-0 after:left-0 after:block after:h-1 after:w-16 after:bg-(--ow-orange) after:content-[''] after:[clip-path:polygon(10%_0,90%_0,100%_100%,0_100%)]"
         >
           {{ tournament()?.name ?? 'Torneio' }}
         </h1>
@@ -51,19 +51,19 @@
       </div>
 
       @if (tournament()?.description) {
-        <p class="text-sm text-(--ow-gray-600)">{{ tournament()!.description }}</p>
+        <p class="text-sm text-(--ow-text)">{{ tournament()!.description }}</p>
       }
     </div>
 
     <!-- Divisor -->
-    <div class="h-px w-full bg-(--ow-gray-200)"></div>
+    <div class="h-px w-full bg-(--ow-border)"></div>
 
     <!-- Chave do torneio -->
     @if (state() === 'loaded' && bracket()) {
 
       <div>
         <p
-          class="mb-4 text-[0.72rem] font-black uppercase tracking-[0.15em] text-(--ow-gray-500)"
+          class="mb-4 text-[0.72rem] font-black uppercase tracking-[0.15em] text-(--ow-text-muted)"
         >
           Chaveamento
         </p>
@@ -80,11 +80,11 @@
       <!-- Sem chave ainda -->
       <div class="flex flex-col items-center justify-center gap-3 py-16 text-center">
         <div
-          class="flex h-16 w-16 items-center justify-center rounded-full bg-(--ow-gray-100)"
+          class="flex h-16 w-16 items-center justify-center rounded-full bg-(--ow-surface-sunken)"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            class="h-8 w-8 text-(--ow-gray-400)"
+            class="h-8 w-8 text-(--ow-text-subtle)"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -97,10 +97,10 @@
             />
           </svg>
         </div>
-        <p class="text-base font-bold uppercase tracking-wider text-(--ow-gray-500)">
+        <p class="text-base font-bold uppercase tracking-wider text-(--ow-text-muted)">
           Chave ainda não gerada
         </p>
-        <p class="text-sm text-(--ow-gray-400)">
+        <p class="text-sm text-(--ow-text-subtle)">
           O chaveamento será publicado em breve.
         </p>
       </div>

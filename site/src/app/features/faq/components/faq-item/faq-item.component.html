@@ -1,4 +1,4 @@
-<div class="group border-b border-black/10 bg-white">
+<div class="group border-b border-(--ow-border) bg-(--ow-surface)">
   <button type="button"
     class="w-full cursor-pointer text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--ow-orange) focus-visible:ring-offset-2 focus-visible:ring-offset-white"
     [attr.id]="buttonId" [attr.aria-expanded]="isOpen()" [attr.aria-controls]="panelId" (click)="onToggle()">
@@ -25,7 +25,7 @@
   <div [id]="panelId" role="region" [attr.aria-labelledby]="buttonId" [attr.aria-hidden]="!isOpen()"
     [class]="panelClass()">
     <div class="min-h-0 config-d-s">
-      <div class="p-4 text-black child-link:font-bold child-link:text-ow-primary">
+      <div class="p-4 text-(--ow-text) child-link:font-bold child-link:text-ow-primary">
         {{ answer() }}
       </div>
     </div>

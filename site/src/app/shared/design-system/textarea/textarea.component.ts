@@ -26,11 +26,11 @@ export type OwTextareaState = 'default' | 'error' | 'success';
       @if (label()) {
         <label
           [for]="textareaId()"
-          class="block text-[0.78rem] font-extrabold uppercase tracking-[0.12em] text-[#3c4043] mb-[7px]"
+          class="block text-[0.78rem] font-extrabold uppercase tracking-[0.12em] text-(--ow-text) mb-[7px]"
         >
           {{ label() }}
           @if (required()) {
-            <span class="text-[#f06314] ml-[3px]">*</span>
+            <span class="text-(--ow-orange) ml-[3px]">*</span>
           }
         </label>
       }
@@ -96,22 +96,22 @@ export class TextareaComponent implements ControlValueAccessor {
   }
 
   private readonly BASE =
-    'w-full py-[13px] px-[18px] text-[0.9rem] font-medium text-[#202124] bg-white border-2 border-[#e8eaed] outline-none resize-y min-h-[100px] transition-all duration-[250ms] placeholder:text-[#9aa0a6] focus:border-[#f06314] focus:[box-shadow:0_0_0_3px_rgba(240,99,20,0.12)] disabled:bg-[#f1f3f4] disabled:text-[#9aa0a6] disabled:cursor-not-allowed';
+    'w-full py-[13px] px-[18px] text-[0.9rem] font-medium text-(--ow-text) bg-(--ow-surface) border-2 border-(--ow-border) outline-none resize-y min-h-[100px] transition-all duration-[250ms] placeholder:text-(--ow-text-subtle) focus:border-(--ow-orange) focus:[box-shadow:0_0_0_3px_rgba(240,99,20,0.12)] disabled:bg-(--ow-surface-sunken) disabled:text-(--ow-text-subtle) disabled:cursor-not-allowed';
 
   readonly textareaClass = computed(() => {
     const stateClass: Record<OwTextareaState, string> = {
       default: '',
-      error: 'border-[#ea4335]',
-      success: 'border-[#34a853]',
+      error: 'border-(--ow-red)',
+      success: 'border-(--ow-green)',
     };
     return `${this.BASE} ${stateClass[this.state()]}`;
   });
 
   readonly helperClass = computed(() => {
     const stateColor: Record<OwTextareaState, string> = {
-      default: 'text-[#5f6368]',
-      error: 'text-[#ea4335]',
-      success: 'text-[#34a853]',
+      default: 'text-(--ow-text-muted)',
+      error: 'text-(--ow-red)',
+      success: 'text-(--ow-green)',
     };
     return `text-[0.78rem] mt-[5px] ${stateColor[this.state()]}`;
   });

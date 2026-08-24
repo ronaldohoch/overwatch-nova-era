@@ -24,14 +24,14 @@ export class BadgeComponent {
   private readonly BASE = `inline-block py-[4px] px-[14px] text-[0.72rem] font-extrabold uppercase tracking-[0.1em]`;
 
   private readonly VARIANTS: Record<OwBadgeVariant, string> = {
-    orange: `${CLIP} bg-[#f06314] text-white`,
-    blue: `${CLIP} bg-[#00c3ff] text-white`,
-    green: `${CLIP} bg-[#34a853] text-white`,
-    red: `${CLIP} bg-[#ea4335] text-white`,
-    yellow: `${CLIP} bg-[#fbbc04] text-[#202124]`,
-    gray: `${CLIP} bg-[#9aa0a6] text-white`,
-    outline: 'bg-transparent text-[#f06314] border-[1.5px] border-[#f06314] py-[3px] px-3',
-    live: `${CLIP} bg-[#ea4335] text-white animate-pulse`,
+    orange: `${CLIP} bg-(--ow-orange) text-(--ow-on-accent)`,
+    blue: `${CLIP} bg-(--ow-blue) text-(--ow-on-accent)`,
+    green: `${CLIP} bg-(--ow-green) text-(--ow-on-accent)`,
+    red: `${CLIP} bg-(--ow-red) text-(--ow-on-accent)`,
+    yellow: `${CLIP} bg-(--ow-yellow) text-(--ow-on-accent-dark)`,
+    gray: `${CLIP} bg-(--ow-gray-400) text-(--ow-on-accent)`,
+    outline: 'bg-transparent text-(--ow-orange) border-[1.5px] border-(--ow-orange) py-[3px] px-3',
+    live: `${CLIP} bg-(--ow-red) text-(--ow-on-accent) animate-pulse`,
   };
 
   readonly classes = computed(() => `${this.BASE} ${this.VARIANTS[this.variant()]}`);

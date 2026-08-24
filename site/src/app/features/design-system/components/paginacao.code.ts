@@ -24,10 +24,10 @@ onPageChange(page: number): void {
   (pageChange)="onPageChange($event)">
 </ow-pagination>
 
-<p class="mt-4 text-[0.875rem] text-[#5f6368]">
+<p class="mt-4 text-[0.875rem] text-(--ow-text-muted)">
   Página
-  <span class="text-[#f06314] font-extrabold">{{ currentPage() }}</span>
+  <span class="text-(--ow-orange) font-extrabold">{{ currentPage() }}</span>
   de
-  <span class="font-extrabold text-[#111111]">{{ totalPages() }}</span>
+  <span class="font-extrabold text-(--ow-text)">{{ totalPages() }}</span>
 </p>`;
 }

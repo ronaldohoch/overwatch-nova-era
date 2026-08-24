@@ -16,7 +16,7 @@ readonly activeStep = signal(2);
 <ow-stepper [activeStep]="activeStep()">
 
   <ow-step label="Inscrição">
-    <p class="text-[0.875rem] text-[#3c4043] leading-[1.6]">
+    <p class="text-[0.875rem] text-(--ow-text) leading-[1.6]">
       Preencha os dados do seu time e inscreva-se no torneio.
     </p>
   </ow-step>

@@ -38,20 +38,20 @@ export class FaqItemComponent {
 
   headerClass = computed(() => {
     const base =
-      "relative flex justify-between pb-4 pr-5 pt-[10px] uppercase text-black config-bold-d-s xl:text-black/50 " +
-      "before:opacity-0 before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:bg-ow-primary before:transition-opacity before:content-[''] before:bg-[#f06314]";
+      "relative flex justify-between pb-4 pr-5 pt-[10px] uppercase text-(--ow-text) config-bold-d-s xl:text-(--ow-text-muted) " +
+      "before:opacity-0 before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:bg-ow-primary before:transition-opacity before:content-[''] before:bg-(--ow-orange)";
     return this.isOpen() ? `${base} before:opacity-100` : base;
   });
 
   questionClass = computed(() => {
     const base =
-      'pr-4 transition-transform group-hover:translate-x-4 group-hover:text-black text-lg font-bold pl-4';
-    return this.isOpen() ? `${base} translate-x-4 text-black` : base;
+      'pr-4 transition-transform group-hover:translate-x-4 group-hover:text-(--ow-text) text-lg font-bold pl-4';
+    return this.isOpen() ? `${base} translate-x-4 text-(--ow-text)` : base;
   });
 
   iconClass = computed(() => {
     const base =
-      'text-black h-8 w-8 transition min-w-5 flex-none group-hover:scale-125 group-hover:rotate-90';
+      'text-(--ow-text) h-8 w-8 transition min-w-5 flex-none group-hover:scale-125 group-hover:rotate-90';
     // vira “x” quando aberto e evita “pular” no hover
     return this.isOpen() ? `${base} rotate-45 group-hover:rotate-45` : base;
   });

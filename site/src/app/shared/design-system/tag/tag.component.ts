@@ -26,8 +26,8 @@ export class TagComponent {
   readonly removed = output<void>();
 
   private readonly VARIANTS: Record<OwTagVariant, string> = {
-    default: 'border-[#e8eaed] bg-[#f8f9fa] text-[#3c4043]',
-    orange: 'border-[#f06314] bg-[rgba(240,99,20,0.08)] text-[#f06314]',
+    default: 'border-(--ow-border) bg-(--ow-surface-raised) text-(--ow-text)',
+    orange: 'border-(--ow-orange) bg-(--ow-orange-tint-strong) text-(--ow-orange)',
   };
 
   readonly containerClass = computed(

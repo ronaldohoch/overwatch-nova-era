@@ -5,13 +5,13 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     @if (label()) {
-      <div class="flex items-center gap-4 my-6 text-[#9aa0a6] text-[0.75rem] font-extrabold uppercase tracking-[0.15em]">
-        <span class="flex-1 h-px bg-[#e8eaed]"></span>
+      <div class="flex items-center gap-4 my-6 text-(--ow-text-subtle) text-[0.75rem] font-extrabold uppercase tracking-[0.15em]">
+        <span class="flex-1 h-px bg-(--ow-border)"></span>
         <span>{{ label() }}</span>
-        <span class="flex-1 h-px bg-[#e8eaed]"></span>
+        <span class="flex-1 h-px bg-(--ow-border)"></span>
       </div>
     } @else {
-      <hr class="h-[2px] border-0 bg-[linear-gradient(90deg,transparent,#f06314,transparent)] my-7" />
+      <hr class="h-[2px] border-0 bg-[image:var(--gradient-divider)] my-7" />
     }
   `,
   host: { class: 'block' },

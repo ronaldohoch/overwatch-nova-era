@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-theme="dark">
 <head>
   <meta charset="utf-8">
   <title>Copa Overwatch Nova Era - Primeira Edicao</title>
@@ -10,7 +10,8 @@
   <meta name="keywords" content="overwatch, torneio, copa overwatch nova era, esports, comunidade, campeonato">
   <meta name="author" content="Copa Overwatch Nova Era">
   <meta name="robots" content="index, follow">
-  <meta name="theme-color" content="#da540d">
+  <meta name="theme-color" content="#111111">
+  <meta name="color-scheme" content="dark light">
   <!-- <link rel="canonical" href="https://copa-nova-era-overwatch.web.app/"> -->
 
   <!-- Open Graph -->
@@ -42,6 +43,22 @@
       font-style: normal;
     }
   </style>
+
+  <!-- Tema: aplica a escolha salva antes do primeiro paint.
+       As rotas sao prerenderizadas, entao sem isso a pagina pisca
+       no tema padrao antes do Angular subir. -->
+  <script>
+    (function () {
+      try {
+        var saved = localStorage.getItem('ow-theme');
+        if (saved === 'light' || saved === 'dark') {
+          document.documentElement.setAttribute('data-theme', saved);
+          var meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.setAttribute('content', saved === 'dark' ? '#111111' : '#ffffff');
+        }
+      } catch (e) {}
+    })();
+  </script>
 </head>
 <body>
   <app-root></app-root>

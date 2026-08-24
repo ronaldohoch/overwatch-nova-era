@@ -154,9 +154,9 @@ export class BanimentoDeHeroisComponent implements OnDestroy {
   });
 
   readonly timerClasses = computed((): string => {
-    if (this.isOver()) return 'border-green-500 text-green-500';
-    if (this.timerValue() <= 10) return 'border-red-500 text-red-500 timer-pulse';
-    return 'border-orange-500';
+    if (this.isOver()) return 'border-(--ow-green) text-(--ow-alert-success-text)';
+    if (this.timerValue() <= 10) return 'border-(--ow-red) text-(--ow-alert-error-text) timer-pulse';
+    return 'border-(--ow-orange)';
   });
 
   ngOnDestroy(): void {
@@ -211,9 +211,9 @@ export class BanimentoDeHeroisComponent implements OnDestroy {
   getSlotClasses(slot: BanSlot): string {
     const base =
       'w-14 h-14 rounded-lg flex items-center justify-center relative overflow-hidden transition-all duration-300 border-2';
-    if (slot.hero) return `${base} border-solid border-red-800 bg-gray-50`;
-    if (slot.isActive) return `${base} border-solid border-orange-500 bg-gray-100 slot-pulse`;
-    return `${base} border-dashed border-gray-300 bg-gray-100`;
+    if (slot.hero) return `${base} border-solid border-(--ow-red) bg-(--ow-surface-raised)`;
+    if (slot.isActive) return `${base} border-solid border-(--ow-orange) bg-(--ow-surface-sunken) slot-pulse`;
+    return `${base} border-dashed border-(--ow-border-strong) bg-(--ow-surface-sunken)`;
   }
 
   getHeroCellClasses(hero: Hero): string {

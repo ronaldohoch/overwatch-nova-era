@@ -15,8 +15,8 @@ export class AvataresIndividualCodeComponent {
   <ow-player-avatar initials="TH" />
 
   <div>
-    <div class="text-[0.9rem] font-extrabold text-[#111111]">xShadow</div>
-    <div class="text-[0.75rem] text-[#5f6368] mb-1">Thunder Hawks</div>
+    <div class="text-[0.9rem] font-extrabold text-(--ow-text)">xShadow</div>
+    <div class="text-[0.75rem] text-(--ow-text-muted) mb-1">Thunder Hawks</div>
     <ow-role-badge role="damage">DPS</ow-role-badge>
   </div>
 

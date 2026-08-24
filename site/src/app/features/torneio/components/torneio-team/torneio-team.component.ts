@@ -16,12 +16,12 @@ export class TorneioTeamComponent {
 
   readonly rowClass = computed(() => {
     const base =
-      'flex items-center justify-between border-b border-(--ow-gray-100) px-3 py-1.5' +
+      'flex items-center justify-between border-b border-(--ow-border) px-3 py-1.5' +
       'transition-colors duration-300 last:border-b-0';
 
     return this.isWinner()
-      ? `${base} bg-[rgba(240,99,20,0.08)] border-l-4 border-l-(--ow-orange)`
-      : `${base} hover:bg-[rgba(240,99,20,0.04)]`;
+      ? `${base} bg-(--ow-orange-tint-strong) border-l-4 border-l-(--ow-orange)`
+      : `${base} hover:bg-(--ow-orange-tint)`;
   });
 
   readonly scoreClass = computed(() =>

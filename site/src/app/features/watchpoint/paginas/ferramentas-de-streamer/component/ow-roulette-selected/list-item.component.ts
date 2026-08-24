@@ -14,10 +14,10 @@ export class OwRouletteSelectedComponent {
   containerClass = computed(() => [
     // .ow-schedule-item (migrado)
     'flex flex-col md:flex-row md:items-center gap-4 md:gap-0',
-    'p-6 mb-4 bg-white',
-    'border-l-4 border-l-[color:var(--ow-orange)]',
-    'shadow-[var(--shadow-card)]',
+    'p-6 mb-4 bg-(--ow-surface)',
+    'border-l-4 border-l-(--ow-orange)',
+    'shadow-(--shadow-card)',
     'transition-all duration-300 ease-out',
-    'hover:bg-[color:var(--ow-gray-50)] hover:shadow-[var(--shadow-card-hover)]',
+    'hover:bg-(--ow-surface-raised) hover:shadow-(--shadow-card-hover)',
   ].join(' '));
 }

@@ -1,7 +1,7 @@
 <div
   class="
-    bg-(--ow-white)
-    border border-(--ow-gray-200)
+    bg-(--ow-surface)
+    border border-(--ow-border)
     shadow-(--shadow-card)
     overflow-hidden
     transition-all duration-300 ease-in-out
@@ -32,12 +32,12 @@
       {{ value() }}
     </div>
 
-    <div class="text-(--ow-gray-500) text-sm">
+    <div class="text-(--ow-text-muted) text-sm">
       {{ subtitle() }}
     </div>
 
     <div
-      class="mt-4 bg-(--ow-gray-200) h-2 rounded-full overflow-hidden"
+      class="mt-4 bg-(--ow-border) h-2 rounded-full overflow-hidden"
       role="progressbar"
       [attr.aria-label]="progressAriaLabel()"
       [attr.aria-valuemin]="0"

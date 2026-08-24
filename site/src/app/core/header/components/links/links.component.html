@@ -2,7 +2,7 @@
   <a
     [routerLink]="item().link"
     [class]="mobileClasses()"
-    routerLinkActive="text-[#f06314] after:h-2.5"
+    routerLinkActive="!text-(--ow-orange) after:h-2.5"
     [routerLinkActiveOptions]="item().exact ? rlaExact : rlaSubset"
   >
     {{ item().label }}
@@ -11,7 +11,7 @@
   <a
     [routerLink]="item().link"
     [class]="desktopClasses()"
-    routerLinkActive="text-[#f06314] after:h-1"
+    routerLinkActive="!text-(--ow-orange) after:h-1"
     [routerLinkActiveOptions]="item().exact ? rlaExact : rlaSubset"
   >
     {{ item().label }}

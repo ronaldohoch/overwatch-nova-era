@@ -34,39 +34,39 @@ type TeamOption = Readonly<{
   template: `
     <section class="space-y-4">
       <header class="space-y-1">
-        <h2 class="text-xl font-black text-(--ow-gray-900)">Adicionar ao time</h2>
-        <p class="text-sm text-(--ow-gray-600)">
+        <h2 class="text-xl font-black text-(--ow-text)">Adicionar ao time</h2>
+        <p class="text-sm text-(--ow-text)">
           Selecione um time para adicionar o membro sorteado.
         </p>
       </header>
 
-      <div class="rounded-md border border-(--ow-gray-200) bg-white p-3 text-sm">
-        <p class="font-semibold text-(--ow-gray-800)">Sorteado:</p>
-        <p class="text-(--ow-gray-700)">{{ selectedName() }}</p>
-        <p class="mt-1 text-xs text-(--ow-gray-500)">Battletag: {{ selectedBattletag() || 'não informada' }}</p>
+      <div class="rounded-md border border-(--ow-border) bg-(--ow-surface) p-3 text-sm">
+        <p class="font-semibold text-(--ow-text)">Sorteado:</p>
+        <p class="text-(--ow-text)">{{ selectedName() }}</p>
+        <p class="mt-1 text-xs text-(--ow-text-muted)">Battletag: {{ selectedBattletag() || 'não informada' }}</p>
       </div>
 
       @if (!hasIdentifierForAdd()) {
-        <p class="text-sm font-medium text-red-600">
+        <p class="text-sm font-medium text-(--ow-alert-error-text)">
           Este sorteado não possui UID/Battletag valida para adicionar em time.
         </p>
       }
 
       @if (loadingTeams()) {
-        <p class="text-sm text-(--ow-gray-600)">Carregando times...</p>
+        <p class="text-sm text-(--ow-text)">Carregando times...</p>
       } @else if (teams().length === 0) {
-        <p class="text-sm text-(--ow-gray-600)">Nenhum time encontrado.</p>
+        <p class="text-sm text-(--ow-text)">Nenhum time encontrado.</p>
       } @else {
         <div class="max-h-72 space-y-2 overflow-auto pr-1">
           @for (team of teams(); track team.id) {
             <button
               type="button"
-              class="w-full rounded-md border border-(--ow-gray-200) bg-white p-3 text-left transition-colors hover:bg-(--ow-gray-50) disabled:cursor-not-allowed disabled:opacity-60"
+              class="w-full rounded-md border border-(--ow-border) bg-(--ow-surface) p-3 text-left transition-colors hover:bg-(--ow-surface-raised) disabled:cursor-not-allowed disabled:opacity-60"
               [disabled]="!hasIdentifierForAdd() || !!assigningTeamId()"
               (click)="addSelectedMemberToTeam(team)"
             >
-              <p class="text-sm font-black uppercase text-(--ow-gray-900)">{{ team.name }}</p>
-              <p class="mt-1 text-xs text-(--ow-gray-600)">
+              <p class="text-sm font-black uppercase text-(--ow-text)">{{ team.name }}</p>
+              <p class="mt-1 text-xs text-(--ow-text)">
                 {{ team.membersCount }}/8 membros. {{ toCategoryLabel(team.category) }}
               </p>
               @if (assigningTeamId() === team.id) {
@@ -78,7 +78,7 @@ type TeamOption = Readonly<{
       }
 
       @if (message(); as message) {
-        <p class="text-sm font-medium" [class.text-red-600]="messageIsError()" [class.text-green-700]="!messageIsError()">
+        <p class="text-sm font-medium" [class.text-(--ow-alert-error-text)]="messageIsError()" [class.text-(--ow-alert-success-text)]="!messageIsError()">
           {{ message }}
         </p>
       }

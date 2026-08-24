@@ -169,44 +169,44 @@ export class ButtonsComponent {
     'before:bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.3),transparent)]',
     'hover:before:left-[100%]',
     'focus-visible:outline-none',
-    'focus-visible:ring-4 focus-visible:ring-[rgba(240,99,20,0.35)]',
+    'focus-visible:ring-4 focus-visible:ring-(--ow-focus-ring)',
     'focus-visible:ring-offset-2 focus-visible:ring-offset-white',
     'disabled:opacity-[0.45] disabled:cursor-not-allowed disabled:pointer-events-none',
   ].join(' ');
 
   readonly VARIANTS: Record<OwBtnVisualVariant, string> = {
     primary: [
-      'bg-[linear-gradient(135deg,#f06314_0%,#d14e0a_100%)]',
-      'text-white',
+      'bg-[image:var(--gradient-orange)]',
+      'text-(--ow-on-accent)',
       'hover:-translate-y-0.5',
       'hover:shadow-[0_4px_20px_rgba(240,99,20,0.35)]',
     ].join(' '),
 
     secondary: [
       'bg-transparent',
-      'text-[#202124]',
-      'border-2 border-[#f06314]',
-      'hover:bg-[#f06314] hover:text-white',
+      'text-(--ow-text)',
+      'border-2 border-(--ow-orange)',
+      'hover:bg-(--ow-orange) hover:text-(--ow-on-accent)',
       'hover:-translate-y-0.5',
     ].join(' '),
 
     blue: [
-      'bg-[linear-gradient(135deg,#00c3ff_0%,#0099cc_100%)]',
-      'text-white',
+      'bg-[image:var(--gradient-blue)]',
+      'text-(--ow-on-accent)',
       'hover:-translate-y-0.5',
       'hover:shadow-[0_4px_20px_rgba(0,195,255,0.35)]',
     ].join(' '),
 
     ghost: [
       'bg-transparent',
-      'text-[#5f6368]',
-      'border-2 border-[#dadce0]',
-      'hover:border-[#5f6368] hover:text-[#202124]',
+      'text-(--ow-text-muted)',
+      'border-2 border-(--ow-border-strong)',
+      'hover:border-(--ow-text-muted) hover:text-(--ow-text)',
     ].join(' '),
 
     danger: [
-      'bg-[linear-gradient(135deg,#ea4335_0%,#c5221f_100%)]',
-      'text-white',
+      'bg-[image:var(--gradient-red)]',
+      'text-(--ow-on-accent)',
       'hover:-translate-y-0.5',
       'hover:shadow-[0_4px_20px_rgba(234,67,53,0.35)]',
     ].join(' '),

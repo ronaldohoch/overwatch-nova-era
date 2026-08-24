@@ -68,7 +68,7 @@ export type OwToastVariant = 'success' | 'error' | 'warning' | 'info';
         @if (dismissible()) {
           <button
             type="button"
-            class="cursor-pointer opacity-40 bg-transparent border-0 text-white leading-none text-[1.1rem] p-0 transition-opacity duration-200 hover:opacity-100 focus-visible:outline-none"
+            class="cursor-pointer opacity-70 bg-transparent border-0 text-(--ow-on-accent) leading-none text-[1.1rem] p-0 transition-opacity duration-200 hover:opacity-100 focus-visible:outline-none"
             aria-label="Fechar"
             (click)="onClose()"
           >×</button>
@@ -89,17 +89,17 @@ export class ToastComponent {
   readonly visible = computed(() => !this.dismissed());
 
   private readonly ICON_COLORS: Record<OwToastVariant, string> = {
-    success: 'text-[#34a853]',
-    error: 'text-[#ea4335]',
-    warning: 'text-[#fbbc04]',
-    info: 'text-[#00c3ff]',
+    success: 'text-(--ow-green)',
+    error: 'text-(--ow-red)',
+    warning: 'text-(--ow-yellow)',
+    info: 'text-(--ow-blue)',
   };
 
   readonly iconColorClass = computed(() => this.ICON_COLORS[this.variant()]);
 
   readonly containerClass = computed(
     () =>
-      'inline-flex items-center gap-3 py-[14px] px-5 bg-[#202124] text-white text-[0.875rem] font-semibold [box-shadow:0_8px_32px_rgba(0,0,0,0.25)] min-w-[280px] [clip-path:polygon(4%_0,100%_0,100%_85%,96%_100%,0_100%,0_15%)]',
+      'inline-flex items-center gap-3 py-[14px] px-5 bg-(--ow-gray-700) border border-(--ow-border) text-(--ow-on-accent) text-[0.875rem] font-semibold [box-shadow:var(--shadow-card-hover)] min-w-[280px] [clip-path:polygon(4%_0,100%_0,100%_85%,96%_100%,0_100%,0_15%)]',
   );
 
   onClose(): void {

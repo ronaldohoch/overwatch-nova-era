@@ -16,16 +16,16 @@ export class TeamsCardsCodeComponent {
   <ow-card cardClass="text-center" contentClass="flex flex-col items-center gap-2 p-6">
 
     <!-- Logo com clip-path hexagonal -->
-    <div class="w-[72px] h-[72px] bg-[#f1f3f4]
+    <div class="w-[72px] h-[72px] bg-(--ow-surface-sunken)
       [clip-path:polygon(20%_0,100%_0,100%_80%,80%_100%,0_100%,0_20%)]
-      flex items-center justify-center text-[1.8rem] font-black text-[#f06314] mx-auto mb-4">
+      flex items-center justify-center text-[1.8rem] font-black text-(--ow-orange) mx-auto mb-4">
       TH
     </div>
 
-    <div class="text-[1rem] font-black uppercase tracking-[0.06em] text-[#111111]">
+    <div class="text-[1rem] font-black uppercase tracking-[0.06em] text-(--ow-text)">
       Thunder Hawks
     </div>
-    <div class="text-[0.75rem] text-[#5f6368] uppercase tracking-[0.08em]">
+    <div class="text-[0.75rem] text-(--ow-text-muted) uppercase tracking-[0.08em]">
       São Paulo, SP
     </div>
 

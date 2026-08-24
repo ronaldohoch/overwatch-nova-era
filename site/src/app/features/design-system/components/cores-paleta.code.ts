@@ -12,25 +12,25 @@ export class CoresPaletaCodeComponent {
   readonly code = `<!-- Paleta Principal — use as CSS custom properties em styles.css -->
 
 <!-- OW Orange -->
-<div style="background-color: #f06314">...</div>
+<div style="background-color:var(--ow-orange)">...</div>
 <!-- var(--ow-orange) -->
 
 <!-- OW Orange Dark -->
-<div style="background-color: #d14e0a">...</div>
+<div style="background-color:var(--ow-orange-dark)">...</div>
 
 <!-- OW Blue -->
-<div style="background-color: #00c3ff">...</div>
+<div style="background-color:var(--ow-blue)">...</div>
 
 <!-- OW Red -->
-<div style="background-color: #ea4335">...</div>
+<div style="background-color:var(--ow-red)">...</div>
 
 <!-- OW Green -->
-<div style="background-color: #34a853">...</div>
+<div style="background-color:var(--ow-green)">...</div>
 
 <!-- OW Yellow -->
-<div style="background-color: #fbbc04">...</div>
+<div style="background-color:var(--ow-yellow)">...</div>
 
 <!-- Em classes Tailwind com valores literais -->
-<div class="bg-[#f06314] text-white">...</div>
-<div class="border-[3px] border-[#f06314]">...</div>`;
+<div class="bg-(--ow-orange) text-(--ow-on-accent)">...</div>
+<div class="border-[3px] border-(--ow-orange)">...</div>`;
 }

@@ -10,7 +10,7 @@ export type OwProgressColor = 'orange' | 'blue' | 'green';
       @if (label() || showValue()) {
         <div class="flex justify-between items-center mb-[6px]">
           @if (label()) {
-            <span class="text-[0.8rem] font-bold text-[#3c4043]">{{ label() }}</span>
+            <span class="text-[0.8rem] font-bold text-(--ow-text)">{{ label() }}</span>
           }
           @if (showValue()) {
             <span class="text-[0.8rem] font-extrabold" [class]="valueColorClass()">{{ value() }}%</span>
@@ -18,7 +18,7 @@ export type OwProgressColor = 'orange' | 'blue' | 'green';
         </div>
       }
       <div
-        class="h-[10px] bg-[#f1f3f4] overflow-hidden [clip-path:polygon(1%_0,100%_0,99%_100%,0%_100%)]"
+        class="h-[10px] bg-(--ow-surface-sunken) overflow-hidden [clip-path:polygon(1%_0,100%_0,99%_100%,0%_100%)]"
         role="progressbar"
         [attr.aria-valuenow]="value()"
         [attr.aria-valuemin]="0"
@@ -42,15 +42,15 @@ export class ProgressComponent {
   readonly showValue = input(true);
 
   private readonly BAR_VARIANTS: Record<OwProgressColor, string> = {
-    orange: 'bg-[linear-gradient(135deg,#f06314_0%,#d14e0a_100%)]',
-    blue: 'bg-[linear-gradient(135deg,#00c3ff_0%,#0099cc_100%)]',
-    green: 'bg-[linear-gradient(135deg,#34a853_0%,#2d7d3a_100%)]',
+    orange: 'bg-[image:var(--gradient-orange)]',
+    blue: 'bg-[image:var(--gradient-blue)]',
+    green: 'bg-[image:var(--gradient-green)]',
   };
 
   private readonly VALUE_COLORS: Record<OwProgressColor, string> = {
-    orange: 'text-[#f06314]',
-    blue: 'text-[#00c3ff]',
-    green: 'text-[#34a853]',
+    orange: 'text-(--ow-orange)',
+    blue: 'text-(--ow-blue)',
+    green: 'text-(--ow-green)',
   };
 
   readonly clampedValue = computed(() => Math.min(100, Math.max(0, this.value())));

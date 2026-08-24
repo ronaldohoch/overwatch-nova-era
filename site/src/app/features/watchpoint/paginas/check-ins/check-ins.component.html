@@ -1,25 +1,25 @@
 <section class="my-8">
   <div class="space-y-2">
-    <h1 class="text-4xl font-black leading-tight text-(--ow-gray-900) lg:text-5xl">
+    <h1 class="text-4xl font-black leading-tight text-(--ow-text) lg:text-5xl">
       Check-in de jogador
     </h1>
-    <p class="text-(--ow-gray-500)">
+    <p class="text-(--ow-text-muted)">
       Escolha o torneio e a role para confirmar sua participação.
     </p>
   </div>
 
   @if (!auth.isAuthenticated()) {
-    <p class="text-sm font-medium text-red-600">
+    <p class="text-sm font-medium text-(--ow-alert-error-text)">
       Faça login para realizar check-in.
     </p>
   }
 
   @if (loadingTournaments()) {
-    <p class="text-sm font-medium text-(--ow-gray-600)">Carregando torneios...</p>
+    <p class="text-sm font-medium text-(--ow-text)">Carregando torneios...</p>
   }
 
   @if (!loadingTournaments() && auth.isAuthenticated() && tournamentOptions().length === 0) {
-    <p class="text-sm font-medium text-(--ow-gray-600)">
+    <p class="text-sm font-medium text-(--ow-text)">
       Nenhum torneio encontrado.
     </p>
   }
@@ -27,12 +27,12 @@
   @if (auth.isAuthenticated() && tournamentOptions().length > 0) {
     <form class="space-y-4" novalidate (submit)="onSubmit($event)">
       <div class="space-y-1.5">
-        <label for="checkin-torneio" class="text-sm font-semibold text-(--ow-gray-700)">
+        <label for="checkin-torneio" class="text-sm font-semibold text-(--ow-text)">
           Torneio
         </label>
         <select
           id="checkin-torneio"
-          class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
+          class="w-full rounded-md border border-(--ow-border-strong) bg-(--ow-surface) px-3 py-2.5 text-(--ow-text) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
           [value]="selectedTournamentId()"
           (change)="onTournamentChange($any($event.target).value)"
         >
@@ -44,12 +44,12 @@
       </div>
 
       <div class="space-y-1.5">
-        <label for="checkin-role" class="text-sm font-semibold text-(--ow-gray-700)">
+        <label for="checkin-role" class="text-sm font-semibold text-(--ow-text)">
           Role
         </label>
         <select
           id="checkin-role"
-          class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
+          class="w-full rounded-md border border-(--ow-border-strong) bg-(--ow-surface) px-3 py-2.5 text-(--ow-text) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
           [value]="selectedRole()"
           (change)="onRoleChange($any($event.target).value)"
         >
@@ -74,8 +74,8 @@
   @if (message(); as message) {
     <p
       class="text-sm font-medium"
-      [class.text-green-700]="status() === 'success'"
-      [class.text-red-600]="status() === 'error'"
+      [class.text-(--ow-alert-success-text)]="status() === 'success'"
+      [class.text-(--ow-alert-error-text)]="status() === 'error'"
     >
       {{ message }}
     </p>
@@ -84,20 +84,20 @@
 
 <section class="my-8 space-y-4">
   <div class="space-y-1">
-    <h2 class="text-2xl font-black text-(--ow-gray-900)">Check-in — Repescagem</h2>
-    <p class="text-(--ow-gray-500)">
+    <h2 class="text-2xl font-black text-(--ow-text)">Check-in — Repescagem</h2>
+    <p class="text-(--ow-text-muted)">
       Inscreva-se na repescagem de um torneio ativo.
     </p>
   </div>
 
   @if (!auth.isAuthenticated()) {
-    <p class="text-sm font-medium text-red-600">
+    <p class="text-sm font-medium text-(--ow-alert-error-text)">
       Faça login para realizar check-in na repescagem.
     </p>
   }
 
   @if (auth.isAuthenticated() && repescagemTournamentOptions().length === 0 && !loadingTournaments()) {
-    <p class="text-sm font-medium text-(--ow-gray-600)">
+    <p class="text-sm font-medium text-(--ow-text)">
       Nenhum torneio com repescagem disponível no momento.
     </p>
   }
@@ -105,12 +105,12 @@
   @if (auth.isAuthenticated() && repescagemTournamentOptions().length > 0) {
     <form class="space-y-4" novalidate (submit)="onRepescagemSubmit($event)">
       <div class="space-y-1.5">
-        <label for="repescagem-torneio" class="text-sm font-semibold text-(--ow-gray-700)">
+        <label for="repescagem-torneio" class="text-sm font-semibold text-(--ow-text)">
           Torneio
         </label>
         <select
           id="repescagem-torneio"
-          class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
+          class="w-full rounded-md border border-(--ow-border-strong) bg-(--ow-surface) px-3 py-2.5 text-(--ow-text) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
           [value]="selectedRepescagemTournamentId()"
           (change)="onRepescagemTournamentChange($any($event.target).value)"
         >
@@ -122,11 +122,11 @@
       </div>
 
       @if (selectedRepescagemTournament()?.repescagem; as repescagem) {
-        <p class="text-sm text-(--ow-gray-600)">
+        <p class="text-sm text-(--ow-text)">
           Role da repescagem:
           <span class="font-semibold">{{ repescagemRoleLabel(repescagem.role) }}</span>
         </p>
-        <p class="text-sm text-(--ow-gray-600)">
+        <p class="text-sm text-(--ow-text)">
           Vagas disponíveis:
           <span class="font-semibold">{{ repescagem.slots - repescagem.checkedIn }}</span>
           de {{ repescagem.slots }}
@@ -148,8 +148,8 @@
   @if (repescagemMessage(); as message) {
     <p
       class="text-sm font-medium"
-      [class.text-green-700]="repescagemStatus() === 'success'"
-      [class.text-red-600]="repescagemStatus() === 'error'"
+      [class.text-(--ow-alert-success-text)]="repescagemStatus() === 'success'"
+      [class.text-(--ow-alert-error-text)]="repescagemStatus() === 'error'"
     >
       {{ message }}
     </p>

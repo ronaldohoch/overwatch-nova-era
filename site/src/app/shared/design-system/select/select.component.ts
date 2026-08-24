@@ -30,11 +30,11 @@ export interface OwSelectOption {
       @if (label()) {
         <label
           [for]="selectId()"
-          class="block text-[0.78rem] font-extrabold uppercase tracking-[0.12em] text-[#3c4043] mb-[7px]"
+          class="block text-[0.78rem] font-extrabold uppercase tracking-[0.12em] text-(--ow-text) mb-[7px]"
         >
           {{ label() }}
           @if (required()) {
-            <span class="text-[#f06314] ml-[3px]">*</span>
+            <span class="text-(--ow-orange) ml-[3px]">*</span>
           }
         </label>
       }
@@ -64,7 +64,7 @@ export interface OwSelectOption {
 
         <!-- Arrow icon -->
         <span
-          class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#f06314]"
+          class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-(--ow-orange)"
           aria-hidden="true"
         >
           <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
@@ -74,7 +74,7 @@ export interface OwSelectOption {
       </div>
 
       @if (helperText()) {
-        <p class="text-[0.78rem] mt-[5px] text-[#5f6368]">{{ helperText() }}</p>
+        <p class="text-[0.78rem] mt-[5px] text-(--ow-text-muted)">{{ helperText() }}</p>
       }
     </div>
   `,
@@ -119,6 +119,6 @@ export class SelectComponent implements ControlValueAccessor {
 
   readonly selectClass = computed(
     () =>
-      'w-full py-[13px] pl-[18px] pr-[44px] text-[0.9rem] font-medium text-[#202124] bg-white border-2 border-[#e8eaed] outline-none appearance-none cursor-pointer transition-all duration-[250ms] [clip-path:polygon(4%_0,100%_0,100%_85%,96%_100%,0_100%,0_15%)] focus:border-[#f06314] focus:[box-shadow:0_0_0_3px_rgba(240,99,20,0.12)] disabled:bg-[#f1f3f4] disabled:text-[#9aa0a6] disabled:cursor-not-allowed',
+      'w-full py-[13px] pl-[18px] pr-[44px] text-[0.9rem] font-medium text-(--ow-text) bg-(--ow-surface) border-2 border-(--ow-border) outline-none appearance-none cursor-pointer transition-all duration-[250ms] [clip-path:polygon(4%_0,100%_0,100%_85%,96%_100%,0_100%,0_15%)] focus:border-(--ow-orange) focus:[box-shadow:0_0_0_3px_rgba(240,99,20,0.12)] disabled:bg-(--ow-surface-sunken) disabled:text-(--ow-text-subtle) disabled:cursor-not-allowed',
   );
 }

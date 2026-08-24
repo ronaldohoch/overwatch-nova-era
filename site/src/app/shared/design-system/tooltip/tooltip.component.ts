@@ -19,7 +19,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
       <div
         class="
           absolute bottom-[calc(100%+8px)] left-1/2 -translate-x-1/2
-          bg-[#202124] text-white
+          bg-(--ow-gray-700) border border-(--ow-border) text-(--ow-on-accent)
           text-[0.75rem] font-semibold
           py-[6px] px-3 whitespace-nowrap
           [clip-path:polygon(5%_0,100%_0,95%_100%,0_100%)]

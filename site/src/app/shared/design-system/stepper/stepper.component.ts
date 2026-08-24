@@ -89,9 +89,9 @@ export class StepperComponent implements AfterContentInit {
     const base =
       'w-10 h-10 [clip-path:polygon(20%_0,100%_0,80%_100%,0_100%)] flex items-center justify-center font-black text-[0.9rem] transition-all duration-300';
     const states: Record<OwStepState, string> = {
-      done: 'bg-[#34a853] text-white',
-      active: 'bg-[#f06314] text-white',
-      pending: 'bg-[#e8eaed] text-[#5f6368]',
+      done: 'bg-(--ow-green) text-(--ow-on-accent)',
+      active: 'bg-(--ow-orange) text-(--ow-on-accent)',
+      pending: 'bg-(--ow-border) text-(--ow-text-muted)',
     };
     return `${base} ${states[state]}`;
   }
@@ -99,15 +99,15 @@ export class StepperComponent implements AfterContentInit {
   labelClass(state: OwStepState): string {
     const base = 'text-[0.7rem] font-bold uppercase tracking-[0.1em] mt-2 text-center';
     const states: Record<OwStepState, string> = {
-      done: 'text-[#34a853]',
-      active: 'text-[#f06314]',
-      pending: 'text-[#5f6368]',
+      done: 'text-(--ow-green)',
+      active: 'text-(--ow-orange)',
+      pending: 'text-(--ow-text-muted)',
     };
     return `${base} ${states[state]}`;
   }
 
   connectorClass(state: OwStepState): string {
     const base = 'flex-1 h-[2px] self-start mt-5 transition-colors duration-300';
-    return state === 'done' ? `${base} bg-[#34a853]` : `${base} bg-[#e8eaed]`;
+    return state === 'done' ? `${base} bg-(--ow-green)` : `${base} bg-(--ow-border)`;
   }
 }

@@ -1,20 +1,20 @@
 <div [class]="containerClass()">
     <div class="text-center md:text-left">
-      <div class="text-2xl font-black text-[color:var(--ow-orange)] md:min-w-[120px]">
+      <div class="text-2xl font-black text-(--ow-orange) md:min-w-[120px]">
         {{ time() }}
       </div>
 
-      <div class="text-sm uppercase tracking-widest text-[color:var(--ow-gray-500)]">
+      <div class="text-sm uppercase tracking-widest text-(--ow-text-muted)">
         {{ dateLabel() }}
       </div>
     </div>
 
     <div class="flex-1 md:px-8">
-      <div class="text-xl font-bold text-[color:var(--ow-gray-700)]">
+      <div class="text-xl font-bold text-(--ow-text)">
         {{ teamsLabel() }}
       </div>
 
-      <div class="text-sm uppercase tracking-widest text-[color:var(--ow-gray-500)]">
+      <div class="text-sm uppercase tracking-widest text-(--ow-text-muted)">
         {{ stageLabel() }}
       </div>
     </div>

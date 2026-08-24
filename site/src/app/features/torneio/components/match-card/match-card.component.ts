@@ -54,12 +54,12 @@ export class MatchCardComponent {
 
   readonly score1Class = computed(() =>
     this.isWalkover() && !this.isTeam1Winner()
-      ? 'font-black text-[1rem] text-(--ow-gray-400)'
+      ? 'font-black text-[1rem] text-(--ow-text-subtle)'
       : this.scoreClass(this.isTeam1Winner()),
   );
   readonly score2Class = computed(() =>
     this.isWalkover() && !this.isTeam2Winner()
-      ? 'font-black text-[1rem] text-(--ow-gray-400)'
+      ? 'font-black text-[1rem] text-(--ow-text-subtle)'
       : this.scoreClass(this.isTeam2Winner()),
   );
 
@@ -69,10 +69,10 @@ export class MatchCardComponent {
 
   private rowClass(isWinner: boolean): string {
     const base =
-      'flex justify-between items-center px-[18px] py-[14px] border-b border-(--ow-gray-100) transition-colors duration-200 last:border-b-0';
+      'flex justify-between items-center px-[18px] py-[14px] border-b border-(--ow-border) transition-colors duration-200 last:border-b-0';
     return isWinner
-      ? `${base} bg-[rgba(240,99,20,0.08)] border-l-4 border-l-(--ow-orange)`
-      : `${base} hover:bg-[rgba(240,99,20,0.04)]`;
+      ? `${base} bg-(--ow-orange-tint-strong) border-l-4 border-l-(--ow-orange)`
+      : `${base} hover:bg-(--ow-orange-tint)`;
   }
 
   private scoreClass(isWinner: boolean): string {

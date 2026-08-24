@@ -20,7 +20,7 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 })
 export class DiagonalGridBgComponent {
   readonly bgSize = input('40px 40px');
-  readonly gridColor = input('#e5e7eb');
+  readonly gridColor = input('var(--ow-grid)');
 
   readonly mask = input(
     'radial-gradient(ellipse 100% 80% at 50% 100%, #000 50%, transparent 90%)',

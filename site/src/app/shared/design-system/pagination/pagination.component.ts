@@ -20,7 +20,7 @@ import { ChangeDetectionStrategy, Component, computed, input, output } from '@an
       @for (item of pages(); track item.key) {
         @if (item.ellipsis) {
           <span
-            class="w-[38px] h-[38px] flex items-center justify-center text-[0.7rem] tracking-[0.05em] text-[#5f6368]"
+            class="w-[38px] h-[38px] flex items-center justify-center text-[0.7rem] tracking-[0.05em] text-(--ow-text-muted)"
           >…</span>
         } @else {
           <button
@@ -55,13 +55,13 @@ export class PaginationComponent {
   readonly pageChange = output<number>();
 
   private readonly BTN_STRUCT =
-    'w-[38px] h-[38px] flex items-center justify-center text-[0.82rem] font-extrabold border-2 cursor-pointer transition-all duration-200 [clip-path:polygon(15%_0,100%_0,85%_100%,0_100%)] bg-white font-[inherit] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#f06314]';
+    'w-[38px] h-[38px] flex items-center justify-center text-[0.82rem] font-extrabold border-2 cursor-pointer transition-all duration-200 [clip-path:polygon(15%_0,100%_0,85%_100%,0_100%)] bg-(--ow-surface) font-[inherit] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--ow-orange)';
 
   private readonly BASE_BTN =
-    this.BTN_STRUCT + ' border-[#e8eaed] text-[#3c4043] hover:border-[#f06314] hover:text-[#f06314]';
+    this.BTN_STRUCT + ' border-(--ow-border) text-(--ow-text) hover:border-(--ow-orange) hover:text-(--ow-orange)';
 
   readonly activePageClass =
-    this.BTN_STRUCT + ' border-[#f06314] text-[#f06314]';
+    this.BTN_STRUCT + ' border-(--ow-orange) text-(--ow-orange)';
 
   pageButtonClass(_active: boolean): string {
     return this.BASE_BTN;

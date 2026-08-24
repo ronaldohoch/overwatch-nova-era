@@ -9,12 +9,12 @@ import { ModalService, MODAL_DATA } from './modal.service';
   template: `
     @if (modalSvc.isOpen()) {
       <div
-        class="fixed top-0 left-0 z-[100] flex items-center justify-center w-screen h-screen bg-slate-300/20 backdrop-blur-sm"
+        class="fixed top-0 left-0 z-[100] flex items-center justify-center w-screen h-screen bg-(--ow-overlay) backdrop-blur-sm"
         (click)="modalSvc.close()"
         >
         <div
-          [ngClass]="{'bg-white':noBackdrop, 'bg-transparent': !noBackdrop}"
-          class="flex max-h-[90vh] w-11/12 max-w-xl flex-col gap-6 overflow-hidden rounded p-6 text-slate-500 shadow-xl shadow-slate-700/10"
+          [ngClass]="{'bg-(--ow-surface)':noBackdrop, 'bg-transparent': !noBackdrop}"
+          class="flex max-h-[90vh] w-11/12 max-w-xl flex-col gap-6 overflow-hidden rounded p-6 text-(--ow-text-muted) shadow-xl shadow-(--ow-overlay)"
           (click)="$event.stopPropagation()"
           >
           @if (modalSvc.content(); as component) {

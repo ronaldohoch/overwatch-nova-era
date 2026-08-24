@@ -26,7 +26,7 @@ removeTag(tag: string): void {
 }
 
 @if (tags().length === 0) {
-  <span class="text-[0.875rem] text-[#9aa0a6] italic">
+  <span class="text-[0.875rem] text-(--ow-text-subtle) italic">
     Todas as tags foram removidas
   </span>
 }`;

@@ -13,18 +13,18 @@ export class CardsBaseCodeComponent {
 <ow-card [padded]="false" cardClass="max-w-sm">
 
   <!-- Header -->
-  <div class="bg-[#f8f9fa] px-6 py-[18px] border-b-2 border-[#f06314]">
-    <div class="text-[0.75rem] font-extrabold uppercase tracking-[0.12em] text-[#5f6368] mb-1">
+  <div class="bg-(--ow-surface-raised) px-6 py-[18px] border-b-2 border-(--ow-orange)">
+    <div class="text-[0.75rem] font-extrabold uppercase tracking-[0.12em] text-(--ow-text-muted) mb-1">
       Torneio
     </div>
-    <div class="text-[1.05rem] font-black uppercase tracking-[0.05em] text-[#111111]">
+    <div class="text-[1.05rem] font-black uppercase tracking-[0.05em] text-(--ow-text)">
       Thunder Hawks vs Dragon Squad
     </div>
   </div>
 
   <!-- Body -->
   <div class="p-6">
-    <p class="text-[0.875rem] text-[#3c4043] leading-[1.6] mb-4">
+    <p class="text-[0.875rem] text-(--ow-text) leading-[1.6] mb-4">
       Partida de Quartas de Final da Temporada 2025.
     </p>
     <div class="flex items-center gap-2">
@@ -34,7 +34,7 @@ export class CardsBaseCodeComponent {
   </div>
 
   <!-- Footer -->
-  <div class="px-6 py-[14px] bg-[#f8f9fa] border-t border-[#e8eaed] flex justify-end gap-2">
+  <div class="px-6 py-[14px] bg-(--ow-surface-raised) border-t border-(--ow-border) flex justify-end gap-2">
     <ow-btn size="sm" variant="ghost">Detalhes</ow-btn>
     <ow-btn size="sm" variant="primary">Assistir</ow-btn>
   </div>

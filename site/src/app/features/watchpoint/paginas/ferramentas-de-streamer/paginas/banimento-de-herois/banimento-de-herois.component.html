@@ -4,14 +4,14 @@
 }
 
 <!-- Teams Header -->
-<section class="flex items-start justify-center bg-white border-b border-gray-200 shadow-sm px-8 py-6">
+<section class="flex items-start justify-center bg-(--ow-surface) border-b border-(--ow-border) shadow-sm px-8 py-6">
 
   <!-- Team 1 -->
   <div class="flex-1 max-w-[420px] flex flex-col items-end text-right">
     <div class="min-h-[24px] mb-1.5">
       @if (currentTeam() === 1) {
         <span
-          class="inline-block text-[0.6rem] font-black uppercase tracking-[0.15em] px-3.5 py-[3px] bg-orange-500 text-white [clip-path:polygon(10%_0,100%_0,90%_100%,0%_100%)]">
+          class="inline-block text-[0.6rem] font-black uppercase tracking-[0.15em] px-3.5 py-[3px] bg-(--ow-orange) text-(--ow-on-accent) [clip-path:polygon(10%_0,100%_0,90%_100%,0%_100%)]">
           SUA VEZ
         </span>
       }
@@ -20,20 +20,20 @@
       class="flex items-center gap-2.5 justify-end transition-opacity duration-300"
       [class.opacity-40]="!isOver() && currentTeam() !== 1"
       [class.opacity-50]="isOver()">
-      <span class="text-[1.1rem] font-black uppercase tracking-widest text-gray-700">
+      <span class="text-[1.1rem] font-black uppercase tracking-widest text-(--ow-text)">
         {{ team1Name() }}
       </span>
-      <div class="w-10 h-10 rounded-full overflow-hidden shrink-0 bg-gray-200 flex items-center justify-center border-2 border-gray-300">
+      <div class="w-10 h-10 rounded-full overflow-hidden shrink-0 bg-(--ow-border) flex items-center justify-center border-2 border-(--ow-border-strong)">
         @if (team1Logo()) {
           <img [src]="team1Logo()!" [alt]="team1Name()" class="w-full h-full object-cover">
         } @else {
-          <span class="text-[0.7rem] font-black text-gray-500 uppercase">
+          <span class="text-[0.7rem] font-black text-(--ow-text-muted) uppercase">
             {{ team1Name().slice(0, 2) }}
           </span>
         }
       </div>
     </div>
-    <div class="text-[0.68rem] font-bold text-gray-400 uppercase tracking-[0.1em] mb-2.5">
+    <div class="text-[0.68rem] font-bold text-(--ow-text-subtle) uppercase tracking-[0.1em] mb-2.5">
       Time 1 · {{ bans()[1].length }}/{{ banCount() }} bans
     </div>
     <div class="flex gap-2 justify-end">
@@ -53,12 +53,12 @@
               </svg>
             </div>
             <div
-              class="absolute bottom-0.5 left-0 right-0 text-center text-[0.42rem] font-black text-white/90 uppercase tracking-[0.04em] truncate px-0.5"
+              class="absolute bottom-0.5 left-0 right-0 text-center text-[0.42rem] font-black text-(--ow-on-accent)/90 uppercase tracking-[0.04em] truncate px-0.5"
               style="text-shadow: 0 1px 3px rgba(0,0,0,0.8)">
               {{ slot.hero.name }}
             </div>
           } @else {
-            <span class="text-[0.62rem] font-black text-gray-300">{{ $index + 1 }}</span>
+            <span class="text-[0.62rem] font-black text-(--ow-gray-300)">{{ $index + 1 }}</span>
           }
         </div>
       }
@@ -67,7 +67,7 @@
 
   <!-- Timer Center -->
   <div class="flex flex-col items-center justify-center px-8 flex-shrink-0">
-    <div class="text-[0.6rem] font-black text-gray-300 uppercase tracking-[0.2em] mb-1.5">VS</div>
+    <div class="text-[0.6rem] font-black text-(--ow-gray-300) uppercase tracking-[0.2em] mb-1.5">VS</div>
     <div
       class="w-[68px] h-[68px] rounded-full border-4 flex flex-col items-center justify-center transition-all duration-300"
       [class]="timerClasses()">
@@ -75,7 +75,7 @@
         <span class="text-2xl font-black leading-none">✓</span>
       } @else {
         <span class="text-2xl font-black leading-none">{{ timerValue() }}</span>
-        <span class="text-[0.5rem] font-black uppercase tracking-[0.15em] text-gray-400 -mt-0.5">seg</span>
+        <span class="text-[0.5rem] font-black uppercase tracking-[0.15em] text-(--ow-text-subtle) -mt-0.5">seg</span>
       }
     </div>
   </div>
@@ -85,7 +85,7 @@
     <div class="min-h-[24px] mb-1.5">
       @if (currentTeam() === 2) {
         <span
-          class="inline-block text-[0.6rem] font-black uppercase tracking-[0.15em] px-3.5 py-[3px] bg-orange-500 text-white [clip-path:polygon(10%_0,100%_0,90%_100%,0%_100%)]">
+          class="inline-block text-[0.6rem] font-black uppercase tracking-[0.15em] px-3.5 py-[3px] bg-(--ow-orange) text-(--ow-on-accent) [clip-path:polygon(10%_0,100%_0,90%_100%,0%_100%)]">
           SUA VEZ
         </span>
       }
@@ -94,20 +94,20 @@
       class="flex items-center gap-2.5 justify-start transition-opacity duration-300"
       [class.opacity-40]="!isOver() && currentTeam() !== 2"
       [class.opacity-50]="isOver()">
-      <div class="w-10 h-10 rounded-full overflow-hidden shrink-0 bg-gray-200 flex items-center justify-center border-2 border-gray-300">
+      <div class="w-10 h-10 rounded-full overflow-hidden shrink-0 bg-(--ow-border) flex items-center justify-center border-2 border-(--ow-border-strong)">
         @if (team2Logo()) {
           <img [src]="team2Logo()!" [alt]="team2Name()" class="w-full h-full object-cover">
         } @else {
-          <span class="text-[0.7rem] font-black text-gray-500 uppercase">
+          <span class="text-[0.7rem] font-black text-(--ow-text-muted) uppercase">
             {{ team2Name().slice(0, 2) }}
           </span>
         }
       </div>
-      <span class="text-[1.1rem] font-black uppercase tracking-widest text-gray-700">
+      <span class="text-[1.1rem] font-black uppercase tracking-widest text-(--ow-text)">
         {{ team2Name() }}
       </span>
     </div>
-    <div class="text-[0.68rem] font-bold text-gray-400 uppercase tracking-[0.1em] mb-2.5">
+    <div class="text-[0.68rem] font-bold text-(--ow-text-subtle) uppercase tracking-[0.1em] mb-2.5">
       Time 2 · {{ bans()[2].length }}/{{ banCount() }} bans
     </div>
     <div class="flex gap-2 justify-start">
@@ -127,12 +127,12 @@
               </svg>
             </div>
             <div
-              class="absolute bottom-0.5 left-0 right-0 text-center text-[0.42rem] font-black text-white/90 uppercase tracking-[0.04em] truncate px-0.5"
+              class="absolute bottom-0.5 left-0 right-0 text-center text-[0.42rem] font-black text-(--ow-on-accent)/90 uppercase tracking-[0.04em] truncate px-0.5"
               style="text-shadow: 0 1px 3px rgba(0,0,0,0.8)">
               {{ slot.hero.name }}
             </div>
           } @else {
-            <span class="text-[0.62rem] font-black text-gray-300">{{ $index + 1 }}</span>
+            <span class="text-[0.62rem] font-black text-(--ow-gray-300)">{{ $index + 1 }}</span>
           }
         </div>
       }
@@ -147,7 +147,7 @@
   <!-- Finished Banner -->
   @if (isOver()) {
     <div
-      class="flex items-center gap-3 px-6 py-3.5 bg-green-500/10 border-l-4 border-green-500 text-green-700 text-[0.85rem] font-black uppercase tracking-[0.08em] mb-4">
+      class="flex items-center gap-3 px-6 py-3.5 bg-(--ow-green)/10 border-l-4 border-(--ow-green) text-(--ow-alert-success-text) text-[0.85rem] font-black uppercase tracking-[0.08em] mb-4">
       <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"
         stroke-width="2.5">
         <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
@@ -161,55 +161,55 @@
   <div class="flex items-end gap-3.5 mb-3.5">
 
     <!-- Role Tabs -->
-    <div class="flex border-b-2 border-gray-200 flex-1">
+    <div class="flex border-b-2 border-(--ow-border) flex-1">
 
       <button
         class="px-5 py-2.5 text-[0.76rem] font-black uppercase tracking-[0.12em] border-b-[3px] -mb-0.5 transition-all duration-200 flex items-center gap-2 bg-transparent font-inherit cursor-pointer border-t-0 border-l-0 border-r-0"
-        [class]="roleFilter() === 'all' ? 'text-orange-500 border-b-orange-500' : 'text-gray-500 border-b-transparent hover:text-orange-500'"
+        [class]="roleFilter() === 'all' ? 'text-(--ow-orange) border-b-(--ow-orange)' : 'text-(--ow-text-muted) border-b-transparent hover:text-(--ow-orange)'"
         (click)="setRoleFilter('all')">
         Todos
         <span
           class="text-[0.6rem] px-1.5 py-px rounded-sm"
-          [class]="roleFilter() === 'all' ? 'bg-orange-500 text-white' : 'bg-gray-200 text-gray-600'">
+          [class]="roleFilter() === 'all' ? 'bg-(--ow-orange) text-(--ow-on-accent)' : 'bg-(--ow-border) text-(--ow-text-muted)'">
           {{ roleCounts().all }}
         </span>
       </button>
 
       <button
         class="px-5 py-2.5 text-[0.76rem] font-black uppercase tracking-[0.12em] border-b-[3px] -mb-0.5 transition-all duration-200 flex items-center gap-2 bg-transparent font-inherit cursor-pointer border-t-0 border-l-0 border-r-0"
-        [class]="roleFilter() === 'Tank' ? 'text-orange-500 border-b-orange-500' : 'text-gray-500 border-b-transparent hover:text-orange-500'"
+        [class]="roleFilter() === 'Tank' ? 'text-(--ow-orange) border-b-(--ow-orange)' : 'text-(--ow-text-muted) border-b-transparent hover:text-(--ow-orange)'"
         (click)="setRoleFilter('Tank')">
         <img src="/imgs/icone-tanque.svg" alt="" width="13" height="13" aria-hidden="true">
         Tanque
         <span
           class="text-[0.6rem] px-1.5 py-px rounded-sm"
-          [class]="roleFilter() === 'Tank' ? 'bg-orange-500 text-white' : 'bg-gray-200 text-gray-600'">
+          [class]="roleFilter() === 'Tank' ? 'bg-(--ow-orange) text-(--ow-on-accent)' : 'bg-(--ow-border) text-(--ow-text-muted)'">
           {{ roleCounts().Tank }}
         </span>
       </button>
 
       <button
         class="px-5 py-2.5 text-[0.76rem] font-black uppercase tracking-[0.12em] border-b-[3px] -mb-0.5 transition-all duration-200 flex items-center gap-2 bg-transparent font-inherit cursor-pointer border-t-0 border-l-0 border-r-0"
-        [class]="roleFilter() === 'Damage' ? 'text-orange-500 border-b-orange-500' : 'text-gray-500 border-b-transparent hover:text-orange-500'"
+        [class]="roleFilter() === 'Damage' ? 'text-(--ow-orange) border-b-(--ow-orange)' : 'text-(--ow-text-muted) border-b-transparent hover:text-(--ow-orange)'"
         (click)="setRoleFilter('Damage')">
         <img src="/imgs/icone-dano.svg" alt="" width="13" height="13" aria-hidden="true">
         Dano
         <span
           class="text-[0.6rem] px-1.5 py-px rounded-sm"
-          [class]="roleFilter() === 'Damage' ? 'bg-orange-500 text-white' : 'bg-gray-200 text-gray-600'">
+          [class]="roleFilter() === 'Damage' ? 'bg-(--ow-orange) text-(--ow-on-accent)' : 'bg-(--ow-border) text-(--ow-text-muted)'">
           {{ roleCounts().Damage }}
         </span>
       </button>
 
       <button
         class="px-5 py-2.5 text-[0.76rem] font-black uppercase tracking-[0.12em] border-b-[3px] -mb-0.5 transition-all duration-200 flex items-center gap-2 bg-transparent font-inherit cursor-pointer border-t-0 border-l-0 border-r-0"
-        [class]="roleFilter() === 'Support' ? 'text-orange-500 border-b-orange-500' : 'text-gray-500 border-b-transparent hover:text-orange-500'"
+        [class]="roleFilter() === 'Support' ? 'text-(--ow-orange) border-b-(--ow-orange)' : 'text-(--ow-text-muted) border-b-transparent hover:text-(--ow-orange)'"
         (click)="setRoleFilter('Support')">
         <img src="/imgs/icone-suporte.svg" alt="" width="13" height="13" aria-hidden="true">
         Suporte
         <span
           class="text-[0.6rem] px-1.5 py-px rounded-sm"
-          [class]="roleFilter() === 'Support' ? 'bg-orange-500 text-white' : 'bg-gray-200 text-gray-600'">
+          [class]="roleFilter() === 'Support' ? 'bg-(--ow-orange) text-(--ow-on-accent)' : 'bg-(--ow-border) text-(--ow-text-muted)'">
           {{ roleCounts().Support }}
         </span>
       </button>
@@ -219,7 +219,7 @@
     <!-- Search -->
     <div class="relative w-48 shrink-0">
       <svg
-        class="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+        class="absolute left-2.5 top-1/2 -translate-y-1/2 text-(--ow-text-subtle) pointer-events-none"
         width="13" height="13" fill="none" stroke="currentColor" viewBox="0 0 24 24"
         stroke-width="2.5">
         <circle cx="11" cy="11" r="8" />
@@ -229,7 +229,7 @@
         type="text"
         placeholder="Buscar..."
         (input)="onSearchInput($event)"
-        class="w-full pl-8 pr-3 py-2 text-[0.8rem] font-medium text-gray-700 bg-white border-2 border-gray-200 outline-none transition-all duration-200 focus:border-orange-500 focus:shadow-[0_0_0_3px_rgba(240,99,20,0.12)] placeholder:text-gray-400 [clip-path:polygon(4%_0,100%_0,100%_85%,96%_100%,0_100%,0_15%)]">
+        class="w-full pl-8 pr-3 py-2 text-[0.8rem] font-medium text-(--ow-text) bg-(--ow-surface) border-2 border-(--ow-border) outline-none transition-all duration-200 focus:border-(--ow-orange) focus:shadow-[0_0_0_3px_rgba(240,99,20,0.12)] placeholder:text-(--ow-text-subtle) [clip-path:polygon(4%_0,100%_0,100%_85%,96%_100%,0_100%,0_15%)]">
     </div>
 
   </div>
@@ -237,7 +237,7 @@
   <!-- Hero Grid -->
   @if (filteredGroups().length === 0) {
     <div
-      class="text-center py-10 text-[0.85rem] font-black text-gray-400 uppercase tracking-widest">
+      class="text-center py-10 text-[0.85rem] font-black text-(--ow-text-subtle) uppercase tracking-widest">
       Nenhum herói encontrado
     </div>
   }
@@ -245,9 +245,9 @@
   @for (group of filteredGroups(); track group.subrole) {
 
     <!-- Subrole Header -->
-    <div class="flex items-center gap-2 mb-2 pb-1.25 border-b border-gray-200">
-      <div class="w-3.5 h-0.5 bg-orange-500 shrink-0"></div>
-      <span class="text-[0.65rem] font-black uppercase tracking-[0.16em] text-gray-500">
+    <div class="flex items-center gap-2 mb-2 pb-1.25 border-b border-(--ow-border)">
+      <div class="w-3.5 h-0.5 bg-(--ow-orange) shrink-0"></div>
+      <span class="text-[0.65rem] font-black uppercase tracking-[0.16em] text-(--ow-text-muted)">
         {{ group.subroleLabel }}
       </span>
     </div>
@@ -263,7 +263,7 @@
 
           <!-- Inner cell -->
           <div
-            class="w-full h-full rounded-[7px] overflow-hidden relative bg-gray-100"
+            class="w-full h-full rounded-[7px] overflow-hidden relative bg-(--ow-surface-sunken)"
             [class]="bannedKeys().has(hero.key)
               ? 'shadow-[inset_0_0_12px_rgba(200,30,60,0.4)]'
               : 'shadow-[inset_0_1px_0_rgba(255,255,255,0.15),inset_0_-1px_0_rgba(0,0,0,0.2)]'">
@@ -278,7 +278,7 @@
 
             <!-- Hero name -->
             <div
-              class="absolute bottom-0 left-0 right-0 bg-linear-to-t from-black/80 to-transparent pt-3.5 px-1 pb-1 text-center text-[0.52rem] font-black text-white uppercase tracking-[0.05em] truncate z-10"
+              class="absolute bottom-0 left-0 right-0 bg-linear-to-t from-black/80 to-transparent pt-3.5 px-1 pb-1 text-center text-[0.52rem] font-black text-(--ow-on-accent) uppercase tracking-[0.05em] truncate z-10"
               [class.opacity-60]="bannedKeys().has(hero.key)">
               {{ hero.name }}
             </div>
@@ -300,7 +300,7 @@
           <!-- Tooltip -->
           @if (!bannedKeys().has(hero.key) && !isOver()) {
             <div
-              class="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-[0.65rem] font-bold px-2.5 py-1 rounded whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200 z-20 shadow-md">
+              class="absolute -top-8 left-1/2 -translate-x-1/2 bg-(--ow-gray-900) text-(--ow-on-accent) text-[0.65rem] font-bold px-2.5 py-1 rounded whitespace-nowrap opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200 z-20 shadow-md">
               {{ hero.name }}
             </div>
           }

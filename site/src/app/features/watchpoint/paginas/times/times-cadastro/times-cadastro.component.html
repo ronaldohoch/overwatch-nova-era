@@ -1,75 +1,75 @@
 <div class="my-8">
   <div class="space-y-2">
-    <h1 class="text-4xl font-black leading-tight text-(--ow-gray-900) lg:text-5xl">
+    <h1 class="text-4xl font-black leading-tight text-(--ow-text) lg:text-5xl">
       {{ pageTitle }}
     </h1>
-    <p class="text-(--ow-gray-500)">
+    <p class="text-(--ow-text-muted)">
       {{ pageDescription }}
     </p>
   </div>
 
   <form class="mt-6 space-y-5" novalidate (submit)="onSubmit($event)">
     <div class="space-y-1.5">
-      <label for="time-name" class="text-sm font-semibold text-(--ow-gray-700)">
+      <label for="time-name" class="text-sm font-semibold text-(--ow-text)">
         Nome do time
       </label>
       <input
         id="time-name"
         type="text"
         placeholder="Ex: Team Nova Era"
-        class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
+        class="w-full rounded-md border border-(--ow-border-strong) bg-(--ow-surface) px-3 py-2.5 text-(--ow-text) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
         [value]="form().name"
         (input)="updateField('name', $any($event.target).value)"
         (blur)="markTouched('name')"
       />
       @if (fieldError('name'); as error) {
-        <p class="text-sm font-medium text-red-600">{{ error }}</p>
+        <p class="text-sm font-medium text-(--ow-alert-error-text)">{{ error }}</p>
       }
     </div>
 
     <div class="space-y-1.5">
-      <label for="time-description" class="text-sm font-semibold text-(--ow-gray-700)">
+      <label for="time-description" class="text-sm font-semibold text-(--ow-text)">
         Descrição
       </label>
       <textarea
         id="time-description"
         rows="3"
         placeholder="Descreva o time (opcional)"
-        class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
+        class="w-full rounded-md border border-(--ow-border-strong) bg-(--ow-surface) px-3 py-2.5 text-(--ow-text) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
         [value]="form().description"
         (input)="updateField('description', $any($event.target).value)"
         (blur)="markTouched('description')"
       ></textarea>
       @if (fieldError('description'); as error) {
-        <p class="text-sm font-medium text-red-600">{{ error }}</p>
+        <p class="text-sm font-medium text-(--ow-alert-error-text)">{{ error }}</p>
       }
     </div>
 
     <div class="space-y-1.5">
-      <label for="time-group-link" class="text-sm font-semibold text-(--ow-gray-700)">
+      <label for="time-group-link" class="text-sm font-semibold text-(--ow-text)">
         Link do grupo (groupLink)
       </label>
       <input
         id="time-group-link"
         type="url"
         placeholder="https://chat.whatsapp.com/..."
-        class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
+        class="w-full rounded-md border border-(--ow-border-strong) bg-(--ow-surface) px-3 py-2.5 text-(--ow-text) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
         [value]="form().groupLink"
         (input)="updateField('groupLink', $any($event.target).value)"
         (blur)="markTouched('groupLink')"
       />
       @if (fieldError('groupLink'); as error) {
-        <p class="text-sm font-medium text-red-600">{{ error }}</p>
+        <p class="text-sm font-medium text-(--ow-alert-error-text)">{{ error }}</p>
       }
     </div>
 
     <div class="space-y-1.5">
-      <label for="time-category" class="text-sm font-semibold text-(--ow-gray-700)">
+      <label for="time-category" class="text-sm font-semibold text-(--ow-text)">
         Categoria
       </label>
       <select
         id="time-category"
-        class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light) disabled:cursor-not-allowed disabled:bg-(--ow-gray-100)"
+        class="w-full rounded-md border border-(--ow-border-strong) bg-(--ow-surface) px-3 py-2.5 text-(--ow-text) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light) disabled:cursor-not-allowed disabled:bg-(--ow-surface-sunken)"
         [disabled]="!canChooseRandomCategory()"
         [value]="form().category"
         (change)="updateField('category', $any($event.target).value)"
@@ -81,27 +81,27 @@
         }
       </select>
       @if (!canChooseRandomCategory()) {
-        <p class="text-xs font-medium text-(--ow-gray-600)">
+        <p class="text-xs font-medium text-(--ow-text)">
           Para membro, a categoria permanece travada em time com participantes selecionados.
         </p>
       }
       @if (fieldError('category'); as error) {
-        <p class="text-sm font-medium text-red-600">{{ error }}</p>
+        <p class="text-sm font-medium text-(--ow-alert-error-text)">{{ error }}</p>
       }
     </div>
 
     @if (canChooseRandomCategory()) {
       <div class="space-y-1.5">
-        <label class="flex items-start gap-2 text-sm font-semibold text-(--ow-gray-700)">
+        <label class="flex items-start gap-2 text-sm font-semibold text-(--ow-text)">
           <input
             type="checkbox"
-            class="mt-0.5 h-4 w-4 rounded border border-(--ow-gray-300) text-(--ow-orange) focus:ring-(--ow-orange-light)"
+            class="mt-0.5 h-4 w-4 rounded border border-(--ow-border-strong) text-(--ow-orange) focus:ring-(--ow-orange-light)"
             [checked]="skipCreatorAsCaptain()"
             (change)="updateSkipCreatorAsCaptain($any($event.target).checked)"
           />
           <span>Não me adicionar como capitão ao criar este time.</span>
         </label>
-        <p class="text-xs font-medium text-(--ow-gray-600)">
+        <p class="text-xs font-medium text-(--ow-text)">
           Ao marcar esta opção, o time será criado sem você na lista de membros.
         </p>
       </div>
@@ -118,7 +118,7 @@
     </div>
 
     @if (!auth.isAuthenticated()) {
-      <p class="text-sm font-medium text-red-600">
+      <p class="text-sm font-medium text-(--ow-alert-error-text)">
         Faça login para cadastrar um time.
       </p>
     }
@@ -126,8 +126,8 @@
     @if (message(); as message) {
       <p
         class="text-sm font-medium"
-        [class.text-green-700]="status() === 'success'"
-        [class.text-red-600]="status() === 'error'"
+        [class.text-(--ow-alert-success-text)]="status() === 'success'"
+        [class.text-(--ow-alert-error-text)]="status() === 'error'"
       >
         {{ message }}
       </p>

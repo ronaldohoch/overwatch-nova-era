@@ -20,11 +20,11 @@ export class ListItemComponent {
   containerClass = computed(() => [
     // .ow-schedule-item (migrado)
     'flex flex-col md:flex-row md:items-center gap-4 md:gap-0',
-    'p-6 mb-4 bg-white',
-    'border-l-4 border-l-[color:var(--ow-orange)]',
-    'shadow-[var(--shadow-card)]',
+    'p-6 mb-4 bg-(--ow-surface)',
+    'border-l-4 border-l-(--ow-orange)',
+    'shadow-(--shadow-card)',
     'transition-all duration-300 ease-out',
-    'hover:bg-[color:var(--ow-gray-50)] hover:translate-x-2.5 hover:shadow-[var(--shadow-card-hover)]',
+    'hover:bg-(--ow-surface-raised) hover:translate-x-2.5 hover:shadow-(--shadow-card-hover)',
   ].join(' '));
 
   statusClass = computed(() => {
@@ -38,10 +38,10 @@ export class ListItemComponent {
 
     const variant =
       this.status() === 'live'
-        ? ['bg-[color:var(--ow-red)] text-white animate-pulse']
+        ? ['bg-(--ow-red) text-(--ow-on-accent) animate-pulse']
         : this.status() === 'finished'
-          ? ['bg-[color:var(--ow-gray-400)] text-white']
-          : ['bg-[color:var(--ow-blue)] text-white'];
+          ? ['bg-(--ow-gray-400) text-(--ow-on-accent)']
+          : ['bg-(--ow-blue) text-(--ow-on-accent)'];
 
     return [...base, ...variant].join(' ');
   });

@@ -62,10 +62,10 @@ export type OwCheckboxState = 'checked' | 'unchecked' | 'indeterminate';
       @if (label() || description()) {
         <div>
           @if (label()) {
-            <div class="text-[0.9rem] font-bold text-[#202124]">{{ label() }}</div>
+            <div class="text-[0.9rem] font-bold text-(--ow-text)">{{ label() }}</div>
           }
           @if (description()) {
-            <div class="text-[0.75rem] text-[#5f6368] mt-[1px]">{{ description() }}</div>
+            <div class="text-[0.75rem] text-(--ow-text-muted) mt-[1px]">{{ description() }}</div>
           }
         </div>
       } @else {
@@ -128,12 +128,12 @@ export class CheckboxComponent implements ControlValueAccessor {
     const disabled = this.isDisabled();
 
     const base = compact
-      ? 'flex items-center gap-3 cursor-pointer py-[10px] px-4 border-2 bg-white transition-all duration-[250ms]'
-      : 'flex items-start gap-3 cursor-pointer py-3 px-[18px] border-2 bg-white transition-all duration-[250ms] [clip-path:polygon(3%_0,100%_0,100%_85%,97%_100%,0_100%,0_15%)]';
+      ? 'flex items-center gap-3 cursor-pointer py-[10px] px-4 border-2 bg-(--ow-surface) transition-all duration-[250ms]'
+      : 'flex items-start gap-3 cursor-pointer py-3 px-[18px] border-2 bg-(--ow-surface) transition-all duration-[250ms] [clip-path:polygon(3%_0,100%_0,100%_85%,97%_100%,0_100%,0_15%)]';
 
     const state = isActive
-      ? 'border-[#f06314] bg-[rgba(240,99,20,0.06)]'
-      : 'border-[#e8eaed] hover:border-[#f06314] hover:bg-[rgba(240,99,20,0.04)]';
+      ? 'border-(--ow-orange) bg-(--ow-orange-tint)'
+      : 'border-(--ow-border) hover:border-(--ow-orange) hover:bg-(--ow-orange-tint)';
 
     const dis = disabled ? 'opacity-50 cursor-not-allowed pointer-events-none' : '';
 
@@ -144,6 +144,6 @@ export class CheckboxComponent implements ControlValueAccessor {
     const isActive = this.checkState() !== 'unchecked';
     const base =
       'w-5 h-5 shrink-0 mt-[1px] border-2 transition-all duration-[250ms] flex items-center justify-center [clip-path:polygon(10%_0,100%_0,100%_90%,90%_100%,0_100%,0_10%)]';
-    return isActive ? `${base} bg-[#f06314] border-[#f06314]` : `${base} bg-white border-[#dadce0]`;
+    return isActive ? `${base} bg-(--ow-orange) border-(--ow-orange)` : `${base} bg-(--ow-surface) border-(--ow-border-strong)`;
   });
 }

@@ -10,12 +10,12 @@ import { DsCodeBlockComponent } from './ds-code-block/ds-code-block.component';
 })
 export class TabelaCodeComponent {
   readonly code = `<!-- Tabela de classificação -->
-<div class="bg-white border border-[#e8eaed] overflow-hidden">
+<div class="bg-(--ow-surface) border border-(--ow-border) overflow-hidden">
   <table class="w-full border-collapse">
     <thead>
       <tr>
         <th class="py-3 px-4 text-left text-[0.72rem] font-extrabold uppercase
-          tracking-[0.12em] text-[#5f6368] bg-[#f8f9fa] border-b-2 border-[#f06314]">
+          tracking-[0.12em] text-(--ow-text-muted) bg-(--ow-surface-raised) border-b-2 border-(--ow-orange)">
           #
         </th>
         <th class="...">Time</th>
@@ -27,18 +27,18 @@ export class TabelaCodeComponent {
     </thead>
     <tbody>
       @for (team of teams; track team.id) {
-        <tr class="hover:bg-[rgba(240,99,20,0.03)] transition-colors">
-          <td class="py-[14px] px-4 text-[0.875rem] border-b border-[#f1f3f4]">
-            <span class="text-[#f06314] font-black">{{ team.rank }}</span>
+        <tr class="hover:bg-(--ow-orange-tint) transition-colors">
+          <td class="py-[14px] px-4 text-[0.875rem] border-b border-(--ow-border)">
+            <span class="text-(--ow-orange) font-black">{{ team.rank }}</span>
           </td>
-          <td class="py-[14px] px-4 border-b border-[#f1f3f4]">
+          <td class="py-[14px] px-4 border-b border-(--ow-border)">
             <div class="flex items-center gap-2">
               <ow-avatar [initials]="team.initials" color="orange" />
               <span class="font-extrabold">{{ team.name }}</span>
             </div>
           </td>
-          <td class="py-[14px] px-4 border-b border-[#f1f3f4]">
-            <span class="text-[#34a853] font-extrabold">{{ team.wins }}</span>
+          <td class="py-[14px] px-4 border-b border-(--ow-border)">
+            <span class="text-(--ow-green) font-extrabold">{{ team.wins }}</span>
           </td>
           <td class="...">
             <ow-badge [variant]="team.status === 'Classificado' ? 'green' : 'red'">

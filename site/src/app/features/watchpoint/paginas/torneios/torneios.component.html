@@ -1,62 +1,62 @@
 <div class="my-8">
   <div class="space-y-2">
-    <h1 class="text-4xl font-black leading-tight text-(--ow-gray-900) lg:text-5xl">
+    <h1 class="text-4xl font-black leading-tight text-(--ow-text) lg:text-5xl">
       {{ pageTitle() }}
     </h1>
-    <p class="text-(--ow-gray-500)">
+    <p class="text-(--ow-text-muted)">
       {{ pageDescription() }}
     </p>
   </div>
 
   @if (editing() && loadingTournament()) {
-    <p class="text-sm font-medium text-(--ow-gray-600)">Carregando dados do torneio...</p>
+    <p class="text-sm font-medium text-(--ow-text)">Carregando dados do torneio...</p>
   }
 
   <form class="space-y-5" novalidate (submit)="onSubmit($event)">
     <div class="space-y-1.5">
-      <label for="torneio-name" class="text-sm font-semibold text-(--ow-gray-700)">
+      <label for="torneio-name" class="text-sm font-semibold text-(--ow-text)">
         Nome
       </label>
       <input
         id="torneio-name"
         type="text"
         placeholder="Ex: Copa Nova Era #3"
-        class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
+        class="w-full rounded-md border border-(--ow-border-strong) bg-(--ow-surface) px-3 py-2.5 text-(--ow-text) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
         [value]="form().name"
         (input)="updateField('name', $any($event.target).value)"
         (blur)="markTouched('name')"
       />
       @if (fieldError('name'); as error) {
-        <p class="text-sm font-medium text-red-600">{{ error }}</p>
+        <p class="text-sm font-medium text-(--ow-alert-error-text)">{{ error }}</p>
       }
     </div>
 
     <div class="space-y-1.5">
-      <label for="torneio-description" class="text-sm font-semibold text-(--ow-gray-700)">
+      <label for="torneio-description" class="text-sm font-semibold text-(--ow-text)">
         Descrição (opcional)
       </label>
       <textarea
         id="torneio-description"
         rows="3"
         placeholder="Regras curtas, observações e formato"
-        class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
+        class="w-full rounded-md border border-(--ow-border-strong) bg-(--ow-surface) px-3 py-2.5 text-(--ow-text) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
         [value]="form().description"
         (input)="updateField('description', $any($event.target).value)"
         (blur)="markTouched('description')"
       ></textarea>
       @if (fieldError('description'); as error) {
-        <p class="text-sm font-medium text-red-600">{{ error }}</p>
+        <p class="text-sm font-medium text-(--ow-alert-error-text)">{{ error }}</p>
       }
     </div>
 
     <div class="grid gap-4 md:grid-cols-2">
       <div class="space-y-1.5">
-        <label for="torneio-mode" class="text-sm font-semibold text-(--ow-gray-700)">
+        <label for="torneio-mode" class="text-sm font-semibold text-(--ow-text)">
           Modo de times
         </label>
         <select
           id="torneio-mode"
-          class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
+          class="w-full rounded-md border border-(--ow-border-strong) bg-(--ow-surface) px-3 py-2.5 text-(--ow-text) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
           [value]="form().teamMode"
           (change)="updateField('teamMode', $any($event.target).value)"
           (blur)="markTouched('teamMode')"
@@ -65,12 +65,12 @@
           <option value="closed">closed</option>
         </select>
         @if (fieldError('teamMode'); as error) {
-          <p class="text-sm font-medium text-red-600">{{ error }}</p>
+          <p class="text-sm font-medium text-(--ow-alert-error-text)">{{ error }}</p>
         }
       </div>
 
       <div class="space-y-1.5">
-        <label for="torneio-maxTeams" class="text-sm font-semibold text-(--ow-gray-700)">
+        <label for="torneio-maxTeams" class="text-sm font-semibold text-(--ow-text)">
           Número máximo de times
         </label>
         <input
@@ -79,65 +79,65 @@
           min="2"
           step="1"
           placeholder="8"
-          class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
+          class="w-full rounded-md border border-(--ow-border-strong) bg-(--ow-surface) px-3 py-2.5 text-(--ow-text) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
           [value]="form().maxTeams"
           (input)="updateField('maxTeams', $any($event.target).value)"
           (blur)="markTouched('maxTeams')"
         />
         @if (fieldError('maxTeams'); as error) {
-          <p class="text-sm font-medium text-red-600">{{ error }}</p>
+          <p class="text-sm font-medium text-(--ow-alert-error-text)">{{ error }}</p>
         }
       </div>
     </div>
 
     <div class="grid gap-4 md:grid-cols-2">
       <div class="space-y-1.5">
-        <label for="torneio-startAt" class="text-sm font-semibold text-(--ow-gray-700)">
+        <label for="torneio-startAt" class="text-sm font-semibold text-(--ow-text)">
           Início do torneio
         </label>
         <input
           id="torneio-startAt"
           type="datetime-local"
-          class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
+          class="w-full rounded-md border border-(--ow-border-strong) bg-(--ow-surface) px-3 py-2.5 text-(--ow-text) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
           [value]="form().startAt"
           (input)="updateField('startAt', $any($event.target).value)"
           (blur)="markTouched('startAt')"
         />
         @if (fieldError('startAt'); as error) {
-          <p class="text-sm font-medium text-red-600">{{ error }}</p>
+          <p class="text-sm font-medium text-(--ow-alert-error-text)">{{ error }}</p>
         }
       </div>
 
       <div class="space-y-1.5">
-        <label for="torneio-checkinDeadlineAt" class="text-sm font-semibold text-(--ow-gray-700)">
+        <label for="torneio-checkinDeadlineAt" class="text-sm font-semibold text-(--ow-text)">
           Fim do check-in
         </label>
         <input
           id="torneio-checkinDeadlineAt"
           type="datetime-local"
-          class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
+          class="w-full rounded-md border border-(--ow-border-strong) bg-(--ow-surface) px-3 py-2.5 text-(--ow-text) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
           [value]="form().checkinDeadlineAt"
           (input)="updateField('checkinDeadlineAt', $any($event.target).value)"
           (blur)="markTouched('checkinDeadlineAt')"
         />
         @if (fieldError('checkinDeadlineAt'); as error) {
-          <p class="text-sm font-medium text-red-600">{{ error }}</p>
+          <p class="text-sm font-medium text-(--ow-alert-error-text)">{{ error }}</p>
         }
       </div>
     </div>
 
     @if (isRandomMode()) {
-      <div class="space-y-3 rounded-lg border border-(--ow-gray-200) bg-(--ow-gray-100) p-4">
+      <div class="space-y-3 rounded-lg border border-(--ow-border) bg-(--ow-surface-sunken) p-4">
         <div class="space-y-1">
-          <h2 class="text-xl font-black text-(--ow-gray-900)">Slots por role (random)</h2>
-          <p class="text-sm text-(--ow-gray-600)">
+          <h2 class="text-xl font-black text-(--ow-text)">Slots por role (random)</h2>
+          <p class="text-sm text-(--ow-text)">
             A soma de tank + dps + support deve ser 8.
           </p>
         </div>
 
         <div class="grid gap-3 md:grid-cols-3">
           <div class="space-y-1.5">
-            <label for="torneio-tank" class="text-sm font-semibold text-(--ow-gray-700)">
+            <label for="torneio-tank" class="text-sm font-semibold text-(--ow-text)">
               Tank
             </label>
             <input
@@ -145,18 +145,18 @@
               type="number"
               min="0"
               step="1"
-              class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
+              class="w-full rounded-md border border-(--ow-border-strong) bg-(--ow-surface) px-3 py-2.5 text-(--ow-text) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
               [value]="form().tank"
               (input)="updateField('tank', $any($event.target).value)"
               (blur)="markTouched('tank')"
             />
             @if (fieldError('tank'); as error) {
-              <p class="text-sm font-medium text-red-600">{{ error }}</p>
+              <p class="text-sm font-medium text-(--ow-alert-error-text)">{{ error }}</p>
             }
           </div>
 
           <div class="space-y-1.5">
-            <label for="torneio-dps" class="text-sm font-semibold text-(--ow-gray-700)">
+            <label for="torneio-dps" class="text-sm font-semibold text-(--ow-text)">
               DPS
             </label>
             <input
@@ -164,18 +164,18 @@
               type="number"
               min="0"
               step="1"
-              class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
+              class="w-full rounded-md border border-(--ow-border-strong) bg-(--ow-surface) px-3 py-2.5 text-(--ow-text) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
               [value]="form().dps"
               (input)="updateField('dps', $any($event.target).value)"
               (blur)="markTouched('dps')"
             />
             @if (fieldError('dps'); as error) {
-              <p class="text-sm font-medium text-red-600">{{ error }}</p>
+              <p class="text-sm font-medium text-(--ow-alert-error-text)">{{ error }}</p>
             }
           </div>
 
           <div class="space-y-1.5">
-            <label for="torneio-support" class="text-sm font-semibold text-(--ow-gray-700)">
+            <label for="torneio-support" class="text-sm font-semibold text-(--ow-text)">
               Support
             </label>
             <input
@@ -183,13 +183,13 @@
               type="number"
               min="0"
               step="1"
-              class="w-full rounded-md border border-(--ow-gray-300) bg-white px-3 py-2.5 text-(--ow-gray-900) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
+              class="w-full rounded-md border border-(--ow-border-strong) bg-(--ow-surface) px-3 py-2.5 text-(--ow-text) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
               [value]="form().support"
               (input)="updateField('support', $any($event.target).value)"
               (blur)="markTouched('support')"
             />
             @if (fieldError('support'); as error) {
-              <p class="text-sm font-medium text-red-600">{{ error }}</p>
+              <p class="text-sm font-medium text-(--ow-alert-error-text)">{{ error }}</p>
             }
           </div>
         </div>
@@ -219,13 +219,13 @@
     </div>
 
     @if (!auth.isAuthenticated()) {
-      <p class="text-sm font-medium text-red-600">
+      <p class="text-sm font-medium text-(--ow-alert-error-text)">
         Faça login para salvar torneios.
       </p>
     }
 
     @if (auth.isAuthenticated() && !hasAdminPermission()) {
-      <p class="text-sm font-medium text-red-600">
+      <p class="text-sm font-medium text-(--ow-alert-error-text)">
         Seu usuário não possui permissão de administrador.
       </p>
     }
@@ -233,15 +233,15 @@
     @if (message(); as message) {
       <p
         class="text-sm font-medium"
-        [class.text-green-700]="status() === 'success'"
-        [class.text-red-600]="status() === 'error'"
+        [class.text-(--ow-alert-success-text)]="status() === 'success'"
+        [class.text-(--ow-alert-error-text)]="status() === 'error'"
       >
         {{ message }}
       </p>
     }
 
     @if (!editing() && createdTournamentId(); as tournamentId) {
-      <p class="text-sm text-(--ow-gray-600)">
+      <p class="text-sm text-(--ow-text)">
         ID criado: <strong>{{ tournamentId }}</strong>
       </p>
     }

@@ -36,10 +36,10 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
       <!-- Label + Description -->
       <div class="flex-1 min-w-0">
         @if (label()) {
-          <div class="text-[0.9rem] font-bold text-[#202124]">{{ label() }}</div>
+          <div class="text-[0.9rem] font-bold text-(--ow-text)">{{ label() }}</div>
         }
         @if (description()) {
-          <div class="text-[0.75rem] text-[#5f6368]">{{ description() }}</div>
+          <div class="text-[0.75rem] text-(--ow-text-muted)">{{ description() }}</div>
         }
         <ng-content />
       </div>
@@ -95,10 +95,10 @@ export class ToggleComponent implements ControlValueAccessor {
     const base = [
       'flex items-center justify-between gap-4',
       'py-[14px] px-[18px]',
-      'border-2 bg-white cursor-pointer',
+      'border-2 bg-(--ow-surface) cursor-pointer',
       'transition-all duration-[250ms]',
     ].join(' ');
-    const state = isOn ? 'border-[rgba(240,99,20,0.3)]' : 'border-[#e8eaed] hover:border-[#dadce0]';
+    const state = isOn ? 'border-(--ow-orange)' : 'border-(--ow-border) hover:border-(--ow-border-strong)';
     const dis = disabled ? 'opacity-50 cursor-not-allowed pointer-events-none' : '';
     return [base, state, dis].filter(Boolean).join(' ');
   });
@@ -107,14 +107,14 @@ export class ToggleComponent implements ControlValueAccessor {
     const isOn = this.checked();
     return [
       'w-12 h-[26px] rounded-[999px] relative shrink-0 transition-colors duration-[250ms]',
-      isOn ? 'bg-[#f06314]' : 'bg-[#e8eaed]',
+      isOn ? 'bg-(--ow-orange)' : 'bg-(--ow-border)',
     ].join(' ');
   });
 
   readonly thumbClass = computed(() => {
     const isOn = this.checked();
     return [
-      'absolute top-[3px] left-[3px] w-5 h-5 rounded-full bg-white',
+      'absolute top-[3px] left-[3px] w-5 h-5 rounded-full bg-(--ow-surface)',
       '[box-shadow:0_2px_4px_rgba(0,0,0,0.2)] transition-transform duration-[250ms]',
       isOn ? 'translate-x-[22px]' : 'translate-x-0',
     ].join(' ');

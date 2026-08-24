@@ -46,7 +46,7 @@ export class RadioItemComponent {
   template: `
     <div class="w-full">
       @if (groupLabel()) {
-        <div class="block text-[0.78rem] font-extrabold uppercase tracking-[0.12em] text-[#3c4043] mb-3">
+        <div class="block text-[0.78rem] font-extrabold uppercase tracking-[0.12em] text-(--ow-text) mb-3">
           {{ groupLabel() }}
         </div>
       }
@@ -101,9 +101,9 @@ export class RadioItemComponent {
               </div>
               <!-- Text -->
               <div>
-                <div class="text-[0.9rem] font-bold text-[#202124]">{{ item.label() }}</div>
+                <div class="text-[0.9rem] font-bold text-(--ow-text)">{{ item.label() }}</div>
                 @if (item.description()) {
-                  <div class="text-[0.75rem] text-[#5f6368] mt-[1px]">{{ item.description() }}</div>
+                  <div class="text-[0.75rem] text-(--ow-text-muted) mt-[1px]">{{ item.description() }}</div>
                 }
               </div>
             </label>
@@ -173,12 +173,12 @@ export class RadioGroupComponent implements ControlValueAccessor, AfterContentIn
     const isSelected = val === this.value();
     const base = [
       'flex items-center gap-3 cursor-pointer py-3 px-[18px]',
-      'border-2 bg-white transition-all duration-[250ms]',
+      'border-2 bg-(--ow-surface) transition-all duration-[250ms]',
       '[clip-path:polygon(3%_0,100%_0,100%_85%,97%_100%,0_100%,0_15%)]',
     ].join(' ');
     const state = isSelected
-      ? 'border-[#f06314] bg-[rgba(240,99,20,0.06)]'
-      : 'border-[#e8eaed] hover:border-[#f06314] hover:bg-[rgba(240,99,20,0.04)]';
+      ? 'border-(--ow-orange) bg-(--ow-orange-tint)'
+      : 'border-(--ow-border) hover:border-(--ow-orange) hover:bg-(--ow-orange-tint)';
     const disabled = itemDisabled || this.isDisabled() ? 'opacity-50 cursor-not-allowed pointer-events-none' : '';
     return [base, state, disabled].filter(Boolean).join(' ');
   }
@@ -188,14 +188,14 @@ export class RadioGroupComponent implements ControlValueAccessor, AfterContentIn
     return [
       'w-5 h-5 rounded-full border-2 shrink-0 transition-all duration-[250ms]',
       'flex items-center justify-center',
-      isSelected ? 'border-[#f06314] bg-[#f06314]' : 'border-[#dadce0] bg-white',
+      isSelected ? 'border-(--ow-orange) bg-(--ow-orange)' : 'border-(--ow-border-strong) bg-(--ow-surface)',
     ].join(' ');
   }
 
   indicatorDotClass(val: string): string {
     const isSelected = val === this.value();
     return [
-      'w-2 h-2 rounded-full bg-white transition-transform duration-200',
+      'w-2 h-2 rounded-full bg-(--ow-surface) transition-transform duration-200',
       isSelected ? 'scale-100' : 'scale-0',
     ].join(' ');
   }
@@ -209,8 +209,8 @@ export class RadioGroupComponent implements ControlValueAccessor, AfterContentIn
       'cursor-pointer border-2 transition-all duration-200 -ml-[2px] first:ml-0',
     ].join(' ');
     const state = isSelected
-      ? 'bg-[#f06314] border-[#f06314] text-white z-[2]'
-      : 'bg-white border-[#e8eaed] text-[#5f6368] hover:border-[#f06314] hover:text-[#f06314] z-[1]';
+      ? 'bg-(--ow-orange) border-(--ow-orange) text-(--ow-on-accent) z-[2]'
+      : 'bg-(--ow-surface) border-(--ow-border) text-(--ow-text-muted) hover:border-(--ow-orange) hover:text-(--ow-orange) z-[1]';
     const disabled = itemDisabled || this.isDisabled() ? 'opacity-50 cursor-not-allowed pointer-events-none' : '';
     return [base, state, disabled].filter(Boolean).join(' ');
   }
