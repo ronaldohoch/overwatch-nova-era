@@ -90,8 +90,10 @@
   --ow-panel-invert: none;
   --ow-panel-invert-soft: none;
 
-  /* Grade diagonal de fundo */
-  --ow-grid: #2a2a2e;
+  /* Grade diagonal de fundo: apagada no tema escuro. A grade e fixa na
+     viewport com mascara concentrada no rodape, e aparecia atraves do CTA
+     da home, que aqui e transparente. */
+  --ow-grid: transparent;
 
   /* Fundo de modal */
   --ow-overlay: rgba(0, 0, 0, 0.6);
