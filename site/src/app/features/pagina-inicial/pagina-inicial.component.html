@@ -26,9 +26,9 @@
   </div>
 </section>
 
-<!-- ─── A STG ─── -->
+<!-- ─── Origem e proposito ─── -->
 <section class="py-16 sm:py-20">
-  <div class="mx-auto max-w-3xl space-y-8">
+  <div class="mx-auto max-w-3xl space-y-10">
     <p class="text-lg leading-relaxed text-(--ow-text)">
       A STG Esports nasceu a partir da iniciativa da gestão da SG Jundiaí, de aproximar cada vez
       mais o público gamer do cenário competitivo, criando oportunidades para jogadores, equipes e
@@ -39,37 +39,46 @@
       Mais do que realizar campeonatos, nosso objetivo é criar experiências competitivas que
       conectem pessoas e fortaleçam as comunidades dos jogos que amamos.
     </p>
-
-    <p class="text-lg leading-relaxed text-(--ow-text)">
-      Ao longo desse projeto, já realizamos e sediamos campeonatos presenciais em nossa estrutura,
-      proporcionando aos jogadores a experiência de competir em um ambiente preparado para receber
-      o cenário competitivo. Esses eventos nos permitiram conhecer de perto diferentes comunidades,
-      equipes e jogadores, além de entender as necessidades de quem participa e acompanha os
-      esports.
-    </p>
-
-    <p class="text-lg leading-relaxed text-(--ow-text)">
-      Agora, ampliamos esse projeto também para o cenário online, permitindo que equipes de
-      diferentes regiões possam participar das nossas competições sem precisar estar fisicamente em
-      nossa estrutura.
-    </p>
   </div>
 </section>
 
-<!-- ─── A virada ─── -->
-<section class="border-y border-(--ow-border) py-16 text-center sm:py-20">
-  <p class="mx-auto max-w-4xl text-3xl font-black leading-tight tracking-tight text-(--ow-text) sm:text-4xl">
-    E é nesse movimento que chegamos ao Overwatch.
-  </p>
-</section>
+<!-- ─── Linha do tempo ─── -->
+<section class="border-t border-(--ow-border) py-16 sm:py-20">
+  <ol class="mx-auto max-w-4xl">
+    @for (marco of linhaDoTempo; track $index; let last = $last) {
+      <li class="relative flex gap-6 pb-12 last:pb-0 sm:gap-8">
+        <!-- Trilho vertical, interrompido no ultimo item -->
+        @if (!last) {
+          <span
+            class="absolute left-[27px] top-16 bottom-0 w-[2px] bg-(--ow-border) sm:left-[31px]"
+            aria-hidden="true"
+          ></span>
+        }
 
-<!-- ─── O campeonato ─── -->
-<section class="py-16 sm:py-20">
-  <p class="mx-auto max-w-3xl text-lg leading-relaxed text-(--ow-text)">
-    Estamos abraçando a comunidade competitiva de Overwatch com um campeonato 100% online, pensado
-    para reunir equipes de diferentes partes do Brasil e proporcionar uma experiência competitiva
-    organizada, acessível e voltada para a integração do cenário nacional.
-  </p>
+        @if (marco.virada) {
+          <!-- Marco de inflexao: losango vazado, sem ordinal -->
+          <span class="relative z-10 flex h-14 w-14 shrink-0 items-center justify-center sm:h-16 sm:w-16">
+            <span
+              class="h-5 w-5 rotate-45 border-[3px] border-(--ow-orange) bg-(--ow-bg)"
+              aria-hidden="true"
+            ></span>
+          </span>
+
+          <p class="self-center text-2xl font-black leading-tight tracking-tight text-(--ow-text) sm:text-3xl">
+            {{ marco.texto }}
+          </p>
+        } @else {
+          <span
+            class="relative z-10 flex h-14 w-14 shrink-0 items-center justify-center bg-[image:var(--gradient-orange)] text-lg font-black text-(--ow-on-accent) [clip-path:polygon(20%_0,100%_0,80%_100%,0_100%)] sm:h-16 sm:w-16 sm:text-xl"
+          >
+            {{ marco.numero }}
+          </span>
+
+          <p class="pt-3 text-lg leading-relaxed text-(--ow-text) sm:pt-4">{{ marco.texto }}</p>
+        }
+      </li>
+    }
+  </ol>
 </section>
 
 <!-- ─── Parceria ─── -->
