@@ -1,7 +1,11 @@
-# Decisões pendentes — contraste da paleta da marca
+# Contraste da paleta da marca — RESOLVIDO
 
-Dois itens da validação visual não foram aplicados porque mudam a
-identidade visual do site. Precisam da sua decisão.
+> **Status:** decidido e aplicado em 2026-08-24 (commit `8cd9db6`).
+> Escolhidas as opções **1-A** e **2-B**. O documento fica como registro
+> do que foi medido e por que cada caminho foi escolhido.
+
+Dois itens da validação visual dependiam de decisão porque mudavam a
+identidade visual do site.
 
 Ambos são **anteriores ao dark mode** — não são regressões do refactor.
 A paleta da Copa Nova Era sempre teve esses valores; o que a validação fez
