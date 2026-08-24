@@ -193,11 +193,11 @@ export class CheckInByTournamentComponent {
   roleBadgeClasses(role: CheckinListItem['role']): string {
     const base = 'inline-flex items-center rounded px-3 py-1 text-xs font-bold uppercase tracking-wider';
 
-    if (role === 'dps') return `${base} bg-(--ow-blue) text-(--ow-on-accent)`;
+    if (role === 'dps') return `${base} bg-(--ow-blue) text-(--ow-on-accent-dark)`;
     if (role === 'tank') return `${base} bg-(--ow-orange) text-(--ow-on-accent)`;
     if (role === 'support') return `${base} bg-(--ow-green) text-(--ow-on-accent)`;
     if (role === 'flex') return `${base} bg-(--ow-purple) text-(--ow-on-accent)`;
-    return `${base} bg-(--ow-gray-400) text-(--ow-on-accent)`;
+    return `${base} bg-(--ow-gray-400) text-(--ow-on-accent-dark)`;
   }
 
   filterLabel(filter: RoleFilter): string {

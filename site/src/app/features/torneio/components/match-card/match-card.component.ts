@@ -77,8 +77,8 @@ export class MatchCardComponent {
 
   private scoreClass(isWinner: boolean): string {
     return isWinner
-      ? 'font-black text-[1.2rem] text-(--ow-green)'
-      : 'font-black text-[1.2rem] text-(--ow-orange)';
+      ? 'font-black text-[1.2rem] text-(--ow-green-text)'
+      : 'font-black text-[1.2rem] text-(--ow-orange-text)';
   }
 
   private initials(name?: string | null): string {

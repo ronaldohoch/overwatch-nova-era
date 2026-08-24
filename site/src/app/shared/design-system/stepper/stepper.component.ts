@@ -99,8 +99,8 @@ export class StepperComponent implements AfterContentInit {
   labelClass(state: OwStepState): string {
     const base = 'text-[0.7rem] font-bold uppercase tracking-[0.1em] mt-2 text-center';
     const states: Record<OwStepState, string> = {
-      done: 'text-(--ow-green)',
-      active: 'text-(--ow-orange)',
+      done: 'text-(--ow-green-text)',
+      active: 'text-(--ow-orange-text)',
       pending: 'text-(--ow-text-muted)',
     };
     return `${base} ${states[state]}`;

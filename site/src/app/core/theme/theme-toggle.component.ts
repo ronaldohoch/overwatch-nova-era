@@ -11,7 +11,7 @@ import { ThemeService } from './theme.service';
       [attr.aria-pressed]="theme.isDark()"
       [attr.aria-label]="label()"
       [title]="label()"
-      class="inline-flex cursor-pointer items-center gap-2 border border-(--ow-border) bg-(--ow-surface-raised) px-4 py-2 text-[0.75rem] font-extrabold uppercase tracking-[0.12em] text-(--ow-text-muted) transition-colors duration-300 [clip-path:polygon(8%_0,100%_0,92%_100%,0_100%)] hover:border-(--ow-orange) hover:text-(--ow-orange) focus:outline-none focus-visible:ring-2 focus-visible:ring-(--ow-orange) focus-visible:ring-offset-2 focus-visible:ring-offset-(--ow-bg)"
+      class="inline-flex cursor-pointer items-center gap-2 border border-(--ow-border) bg-(--ow-surface-raised) px-4 py-2 text-[0.75rem] font-extrabold uppercase tracking-[0.12em] text-(--ow-text-muted) transition-colors duration-300 [clip-path:polygon(8%_0,100%_0,92%_100%,0_100%)] hover:border-(--ow-orange) hover:text-(--ow-orange-text) focus:outline-none focus-visible:ring-2 focus-visible:ring-(--ow-orange) focus-visible:ring-offset-2 focus-visible:ring-offset-(--ow-bg)"
     >
       @if (theme.isDark()) {
         <!-- Sol: clicar volta para o tema claro -->

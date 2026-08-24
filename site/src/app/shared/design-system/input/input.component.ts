@@ -37,7 +37,7 @@ export type OwInputType =
         <label [for]="inputId()" class="block text-[0.78rem] font-extrabold uppercase tracking-[0.12em] text-(--ow-text) mb-[7px]">
           {{ label() }}
           @if (required()) {
-            <span class="text-(--ow-orange) ml-[3px]">*</span>
+            <span class="text-(--ow-orange-text) ml-[3px]">*</span>
           }
         </label>
       }
@@ -152,8 +152,8 @@ export class InputComponent implements ControlValueAccessor {
     const base = 'text-[0.78rem] mt-[5px]';
     const stateColor: Record<OwInputState, string> = {
       default: 'text-(--ow-text-muted)',
-      error: 'text-(--ow-red)',
-      success: 'text-(--ow-green)',
+      error: 'text-(--ow-red-text)',
+      success: 'text-(--ow-green-text)',
     };
     return `${base} ${stateColor[this.state()]}`;
   });

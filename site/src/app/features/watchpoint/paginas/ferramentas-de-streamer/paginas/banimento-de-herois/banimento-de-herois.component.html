@@ -165,7 +165,7 @@
 
       <button
         class="px-5 py-2.5 text-[0.76rem] font-black uppercase tracking-[0.12em] border-b-[3px] -mb-0.5 transition-all duration-200 flex items-center gap-2 bg-transparent font-inherit cursor-pointer border-t-0 border-l-0 border-r-0"
-        [class]="roleFilter() === 'all' ? 'text-(--ow-orange) border-b-(--ow-orange)' : 'text-(--ow-text-muted) border-b-transparent hover:text-(--ow-orange)'"
+        [class]="roleFilter() === 'all' ? 'text-(--ow-orange-text) border-b-(--ow-orange)' : 'text-(--ow-text-muted) border-b-transparent hover:text-(--ow-orange-text)'"
         (click)="setRoleFilter('all')">
         Todos
         <span
@@ -177,7 +177,7 @@
 
       <button
         class="px-5 py-2.5 text-[0.76rem] font-black uppercase tracking-[0.12em] border-b-[3px] -mb-0.5 transition-all duration-200 flex items-center gap-2 bg-transparent font-inherit cursor-pointer border-t-0 border-l-0 border-r-0"
-        [class]="roleFilter() === 'Tank' ? 'text-(--ow-orange) border-b-(--ow-orange)' : 'text-(--ow-text-muted) border-b-transparent hover:text-(--ow-orange)'"
+        [class]="roleFilter() === 'Tank' ? 'text-(--ow-orange-text) border-b-(--ow-orange)' : 'text-(--ow-text-muted) border-b-transparent hover:text-(--ow-orange-text)'"
         (click)="setRoleFilter('Tank')">
         <img src="/imgs/icone-tanque.svg" alt="" width="13" height="13" aria-hidden="true">
         Tanque
@@ -190,7 +190,7 @@
 
       <button
         class="px-5 py-2.5 text-[0.76rem] font-black uppercase tracking-[0.12em] border-b-[3px] -mb-0.5 transition-all duration-200 flex items-center gap-2 bg-transparent font-inherit cursor-pointer border-t-0 border-l-0 border-r-0"
-        [class]="roleFilter() === 'Damage' ? 'text-(--ow-orange) border-b-(--ow-orange)' : 'text-(--ow-text-muted) border-b-transparent hover:text-(--ow-orange)'"
+        [class]="roleFilter() === 'Damage' ? 'text-(--ow-orange-text) border-b-(--ow-orange)' : 'text-(--ow-text-muted) border-b-transparent hover:text-(--ow-orange-text)'"
         (click)="setRoleFilter('Damage')">
         <img src="/imgs/icone-dano.svg" alt="" width="13" height="13" aria-hidden="true">
         Dano
@@ -203,7 +203,7 @@
 
       <button
         class="px-5 py-2.5 text-[0.76rem] font-black uppercase tracking-[0.12em] border-b-[3px] -mb-0.5 transition-all duration-200 flex items-center gap-2 bg-transparent font-inherit cursor-pointer border-t-0 border-l-0 border-r-0"
-        [class]="roleFilter() === 'Support' ? 'text-(--ow-orange) border-b-(--ow-orange)' : 'text-(--ow-text-muted) border-b-transparent hover:text-(--ow-orange)'"
+        [class]="roleFilter() === 'Support' ? 'text-(--ow-orange-text) border-b-(--ow-orange)' : 'text-(--ow-text-muted) border-b-transparent hover:text-(--ow-orange-text)'"
         (click)="setRoleFilter('Support')">
         <img src="/imgs/icone-suporte.svg" alt="" width="13" height="13" aria-hidden="true">
         Suporte

@@ -16,7 +16,7 @@
             class="h-11 w-11 object-cover"
           />
           <span class="flex flex-col leading-tight">
-            <span class="text-[0.65rem] font-black uppercase tracking-[0.2em] text-(--ow-orange)">
+            <span class="text-[0.65rem] font-black uppercase tracking-[0.2em] text-(--ow-orange-text)">
               @if (auth.isAuthenticated()) { Watchpoint } @else { Copa Overwatch }
             </span>
             <span class="text-[0.72rem] font-black uppercase tracking-[0.14em] text-(--ow-text)">
@@ -38,7 +38,7 @@
                 <a
                   [routerLink]="userProfileLink"
                   (click)="closeMobile()"
-                  class="text-[0.7rem] font-black uppercase tracking-widest text-(--ow-orange) no-underline hover:text-(--ow-orange-dark) transition-colors duration-200"
+                  class="text-[0.7rem] font-black uppercase tracking-widest text-(--ow-orange-text) no-underline hover:text-(--ow-orange-text) transition-colors duration-200"
                 >
                   {{ userDisplayName() }}
                 </a>
@@ -46,14 +46,14 @@
               @if (compactLoggedLinks()) {
                 <button
                   (click)="logout()"
-                  class="inline-block cursor-pointer relative no-underline text-(--ow-text-muted) font-bold uppercase tracking-widest text-[0.7rem] py-6.25 px-3 transition-colors duration-300 ease-[ease] hover:text-(--ow-orange) after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-full after:h-0 after:bg-(--ow-orange) after:[transition-property:all] after:duration-300 after:ease-[ease] hover:after:h-1"
+                  class="inline-block cursor-pointer relative no-underline text-(--ow-text-muted) font-bold uppercase tracking-widest text-[0.7rem] py-6.25 px-3 transition-colors duration-300 ease-[ease] hover:text-(--ow-orange-text) after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-full after:h-0 after:bg-(--ow-orange) after:[transition-property:all] after:duration-300 after:ease-[ease] hover:after:h-1"
                 >
                   Sair
                 </button>
               } @else {
                 <button
                   (click)="logout()"
-                  class="inline-block cursor-pointer relative no-underline text-(--ow-text-muted) font-bold uppercase tracking-widest text-[0.9rem] py-6.25 px-5 transition-colors duration-300 ease-[ease] hover:text-(--ow-orange) after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-full after:h-0 after:bg-(--ow-orange) after:[transition-property:all] after:duration-300 after:ease-[ease] hover:after:h-1"
+                  class="inline-block cursor-pointer relative no-underline text-(--ow-text-muted) font-bold uppercase tracking-widest text-[0.9rem] py-6.25 px-5 transition-colors duration-300 ease-[ease] hover:text-(--ow-orange-text) after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-full after:h-0 after:bg-(--ow-orange) after:[transition-property:all] after:duration-300 after:ease-[ease] hover:after:h-1"
                 >
                   Sair
                 </button>
@@ -103,7 +103,7 @@
                 <a
                   [routerLink]="userProfileLink"
                   (click)="closeMobile()"
-                  class="mb-3 block text-[0.72rem] font-black uppercase tracking-widest text-(--ow-orange) no-underline hover:text-(--ow-orange-dark) transition-colors duration-200"
+                  class="mb-3 block text-[0.72rem] font-black uppercase tracking-widest text-(--ow-orange-text) no-underline hover:text-(--ow-orange-text) transition-colors duration-200"
                 >
                   {{ userDisplayName() }}
                 </a>

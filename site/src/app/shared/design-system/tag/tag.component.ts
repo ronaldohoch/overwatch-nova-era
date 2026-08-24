@@ -27,7 +27,7 @@ export class TagComponent {
 
   private readonly VARIANTS: Record<OwTagVariant, string> = {
     default: 'border-(--ow-border) bg-(--ow-surface-raised) text-(--ow-text)',
-    orange: 'border-(--ow-orange) bg-(--ow-orange-tint-strong) text-(--ow-orange)',
+    orange: 'border-(--ow-orange) bg-(--ow-orange-tint-strong) text-(--ow-orange-text)',
   };
 
   readonly containerClass = computed(

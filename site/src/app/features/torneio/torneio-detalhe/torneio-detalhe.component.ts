@@ -57,8 +57,8 @@ export class TorneioDetalheComponent {
 
   readonly statusClass = computed(() => {
     const s = this.tournament()?.status ?? '';
-    if (s === 'running') return 'bg-(--ow-orange-tint-strong) text-(--ow-orange) border border-(--ow-orange)';
-    if (s === 'finished') return 'bg-(--ow-alert-success-bg) text-(--ow-green) border border-(--ow-green)';
+    if (s === 'running') return 'bg-(--ow-orange-tint-strong) text-(--ow-orange-text) border border-(--ow-orange)';
+    if (s === 'finished') return 'bg-(--ow-alert-success-bg) text-(--ow-green-text) border border-(--ow-green)';
     if (s === 'canceled') return 'bg-(--ow-alert-error-bg) text-(--ow-alert-error-text) border border-(--ow-red)';
     return 'bg-(--ow-surface-sunken) text-(--ow-text) border border-(--ow-border-strong)';
   });

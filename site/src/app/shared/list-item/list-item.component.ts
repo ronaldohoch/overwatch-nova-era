@@ -40,8 +40,8 @@ export class ListItemComponent {
       this.status() === 'live'
         ? ['bg-(--ow-red) text-(--ow-on-accent) animate-pulse']
         : this.status() === 'finished'
-          ? ['bg-(--ow-gray-400) text-(--ow-on-accent)']
-          : ['bg-(--ow-blue) text-(--ow-on-accent)'];
+          ? ['bg-(--ow-gray-400) text-(--ow-on-accent-dark)']
+          : ['bg-(--ow-blue) text-(--ow-on-accent-dark)'];
 
     return [...base, ...variant].join(' ');
   });

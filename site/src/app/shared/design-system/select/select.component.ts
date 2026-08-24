@@ -34,7 +34,7 @@ export interface OwSelectOption {
         >
           {{ label() }}
           @if (required()) {
-            <span class="text-(--ow-orange) ml-[3px]">*</span>
+            <span class="text-(--ow-orange-text) ml-[3px]">*</span>
           }
         </label>
       }
@@ -64,7 +64,7 @@ export interface OwSelectOption {
 
         <!-- Arrow icon -->
         <span
-          class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-(--ow-orange)"
+          class="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-(--ow-orange-text)"
           aria-hidden="true"
         >
           <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">

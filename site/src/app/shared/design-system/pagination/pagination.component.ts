@@ -58,10 +58,10 @@ export class PaginationComponent {
     'w-[38px] h-[38px] flex items-center justify-center text-[0.82rem] font-extrabold border-2 cursor-pointer transition-all duration-200 [clip-path:polygon(15%_0,100%_0,85%_100%,0_100%)] bg-(--ow-surface) font-[inherit] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--ow-orange)';
 
   private readonly BASE_BTN =
-    this.BTN_STRUCT + ' border-(--ow-border) text-(--ow-text) hover:border-(--ow-orange) hover:text-(--ow-orange)';
+    this.BTN_STRUCT + ' border-(--ow-border) text-(--ow-text) hover:border-(--ow-orange) hover:text-(--ow-orange-text)';
 
   readonly activePageClass =
-    this.BTN_STRUCT + ' border-(--ow-orange) text-(--ow-orange)';
+    this.BTN_STRUCT + ' border-(--ow-orange) text-(--ow-orange-text)';
 
   pageButtonClass(_active: boolean): string {
     return this.BASE_BTN;

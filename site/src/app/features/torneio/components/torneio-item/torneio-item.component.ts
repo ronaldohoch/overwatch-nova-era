@@ -27,7 +27,7 @@ export class TorneioItemComponent {
 
   readonly statusClass = computed(() =>
     this.isFinished()
-      ? 'text-(--ow-green) font-extrabold'
+      ? 'text-(--ow-green-text) font-extrabold'
       : 'text-(--ow-text-muted) font-bold',
   );
 }

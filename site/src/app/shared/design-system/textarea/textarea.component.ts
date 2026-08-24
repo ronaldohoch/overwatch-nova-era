@@ -30,7 +30,7 @@ export type OwTextareaState = 'default' | 'error' | 'success';
         >
           {{ label() }}
           @if (required()) {
-            <span class="text-(--ow-orange) ml-[3px]">*</span>
+            <span class="text-(--ow-orange-text) ml-[3px]">*</span>
           }
         </label>
       }
@@ -110,8 +110,8 @@ export class TextareaComponent implements ControlValueAccessor {
   readonly helperClass = computed(() => {
     const stateColor: Record<OwTextareaState, string> = {
       default: 'text-(--ow-text-muted)',
-      error: 'text-(--ow-red)',
-      success: 'text-(--ow-green)',
+      error: 'text-(--ow-red-text)',
+      success: 'text-(--ow-green-text)',
     };
     return `text-[0.78rem] mt-[5px] ${stateColor[this.state()]}`;
   });

@@ -63,7 +63,7 @@ export class AvatarGroupComponent {}
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div
-      class="w-14 h-14 rounded-full border-2 border-(--ow-orange) bg-(--ow-surface-sunken) flex items-center justify-center font-extrabold text-(--ow-orange) text-[1.2rem]"
+      class="w-14 h-14 rounded-full border-2 border-(--ow-orange) bg-(--ow-surface-sunken) flex items-center justify-center font-extrabold text-(--ow-orange-text) text-[1.2rem]"
     >
       @if (src()) {
         <img [src]="src()" [alt]="initials()" class="w-full h-full object-cover rounded-full" />
@@ -90,7 +90,7 @@ export class RoleBadgeComponent {
   readonly role = input.required<OwRoleBadge>();
 
   private readonly ROLE_VARIANTS: Record<OwRoleBadge, string> = {
-    tank: 'bg-(--ow-blue) text-(--ow-on-accent)',
+    tank: 'bg-(--ow-blue) text-(--ow-on-accent-dark)',
     damage: 'bg-(--ow-red) text-(--ow-on-accent)',
     support: 'bg-(--ow-green) text-(--ow-on-accent)',
     flex: 'bg-(--ow-yellow) text-(--ow-on-accent-dark)',

@@ -28,7 +28,7 @@
 
           <div class="flex flex-col gap-[0.55rem]">
             <div
-              class="flex items-center justify-center w-full aspect-square border-2 border-dashed border-(--ow-orange) rounded-[0.9rem] text-(--ow-orange-dark) text-[1.4rem] font-black tracking-[0.08em] uppercase"
+              class="flex items-center justify-center w-full aspect-square border-2 border-dashed border-(--ow-orange) rounded-[0.9rem] text-(--ow-orange-text) text-[1.4rem] font-black tracking-[0.08em] uppercase"
               style="background: radial-gradient(circle at top right, rgba(240, 99, 20, 0.22), transparent 62%), var(--ow-surface-raised)"
             >
               @if (team()?.logoUrl; as logoUrl) {
@@ -122,7 +122,7 @@
                     [href]="team.groupLink"
                     target="_blank"
                     rel="noopener noreferrer"
-                    class="font-semibold text-(--ow-orange-dark) underline"
+                    class="font-semibold text-(--ow-orange-text) underline"
                   >
                     Abrir grupo
                   </a>
@@ -298,7 +298,7 @@
                   </h3>
                 </div>
                 @if (member.isCaptain) {
-                  <span class="inline-flex items-center justify-center py-[0.2rem] px-[0.6rem] rounded-full text-[0.7rem] font-extrabold tracking-[0.04em] uppercase bg-(--ow-orange-tint-strong) text-(--ow-orange-dark)">Capitão</span>
+                  <span class="inline-flex items-center justify-center py-[0.2rem] px-[0.6rem] rounded-full text-[0.7rem] font-extrabold tracking-[0.04em] uppercase bg-(--ow-orange-tint-strong) text-(--ow-orange-text)">Capitão</span>
                 }
               </div>
 
@@ -483,8 +483,8 @@
     @if (isCurrentUserMember() || leaveTeamMessage()) {
       <div class="bg-(--ow-surface) mt-8">
         <div class="p-4 bg-(--ow-alert-error-bg) border-(--ow-red) border-l-4">
-          <h2 class="text-xl font-black text-(--ow-red-dark)">Sair do time</h2>
-          <p class="text-sm text-(--ow-red-dark)">
+          <h2 class="text-xl font-black text-(--ow-red-text)">Sair do time</h2>
+          <p class="text-sm text-(--ow-red-text)">
             Ao sair, você deixa de participar deste time e perde acesso à gestão dele.
           </p>
 

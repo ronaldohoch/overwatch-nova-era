@@ -48,9 +48,9 @@ export class ProgressComponent {
   };
 
   private readonly VALUE_COLORS: Record<OwProgressColor, string> = {
-    orange: 'text-(--ow-orange)',
-    blue: 'text-(--ow-blue)',
-    green: 'text-(--ow-green)',
+    orange: 'text-(--ow-orange-text)',
+    blue: 'text-(--ow-blue-text)',
+    green: 'text-(--ow-green-text)',
   };
 
   readonly clampedValue = computed(() => Math.min(100, Math.max(0, this.value())));

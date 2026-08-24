@@ -72,6 +72,15 @@
   --ow-text-muted: #9aa0a6;
   --ow-text-subtle: #868a90;
 
+  /* Cor de marca usada como TEXTO. No escuro sao os valores da marca, que
+     ja passam AA sobre #111111. No claro escurecem, porque sobre branco o
+     laranja da 3.23:1. Preenchimentos (botao, badge, borda) seguem usando
+     --ow-orange e companhia, sem alteracao. */
+  --ow-orange-text: #f06314;
+  --ow-blue-text: #00c3ff;
+  --ow-green-text: #34a853;
+  --ow-red-text: #ea4335;
+
   /* Bordas */
   --ow-border: #2a2a2e;
   --ow-border-strong: #3c4043;
@@ -135,6 +144,12 @@
   --ow-text: #202124;
   --ow-text-muted: #5f6368;
   --ow-text-subtle: #70757b;
+
+  /* Versoes escurecidas para uso como texto sobre superficie clara. */
+  --ow-orange-text: #b4470c;
+  --ow-blue-text: #00708f;
+  --ow-green-text: #237a3c;
+  --ow-red-text: #c0271b;
 
   /* Bordas */
   --ow-border: #e8eaed;

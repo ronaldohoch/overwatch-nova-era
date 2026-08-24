@@ -156,8 +156,8 @@ export class TorneioBracketComponent {
     const b = this.bracket();
     if (!b) return '';
     return b.status === 'finished'
-      ? 'text-(--ow-green) font-extrabold'
-      : 'text-(--ow-blue) font-extrabold';
+      ? 'text-(--ow-green-text) font-extrabold'
+      : 'text-(--ow-blue-text) font-extrabold';
   });
 
   readonly isRandomTournament = computed(() => this.tournamentTeamMode() === 'random');

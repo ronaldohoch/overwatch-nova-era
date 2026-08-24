@@ -26,7 +26,7 @@ export class TorneioTeamComponent {
 
   readonly scoreClass = computed(() =>
     this.isWinner()
-      ? 'text-[1.3rem] font-black text-(--ow-green)'
-      : 'text-[1.3rem] font-black text-(--ow-orange)',
+      ? 'text-[1.3rem] font-black text-(--ow-green-text)'
+      : 'text-[1.3rem] font-black text-(--ow-orange-text)',
   );
 }

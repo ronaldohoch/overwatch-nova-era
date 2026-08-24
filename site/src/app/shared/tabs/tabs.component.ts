@@ -72,8 +72,8 @@ export class TabsComponent implements AfterContentInit {
     'focus-visible:ring-2 focus-visible:ring-(--ow-orange) focus-visible:ring-offset-2 focus-visible:ring-offset-white',
   ].join(' ');
 
-  readonly tabButtonActiveClass = 'text-(--ow-orange) shadow-[inset_0_-3px_0_var(--ow-orange)]';
-  readonly tabButtonInactiveClass = 'text-(--ow-text-muted) hover:text-(--ow-orange)';
+  readonly tabButtonActiveClass = 'text-(--ow-orange-text) shadow-[inset_0_-3px_0_var(--ow-orange)]';
+  readonly tabButtonInactiveClass = 'text-(--ow-text-muted) hover:text-(--ow-orange-text)';
   readonly tabButtonDisabledClass =
     'opacity-40 cursor-not-allowed hover:text-(--ow-text-muted)';
 

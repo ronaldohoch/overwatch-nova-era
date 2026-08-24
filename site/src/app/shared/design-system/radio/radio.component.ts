@@ -210,7 +210,7 @@ export class RadioGroupComponent implements ControlValueAccessor, AfterContentIn
     ].join(' ');
     const state = isSelected
       ? 'bg-(--ow-orange) border-(--ow-orange) text-(--ow-on-accent) z-[2]'
-      : 'bg-(--ow-surface) border-(--ow-border) text-(--ow-text-muted) hover:border-(--ow-orange) hover:text-(--ow-orange) z-[1]';
+      : 'bg-(--ow-surface) border-(--ow-border) text-(--ow-text-muted) hover:border-(--ow-orange) hover:text-(--ow-orange-text) z-[1]';
     const disabled = itemDisabled || this.isDisabled() ? 'opacity-50 cursor-not-allowed pointer-events-none' : '';
     return [base, state, disabled].filter(Boolean).join(' ');
   }

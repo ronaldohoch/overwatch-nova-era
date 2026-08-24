@@ -13,7 +13,7 @@
     <span>{{ label() || 'Partida' }}</span>
 
     @if (canTriggerReport()) {
-      <button type="button" (click)="onReportClick()" class="cursor-pointer text-[0.7rem] font-extrabold uppercase tracking-widest text-(--ow-blue) underline">
+      <button type="button" (click)="onReportClick()" class="cursor-pointer text-[0.7rem] font-extrabold uppercase tracking-widest text-(--ow-blue-text) underline">
         REGISTRAR
       </button>
     } @else if (isLive()) {
@@ -49,7 +49,7 @@
       } @else {
         <div
           class="w-8 h-8 flex items-center justify-center shrink-0
-                 bg-(--ow-surface-sunken) text-(--ow-orange) text-[0.65rem] font-black
+                 bg-(--ow-surface-sunken) text-(--ow-orange-text) text-[0.65rem] font-black
                  [clip-path:polygon(20%_0,100%_0,100%_80%,80%_100%,0_100%,0_20%)]"
         >
           {{ team1Initials() }}
@@ -79,7 +79,7 @@
       } @else {
         <div
           class="w-8 h-8 flex items-center justify-center shrink-0
-                 bg-(--ow-surface-sunken) text-(--ow-orange) text-[0.65rem] font-black
+                 bg-(--ow-surface-sunken) text-(--ow-orange-text) text-[0.65rem] font-black
                  [clip-path:polygon(20%_0,100%_0,100%_80%,80%_100%,0_100%,0_20%)]"
         >
           {{ team2Initials() }}

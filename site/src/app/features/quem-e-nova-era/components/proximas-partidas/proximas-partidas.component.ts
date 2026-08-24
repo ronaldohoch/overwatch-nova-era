@@ -16,8 +16,8 @@ interface Partida {
   template: `
     <section class="py-16 sm:py-20 border-b border-(--ow-border)">
       <div class="mx-auto max-w-6xl px-4">
-        <p class="text-sm uppercase tracking-widest text-(--ow-orange) font-bold mb-2 text-center">Copa Nova Era · 2026</p>
-        <h2 class="text-4xl font-black text-center mb-12">Próximas <span class="text-(--ow-orange)">Partidas</span></h2>
+        <p class="text-sm uppercase tracking-widest text-(--ow-orange-text) font-bold mb-2 text-center">Copa Nova Era · 2026</p>
+        <h2 class="text-4xl font-black text-center mb-12">Próximas <span class="text-(--ow-orange-text)">Partidas</span></h2>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
           @for (partida of partidas; track partida.stage) {

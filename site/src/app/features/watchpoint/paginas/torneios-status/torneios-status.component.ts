@@ -194,7 +194,7 @@ export class TorneiosStatusComponent {
     const base =
       'inline-flex items-center rounded px-3 py-1 text-xs font-bold uppercase tracking-wider';
 
-    if (status === 'running') return `${base} bg-(--ow-blue) text-(--ow-on-accent)`;
+    if (status === 'running') return `${base} bg-(--ow-blue) text-(--ow-on-accent-dark)`;
     if (status === 'finished') return `${base} bg-(--ow-green) text-(--ow-on-accent)`;
     if (status === 'canceled') return `${base} bg-(--ow-red) text-(--ow-on-accent)`;
     if (status === 'checkin') return `${base} bg-(--ow-orange) text-(--ow-on-accent)`;
@@ -202,7 +202,7 @@ export class TorneiosStatusComponent {
     if (status === 'published') return `${base} bg-(--ow-blue-dark) text-(--ow-on-accent)`;
     if (status === 'draft') return `${base} bg-(--ow-gray-500) text-(--ow-on-accent)`;
 
-    return `${base} bg-(--ow-gray-400) text-(--ow-on-accent)`;
+    return `${base} bg-(--ow-gray-400) text-(--ow-on-accent-dark)`;
   }
 
   private async loadTournamentDetails(tournamentId: string): Promise<void> {

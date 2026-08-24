@@ -70,7 +70,7 @@ type TeamOption = Readonly<{
                 {{ team.membersCount }}/8 membros. {{ toCategoryLabel(team.category) }}
               </p>
               @if (assigningTeamId() === team.id) {
-                <p class="mt-1 text-xs font-semibold text-(--ow-orange)">Adicionando...</p>
+                <p class="mt-1 text-xs font-semibold text-(--ow-orange-text)">Adicionando...</p>
               }
             </button>
           }

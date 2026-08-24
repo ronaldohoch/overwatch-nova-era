@@ -25,12 +25,12 @@ export class BadgeComponent {
 
   private readonly VARIANTS: Record<OwBadgeVariant, string> = {
     orange: `${CLIP} bg-(--ow-orange) text-(--ow-on-accent)`,
-    blue: `${CLIP} bg-(--ow-blue) text-(--ow-on-accent)`,
+    blue: `${CLIP} bg-(--ow-blue) text-(--ow-on-accent-dark)`,
     green: `${CLIP} bg-(--ow-green) text-(--ow-on-accent)`,
     red: `${CLIP} bg-(--ow-red) text-(--ow-on-accent)`,
     yellow: `${CLIP} bg-(--ow-yellow) text-(--ow-on-accent-dark)`,
-    gray: `${CLIP} bg-(--ow-gray-400) text-(--ow-on-accent)`,
-    outline: 'bg-transparent text-(--ow-orange) border-[1.5px] border-(--ow-orange) py-[3px] px-3',
+    gray: `${CLIP} bg-(--ow-gray-400) text-(--ow-on-accent-dark)`,
+    outline: 'bg-transparent text-(--ow-orange-text) border-[1.5px] border-(--ow-orange) py-[3px] px-3',
     live: `${CLIP} bg-(--ow-red) text-(--ow-on-accent) animate-pulse`,
   };
 

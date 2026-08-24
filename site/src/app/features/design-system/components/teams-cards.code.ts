@@ -18,7 +18,7 @@ export class TeamsCardsCodeComponent {
     <!-- Logo com clip-path hexagonal -->
     <div class="w-[72px] h-[72px] bg-(--ow-surface-sunken)
       [clip-path:polygon(20%_0,100%_0,100%_80%,80%_100%,0_100%,0_20%)]
-      flex items-center justify-center text-[1.8rem] font-black text-(--ow-orange) mx-auto mb-4">
+      flex items-center justify-center text-[1.8rem] font-black text-(--ow-orange-text) mx-auto mb-4">
       TH
     </div>
 

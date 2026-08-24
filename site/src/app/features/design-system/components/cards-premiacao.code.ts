@@ -15,7 +15,7 @@ export class CardsPremiacaoCodeComponent {
   <!-- 1º Lugar -->
   <ow-card cardClass="text-center" contentClass="flex flex-col items-center">
     <div class="text-[3rem] mb-2">🥇</div>
-    <div class="text-[0.65rem] font-extrabold uppercase tracking-[0.2em] text-(--ow-orange) mb-1">1º Lugar</div>
+    <div class="text-[0.65rem] font-extrabold uppercase tracking-[0.2em] text-(--ow-orange-text) mb-1">1º Lugar</div>
     <div class="text-[1.5rem] font-black text-(--ow-text) mb-2">R$ 5.000</div>
     <p class="text-[0.8rem] text-(--ow-text-muted)">+ Trophy + Medal</p>
   </ow-card>

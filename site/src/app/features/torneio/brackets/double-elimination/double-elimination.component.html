@@ -8,7 +8,7 @@
     <!-- Cabeçalho da seção -->
     <div class="mb-3 flex items-center gap-3">
       <span
-        class="shrink-0 text-[0.7rem] font-black uppercase tracking-[0.15em] text-(--ow-orange)"
+        class="shrink-0 text-[0.7rem] font-black uppercase tracking-[0.15em] text-(--ow-orange-text)"
       >
         Chave dos Vencedores
       </span>
@@ -44,7 +44,7 @@
                            text-[0.72rem] font-bold text-(--ow-text-muted) uppercase tracking-widest"
                   >
                     <span>Jogo {{ match.matchNumber }}</span>
-                    <span class="text-[0.6rem] font-bold text-(--ow-blue) tracking-wider">
+                    <span class="text-[0.6rem] font-bold text-(--ow-blue-text) tracking-wider">
                       ARRASTAR PARA TROCAR
                     </span>
                   </div>
@@ -73,7 +73,7 @@
                         } @else {
                           <div
                             class="w-8 h-8 flex items-center justify-center shrink-0
-                                   bg-(--ow-surface-sunken) text-(--ow-orange) text-[0.65rem] font-black
+                                   bg-(--ow-surface-sunken) text-(--ow-orange-text) text-[0.65rem] font-black
                                    [clip-path:polygon(20%_0,100%_0,100%_80%,80%_100%,0_100%,0_20%)]"
                           >
                             {{ teamDisplayInitials(match.team1Id) }}
@@ -118,7 +118,7 @@
                         } @else {
                           <div
                             class="w-8 h-8 flex items-center justify-center shrink-0
-                                   bg-(--ow-surface-sunken) text-(--ow-orange) text-[0.65rem] font-black
+                                   bg-(--ow-surface-sunken) text-(--ow-orange-text) text-[0.65rem] font-black
                                    [clip-path:polygon(20%_0,100%_0,100%_80%,80%_100%,0_100%,0_20%)]"
                           >
                             {{ teamDisplayInitials(match.team2Id) }}
@@ -215,7 +215,7 @@
 
       <div class="mb-3 flex items-center gap-3">
         <span
-          class="shrink-0 text-[0.7rem] font-black uppercase tracking-[0.15em] text-(--ow-orange)"
+          class="shrink-0 text-[0.7rem] font-black uppercase tracking-[0.15em] text-(--ow-orange-text)"
         >
           Grande Final
         </span>

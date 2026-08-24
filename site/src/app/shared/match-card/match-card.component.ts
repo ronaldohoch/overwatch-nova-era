@@ -64,7 +64,7 @@ export class MatchCardComponent {
 
   scoreClass(team: OwMatchTeam): string {
     return team.winner
-      ? 'font-black text-[1.2rem] text-(--ow-green)'
-      : 'font-black text-[1.2rem] text-(--ow-orange)';
+      ? 'font-black text-[1.2rem] text-(--ow-green-text)'
+      : 'font-black text-[1.2rem] text-(--ow-orange-text)';
   }
 }

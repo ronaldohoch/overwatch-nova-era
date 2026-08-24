@@ -74,7 +74,7 @@
                 class="absolute top-full right-0 z-20 w-full bg-(--ow-surface) border border-(--ow-border) shadow-lg max-h-52 overflow-y-auto">
                 @for (team of team1Results(); track team.id) {
                   <button type="button"
-                    class="w-full flex items-center justify-end gap-2.5 px-3 py-2.5 text-[0.82rem] font-bold text-(--ow-text) hover:bg-(--ow-orange-tint) hover:text-(--ow-orange) transition-colors"
+                    class="w-full flex items-center justify-end gap-2.5 px-3 py-2.5 text-[0.82rem] font-bold text-(--ow-text) hover:bg-(--ow-orange-tint) hover:text-(--ow-orange-text) transition-colors"
                     (mousedown)="selectTeam1(team)">
                     <span>{{ team.name }}</span>
                     @if (team.logoUrl) {
@@ -112,7 +112,7 @@
         <button type="button"
           class="w-17 h-17 rounded-full border-4 flex items-center justify-center text-[0.5rem] font-black uppercase tracking-[0.12em] transition-all duration-300"
           [class]="canStart()
-            ? 'border-(--ow-orange) text-(--ow-orange) hover:bg-(--ow-orange) hover:text-(--ow-on-accent) cursor-pointer'
+            ? 'border-(--ow-orange) text-(--ow-orange-text) hover:bg-(--ow-orange) hover:text-(--ow-on-accent) cursor-pointer'
             : 'border-(--ow-border) text-(--ow-gray-300) cursor-not-allowed'"
           [disabled]="!canStart()"
           (click)="start()">
@@ -176,7 +176,7 @@
                 class="absolute top-full left-0 z-20 w-full bg-(--ow-surface) border border-(--ow-border) shadow-lg max-h-52 overflow-y-auto">
                 @for (team of team2Results(); track team.id) {
                   <button type="button"
-                    class="w-full flex items-center justify-start gap-2.5 px-3 py-2.5 text-[0.82rem] font-bold text-(--ow-text) hover:bg-(--ow-orange-tint) hover:text-(--ow-orange) transition-colors"
+                    class="w-full flex items-center justify-start gap-2.5 px-3 py-2.5 text-[0.82rem] font-bold text-(--ow-text) hover:bg-(--ow-orange-tint) hover:text-(--ow-orange-text) transition-colors"
                     (mousedown)="selectTeam2(team)">
                     @if (team.logoUrl) {
                       <img [src]="team.logoUrl" [alt]="team.name"

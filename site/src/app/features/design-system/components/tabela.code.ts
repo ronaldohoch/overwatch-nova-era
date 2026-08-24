@@ -29,7 +29,7 @@ export class TabelaCodeComponent {
       @for (team of teams; track team.id) {
         <tr class="hover:bg-(--ow-orange-tint) transition-colors">
           <td class="py-[14px] px-4 text-[0.875rem] border-b border-(--ow-border)">
-            <span class="text-(--ow-orange) font-black">{{ team.rank }}</span>
+            <span class="text-(--ow-orange-text) font-black">{{ team.rank }}</span>
           </td>
           <td class="py-[14px] px-4 border-b border-(--ow-border)">
             <div class="flex items-center gap-2">
@@ -38,7 +38,7 @@ export class TabelaCodeComponent {
             </div>
           </td>
           <td class="py-[14px] px-4 border-b border-(--ow-border)">
-            <span class="text-(--ow-green) font-extrabold">{{ team.wins }}</span>
+            <span class="text-(--ow-green-text) font-extrabold">{{ team.wins }}</span>
           </td>
           <td class="...">
             <ow-badge [variant]="team.status === 'Classificado' ? 'green' : 'red'">
