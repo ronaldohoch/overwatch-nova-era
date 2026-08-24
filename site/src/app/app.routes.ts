@@ -5,8 +5,19 @@ import { USER_ROLES } from './core/auth/user-role';
 export const routes: Routes = [
   {
     path: '',
-    title: 'Copa Overwatch Nova Era - Primeira Edição',
-    loadComponent: () => import('./features/pagina-inicial/pagina-inicial').then(m=>m.PaginaInicial)
+    title: 'STG Esports - Conectando comunidades através dos esports',
+    loadComponent: () =>
+      import('./features/pagina-inicial/pagina-inicial.component').then(
+        (m) => m.PaginaInicialComponent,
+      ),
+  },
+  {
+    path: 'quem-e-nova-era',
+    title: 'Copa Overwatch Nova Era - Quem é Nova Era?',
+    loadComponent: () =>
+      import('./features/quem-e-nova-era/quem-e-nova-era.component').then(
+        (m) => m.QuemENovaEraComponent,
+      ),
   },
   {
     path: 'como-funciona',

@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PaginaInicial } from './pagina-inicial';
+import { QuemENovaEraComponent } from './quem-e-nova-era.component';
 
-describe('PaginaInicial', () => {
-  let component: PaginaInicial;
-  let fixture: ComponentFixture<PaginaInicial>;
+describe('QuemENovaEraComponent', () => {
+  let component: QuemENovaEraComponent;
+  let fixture: ComponentFixture<QuemENovaEraComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PaginaInicial]
+      imports: [QuemENovaEraComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(PaginaInicial);
+    fixture = TestBed.createComponent(QuemENovaEraComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

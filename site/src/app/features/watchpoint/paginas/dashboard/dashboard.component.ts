@@ -5,7 +5,7 @@ import { environment } from '../../../../../environments/environment';
 // import { ButtonsComponent } from '../../../../shared/buttons/buttons';
 // import { StatsCardComponent } from './components/stats-card/stats-card.component';
 // import { ButtonsComponent } from "../../../../shared/buttons/buttons";
-import { ProximasPartidasComponent } from "../../../pagina-inicial/components/proximas-partidas/proximas-partidas.component";
+import { ProximasPartidasComponent } from "../../../quem-e-nova-era/components/proximas-partidas/proximas-partidas.component";
 
 type RoleCardModel = Readonly<{
   id: 'tank' | 'dps' | 'support';

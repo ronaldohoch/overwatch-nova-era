@@ -14,6 +14,7 @@ export type OwNavItem = Readonly<{
 
 const DEFAULT_LINKS: readonly OwNavItem[] = [
     { label: 'Início', link: '/', exact: true },
+    { label: 'Quem é Nova Era?', link: '/quem-e-nova-era' },
     { label: 'Como Funciona', link: '/como-funciona' },
     { label: 'Torneio', link: `/torneios/${environment.TOURNAMENT_ID}` },
     // { label: 'Times', link: '/times' },

@@ -14,7 +14,7 @@ interface Partida {
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [MatchCardComponent, RouterLink],
   template: `
-    <section class="py-16 sm:py-20 border-b border-(--ow-gray-200)">
+    <section class="py-16 sm:py-20 border-b border-(--ow-border)">
       <div class="mx-auto max-w-6xl px-4">
         <p class="text-sm uppercase tracking-widest text-(--ow-orange) font-bold mb-2 text-center">Copa Nova Era · 2026</p>
         <h2 class="text-4xl font-black text-center mb-12">Próximas <span class="text-(--ow-orange)">Partidas</span></h2>
@@ -35,7 +35,7 @@ interface Partida {
         <div class="mt-10 text-center">
           <a
             routerLink="/torneios/jCrpbomkCfDF4BLPJOsu"
-            class="inline-block px-8 py-3 bg-(--ow-orange) text-white font-bold uppercase tracking-widest text-sm hover:opacity-90 transition-opacity [clip-path:polygon(4%_0,100%_0,96%_100%,0_100%)]"
+            class="inline-block px-8 py-3 bg-(--ow-orange) text-(--ow-on-accent) font-bold uppercase tracking-widest text-sm hover:opacity-90 transition-opacity [clip-path:polygon(4%_0,100%_0,96%_100%,0_100%)]"
           >
             Veja as chaves completas
           </a>
@@ -56,10 +56,10 @@ export class ProximasPartidasComponent {
     },
     {
       stage: 'Fase de Grupos',
-      status: 'upcoming',
+      status: 'finished',
       teams: [
-        { name: 'Over Piece', score: '-' },
-        { name: 'Aldeia da Folha', score: '-' },
+        { name: 'Over Piece', score: '0' },
+        { name: 'Aldeia da Folha', score: '2', winner: true },
       ],
     },
     {
