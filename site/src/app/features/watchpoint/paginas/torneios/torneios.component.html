@@ -49,6 +49,14 @@
       }
     </div>
 
+    @if (lockedFieldsHint(); as lockedFieldsHint) {
+      <p
+        class="rounded-md border border-(--ow-border) bg-(--ow-surface) px-3 py-2 text-sm text-(--ow-text-muted)"
+      >
+        {{ lockedFieldsHint }}
+      </p>
+    }
+
     <div class="grid gap-4 md:grid-cols-2">
       <div class="space-y-1.5">
         <label for="torneio-mode" class="text-sm font-semibold text-(--ow-text)">
@@ -60,6 +68,7 @@
           [value]="form().teamMode"
           (change)="updateField('teamMode', $any($event.target).value)"
           (blur)="markTouched('teamMode')"
+          [disabled]="!canEditSetupFields()"
         >
           <option value="random">random</option>
           <option value="closed">closed</option>
@@ -83,6 +92,7 @@
           [value]="form().maxTeams"
           (input)="updateField('maxTeams', $any($event.target).value)"
           (blur)="markTouched('maxTeams')"
+          [disabled]="!canEditSetupFields()"
         />
         @if (fieldError('maxTeams'); as error) {
           <p class="text-sm font-medium text-(--ow-alert-error-text)">{{ error }}</p>
@@ -102,6 +112,7 @@
           [value]="form().startAt"
           (input)="updateField('startAt', $any($event.target).value)"
           (blur)="markTouched('startAt')"
+          [disabled]="!canEditCoreFields()"
         />
         @if (fieldError('startAt'); as error) {
           <p class="text-sm font-medium text-(--ow-alert-error-text)">{{ error }}</p>
@@ -119,6 +130,7 @@
           [value]="form().checkinDeadlineAt"
           (input)="updateField('checkinDeadlineAt', $any($event.target).value)"
           (blur)="markTouched('checkinDeadlineAt')"
+          [disabled]="!canEditCoreFields()"
         />
         @if (fieldError('checkinDeadlineAt'); as error) {
           <p class="text-sm font-medium text-(--ow-alert-error-text)">{{ error }}</p>
@@ -149,6 +161,7 @@
               [value]="form().tank"
               (input)="updateField('tank', $any($event.target).value)"
               (blur)="markTouched('tank')"
+              [disabled]="!canEditCoreFields()"
             />
             @if (fieldError('tank'); as error) {
               <p class="text-sm font-medium text-(--ow-alert-error-text)">{{ error }}</p>
@@ -168,6 +181,7 @@
               [value]="form().dps"
               (input)="updateField('dps', $any($event.target).value)"
               (blur)="markTouched('dps')"
+              [disabled]="!canEditCoreFields()"
             />
             @if (fieldError('dps'); as error) {
               <p class="text-sm font-medium text-(--ow-alert-error-text)">{{ error }}</p>
@@ -187,6 +201,7 @@
               [value]="form().support"
               (input)="updateField('support', $any($event.target).value)"
               (blur)="markTouched('support')"
+              [disabled]="!canEditCoreFields()"
             />
             @if (fieldError('support'); as error) {
               <p class="text-sm font-medium text-(--ow-alert-error-text)">{{ error }}</p>

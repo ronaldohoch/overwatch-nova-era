@@ -192,6 +192,29 @@ export class TorneiosService {
     }
     const canEditCore = t.status === 'draft';
 
+    // Campos definidos na criacao: alteracoes silenciosas aqui invalidariam
+    // check-ins, contadores e chaveamento ja gerados.
+    const immutableFields = (['teamMode', 'maxTeams'] as const).filter(
+      (field) => dto[field] != null,
+    );
+    if (immutableFields.length) {
+      throw new Error(
+        `Os campos ${immutableFields.join(', ')} nao podem ser alterados apos a criacao do torneio.`,
+      );
+    }
+
+    // Fora de draft esses campos eram descartados em silencio, com resposta 200.
+    if (!canEditCore) {
+      const draftOnlyFields = (['startAt', 'checkinDeadlineAt', 'roleSlotsPerTeam'] as const).filter(
+        (field) => dto[field] != null,
+      );
+      if (draftOnlyFields.length) {
+        throw new Error(
+          `Os campos ${draftOnlyFields.join(', ')} so podem ser alterados enquanto o torneio estiver em rascunho.`,
+        );
+      }
+    }
+
     const updateData: any = { updatedAt: FieldValue.serverTimestamp() };
 
     if (dto.name != null) {

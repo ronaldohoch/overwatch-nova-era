@@ -53,6 +53,22 @@ type SaveTournamentPayload = Readonly<{
   }>;
 }>;
 
+/**
+ * A edicao nunca envia teamMode/maxTeams, e so envia datas e vagas por role
+ * enquanto o torneio esta em rascunho: fora disso a API recusa esses campos.
+ */
+type UpdateTournamentPayload = Readonly<{
+  name: string;
+  description: string | null;
+  startAt?: string;
+  checkinDeadlineAt?: string;
+  roleSlotsPerTeam?: Readonly<{
+    tank: number;
+    dps: number;
+    support: number;
+  }>;
+}>;
+
 type SaveTournamentResponse = Readonly<Record<string, unknown>>;
 
 @Component({
@@ -70,6 +86,7 @@ export class TorneiosComponent {
   private readonly torneiosApiUrl = `${environment.apiURLTorneios}`;
 
   readonly tournamentId = signal<string | null>(null);
+  readonly tournamentStatus = signal<string | null>(null);
   readonly loadingTournament = signal(false);
 
   readonly form = signal<TournamentFormValue>({
@@ -110,6 +127,20 @@ export class TorneiosComponent {
       : 'Crie um torneio seguindo as mesmas regras da API de torneios.',
   );
   readonly isRandomMode = computed(() => this.form().teamMode === 'random');
+  /** Modo de times e numero de times sao definidos na criacao e nao mudam depois. */
+  readonly canEditSetupFields = computed(() => !this.editing());
+  /** Datas e vagas por role so podem mudar enquanto o torneio esta em rascunho. */
+  readonly canEditCoreFields = computed(
+    () => !this.editing() || this.tournamentStatus() === 'draft',
+  );
+  readonly lockedFieldsHint = computed(() => {
+    if (!this.editing()) return null;
+    if (this.canEditCoreFields()) {
+      return 'Modo de times e número de times foram definidos na criação e não podem ser alterados.';
+    }
+
+    return 'Este torneio saiu do rascunho: apenas nome e descrição podem ser alterados. Para mudar datas ou vagas por role, volte o torneio para rascunho na tela de status.';
+  });
   readonly errors = computed<TournamentErrors>(() => this.validateForm(this.form()));
   readonly hasErrors = computed(() =>
     TOURNAMENT_FIELDS.some((field) => this.errors()[field].length > 0),
@@ -181,19 +212,21 @@ export class TorneiosComponent {
     this.pending.set(true);
 
     try {
-      const payload = this.toPayload(this.form());
       const id = this.tournamentId();
 
       if (id) {
         await firstValueFrom(
-          this.http.patch<SaveTournamentResponse>(`${this.torneiosApiUrl}/${id}`, payload),
+          this.http.patch<SaveTournamentResponse>(
+            `${this.torneiosApiUrl}/${id}`,
+            this.toUpdatePayload(this.form()),
+          ),
         );
 
         this.message.set('Torneio atualizado com sucesso.');
         this.status.set('success');
       } else {
         const response = await firstValueFrom(
-          this.http.post<SaveTournamentResponse>(this.torneiosApiUrl, payload),
+          this.http.post<SaveTournamentResponse>(this.torneiosApiUrl, this.toPayload(this.form())),
         );
 
         const createdId = this.readString(response, 'id');
@@ -231,6 +264,7 @@ export class TorneiosComponent {
         throw new Error('Resposta inválida ao carregar torneio.');
       }
 
+      this.tournamentStatus.set((this.readString(response, 'status') ?? '').toLowerCase() || null);
       this.form.set(this.toFormValue(response));
       this.resetTouchState();
       this.submitted.set(false);
@@ -327,6 +361,36 @@ export class TorneiosComponent {
 
     return {
       ...payloadBase,
+      roleSlotsPerTeam: {
+        tank: Number.parseInt(value.tank, 10),
+        dps: Number.parseInt(value.dps, 10),
+        support: Number.parseInt(value.support, 10),
+      },
+    };
+  }
+
+  private toUpdatePayload(value: TournamentFormValue): UpdateTournamentPayload {
+    const base: UpdateTournamentPayload = {
+      name: value.name.trim(),
+      description: value.description.trim() ? value.description.trim() : null,
+    };
+
+    if (!this.canEditCoreFields()) {
+      return base;
+    }
+
+    const withDates: UpdateTournamentPayload = {
+      ...base,
+      startAt: this.toIsoDate(value.startAt),
+      checkinDeadlineAt: this.toIsoDate(value.checkinDeadlineAt),
+    };
+
+    if (value.teamMode !== 'random') {
+      return withDates;
+    }
+
+    return {
+      ...withDates,
       roleSlotsPerTeam: {
         tank: Number.parseInt(value.tank, 10),
         dps: Number.parseInt(value.dps, 10),
