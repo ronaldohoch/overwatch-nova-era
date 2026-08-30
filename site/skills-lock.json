@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "linkedin-content": {
+      "source": "openclaudia/openclaudia-skills",
+      "sourceType": "github",
+      "skillPath": "skills/linkedin-content/SKILL.md",
+      "computedHash": "fa2ea558bd1f67bd7538e2e4346dedd2bd0a32c6ba8509919210ef2d0ba7b973"
+    }
+  }
+}

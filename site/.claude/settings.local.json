@@ -3,7 +3,8 @@
     "allow": [
       "Bash(npm run build)",
       "Bash(xargs grep -l \"bracket\\\\|chaveamento\")",
-      "Bash(npx ng serve --no-open)"
+      "Bash(npx ng serve --no-open)",
+      "WebFetch(domain:github.com)"
     ]
   }
 }
