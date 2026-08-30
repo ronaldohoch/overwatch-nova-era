@@ -1,4 +1,5 @@
-import { Routes } from '@angular/router';
+import { inject } from '@angular/core';
+import { Router, Routes } from '@angular/router';
 import { routeAccessGuard } from './core/auth/route-access.guard';
 import { USER_ROLES } from './core/auth/user-role';
 
@@ -20,9 +21,9 @@ export const routes: Routes = [
       ),
   },
   {
+    // Como Funciona virou aba de "Quem e Nova Era?"; a rota antiga continua valendo como atalho.
     path: 'como-funciona',
-    title: 'Copa Overwatch Nova Era - Como Funciona',
-    loadComponent: () => import('./features/como-funciona/como-funciona.component').then(m => m.ComoFuncionaComponent)
+    redirectTo: () => inject(Router).parseUrl('/quem-e-nova-era?tab=como-funciona'),
   },
   {
     path: 'duvidas-frequentes',
@@ -30,9 +31,15 @@ export const routes: Routes = [
     loadComponent: () => import('./features/faq/faq.component').then(m=>m.FaqComponent)
   },
   {
+    path: 'regras-stg',
+    title: 'STG Overwatch Open - Regulamento',
+    loadComponent: () =>
+      import('./features/regras-stg/regras-stg.component').then((m) => m.RegrasStgComponent),
+  },
+  {
+    // Regras virou aba de "Quem e Nova Era?"; a rota antiga continua valendo como atalho.
     path: 'regras',
-    title: 'Copa Overwatch Nova Era - Regras',
-    loadComponent: () => import('./features/regras/regras.component').then(m=>m.RegrasComponent)
+    redirectTo: () => inject(Router).parseUrl('/quem-e-nova-era?tab=regras'),
   },
   {
     path: 'torneio',

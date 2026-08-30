@@ -10,9 +10,12 @@ import {
   TemplateRef,
   booleanAttribute,
   computed,
+  effect,
   inject,
   input,
+  output,
   signal,
+  untracked,
   viewChild,
 } from '@angular/core';
 
@@ -50,6 +53,11 @@ export class TabsComponent implements AfterContentInit {
   private readonly tabsState = signal<readonly TabsItemComponent[]>([]);
   readonly activeIndex = signal(0);
 
+  /** Abre a aba cujo `id` bate com este valor. Permite controlar as abas pela URL. */
+  readonly activeId = input<string | null | undefined>(undefined);
+  /** Emite o `id` da aba escolhida pelo usuario (ou o indice, quando a aba nao tem id). */
+  readonly activeIdChange = output<string>();
+
   readonly tabs = computed(() => this.tabsState());
   readonly hasTabs = computed(() => this.tabs().length > 0);
   readonly activeTab = computed(() => this.tabs()[this.activeIndex()] ?? null);
@@ -78,6 +86,21 @@ export class TabsComponent implements AfterContentInit {
     'opacity-40 cursor-not-allowed hover:text-(--ow-text-muted)';
 
   readonly panelBaseClass = 'py-6 text-[0.9rem] text-(--ow-text)';
+
+  constructor() {
+    effect(() => {
+      const requestedId = this.activeId();
+      const tabs = this.tabs();
+      if (!requestedId || tabs.length === 0) return;
+
+      const token = this.normalizeToken(requestedId);
+      const index = tabs.findIndex((tab) => this.tokenForTab(tab) === token);
+      if (index === -1 || tabs[index]?.disabled()) return;
+      if (untracked(() => this.activeIndex()) === index) return;
+
+      this.activeIndex.set(index);
+    });
+  }
 
   ngAfterContentInit(): void {
     this.syncTabs();
@@ -126,6 +149,7 @@ export class TabsComponent implements AfterContentInit {
     const tab = this.tabs()[index];
     if (!tab || tab.disabled()) return;
     this.activeIndex.set(index);
+    this.emitActiveId(index);
   }
 
   onTabKeydown(event: KeyboardEvent, currentIndex: number): void {
@@ -151,6 +175,7 @@ export class TabsComponent implements AfterContentInit {
 
     event.preventDefault();
     this.activeIndex.set(targetIndex);
+    this.emitActiveId(targetIndex);
     this.focusTab(targetIndex);
   }
 
@@ -213,6 +238,17 @@ export class TabsComponent implements AfterContentInit {
       const target = document.getElementById(this.tabButtonId(index));
       if (target instanceof HTMLButtonElement) target.focus();
     });
+  }
+
+  private emitActiveId(index: number): void {
+    const tab = this.tabs()[index];
+    if (!tab) return;
+    this.activeIdChange.emit(this.tokenForTab(tab));
+  }
+
+  private tokenForTab(tab: TabsItemComponent): string {
+    const customId = tab.id()?.trim();
+    return customId ? this.normalizeToken(customId) : String(this.tabs().indexOf(tab));
   }
 
   private normalizeToken(value: string): string {

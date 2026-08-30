@@ -15,11 +15,10 @@ export type OwNavItem = Readonly<{
 const DEFAULT_LINKS: readonly OwNavItem[] = [
     { label: 'Início', link: '/', exact: true },
     { label: 'Quem é Nova Era?', link: '/quem-e-nova-era' },
-    { label: 'Como Funciona', link: '/como-funciona' },
     { label: 'Torneio', link: `/torneios/${environment.TOURNAMENT_ID}` },
     // { label: 'Times', link: '/times' },
     // { label: 'Agenda', link: '/agenda' },
-    { label: 'Regras', link: '/regras' },
+    { label: 'Regras', link: '/regras-stg' },
 ];
 
 const MEMBER_LINKS: readonly OwNavItem[] = [

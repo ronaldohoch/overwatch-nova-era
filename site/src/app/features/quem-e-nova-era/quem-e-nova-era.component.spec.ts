@@ -1,4 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ActivatedRoute, convertToParamMap } from '@angular/router';
+import { of } from 'rxjs';
 
 import { QuemENovaEraComponent } from './quem-e-nova-era.component';
 
@@ -8,7 +10,13 @@ describe('QuemENovaEraComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [QuemENovaEraComponent]
+      imports: [QuemENovaEraComponent],
+      providers: [
+        {
+          provide: ActivatedRoute,
+          useValue: { queryParamMap: of(convertToParamMap({})) },
+        },
+      ],
     })
     .compileComponents();
 
@@ -19,5 +27,9 @@ describe('QuemENovaEraComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('abre a aba Sobre por padrao', () => {
+    expect(component.activeTabId()).toBe('sobre');
   });
 });

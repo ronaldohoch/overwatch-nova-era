@@ -1,0 +1,253 @@
+<div class="mx-auto w-full max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
+  <!-- ============================= HERO ============================= -->
+  <header class="text-center">
+    <ow-badge variant="orange">Regulamento</ow-badge>
+
+    <h1 class="mt-4 text-4xl font-black leading-tight text-(--ow-text) lg:text-6xl">
+      STG <span class="text-(--ow-orange-text)">Overwatch Open</span>
+    </h1>
+
+    <p class="mx-auto mt-6 max-w-3xl text-lg font-semibold text-(--ow-text)">
+      Bem-vindo(a) ao formulário de inscrição do STG Overwatch Open!
+    </p>
+
+    <div class="mx-auto mt-6 max-w-3xl space-y-4 text-left text-base leading-7 text-(--ow-text-muted) sm:text-center">
+      <p>
+        O campeonato foi criado para reunir equipes competitivas de Overwatch 2 em uma competição
+        organizada, buscando proporcionar uma experiência competitiva para jogadores e equipes de toda
+        a comunidade.
+      </p>
+      <p>
+        Devido à alta procura pelo campeonato, a organização decidiu realizar o STG Overwatch Open 100%
+        ONLINE, permitindo que equipes de diferentes localidades possam participar da competição.
+      </p>
+    </div>
+
+    <p class="mt-8 inline-flex items-center gap-2 border-l-4 border-(--ow-orange) bg-(--ow-orange-tint) px-4 py-3 text-left text-sm font-extrabold uppercase tracking-[0.08em] text-(--ow-text)">
+      Leia atentamente todas as informações antes de realizar sua inscrição.
+    </p>
+  </header>
+
+  <!-- ============================= ÍNDICE ============================= -->
+  <nav class="mt-10 flex flex-wrap justify-center gap-2" aria-label="Seções do regulamento">
+    @for (secao of indice; track secao.id) {
+      <a
+        [href]="'#' + secao.id"
+        class="border border-(--ow-border-strong) bg-(--ow-surface) px-4 py-2 text-xs font-extrabold uppercase tracking-[0.08em] text-(--ow-text-muted) transition-colors hover:border-(--ow-orange) hover:text-(--ow-orange-text) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--ow-orange)"
+      >
+        {{ secao.titulo }}
+      </a>
+    }
+  </nav>
+
+  <ow-divider class="my-10" />
+
+  <!-- ============================= FORMATO ============================= -->
+  <section id="formato" class="scroll-mt-24 space-y-6">
+    <h2 class="text-2xl font-black text-(--ow-text) sm:text-3xl">📅 Formato do Campeonato</h2>
+
+    <div class="grid gap-4 lg:grid-cols-2">
+      <ow-card cardClass="h-full">
+        <h3 class="text-lg font-extrabold text-(--ow-text)">🌐 Campeonato 100% ONLINE</h3>
+        <p class="mt-3 text-sm leading-7 text-(--ow-text)">
+          Todas as partidas do STG Overwatch Open serão realizadas online.
+        </p>
+
+        <ul class="mt-4 space-y-3">
+          @for (item of formatoOnline; track item) {
+            <li class="flex gap-3 text-sm leading-6 text-(--ow-text-muted)">
+              <span class="mt-2 h-1.5 w-1.5 shrink-0 rotate-45 bg-(--ow-orange)" aria-hidden="true"></span>
+              <span>{{ item }}</span>
+            </li>
+          }
+        </ul>
+      </ow-card>
+
+      <ow-card cardClass="h-full">
+        <h3 class="text-lg font-extrabold text-(--ow-text)">🏆 Fases da Competição</h3>
+
+        <ul class="mt-4 space-y-3">
+          @for (item of fasesCompeticao; track item) {
+            <li class="flex gap-3 text-sm leading-6 text-(--ow-text-muted)">
+              <span class="mt-2 h-1.5 w-1.5 shrink-0 rotate-45 bg-(--ow-blue)" aria-hidden="true"></span>
+              <span>{{ item }}</span>
+            </li>
+          }
+        </ul>
+      </ow-card>
+    </div>
+  </section>
+
+  <ow-divider class="my-10" />
+
+  <!-- ============================= INFORMAÇÕES GERAIS ============================= -->
+  <section id="informacoes" class="scroll-mt-24 space-y-6">
+    <h2 class="text-2xl font-black text-(--ow-text) sm:text-3xl">📌 Informações Gerais</h2>
+
+    <dl class="grid gap-px overflow-hidden border border-(--ow-border) bg-(--ow-border) sm:grid-cols-2 lg:grid-cols-4">
+      @for (info of informacoesGerais; track info.label) {
+        <div class="bg-(--ow-surface) p-5">
+          <dt class="text-[0.68rem] font-extrabold uppercase tracking-[0.14em] text-(--ow-orange-text)">
+            {{ info.label }}
+          </dt>
+          <dd class="mt-2 text-sm font-semibold leading-6 text-(--ow-text)">{{ info.value }}</dd>
+        </div>
+      }
+    </dl>
+  </section>
+
+  <ow-divider class="my-10" />
+
+  <!-- ============================= INSCRIÇÃO ============================= -->
+  <section id="inscricao" class="scroll-mt-24 space-y-6">
+    <h2 class="text-2xl font-black text-(--ow-text) sm:text-3xl">💰 Inscrição</h2>
+
+    <div class="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.6fr)]">
+      <div class="flex flex-col justify-center border border-(--ow-orange) bg-(--ow-orange-tint) p-6 text-center [clip-path:polygon(5%_0,100%_0,100%_95%,95%_100%,0_100%,0_5%)]">
+        <p class="text-[0.68rem] font-extrabold uppercase tracking-[0.14em] text-(--ow-text-muted)">
+          Valor da inscrição
+        </p>
+        <p class="mt-2 text-4xl font-black text-(--ow-orange-text)">R$ 180,00</p>
+        <p class="mt-1 text-sm font-semibold text-(--ow-text)">por equipe</p>
+      </div>
+
+      <ow-card cardClass="h-full">
+        <ul class="space-y-4">
+          @for (item of inscricao; track item) {
+            <li class="flex gap-3 text-sm leading-6 text-(--ow-text)">
+              <span class="mt-2 h-1.5 w-1.5 shrink-0 rotate-45 bg-(--ow-orange)" aria-hidden="true"></span>
+              <span>{{ item }}</span>
+            </li>
+          }
+        </ul>
+      </ow-card>
+    </div>
+
+    <div
+      class="flex gap-4 border-l-4 border-(--ow-red) bg-(--ow-alert-error-bg) p-5"
+      role="note"
+    >
+      <div class="shrink-0 text-xl" aria-hidden="true">⚠️</div>
+      <div>
+        <h3 class="text-sm font-extrabold uppercase tracking-[0.1em] text-(--ow-text)">Desistência</h3>
+        <p class="mt-2 text-sm leading-6 text-(--ow-text)">
+          Em caso de desistência da equipe após a confirmação da inscrição, o valor pago não será
+          devolvido.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <ow-divider class="my-10" />
+
+  <!-- ============================= PREMIAÇÃO ============================= -->
+  <section id="premiacao" class="scroll-mt-24 space-y-6">
+    <h2 class="text-2xl font-black text-(--ow-text) sm:text-3xl">🏆 Premiação</h2>
+
+    <p class="text-base leading-7 text-(--ow-text)">
+      O STG Overwatch Open contará com premiação em dinheiro, além de troféus, medalhas e brindes.
+    </p>
+
+    <p class="flex gap-3 border border-(--ow-border-strong) bg-(--ow-surface-raised) p-4 text-sm leading-6 text-(--ow-text)">
+      <span aria-hidden="true">💰</span>
+      <span>
+        O valor oficial da premiação em dinheiro será divulgado pela organização até o final de
+        setembro.
+      </span>
+    </p>
+
+    <div class="grid gap-4 md:grid-cols-3">
+      @for (lugar of premiacao; track lugar.titulo) {
+        <ow-card
+          [cardClass]="lugar.destaque ? 'h-full border-(--ow-orange)' : 'h-full'"
+        >
+          <h3 class="text-lg font-extrabold text-(--ow-text)">{{ lugar.titulo }}</h3>
+
+          <ul class="mt-4 space-y-2">
+            @for (item of lugar.itens; track item) {
+              <li class="flex gap-3 text-sm leading-6 text-(--ow-text-muted)">
+                <span
+                  class="mt-2 h-1.5 w-1.5 shrink-0 rotate-45"
+                  [class]="lugar.destaque ? 'bg-(--ow-orange)' : 'bg-(--ow-gray-400)'"
+                  aria-hidden="true"
+                ></span>
+                <span>{{ item }}</span>
+              </li>
+            }
+          </ul>
+        </ow-card>
+      }
+    </div>
+
+    <p class="text-sm italic leading-6 text-(--ow-text-muted)">
+      A organização poderá adicionar novas premiações, brindes e ativações ao longo do campeonato.
+    </p>
+  </section>
+
+  <ow-divider class="my-10" />
+
+  <!-- ============================= REGRAS GERAIS ============================= -->
+  <section id="regras-gerais" class="scroll-mt-24 space-y-6">
+    <h2 class="text-2xl font-black text-(--ow-text) sm:text-3xl">📜 Regras Gerais</h2>
+
+    <p class="border-l-4 border-(--ow-blue) bg-(--ow-surface-raised) p-4 text-base leading-7 text-(--ow-text)">
+      Ao realizar a inscrição, o responsável pela equipe declara que todos os integrantes estão de
+      acordo com as regras e condições do campeonato.
+    </p>
+
+    <ol class="grid gap-px overflow-hidden border border-(--ow-border) bg-(--ow-border)">
+      @for (regra of regrasGerais; track regra; let i = $index) {
+        <li class="flex items-start gap-4 bg-(--ow-surface) p-5 transition-colors hover:bg-(--ow-surface-raised)">
+          <span class="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center bg-(--ow-orange-tint-strong) text-xs font-black text-(--ow-orange-text) [clip-path:polygon(15%_0,100%_0,85%_100%,0%_100%)]">
+            {{ i + 1 }}
+          </span>
+          <span class="text-sm leading-6 text-(--ow-text)">{{ regra }}</span>
+        </li>
+      }
+    </ol>
+  </section>
+
+  <ow-divider class="my-10" />
+
+  <!-- ============================= COMUNICAÇÃO ============================= -->
+  <section id="comunicacao" class="scroll-mt-24 space-y-6">
+    <h2 class="text-2xl font-black text-(--ow-text) sm:text-3xl">📢 Comunicação</h2>
+
+    <p class="text-base leading-7 text-(--ow-text)">
+      Todas as informações importantes sobre o campeonato, incluindo:
+    </p>
+
+    <ul class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      @for (item of comunicacaoItens; track item) {
+        <li class="flex items-center gap-3 border border-(--ow-border) bg-(--ow-surface) px-4 py-3 text-sm font-semibold text-(--ow-text)">
+          <span class="h-1.5 w-1.5 shrink-0 rotate-45 bg-(--ow-blue)" aria-hidden="true"></span>
+          {{ item }}
+        </li>
+      }
+    </ul>
+
+    <p class="text-base leading-7 text-(--ow-text)">
+      serão divulgadas pelos canais oficiais da STG e/ou diretamente aos capitães das equipes.
+    </p>
+
+    <p class="text-base leading-7 text-(--ow-text-muted)">
+      É responsabilidade do capitão acompanhar os canais oficiais e manter seus meios de contato
+      atualizados.
+    </p>
+  </section>
+
+  <!-- ============================= FECHAMENTO ============================= -->
+  <section class="mt-12 border border-(--ow-border-strong) bg-(--ow-surface-raised) p-8 text-center [clip-path:polygon(3%_0,100%_0,100%_92%,97%_100%,0_100%,0_8%)] sm:p-12">
+    <h2 class="text-2xl font-black text-(--ow-text) sm:text-3xl">🎮 Prepare sua equipe!</h2>
+
+    <p class="mx-auto mt-4 max-w-2xl text-base leading-7 text-(--ow-text)">
+      Monte sua line, organize sua estratégia e prepare-se para disputar o STG Overwatch Open.
+    </p>
+
+    <p class="mx-auto mt-6 max-w-2xl text-lg font-black uppercase tracking-[0.06em] text-(--ow-orange-text)">
+      100% ONLINE. Competição de verdade. Uma só equipe será campeã. 🏆
+    </p>
+
+    <p class="mt-6 text-sm font-semibold text-(--ow-text-muted)">Boa sorte a todas as equipes!</p>
+  </section>
+</div>

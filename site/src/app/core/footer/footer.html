@@ -3,9 +3,9 @@
 >
 <!-- xl:bg-[url(/imgs/footer.webp)] xl:bg-no-repeat xl:bg-contain xl:bg-bottom-right -->
   <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-    <div class="mb-10 grid gap-8 md:grid-cols-4">
+    <div class="mb-10 grid gap-8 md:grid-cols-2 lg:grid-cols-12">
       <!-- Brand -->
-      <div class="md:col-span-2">
+      <div class="lg:col-span-4">
         <div
           class="mb-5 text-3xl font-black uppercase tracking-widest text-(--ow-text)"
         >
@@ -24,107 +24,103 @@
 
       </div>
 
-      <!-- Links Rápidos -->
-      <div>
+      <!-- STG Overwatch Open -->
+      <nav
+        class="border-l-2 border-(--ow-orange) bg-(--ow-orange-tint) py-4 pl-5 pr-4 lg:col-span-3"
+        aria-labelledby="footer-grupo-stg"
+      >
+        <p class="mb-1 inline-block bg-(--ow-orange) px-3 py-[3px] text-[0.62rem] font-black uppercase tracking-[0.18em] text-(--ow-on-accent) [clip-path:polygon(10%_0,100%_0,90%_100%,0%_100%)]">
+          STG
+        </p>
+
         <h4
+          id="footer-grupo-stg"
           class="mb-4 text-lg font-bold uppercase tracking-wider text-(--ow-orange-text)"
         >
-          Links
+          Overwatch Open
         </h4>
 
         <ul class="list-none p-0">
-          <li class="mb-2.5">
-            <a
-              routerLink="/"
-              class="font-semibold text-(--ow-text-muted) no-underline transition-colors duration-300 hover:text-(--ow-orange-text) focus:outline-none focus-visible:ring-2 focus-visible:ring-(--ow-orange) focus-visible:ring-offset-2 focus-visible:ring-offset-(--ow-bg) active:text-(--ow-orange-text)"
-            >
-              Início
-            </a>
-          </li>
-          <li class="mb-2.5">
-            <a
-              routerLink="/como-funciona"
-              class="font-semibold text-(--ow-text-muted) no-underline transition-colors duration-300 hover:text-(--ow-orange-text) focus:outline-none focus-visible:ring-2 focus-visible:ring-(--ow-orange) focus-visible:ring-offset-2 focus-visible:ring-offset-(--ow-bg) active:text-(--ow-orange-text)"
-            >
-              Como funciona
-            </a>
-          </li>
-          <li class="mb-2.5">
-            <a
-              routerLink="/duvidas-frequentes"
-              class="font-semibold text-(--ow-text-muted) no-underline transition-colors duration-300 hover:text-(--ow-orange-text) focus:outline-none focus-visible:ring-2 focus-visible:ring-(--ow-orange) focus-visible:ring-offset-2 focus-visible:ring-offset-(--ow-bg) active:text-(--ow-orange-text)"
-            >
-              Duvidas frequentes
-            </a>
-          </li>
-          <li class="mb-2.5">
-            <a
-              routerLink="/regras"
-              class="font-semibold text-(--ow-text-muted) no-underline transition-colors duration-300 hover:text-(--ow-orange-text) focus:outline-none focus-visible:ring-2 focus-visible:ring-(--ow-orange) focus-visible:ring-offset-2 focus-visible:ring-offset-(--ow-bg) active:text-(--ow-orange-text)"
-            >
-              Regras
-            </a>
-          </li>
-          <li class="mb-2.5">
-            <a
-              routerLink="/login"
-              class="font-semibold text-(--ow-text-muted) no-underline transition-colors duration-300 hover:text-(--ow-orange-text) focus:outline-none focus-visible:ring-2 focus-visible:ring-(--ow-orange) focus-visible:ring-offset-2 focus-visible:ring-offset-(--ow-bg) active:text-(--ow-orange-text)"
-            >
-              Minha conta
-            </a>
-          </li>
+          @for (item of stgLinks; track item.label) {
+            <li class="mb-2.5">
+              <a
+                [routerLink]="item.link"
+                class="group inline-flex items-center gap-2 font-semibold text-(--ow-text-muted) no-underline transition-colors duration-300 hover:text-(--ow-orange-text) focus:outline-none focus-visible:ring-2 focus-visible:ring-(--ow-orange) focus-visible:ring-offset-2 focus-visible:ring-offset-(--ow-bg) active:text-(--ow-orange-text)"
+              >
+                <span class="h-1.5 w-1.5 shrink-0 rotate-45 bg-(--ow-orange) opacity-60 transition-opacity duration-300 group-hover:opacity-100" aria-hidden="true"></span>
+                {{ item.label }}
+              </a>
+            </li>
+          }
         </ul>
-      </div>
+      </nav>
+
+      <!-- Copa Overwatch Nova Era -->
+      <nav
+        class="border-l-2 border-(--ow-blue) py-4 pl-5 pr-4 lg:col-span-3"
+        aria-labelledby="footer-grupo-nova-era"
+      >
+        <p class="mb-1 inline-block border-[1.5px] border-(--ow-blue) px-3 py-[2px] text-[0.62rem] font-black uppercase tracking-[0.18em] text-(--ow-blue-text)">
+          Copa
+        </p>
+
+        <h4
+          id="footer-grupo-nova-era"
+          class="mb-4 text-lg font-bold uppercase tracking-wider text-(--ow-blue-text)"
+        >
+          Nova Era
+        </h4>
+
+        <ul class="list-none p-0">
+          @for (item of novaEraLinks; track item.label) {
+            <li class="mb-2.5">
+              <a
+                [routerLink]="item.link"
+                [queryParams]="item.queryParams ?? null"
+                class="group inline-flex items-center gap-2 font-semibold text-(--ow-text-muted) no-underline transition-colors duration-300 hover:text-(--ow-blue-text) focus:outline-none focus-visible:ring-2 focus-visible:ring-(--ow-blue) focus-visible:ring-offset-2 focus-visible:ring-offset-(--ow-bg) active:text-(--ow-blue-text)"
+              >
+                <span class="h-px w-3 shrink-0 bg-(--ow-blue) opacity-60 transition-all duration-300 group-hover:w-5 group-hover:opacity-100" aria-hidden="true"></span>
+                {{ item.label }}
+              </a>
+            </li>
+          }
+        </ul>
+      </nav>
 
       <!-- Recursos -->
-      <div>
+      <nav class="py-4 lg:col-span-2" aria-labelledby="footer-grupo-recursos">
         <h4
-          class="mb-4 text-lg font-bold uppercase tracking-wider text-(--ow-orange-text)"
+          id="footer-grupo-recursos"
+          class="mb-4 text-lg font-bold uppercase tracking-wider text-(--ow-text)"
         >
           Recursos
         </h4>
 
         <ul class="list-none p-0">
-          <li class="mb-2.5">
-            <a
-              href="https://overwatch.blizzard.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="font-semibold text-(--ow-text-muted) no-underline transition-colors duration-300 hover:text-(--ow-orange-text) focus:outline-none focus-visible:ring-2 focus-visible:ring-(--ow-orange) focus-visible:ring-offset-2 focus-visible:ring-offset-(--ow-bg) active:text-(--ow-orange-text)"
-            >
-              Site Oficial Overwatch
-            </a>
-          </li>
-          <li class="mb-2.5">
-            <a
-              href="https://esports.overwatch.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="font-semibold text-(--ow-text-muted) no-underline transition-colors duration-300 hover:text-(--ow-orange-text) focus:outline-none focus-visible:ring-2 focus-visible:ring-(--ow-orange) focus-visible:ring-offset-2 focus-visible:ring-offset-(--ow-bg) active:text-(--ow-orange-text)"
-            >
-              Overwatch Esports
-            </a>
-          </li>
-          <li class="mb-2.5">
-            <a
-              href="https://blizzard.gamespress.com/overwatch"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="font-semibold text-(--ow-text-muted) no-underline transition-colors duration-300 hover:text-(--ow-orange-text) focus:outline-none focus-visible:ring-2 focus-visible:ring-(--ow-orange) focus-visible:ring-offset-2 focus-visible:ring-offset-(--ow-bg) active:text-(--ow-orange-text)"
-            >
-              Press Kit
-            </a>
-          </li>
-          <li class="mb-2.5">
-            <a
-              routerLink="/design-system"
-              class="font-semibold text-(--ow-text-muted) no-underline transition-colors duration-300 hover:text-(--ow-orange-text) focus:outline-none focus-visible:ring-2 focus-visible:ring-(--ow-orange) focus-visible:ring-offset-2 focus-visible:ring-offset-(--ow-bg) active:text-(--ow-orange-text)"
-            >
-              Design system
-            </a>
-          </li>
+          @for (item of recursosLinks; track item.label) {
+            <li class="mb-2.5">
+              @if (item.href) {
+                <a
+                  [href]="item.href"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="inline-flex items-center gap-1.5 font-semibold text-(--ow-text-muted) no-underline transition-colors duration-300 hover:text-(--ow-orange-text) focus:outline-none focus-visible:ring-2 focus-visible:ring-(--ow-orange) focus-visible:ring-offset-2 focus-visible:ring-offset-(--ow-bg) active:text-(--ow-orange-text)"
+                >
+                  {{ item.label }}
+                  <span class="text-xs" aria-hidden="true">↗</span>
+                </a>
+              } @else {
+                <a
+                  [routerLink]="item.link"
+                  class="font-semibold text-(--ow-text-muted) no-underline transition-colors duration-300 hover:text-(--ow-orange-text) focus:outline-none focus-visible:ring-2 focus-visible:ring-(--ow-orange) focus-visible:ring-offset-2 focus-visible:ring-offset-(--ow-bg) active:text-(--ow-orange-text)"
+                >
+                  {{ item.label }}
+                </a>
+              }
+            </li>
+          }
         </ul>
-      </div>
+      </nav>
     </div>
 
     <!-- Legal -->
@@ -152,4 +148,3 @@
     </div>
   </div>
 </footer>
-

@@ -3,7 +3,7 @@ import { provideRouter } from '@angular/router';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 
 import { routes } from './app.routes';
-import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
+import { provideClientHydration, withIncrementalHydration } from '@angular/platform-browser';
 import { environment } from '../environments/environment';
 import { AUTH_API_BASE_URL } from './core/auth/auth.tokens';
 import { authInterceptor } from './core/auth/auth.interceptor';
@@ -13,7 +13,7 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideZonelessChangeDetection(),
     provideRouter(routes),
-    provideClientHydration(withEventReplay()),
+    provideClientHydration(withIncrementalHydration()),
     {
       provide: AUTH_API_BASE_URL,
       useValue: environment.apiURLAuth,
