@@ -1,0 +1,14 @@
+{
+  "name": "overwatch-nova-era",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Raiz do projeto: atalhos de deploy para o site (site/) e para a API (api2/).",
+  "scripts": {
+    "deploy": "node scripts/deploy.mjs site",
+    "deploy:site": "node scripts/deploy.mjs site",
+    "deploy:api": "node scripts/deploy.mjs api",
+    "deploy:rules": "node scripts/deploy.mjs rules",
+    "deploy:all": "node scripts/deploy.mjs all",
+    "preview:site": "node scripts/deploy.mjs preview"
+  }
+}
