@@ -23,6 +23,7 @@ export type OwBtnVariant =
 
 export type OwBtnSize = 'sm' | 'md' | 'lg' | 'icon';
 export type OwBtnType = 'button' | 'submit' | 'reset';
+export type OwBtnTarget = '_blank' | '_self' | '_parent' | '_top';
 export type OwBtnRouterLink = string | readonly (string | number)[];
 
 type OwBtnVisualVariant = 'primary' | 'secondary' | 'blue' | 'ghost' | 'danger';
@@ -50,6 +51,8 @@ type OwBtnVisualVariant = 'primary' | 'secondary' | 'blue' | 'ghost' | 'danger';
     } @else if (hasHref()) {
       <a
         [attr.href]="hrefAttr()"
+        [attr.target]="targetAttr()"
+        [attr.rel]="relAttr()"
         [attr.aria-disabled]="disabled()"
         [attr.aria-label]="ariaLabel() ?? null"
         [attr.tabindex]="disabled() ? -1 : 0"
@@ -77,6 +80,8 @@ export class ButtonsComponent {
   readonly routerLink = input<OwBtnRouterLink | undefined>(undefined);
   readonly href = input<string | undefined>(undefined);
   readonly type = input<OwBtnType>('button');
+  /** Sobrescreve o alvo do link. Sem valor, link externo abre em nova aba. */
+  readonly target = input<OwBtnTarget | undefined>(undefined);
   readonly disabled = input(false, { transform: booleanAttribute });
   readonly ariaLabel = input<string | undefined>(undefined);
 
@@ -125,6 +130,22 @@ export class ButtonsComponent {
     if (!this.hasHref() || this.hasRouterLink()) return null;
     return this.disabled() ? null : (this.href() ?? null);
   });
+
+  /** Link que sai do site: protocolo explicito ou URL protocol-relative. */
+  readonly isExternalHref = computed(() => {
+    const rawHref = this.href();
+    if (typeof rawHref !== 'string') return false;
+    return /^(https?:)?\/\//i.test(rawHref.trim());
+  });
+
+  readonly targetAttr = computed(() => {
+    if (!this.hrefAttr()) return null;
+    return this.target() ?? (this.isExternalHref() ? '_blank' : null);
+  });
+
+  readonly relAttr = computed(() =>
+    this.targetAttr() === '_blank' ? 'noopener noreferrer' : null,
+  );
 
   private isLegacyMiniVariant(variant: OwBtnVariant): boolean {
     return (

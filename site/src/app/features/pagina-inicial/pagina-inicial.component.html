@@ -11,7 +11,7 @@
       </p>
 
       <div class="mt-9 flex flex-col gap-4 sm:flex-row sm:justify-center lg:justify-start">
-        <ow-btn variant="primary" href="/login">Inscreva-se</ow-btn>
+        <ow-btn variant="primary" [href]="cadastroLink">Inscreva-se</ow-btn>
         <ow-btn variant="blue" [href]="torneioLink">Ver o torneio</ow-btn>
       </div>
     </div>
@@ -123,7 +123,7 @@
   </p>
 
   <div class="mt-10 flex flex-col gap-4 sm:flex-row sm:justify-center">
-    <ow-btn variant="primary" size="lg" href="/login">Inscreva-se agora</ow-btn>
-    <ow-btn variant="blue" href="/quem-e-nova-era?tab=regras">Ver as regras</ow-btn>
+    <ow-btn variant="primary" size="lg" [href]="cadastroLink">Inscreva-se agora</ow-btn>
+    <ow-btn variant="blue" href="/regras-stg">Ver as regras</ow-btn>
   </div>
 </section>

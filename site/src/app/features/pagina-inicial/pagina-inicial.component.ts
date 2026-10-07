@@ -24,6 +24,10 @@ type Marco = Readonly<{
 export class PaginaInicialComponent {
   readonly torneioLink = `/torneios/${environment.TOURNAMENT_ID}`;
 
+  /** Formulario externo de inscricao das equipes. */
+  readonly cadastroLink =
+    'https://docs.google.com/forms/d/e/1FAIpQLSd81SOpEm9nMCniwZw1Fs-gkLknY5BkjmdtDFZyl1JI2lrTfA/viewform?usp=dialog';
+
   readonly linhaDoTempo: readonly Marco[] = [
     {
       numero: '01',
