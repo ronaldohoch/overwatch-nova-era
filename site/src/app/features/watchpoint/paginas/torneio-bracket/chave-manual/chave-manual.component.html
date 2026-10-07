@@ -1,0 +1,97 @@
+<section class="space-y-4">
+  <div class="flex flex-wrap items-center justify-between gap-3">
+    <div class="flex items-center gap-2">
+      <span class="shrink-0 text-[0.65rem] font-black uppercase tracking-[0.15em] text-(--ow-orange-text)">
+        Vencedores · R1
+      </span>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <span class="text-xs font-semibold text-(--ow-text-muted)">
+        {{ filledCount() }} / {{ maxTeams() }} posicionados
+      </span>
+
+      <button
+        type="button"
+        class="border border-(--ow-border-strong) px-3 py-1.5 text-[0.65rem] font-extrabold uppercase tracking-[0.1em] text-(--ow-text-muted) transition-colors hover:border-(--ow-orange) hover:text-(--ow-orange-text) disabled:cursor-not-allowed disabled:opacity-50"
+        [disabled]="disabled() || filledCount() === 0"
+        (click)="clearAll()"
+      >
+        Limpar tudo
+      </button>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
+    @for (pair of pairs(); track pair.matchNumber) {
+      <div class="overflow-hidden border border-(--ow-border) bg-(--ow-surface) [clip-path:polygon(3%_0,100%_0,100%_92%,97%_100%,0_100%,0_8%)]">
+        <div class="border-b border-(--ow-border) bg-(--ow-surface-raised) px-3 py-1.5">
+          <span class="text-[0.58rem] font-black uppercase tracking-widest text-(--ow-text-subtle)">
+            Jogo {{ pair.matchNumber }}
+          </span>
+        </div>
+
+        <div class="space-y-3 p-3">
+          @for (seed of [pair.seed1, pair.seed2]; track seed) {
+            <div class="flex items-center gap-2.5">
+              <span class="w-7 shrink-0 text-[0.6rem] font-black text-(--ow-text-subtle)">
+                S{{ seed }}
+              </span>
+
+              @if (teamAtSeed(seed); as team) {
+                @if (team.logoUrl) {
+                  <img
+                    [src]="team.logoUrl"
+                    [alt]="team.name"
+                    class="h-7 w-7 shrink-0 rounded-full object-cover ring-1 ring-(--ow-border)"
+                  />
+                } @else {
+                  <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-(--ow-surface-sunken) text-[0.6rem] font-black text-(--ow-text-muted)">
+                    {{ initials(team.name) }}
+                  </span>
+                }
+              } @else {
+                <span class="h-7 w-7 shrink-0 rounded-full border border-dashed border-(--ow-border-strong)"></span>
+              }
+
+              <ow-select
+                class="min-w-0 flex-1"
+                placeholder="Selecione o time"
+                [options]="optionsBySeed()[seed]"
+                [ngModel]="valueFor(seed)"
+                [disabled]="disabled()"
+                (ngModelChange)="onSeedChange(seed, $event)"
+              />
+
+              <button
+                type="button"
+                class="shrink-0 border border-(--ow-border-strong) px-2 py-1.5 text-[0.65rem] font-black uppercase text-(--ow-text-muted) transition-colors hover:border-(--ow-red) hover:text-(--ow-red-text) disabled:cursor-not-allowed disabled:opacity-40"
+                [disabled]="disabled() || !teamAtSeed(seed)"
+                [attr.aria-label]="'Limpar seed ' + seed"
+                (click)="clearSeed(seed)"
+              >
+                ✕
+              </button>
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </div>
+
+  <div class="flex flex-wrap items-center gap-2">
+    <span class="text-[0.6rem] font-black uppercase tracking-[0.16em] text-(--ow-text-muted)">
+      Sem posição · {{ availableTeams().length }}
+    </span>
+
+    @for (team of availableTeams(); track team.id) {
+      <span class="border border-(--ow-border-strong) bg-(--ow-surface-raised) px-2.5 py-1 text-[0.7rem] font-bold text-(--ow-text-muted)">
+        {{ team.name }}
+      </span>
+    } @empty {
+      <span class="text-[0.7rem] font-bold italic text-(--ow-text-subtle)">
+        Todos os times posicionados
+      </span>
+    }
+  </div>
+</section>

@@ -1,0 +1,266 @@
+<!-- Palco de sorteio: overlay em tela cheia, pensado para transmissão -->
+<div class="fixed inset-0 z-50 overflow-y-auto bg-(--ow-bg)/95 backdrop-blur-sm">
+  <div class="mx-auto flex min-h-full max-w-7xl flex-col gap-6 px-4 py-6 sm:px-6 lg:px-8">
+
+    <!-- ── Cabeçalho ── -->
+    <header class="flex flex-wrap items-center justify-between gap-4 border-b border-(--ow-border) pb-4">
+      <div>
+        <p class="text-[0.62rem] font-black uppercase tracking-[0.2em] text-(--ow-orange-text)">
+          Sorteio ao vivo
+        </p>
+        <h2 class="text-2xl font-black uppercase tracking-wider text-(--ow-text) sm:text-3xl">
+          Definição da chave
+        </h2>
+      </div>
+
+      <div class="flex items-center gap-6">
+        <div class="text-right">
+          <p class="text-[0.6rem] font-black uppercase tracking-[0.16em] text-(--ow-text-muted)">
+            Sorteados
+          </p>
+          <p class="text-2xl font-black leading-none text-(--ow-text)">
+            {{ drawnCount() }}<span class="text-(--ow-text-subtle)">/{{ maxTeams() }}</span>
+          </p>
+        </div>
+
+        <button
+          type="button"
+          class="border border-(--ow-border-strong) px-3 py-2 text-xs font-extrabold uppercase tracking-[0.1em] text-(--ow-text-muted) transition-colors hover:border-(--ow-red) hover:text-(--ow-red-text) focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--ow-orange)"
+          (click)="close()"
+        >
+          Fechar
+        </button>
+      </div>
+    </header>
+
+    <!-- ── Barra de progresso ── -->
+    <div class="h-1 w-full overflow-hidden bg-(--ow-surface-sunken)">
+      <div
+        class="h-full bg-(--ow-orange) transition-[width] duration-500 ease-out"
+        [style.width.%]="(drawnCount() / maxTeams()) * 100"
+      ></div>
+    </div>
+
+    <div class="grid flex-1 grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(20rem,25rem)]">
+
+      <!-- ══════════ Chaves vazias ══════════ -->
+      <section class="space-y-3">
+        <div class="flex items-center gap-2">
+          <span class="shrink-0 text-[0.65rem] font-black uppercase tracking-[0.15em] text-(--ow-orange-text)">
+            Vencedores · R1
+          </span>
+          <div class="h-px flex-1 bg-(--ow-orange) opacity-20"></div>
+        </div>
+
+        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          @for (pair of pairs(); track pair.matchNumber) {
+            <div class="overflow-hidden border border-(--ow-border) bg-(--ow-surface) [clip-path:polygon(3%_0,100%_0,100%_88%,97%_100%,0_100%,0_12%)]">
+              <div class="border-b border-(--ow-border) bg-(--ow-surface-raised) px-3 py-1">
+                <span class="text-[0.58rem] font-black uppercase tracking-widest text-(--ow-text-subtle)">
+                  Jogo {{ pair.matchNumber }}
+                </span>
+              </div>
+
+              @for (seed of [pair.seed1, pair.seed2]; track seed) {
+                <div
+                  [attr.data-seed]="seed"
+                  class="flex items-center gap-2.5 border-(--ow-border) px-3 py-2.5 transition-all duration-300"
+                  [class.border-b]="seed === pair.seed1"
+                  [class.bg-(--ow-orange-tint)]="!!teamAtSeed(seed)"
+                  [class.ring-2]="justLandedSeed() === seed"
+                  [class.ring-(--ow-orange)]="justLandedSeed() === seed"
+                  [class.scale-[1.02]]="justLandedSeed() === seed"
+                >
+                  @if (teamAtSeed(seed); as team) {
+                    @if (team.logoUrl) {
+                      <img
+                        [src]="team.logoUrl"
+                        [alt]="team.name"
+                        class="h-7 w-7 shrink-0 rounded-full object-cover ring-1 ring-(--ow-border)"
+                      />
+                    } @else {
+                      <div class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-(--ow-surface-sunken) text-[0.6rem] font-black text-(--ow-text-muted)">
+                        {{ initials(team.name) }}
+                      </div>
+                    }
+                    <span class="min-w-0 flex-1 truncate text-sm font-bold text-(--ow-text)">
+                      {{ team.name }}
+                    </span>
+                  } @else {
+                    <div class="h-7 w-7 shrink-0 rounded-full border border-dashed border-(--ow-border-strong)"></div>
+                    <span class="min-w-0 flex-1 truncate text-sm font-semibold text-(--ow-text-subtle)">
+                      Aguardando sorteio
+                    </span>
+                  }
+
+                  <span class="shrink-0 text-[0.6rem] font-black text-(--ow-text-subtle)">
+                    S{{ seed }}
+                  </span>
+                </div>
+              }
+            </div>
+          }
+        </div>
+
+        <p class="text-[0.65rem] italic text-(--ow-text-subtle)">
+          ↓ Demais rodadas serão definidas pelos resultados das partidas
+        </p>
+      </section>
+
+      <!-- ══════════ Roleta ══════════ -->
+      <section class="flex flex-col gap-4">
+        <div class="border border-(--ow-border-strong) bg-(--ow-surface)">
+          <div class="border-b border-(--ow-border) bg-(--ow-surface-raised) px-4 py-2">
+            <span class="text-[0.6rem] font-black uppercase tracking-[0.16em] text-(--ow-text-muted)">
+              @if (phase() === 'spinning') { Sorteando... }
+              @else if (finished()) { Todos os times posicionados }
+              @else { Próximo time }
+            </span>
+          </div>
+
+          <!-- Janela da fita -->
+          <div
+            class="relative h-[5.5rem] overflow-hidden border-2 transition-colors duration-200"
+            [class.border-(--ow-orange)]="phase() === 'spinning'"
+            [class.border-transparent]="phase() !== 'spinning'"
+            aria-live="polite"
+          >
+            <ul
+              class="m-0 list-none p-0"
+              [style.transform]="reelTransform()"
+              [style.transition]="reelRunning() ? 'transform ' + spinMs + 'ms cubic-bezier(0.15,0.9,0.2,1)' : 'none'"
+            >
+              @for (entry of reelSlots(); track trackSlot($index, entry)) {
+                <li class="flex h-[5.5rem] items-center justify-center gap-3 px-3 odd:bg-(--ow-surface-sunken)">
+                  @if (entry.logoUrl) {
+                    <img [src]="entry.logoUrl" [alt]="entry.name" class="h-9 w-9 shrink-0 rounded-full object-cover" />
+                  }
+                  <span class="truncate text-center text-[clamp(1.1rem,2.4vw,1.6rem)] font-black uppercase leading-none tracking-[0.04em] text-(--ow-text)">
+                    {{ entry.name }}
+                  </span>
+                </li>
+              }
+            </ul>
+
+            @if (!reelSlots().length) {
+              <p class="absolute inset-0 m-0 grid place-items-center px-4 text-center text-sm font-bold text-(--ow-text-muted)">
+                @if (finished()) { Chave completa } @else { Pressione iniciar para sortear }
+              </p>
+            }
+
+            <!-- Marcador central de leitura -->
+            <div class="pointer-events-none absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-(--ow-orange) opacity-30"></div>
+          </div>
+
+          <!-- Origem do voo: card do time sorteado -->
+          <div class="border-t border-(--ow-border) p-4">
+            <p class="text-[0.6rem] font-black uppercase tracking-[0.16em] text-(--ow-text-muted)">
+              Time sorteado
+            </p>
+
+            <div
+              data-fly-origin
+              class="mt-2 flex items-center gap-3 border border-(--ow-orange) bg-(--ow-orange-tint) px-3 py-2.5 transition-opacity duration-200"
+              [class.opacity-0]="phase() === 'flying'"
+              [class.opacity-30]="!lastDrawn()"
+            >
+              @if (lastDrawn(); as drawn) {
+                @if (drawn.logoUrl) {
+                  <img [src]="drawn.logoUrl" [alt]="drawn.name" class="h-8 w-8 shrink-0 rounded-full object-cover" />
+                } @else {
+                  <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-(--ow-surface-sunken) text-[0.65rem] font-black text-(--ow-text-muted)">
+                    {{ initials(drawn.name) }}
+                  </div>
+                }
+                <span class="min-w-0 flex-1 truncate text-sm font-black uppercase tracking-wide text-(--ow-text)">
+                  {{ drawn.name }}
+                </span>
+              } @else {
+                <div class="h-8 w-8 shrink-0 rounded-full border border-dashed border-(--ow-border-strong)"></div>
+                <span class="text-sm font-bold text-(--ow-text-subtle)">Aguardando primeiro giro</span>
+              }
+            </div>
+          </div>
+        </div>
+
+        <!-- Controles -->
+        <div class="flex flex-col gap-3">
+          @if (!finished()) {
+            <ow-btn variant="primary" [disabled]="!canDraw()" (click)="drawNext()">
+              {{ actionLabel() }}
+            </ow-btn>
+
+            <button
+              type="button"
+              class="border px-3 py-2 text-xs font-extrabold uppercase tracking-[0.1em] transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--ow-orange)"
+              [class]="autoMode()
+                ? 'border-(--ow-orange) bg-(--ow-orange-tint) text-(--ow-orange-text)'
+                : 'border-(--ow-border-strong) text-(--ow-text-muted) hover:border-(--ow-orange) hover:text-(--ow-orange-text)'"
+              [disabled]="busy() && !autoMode()"
+              (click)="toggleAuto()"
+            >
+              {{ autoMode() ? 'Automático ligado' : 'Sortear tudo (automático)' }}
+            </button>
+          } @else {
+            <ow-btn variant="primary" [disabled]="generating()" (click)="requestGenerate()">
+              {{ generating() ? 'Gerando chave...' : 'Gerar chave com este sorteio' }}
+            </ow-btn>
+          }
+
+          <button
+            type="button"
+            class="border border-(--ow-border-strong) px-3 py-2 text-xs font-extrabold uppercase tracking-[0.1em] text-(--ow-text-muted) transition-colors hover:border-(--ow-orange) hover:text-(--ow-orange-text) disabled:cursor-not-allowed disabled:opacity-50"
+            [disabled]="busy() || generating()"
+            (click)="reset()"
+          >
+            Refazer sorteio
+          </button>
+        </div>
+
+        <!-- Times ainda na urna -->
+        <div class="border border-(--ow-border) bg-(--ow-surface) p-4">
+          <p class="mb-3 text-[0.6rem] font-black uppercase tracking-[0.16em] text-(--ow-text-muted)">
+            Na urna · {{ remaining().length }}
+          </p>
+
+          <div class="flex flex-wrap gap-2">
+            @for (team of remaining(); track team.id) {
+              <span class="border border-(--ow-border-strong) bg-(--ow-surface-raised) px-2.5 py-1 text-[0.7rem] font-bold text-(--ow-text-muted)">
+                {{ team.name }}
+              </span>
+            } @empty {
+              <span class="text-[0.7rem] font-bold italic text-(--ow-text-subtle)">
+                Urna vazia
+              </span>
+            }
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- ══════════ Card em voo ══════════ -->
+  @if (fly(); as state) {
+    <div
+      class="pointer-events-none fixed z-[60] flex items-center gap-3 border-2 border-(--ow-orange) bg-(--ow-surface-raised) px-3 py-2.5 shadow-[0_0_30px_var(--ow-orange-tint-strong)]"
+      [style.left.px]="state.x"
+      [style.top.px]="state.y"
+      [style.width.px]="state.w"
+      [style.height.px]="state.h"
+      [style.transform]="flyTransform()"
+      [style.transition]="'transform ' + flightMs + 'ms cubic-bezier(0.5,-0.2,0.25,1)'"
+    >
+      @if (state.team.logoUrl) {
+        <img [src]="state.team.logoUrl" [alt]="state.team.name" class="h-8 w-8 shrink-0 rounded-full object-cover" />
+      } @else {
+        <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-(--ow-surface-sunken) text-[0.65rem] font-black text-(--ow-text-muted)">
+          {{ initials(state.team.name) }}
+        </div>
+      }
+      <span class="min-w-0 flex-1 truncate text-sm font-black uppercase tracking-wide text-(--ow-text)">
+        {{ state.team.name }}
+      </span>
+      <span class="shrink-0 text-[0.6rem] font-black text-(--ow-orange-text)">S{{ state.seed }}</span>
+    </div>
+  }
+</div>

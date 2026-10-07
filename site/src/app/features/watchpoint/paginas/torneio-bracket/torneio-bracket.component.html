@@ -62,9 +62,9 @@
   }
 
   <!-- ═══════════════════════════════════════════════════════
-       GERAR CHAVE — Torneio RANDOM
+       GERAR CHAVE — vale para qualquer tipo de torneio
   ════════════════════════════════════════════════════════ -->
-  @if (state() === 'no-bracket' && isAdminOrStreamer() && isRandomTournament()) {
+  @if (state() === 'no-bracket' && isAdminOrStreamer()) {
     <div class="space-y-6">
 
       <div>
@@ -76,7 +76,7 @@
         </p>
       </div>
 
-      <!-- Modo de Seeding (pill horizontal) — acima das colunas -->
+      <!-- Modo de Seeding -->
       <div class="space-y-2">
         <p class="text-xs font-bold uppercase tracking-wider text-(--ow-text)">
           Modo de Seeding
@@ -89,12 +89,12 @@
           <ow-radio-item
             value="random"
             label="Aleatório"
-            description="Cada time é sorteado para uma posição disponível"
+            description="As posições são sorteadas — na hora ou ao vivo com roleta"
           />
           <ow-radio-item
             value="manual"
             label="Manual"
-            description="A ordem de seleção define os seeds"
+            description="Você escolhe o time de cada posição da chave"
           />
         </ow-radio-group>
       </div>
@@ -109,177 +109,50 @@
         <p class="text-sm font-semibold text-(--ow-alert-error-text)">{{ selectableTeamsMessage() }}</p>
       }
 
-      <!-- Layout 2 colunas: times | preview da chave -->
-      @if (!loadingSelectableTeams() && selectableTeams().length > 0) {
-        <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+      <!-- Sem times para montar a chave -->
+      @if (!loadingSelectableTeams() && !selectableTeamsMessage() && selectableTeams().length === 0) {
+        <p class="text-sm font-semibold text-(--ow-text-muted)">
+          Nenhum time disponível para montar a chave.
+        </p>
+      }
 
-          <!-- ── Coluna 1: Lista de times ── -->
-          <div class="space-y-3">
-            <div class="flex items-center justify-between">
-              <p class="text-xs font-bold uppercase tracking-wider text-(--ow-text)">
-                Times disponíveis
-              </p>
-              <span class="text-xs font-semibold text-(--ow-text-muted)">
-                {{ selectedCount() }} / {{ maxTeams() ?? '?' }} selecionados
-              </span>
-            </div>
+      <!-- Modo manual: chave vazia com selects -->
+      @if (!loadingSelectableTeams() && selectableTeams().length > 0 && seedMode() === 'manual' && maxTeams()) {
+        <app-chave-manual
+          [teams]="chaveTeams()"
+          [maxTeams]="maxTeams()!"
+          [disabled]="creating()"
+          (seedMapChange)="onManualSeedMapChange($event)"
+        />
+      }
 
-            <div class="max-h-96 space-y-2 overflow-y-auto pr-1 flex flex-col gap-4">
-              @for (team of selectableTeams(); track team.id) {
-                <ow-checkbox
-                  [ngModel]="isSelectableTeamChecked(team.id)"
-                  (ngModelChange)="onSelectableTeamChange(team.id, $event)"
-                >
-                  <!-- Logo + nome projetados como conteúdo customizado -->
-                  <div class="flex items-center gap-2.5 min-w-0">
-                    @if (team.logoUrl) {
-                      <img
-                        [src]="team.logoUrl"
-                        [alt]="team.name"
-                        class="h-7 w-7 shrink-0 rounded-full object-cover ring-1 ring-(--ow-border)"
-                      />
-                    } @else {
-                      <div
-                        class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-(--ow-surface-sunken) text-[0.6rem] font-black text-(--ow-text-muted) ring-1 ring-(--ow-border)"
-                      >
-                        {{ teamInitials(team.name) }}
-                      </div>
-                    }
-                    <span class="truncate text-[0.9rem] font-bold text-(--ow-text)">
-                      {{ team.name }}
-                    </span>
-                  </div>
-                </ow-checkbox>
-              }
-            </div>
-          </div>
+      <!-- Modo aleatório: nada a escolher, só disparar o sorteio -->
+      @if (!loadingSelectableTeams() && selectableTeams().length > 0 && seedMode() === 'random') {
+        <div class="flex flex-wrap items-center gap-3 border border-(--ow-border) bg-(--ow-surface) px-4 py-3">
+          <p class="text-xs font-bold uppercase tracking-wider text-(--ow-text)">
+            Times no sorteio
+          </p>
+          <span
+            class="text-xs font-black"
+            [class.text-(--ow-orange-text)]="canSortear()"
+            [class.text-(--ow-alert-error-text)]="!canSortear()"
+          >
+            {{ selectableTeams().length }} / {{ maxTeams() ?? '?' }}
+          </span>
 
-          <!-- ── Coluna 2: Preview da chave ── -->
-          <div class="space-y-3">
-            <p class="text-xs font-bold uppercase tracking-wider text-(--ow-text)">
-              Preview da Chave
-            </p>
-
-            @if (!maxTeams()) {
-              <p class="text-xs text-(--ow-text-muted) italic">
-                Aguardando informações do torneio...
-              </p>
-            } @else {
-              <div class="space-y-3">
-
-                <!-- Cabeçalho WB R1 -->
-                <div class="flex items-center gap-2">
-                  <span
-                    class="shrink-0 text-[0.65rem] font-black uppercase tracking-[0.15em] text-(--ow-orange-text)"
-                  >
-                    Vencedores · R1
-                  </span>
-                  <div class="h-px flex-1 bg-(--ow-orange) opacity-20"></div>
-                </div>
-
-                <!-- Grade de partidas do R1 -->
-                <div class="grid grid-cols-2 gap-2">
-                  @for (pair of wbR1Pairs(); track pair.matchNumber) {
-                    <div
-                      class="overflow-hidden rounded border border-(--ow-border) bg-(--ow-surface) text-xs [clip-path:polygon(4%_0,100%_0,100%_84%,96%_100%,0_100%,0_16%)]"
-                    >
-                      <!-- Label da partida -->
-                      <div class="border-b border-(--ow-border) bg-(--ow-surface-raised) px-2.5 py-1">
-                        <span
-                          class="text-[0.58rem] font-black uppercase tracking-widest text-(--ow-text-subtle)"
-                        >
-                          Jogo {{ pair.matchNumber }}
-                        </span>
-                      </div>
-
-                      <!-- Slot seed 1 -->
-                      <div
-                        class="flex items-center gap-2 border-b border-(--ow-border) px-2.5 py-1.5 transition-colors duration-150"
-                        [class.bg-(--ow-orange-tint)]="previewSlotFilled(pair.seed1)"
-                      >
-                        <!-- Avatar / logo -->
-                        @if (previewSlotFilled(pair.seed1)) {
-                          @if (selectableTeamLogo(seedPreview().seedMap[pair.seed1])) {
-                            <img
-                              [src]="selectableTeamLogo(seedPreview().seedMap[pair.seed1])"
-                              class="h-5 w-5 shrink-0 rounded-full object-cover"
-                            />
-                          } @else {
-                            <div
-                              class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-(--ow-surface-sunken) text-[0.5rem] font-black text-(--ow-text-muted)"
-                            >
-                              {{ teamInitials(previewTeamName(pair.seed1)) }}
-                            </div>
-                          }
-                        }
-                        <span
-                          class="min-w-0 flex-1 truncate text-[0.72rem] font-semibold transition-colors duration-150"
-                          [class.text-(--ow-text)]="previewSlotFilled(pair.seed1)"
-                          [class.text-(--ow-text-subtle)]="!previewSlotFilled(pair.seed1)"
-                        >
-                          {{ previewTeamName(pair.seed1) }}
-                        </span>
-                        <span class="shrink-0 text-[0.58rem] font-bold text-(--ow-text-subtle)">
-                          S{{ pair.seed1 }}
-                        </span>
-                      </div>
-
-                      <!-- Slot seed 2 -->
-                      <div
-                        class="flex items-center gap-2 px-2.5 py-1.5 transition-colors duration-150"
-                        [class.bg-(--ow-orange-tint)]="previewSlotFilled(pair.seed2)"
-                      >
-                        <!-- Avatar / logo -->
-                        @if (previewSlotFilled(pair.seed2)) {
-                          @if (selectableTeamLogo(seedPreview().seedMap[pair.seed2])) {
-                            <img
-                              [src]="selectableTeamLogo(seedPreview().seedMap[pair.seed2])"
-                              class="h-5 w-5 shrink-0 rounded-full object-cover"
-                            />
-                          } @else {
-                            <div
-                              class="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-(--ow-surface-sunken) text-[0.5rem] font-black text-(--ow-text-muted)"
-                            >
-                              {{ teamInitials(previewTeamName(pair.seed2)) }}
-                            </div>
-                          }
-                        }
-                        <span
-                          class="min-w-0 flex-1 truncate text-[0.72rem] font-semibold transition-colors duration-150"
-                          [class.text-(--ow-text)]="previewSlotFilled(pair.seed2)"
-                          [class.text-(--ow-text-subtle)]="!previewSlotFilled(pair.seed2)"
-                        >
-                          {{ previewTeamName(pair.seed2) }}
-                        </span>
-                        <span class="shrink-0 text-[0.58rem] font-bold text-(--ow-text-subtle)">
-                          S{{ pair.seed2 }}
-                        </span>
-                      </div>
-                    </div>
-                  }
-                </div>
-
-                <!-- Indicação de rounds subsequentes -->
-                <p class="text-[0.65rem] italic text-(--ow-text-subtle)">
-                  ↓ Demais rodadas serão definidas pelos resultados das partidas
-                </p>
-
-              </div>
-            }
-          </div>
-
+          @if (!canSortear() && maxTeams()) {
+            <span class="text-xs text-(--ow-text-subtle)">
+              A chave precisa de exatamente {{ maxTeams() }} times para sortear.
+            </span>
+          }
         </div>
       }
 
-      <!-- Instrução de seleção -->
-      @if (!loadingSelectableTeams() && maxTeams() && selectedCount() < maxTeams()!) {
+      <!-- Instrução do modo manual -->
+      @if (seedMode() === 'manual' && !loadingSelectableTeams() && selectableTeams().length > 0 && maxTeams() && selectedCount() < maxTeams()!) {
         <p class="text-xs font-semibold text-(--ow-text)">
-          Selecione exatamente {{ maxTeams() }} times para gerar a chave
-          @if (seedMode() === 'random') {
-            <span class="text-(--ow-text-subtle)"> — cada clique sorteia uma posição aleatória.</span>
-          } @else {
-            <span class="text-(--ow-text-subtle)"> — a ordem de seleção define os seeds.</span>
-          }
+          Posicione exatamente {{ maxTeams() }} times na chave
+          <span class="text-(--ow-text-subtle)"> — cada time escolhido sai dos demais selects.</span>
         </p>
       }
 
@@ -288,98 +161,36 @@
         <p class="text-(--ow-alert-error-text) font-semibold text-sm">{{ createMessage()!.text }}</p>
       }
 
-      <ow-btn
-        variant="primary"
-        [disabled]="!canGenerateBracket()"
-        (click)="createBracket()"
-      >
-        {{ creating() ? 'Gerando...' : 'Gerar Chave' }}
-      </ow-btn>
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+        @if (seedMode() === 'manual') {
+          <ow-btn
+            variant="primary"
+            [disabled]="!canGenerateBracket()"
+            (click)="createBracket()"
+          >
+            {{ creating() ? 'Gerando...' : 'Gerar Chave' }}
+          </ow-btn>
+        } @else {
+          <ow-btn
+            variant="primary"
+            [disabled]="!canSortear()"
+            (click)="sortearAgora()"
+          >
+            {{ creating() ? 'Sorteando...' : 'Sortear agora' }}
+          </ow-btn>
 
-    </div>
-    <!-- <ow-card>
-    </ow-card> -->
-  }
-
-  <!-- ═══════════════════════════════════════════════════════
-       GERAR CHAVE — Torneio NÃO-RANDOM (formado/closed)
-  ════════════════════════════════════════════════════════ -->
-  @if (state() === 'no-bracket' && isAdminOrStreamer() && !isRandomTournament()) {
-    <div class="space-y-6">
-      <h3 class="text-lg font-black uppercase tracking-wider text-(--ow-text)">
-        Gerar Chave
-      </h3>
-      <p class="text-(--ow-text) text-sm">
-        Nenhuma chave foi criada para este torneio ainda.
-      </p>
-
-      <!-- seedMode -->
-      <div class="space-y-2">
-        <p class="text-xs font-bold uppercase tracking-wider text-(--ow-text)">Modo de seeding</p>
-        <div class="flex gap-4">
-          <label class="flex items-center gap-2 cursor-pointer">
-            <input
-              type="radio"
-              name="seedMode"
-              value="random"
-              [checked]="seedMode() === 'random'"
-              (change)="onSeedModeChange('random')"
-              class="accent-(--ow-orange)"
-            />
-            <span class="font-semibold text-sm text-(--ow-text)">Aleatório</span>
-          </label>
-          <label class="flex items-center gap-2 cursor-pointer">
-            <input
-              type="radio"
-              name="seedMode"
-              value="manual"
-              [checked]="seedMode() === 'manual'"
-              (change)="onSeedModeChange('manual')"
-              class="accent-(--ow-orange)"
-            />
-            <span class="font-semibold text-sm text-(--ow-text)">Manual</span>
-          </label>
-        </div>
+          <button
+            type="button"
+            class="border-2 border-(--ow-orange) bg-(--ow-orange-tint) px-4 py-2.5 text-sm font-black uppercase tracking-[0.08em] text-(--ow-orange-text) transition-colors hover:bg-(--ow-orange-tint-strong) disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--ow-orange)"
+            [disabled]="!canOpenSorteio()"
+            (click)="openSorteio()"
+          >
+            Sortear ao vivo
+          </button>
+        }
       </div>
 
-      <!-- Manual: IDs dos times -->
-      @if (seedMode() === 'manual') {
-        <div class="space-y-2">
-          <label
-            for="teamIdsInput"
-            class="block text-xs font-bold uppercase tracking-wider text-(--ow-text)"
-          >
-            IDs dos times em ordem de seed (um por linha)
-          </label>
-          <textarea
-            id="teamIdsInput"
-            rows="8"
-            [value]="teamIdsInput()"
-            (input)="onTeamIdsInputChange($any($event.target).value)"
-            placeholder="ID_TIME_1&#10;ID_TIME_2&#10;ID_TIME_3&#10;ID_TIME_4"
-            class="w-full rounded border border-(--ow-border-strong) bg-(--ow-surface) p-3 text-sm font-mono text-(--ow-text) focus:border-(--ow-orange) focus:outline-none focus:ring-2 focus:ring-(--ow-orange)/30"
-          ></textarea>
-          <p class="text-xs text-(--ow-text-muted)">
-            O primeiro ID será o seed 1, o segundo será o seed 2, e assim por diante.
-          </p>
-        </div>
-      }
-
-      <!-- Mensagem de erro de criação -->
-      @if (createMessage() && !createMessage()!.ok) {
-        <p class="text-(--ow-alert-error-text) font-semibold text-sm">{{ createMessage()!.text }}</p>
-      }
-
-      <ow-btn
-        variant="primary"
-        [disabled]="!canGenerateBracket()"
-        (click)="createBracket()"
-      >
-        {{ creating() ? 'Gerando...' : 'Gerar chave' }}
-      </ow-btn>
     </div>
-    <!-- <ow-card>
-    </ow-card> -->
   }
 
   <!-- Chave carregada -->
@@ -513,3 +324,17 @@
   }
 
 </section>
+
+<!-- ═══════════════════════════════════════════════════════
+     PALCO DE SORTEIO AO VIVO (modo aleatório)
+════════════════════════════════════════════════════════ -->
+@if (sorteioOpen() && maxTeams()) {
+  <app-sorteio-ao-vivo
+    [teams]="chaveTeams()"
+    [maxTeams]="maxTeams()!"
+    [generating]="creating()"
+    (concluded)="onSorteioConcluded($event)"
+    (generateRequested)="onSorteioGenerate($event)"
+    (closed)="closeSorteio()"
+  />
+}
