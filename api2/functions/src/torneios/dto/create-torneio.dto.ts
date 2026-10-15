@@ -1,4 +1,6 @@
 export type TeamMode = 'random' | 'closed';
+export type TournamentFormat = 'double_elimination' | 'groups';
+export type KnockoutFormat = 'double_elimination' | 'single_elimination';
 
 export interface RoleSlotsPerTeamDto {
   tank: number;
@@ -11,7 +13,12 @@ export interface CreateTorneioDto {
   description?: string | null;
 
   teamMode: TeamMode; // 'random' | 'closed'
-  maxTeams: number;   // 4,8,16...
+  maxTeams: number;   // 4,8,16... (em grupos: limite de inscritos, mínimo 6)
+
+  // padrão: double_elimination
+  format?: TournamentFormat;
+  // obrigatório quando format === 'groups'
+  knockoutFormat?: KnockoutFormat;
 
   // datas (aceita ISO no body)
   startAt: string;            // ISO

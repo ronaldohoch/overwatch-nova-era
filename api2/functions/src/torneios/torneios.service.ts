@@ -1,7 +1,8 @@
 import { FieldValue } from 'firebase-admin/firestore';
 import { firestore } from '../firebase';
 import { grantAutomaticTrophiesForEvent } from '../trofeus/trofeus.service';
-import { CreateTorneioDto, TeamMode } from './dto/create-torneio.dto';
+import { CreateTorneioDto, KnockoutFormat, TeamMode, TournamentFormat } from './dto/create-torneio.dto';
+import { MAX_GROUP_STAGE_TEAMS, MIN_GROUP_STAGE_TEAMS } from '../grupos/logic/group-split';
 import { UpdateTorneioDto } from './dto/update-torneio.dto';
 import { CheckinDto, Role } from './dto/checkin.dto';
 import { CreateTeamDto } from './dto/create-team.dto';
@@ -113,10 +114,30 @@ export class TorneiosService {
     const teamMode = String(dto?.teamMode || '').trim() as TeamMode;
     if (teamMode !== 'random' && teamMode !== 'closed') throw new Error('teamMode deve ser random|closed');
 
+    const format = String(dto?.format || 'double_elimination').trim() as TournamentFormat;
+    if (format !== 'double_elimination' && format !== 'groups') {
+      throw new Error('format deve ser double_elimination|groups');
+    }
+
+    let knockoutFormat: KnockoutFormat | null = null;
+    if (format === 'groups') {
+      knockoutFormat = String(dto?.knockoutFormat || '').trim() as KnockoutFormat;
+      if (knockoutFormat !== 'double_elimination' && knockoutFormat !== 'single_elimination') {
+        throw new Error('knockoutFormat deve ser double_elimination|single_elimination');
+      }
+    }
+
     const maxTeams = Number(dto?.maxTeams);
     if (!Number.isInteger(maxTeams) || maxTeams <= 0) throw new Error('maxTeams deve ser inteiro > 0');
-    if (!this.isEven(maxTeams)) throw new Error('maxTeams deve ser par (ex: 4, 8, 16...)');
-    if (!this.isPowerOfTwo(maxTeams)) throw new Error('maxTeams deve ser potência de 2 (ex: 4, 8, 16...)');
+    if (format === 'groups') {
+      // Grupos crescem com os inscritos: maxTeams é só o teto.
+      if (maxTeams < MIN_GROUP_STAGE_TEAMS || maxTeams > MAX_GROUP_STAGE_TEAMS) {
+        throw new Error(`maxTeams deve ficar entre ${MIN_GROUP_STAGE_TEAMS} e ${MAX_GROUP_STAGE_TEAMS} na fase de grupos`);
+      }
+    } else {
+      if (!this.isEven(maxTeams)) throw new Error('maxTeams deve ser par (ex: 4, 8, 16...)');
+      if (!this.isPowerOfTwo(maxTeams)) throw new Error('maxTeams deve ser potência de 2 (ex: 4, 8, 16...)');
+    }
 
     const startAtDate = this.parseIsoDate(dto.startAt, 'startAt');
     const checkinDeadlineDate = this.parseIsoDate(dto.checkinDeadlineAt, 'checkinDeadlineAt');
@@ -130,7 +151,8 @@ export class TorneiosService {
     const base: any = {
       name,
       description,
-      format: 'double_elimination',
+      format,
+      ...(knockoutFormat ? { knockoutFormat } : {}),
       teamMode,
       maxTeams,
 
@@ -194,7 +216,7 @@ export class TorneiosService {
 
     // Campos definidos na criacao: alteracoes silenciosas aqui invalidariam
     // check-ins, contadores e chaveamento ja gerados.
-    const immutableFields = (['teamMode', 'maxTeams'] as const).filter(
+    const immutableFields = (['teamMode', 'maxTeams', 'format', 'knockoutFormat'] as const).filter(
       (field) => dto[field] != null,
     );
     if (immutableFields.length) {

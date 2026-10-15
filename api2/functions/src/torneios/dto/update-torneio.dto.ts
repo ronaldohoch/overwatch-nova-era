@@ -1,4 +1,4 @@
-import { RoleSlotsPerTeamDto, TeamMode } from './create-torneio.dto';
+import { KnockoutFormat, RoleSlotsPerTeamDto, TeamMode, TournamentFormat } from './create-torneio.dto';
 
 export interface UpdateTorneioDto {
   name?: string;
@@ -7,6 +7,8 @@ export interface UpdateTorneioDto {
   // só pode alterar isso enquanto estiver draft (a service vai travar)
   teamMode?: TeamMode;
   maxTeams?: number;
+  format?: TournamentFormat;
+  knockoutFormat?: KnockoutFormat;
 
   startAt?: string;           // ISO
   checkinDeadlineAt?: string; // ISO
