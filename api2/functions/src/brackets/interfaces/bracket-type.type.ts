@@ -1,1 +1,1 @@
-export type BracketType = 'double-elimination';
+export type BracketType = 'double-elimination' | 'single-elimination';

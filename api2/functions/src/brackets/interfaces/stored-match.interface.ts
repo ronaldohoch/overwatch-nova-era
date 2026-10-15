@@ -15,6 +15,8 @@ export interface StoredMatch {
   readonly winnerId: string | null;
   readonly loserId: string | null;
   readonly walkover?: boolean;
+  /** Partida resolvida sozinha porque um dos lados nunca terá time (bye). */
+  readonly bye?: boolean;
   readonly status: MatchStatus;
   readonly createdAt: string;
   readonly updatedAt: string;

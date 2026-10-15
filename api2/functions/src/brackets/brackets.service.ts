@@ -1,7 +1,17 @@
 import { firestore } from '../firebase';
-import { generateDoubleEliminationTemplate } from './generators/double-elimination.generator';
+import { loadPublicTeamInfo } from '../_services/team-info.service';
+import {
+  applyResult,
+  BracketSize,
+  buildMatches,
+  EngineMatch,
+  finalMatchNumber,
+  findDeadSlots,
+  templatesFor,
+} from './engine/bracket-engine';
 import {
   BracketStatus,
+  BracketType,
   CreateBracketDto,
   MatchStatus,
   ReportMatchDto,
@@ -11,58 +21,6 @@ import {
 } from './interfaces';
 
 const VALID_TEAM_COUNTS = new Set([4, 8, 16, 32]);
-const DEFAULT_LOGO_BUCKET = 'copa-nova-era-overwatch.firebasestorage.app';
-
-/**
- * Gera a URL pública de acesso à logo a partir do logoPath armazenado no Firestore.
- * Suporta: gs:// URI, URL HTTPS completa, e caminho relativo.
- * Respeita FIREBASE_STORAGE_EMULATOR_HOST quando rodando localmente.
- */
-function buildLogoUrl(
-  logoPath: string | null | undefined,
-  logoBucketName: string | null | undefined,
-): string | null {
-  if (!logoPath || typeof logoPath !== 'string') return null;
-  const path = logoPath.trim();
-  if (!path) return null;
-
-  // Já é uma URL completa
-  if (path.startsWith('https://') || path.startsWith('http://')) {
-    return path.includes('?alt=media') ? path : `${path}?alt=media`;
-  }
-
-  let bucket: string;
-  let objectPath: string;
-
-  // gs:// URI → extrai bucket e objectPath
-  if (path.startsWith('gs://')) {
-    const withoutScheme = path.slice('gs://'.length);
-    const slashIndex = withoutScheme.indexOf('/');
-    if (slashIndex <= 0) return null;
-    bucket = withoutScheme.slice(0, slashIndex);
-    objectPath = withoutScheme.slice(slashIndex + 1).replace(/^\/+/, '');
-    if (!objectPath) return null;
-  } else {
-    // Caminho relativo — usa bucket do time ou padrão
-    bucket =
-      typeof logoBucketName === 'string' && logoBucketName.trim()
-        ? logoBucketName.trim()
-        : DEFAULT_LOGO_BUCKET;
-    objectPath = path;
-  }
-
-  // Emulador local
-  const emulatorHost = process.env['FIREBASE_STORAGE_EMULATOR_HOST'];
-  if (emulatorHost) {
-    const baseHost =
-      emulatorHost.startsWith('http://') || emulatorHost.startsWith('https://')
-        ? emulatorHost
-        : `http://${emulatorHost}`;
-    return `${baseHost}/v0/b/${bucket}/o/${encodeURIComponent(objectPath)}?alt=media`;
-  }
-
-  return `https://firebasestorage.googleapis.com/v0/b/${bucket}/o/${encodeURIComponent(objectPath)}?alt=media`;
-}
 
 function fisherYates<T>(arr: T[]): T[] {
   for (let i = arr.length - 1; i > 0; i--) {
@@ -102,6 +60,9 @@ export class BracketsService {
     const tournament = tournamentSnap.data() as any;
     if (tournament.status !== 'running') {
       throw new Error('O bracket só pode ser gerado quando o torneio está em status "running".');
+    }
+    if (tournament.format === 'groups') {
+      throw new Error('Torneio com fase de grupos: o mata-mata é gerado a partir da classificação dos grupos.');
     }
 
     const maxTeams: number = tournament.maxTeams;
@@ -164,17 +125,69 @@ export class BracketsService {
       seedMap[idx + 1] = teamId;
     });
 
-    // Gera template e resolve partidas iniciais
-    const templates = generateDoubleEliminationTemplate(maxTeams as 4 | 8 | 16 | 32);
+    const bracketDoc = await this.persistBracket(tournamentId, {
+      type: 'double-elimination',
+      size: maxTeams as BracketSize,
+      seedMap,
+      autoCheckinTeamIds,
+    });
+
+    return { id: tournamentId, ...bracketDoc };
+  }
+
+  /**
+   * Gera o mata-mata de uma fase de grupos. `positions[i]` é o time da posição
+   * i+1 da chave; `null` é bye. O tamanho já vem arredondado (4/8/16/32).
+   */
+  async createFromGroups(tournamentId: string, type: BracketType, positions: readonly (string | null)[]) {
+    if (!VALID_TEAM_COUNTS.has(positions.length)) {
+      throw new Error(`Tamanho de chave inválido (${positions.length}). Use 4, 8, 16 ou 32.`);
+    }
+
+    const existingBracket = await this.bracketsCollection.doc(tournamentId).get();
+    if (existingBracket.exists) {
+      throw new Error('Este torneio já possui um mata-mata. Exclua-o primeiro.');
+    }
+
+    const seedMap: Record<number, string> = {};
+    positions.forEach((teamId, idx) => {
+      if (teamId) seedMap[idx + 1] = teamId;
+    });
+
+    const bracketDoc = await this.persistBracket(tournamentId, {
+      type,
+      size: positions.length as BracketSize,
+      seedMap,
+      autoCheckinTeamIds: [],
+      source: 'groups',
+    });
+
+    return { id: tournamentId, ...bracketDoc };
+  }
+
+  private async persistBracket(
+    tournamentId: string,
+    options: {
+      type: BracketType;
+      size: BracketSize;
+      seedMap: Record<number, string>;
+      autoCheckinTeamIds: readonly string[];
+      source?: 'groups';
+    },
+  ): Promise<StoredBracket> {
+    const { type, size, seedMap, autoCheckinTeamIds, source } = options;
+    const templates = templatesFor(type, size);
+    const engineMatches = buildMatches(templates, seedMap);
     const now = new Date().toISOString();
 
     const bracketDoc: StoredBracket = {
       tournamentId,
-      type: 'double-elimination',
-      teamCount: maxTeams as 4 | 8 | 16 | 32,
+      type,
+      teamCount: size,
       status: 'running' as BracketStatus,
       seedMap,
       winnerId: null,
+      ...(source ? { source } : {}),
       createdAt: now,
       updatedAt: now,
     };
@@ -193,28 +206,12 @@ export class BracketsService {
     }
 
     for (const tpl of templates) {
-      // Resolve slots do tipo seed para team IDs imediatamente
-      let team1Id: string | null = null;
-      let team2Id: string | null = null;
-
-      if (tpl.slot1.type === 'seed') team1Id = seedMap[tpl.slot1.ref] ?? null;
-      if (tpl.slot2.type === 'seed') team2Id = seedMap[tpl.slot2.ref] ?? null;
-
-      const status: MatchStatus = team1Id && team2Id ? 'ready' : 'pending';
-
+      const m = engineMatches.find((x) => x.matchNumber === tpl.matchNumber)!;
       const match: StoredMatch = {
         matchNumber: tpl.matchNumber,
         round: tpl.round,
         side: tpl.side,
-        slot1: tpl.slot1,
-        slot2: tpl.slot2,
-        team1Id,
-        team2Id,
-        team1Score: null,
-        team2Score: null,
-        winnerId: null,
-        loserId: null,
-        status,
+        ...this.engineFields(m),
         createdAt: now,
         updatedAt: now,
       };
@@ -223,8 +220,7 @@ export class BracketsService {
     }
 
     await batch.commit();
-
-    return { id: tournamentId, ...bracketDoc };
+    return bracketDoc;
   }
 
   // ──────────────────────────────────────────────────────────
@@ -240,25 +236,7 @@ export class BracketsService {
     const matches = matchesSnap.docs.map((d) => ({ id: d.id, ...(d.data() as StoredMatch) }));
 
     // Embed public team info (name + logoUrl) so unauthenticated clients can display teams
-    const teamIds = Object.values(bracketData.seedMap).filter((id): id is string => !!id);
-    const teamInfo: Record<string, { name: string; logoUrl: string | null }> = {};
-
-    if (teamIds.length > 0) {
-      const teamSnaps = await Promise.all(
-        teamIds.map((id) => firestore.collection('teams').doc(id).get()),
-      );
-      for (const snap of teamSnaps) {
-        if (!snap.exists) continue;
-        const data = snap.data() as Record<string, unknown>;
-        const name = typeof data?.name === 'string' ? data.name.trim() : 'Time sem nome';
-        const logoPath = typeof data?.logoPath === 'string' ? data.logoPath : null;
-        const logoBucketName =
-          typeof data?.logoBucketName === 'string' ? data.logoBucketName :
-          typeof data?.logoBucket === 'string' ? data.logoBucket : null;
-        const logoUrl = buildLogoUrl(logoPath, logoBucketName);
-        teamInfo[snap.id] = { name, logoUrl };
-      }
-    }
+    const teamInfo = await loadPublicTeamInfo(Object.values(bracketData.seedMap));
 
     return { id: tournamentId, ...bracketData, matches, teamInfo };
   }
@@ -272,95 +250,58 @@ export class BracketsService {
     if (!winnerId) throw new Error('winnerId é obrigatório.');
     const walkover = dto?.walkover === true;
 
-    const matchRef = this.matchesCol(tournamentId).doc(String(matchNumber));
-    const matchSnap = await matchRef.get();
-    if (!matchSnap.exists) throw new Error(`Partida ${matchNumber} não encontrada no bracket ${tournamentId}.`);
-
-    const match = matchSnap.data() as StoredMatch;
-
-    if (match.status !== 'ready' && match.status !== 'running') {
-      throw new Error(`A partida ${matchNumber} está "${match.status}" e não pode receber resultado.`);
-    }
-    if (!match.team1Id || !match.team2Id) {
-      throw new Error(`A partida ${matchNumber} ainda não tem os dois times definidos.`);
-    }
-    if (winnerId !== match.team1Id && winnerId !== match.team2Id) {
-      throw new Error(`winnerId "${winnerId}" não é um dos times desta partida.`);
-    }
-
-    const loserId = winnerId === match.team1Id ? match.team2Id : match.team1Id;
-
     // Placar opcional — ignorado em W.O.
     const team1Score = walkover ? null : this.parseOptionalScore(dto?.team1Score);
     const team2Score = walkover ? null : this.parseOptionalScore(dto?.team2Score);
 
+    const bracketRef = this.bracketsCollection.doc(tournamentId);
+    const bracketSnap = await bracketRef.get();
+    if (!bracketSnap.exists) throw new Error(`Bracket do torneio ${tournamentId} não encontrado.`);
+    const bracket = bracketSnap.data() as StoredBracket;
+
     // Carrega todas as partidas para propagar resultado
     const allMatchesSnap = await this.matchesCol(tournamentId).get();
-    const allMatches = allMatchesSnap.docs.map((d) => ({
-      ref: d.ref,
-      data: d.data() as StoredMatch,
-    }));
+    const stored = allMatchesSnap.docs.map((d) => ({ ref: d.ref, data: d.data() as StoredMatch }));
+    if (!stored.some((m) => m.data.matchNumber === matchNumber)) {
+      throw new Error(`Partida ${matchNumber} não encontrada no bracket ${tournamentId}.`);
+    }
+
+    const templates = templatesFor(bracket.type ?? 'double-elimination', bracket.teamCount);
+    const dead = findDeadSlots(templates, bracket.seedMap);
+    const engineMatches: EngineMatch[] = stored.map(({ data }) => ({ ...data }));
+    const before = new Map(engineMatches.map((m) => [m.matchNumber, JSON.stringify(this.engineFields(m))]));
+
+    applyResult(engineMatches, dead, matchNumber, { winnerId, team1Score, team2Score, walkover });
 
     const now = new Date().toISOString();
     const batch = firestore.batch();
 
-    // Finaliza a partida atual
-    batch.update(matchRef, {
-      winnerId,
-      loserId,
-      team1Score: team1Score ?? null,
-      team2Score: team2Score ?? null,
-      walkover,
-      status: 'finished' as MatchStatus,
-      updatedAt: now,
-    });
-
-    // Propaga para partidas dependentes
-    const bracketRef = this.bracketsCollection.doc(tournamentId);
-    let bracketWinnerId: string | null = null;
-
-    for (const { ref, data: m } of allMatches) {
-      if (m.matchNumber === matchNumber) continue;
-      if (m.status === 'finished') continue;
-
-      let newTeam1Id = m.team1Id;
-      let newTeam2Id = m.team2Id;
-
-      if (m.slot1.type === 'winner_of' && m.slot1.ref === matchNumber) newTeam1Id = winnerId;
-      if (m.slot1.type === 'loser_of' && m.slot1.ref === matchNumber) newTeam1Id = loserId;
-      if (m.slot2.type === 'winner_of' && m.slot2.ref === matchNumber) newTeam2Id = winnerId;
-      if (m.slot2.type === 'loser_of' && m.slot2.ref === matchNumber) newTeam2Id = loserId;
-
-      const changed = newTeam1Id !== m.team1Id || newTeam2Id !== m.team2Id;
-      if (!changed) continue;
-
-      const newStatus: MatchStatus = newTeam1Id && newTeam2Id ? 'ready' : 'pending';
-      batch.update(ref, { team1Id: newTeam1Id, team2Id: newTeam2Id, status: newStatus, updatedAt: now });
+    // Persiste só as partidas que mudaram (a reportada + as que receberam times ou byes)
+    for (const m of engineMatches) {
+      const fields = this.engineFields(m);
+      if (before.get(m.matchNumber) === JSON.stringify(fields)) continue;
+      const ref = stored.find((x) => x.data.matchNumber === m.matchNumber)!.ref;
+      batch.update(ref, { ...fields, updatedAt: now });
     }
 
-    // Se for a grande final, encerra o bracket
-    const bracketSnap = await bracketRef.get();
-    if (bracketSnap.exists) {
-      const bracket = bracketSnap.data() as StoredBracket;
-      const templates = generateDoubleEliminationTemplate(bracket.teamCount);
-      const grandFinal = templates.find((t) => t.side === 'grand-final');
-
-      if (grandFinal && grandFinal.matchNumber === matchNumber) {
-        bracketWinnerId = winnerId;
-        batch.update(bracketRef, {
-          status: 'finished' as BracketStatus,
-          winnerId: bracketWinnerId,
-          updatedAt: now,
-        });
-      }
+    // Se for a final, encerra o bracket
+    const finalMatch = engineMatches.find((m) => m.matchNumber === finalMatchNumber(templates));
+    const bracketWinnerId = finalMatch?.status === 'finished' ? finalMatch.winnerId : null;
+    if (bracketWinnerId) {
+      batch.update(bracketRef, {
+        status: 'finished' as BracketStatus,
+        winnerId: bracketWinnerId,
+        updatedAt: now,
+      });
     }
 
     await batch.commit();
 
+    const reported = engineMatches.find((m) => m.matchNumber === matchNumber)!;
     return {
       matchNumber,
       winnerId,
-      loserId,
+      loserId: reported.loserId,
       bracketFinished: bracketWinnerId !== null,
       bracketWinnerId,
     };
@@ -378,6 +319,9 @@ export class BracketsService {
     const bracket = bracketSnap.data() as StoredBracket;
     if (bracket.status !== 'running') {
       throw new Error('Só é possível reordenar seeds enquanto o bracket está em andamento.');
+    }
+    if (Object.keys(bracket.seedMap).length < bracket.teamCount) {
+      throw new Error('Chave com bye não pode ter seeds reordenados: os byes já foram aplicados.');
     }
 
     // Valida que o novo seedMap tem o mesmo tamanho
@@ -470,6 +414,23 @@ export class BracketsService {
   // ──────────────────────────────────────────────────────────
   // Helpers
   // ──────────────────────────────────────────────────────────
+
+  /** Campos da partida que o motor controla, sem undefined (Firestore rejeita). */
+  private engineFields(m: EngineMatch) {
+    return {
+      slot1: m.slot1,
+      slot2: m.slot2,
+      team1Id: m.team1Id,
+      team2Id: m.team2Id,
+      team1Score: m.team1Score ?? null,
+      team2Score: m.team2Score ?? null,
+      winnerId: m.winnerId,
+      loserId: m.loserId,
+      walkover: m.walkover === true,
+      bye: m.bye === true,
+      status: m.status,
+    };
+  }
 
   private parseOptionalScore(value: unknown): number | null {
     if (value === undefined || value === null) return null;
