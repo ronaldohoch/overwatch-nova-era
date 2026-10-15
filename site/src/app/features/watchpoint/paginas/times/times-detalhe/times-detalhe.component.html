@@ -58,6 +58,16 @@
                 </p>
               }
 
+              @if (!isAdmin()) {
+                <p class="text-xs font-medium text-(--ow-text-muted)">
+                  @if (captainLogoNextChangeLabel(); as nextChangeLabel) {
+                    Você já trocou a logo esta semana. Próxima troca liberada em {{ nextChangeLabel }}.
+                  } @else {
+                    O capitão pode trocar a logo 1 vez por semana.
+                  }
+                </p>
+              }
+
               <div class="flex flex-wrap justify-end gap-2">
                 <ow-btn type="button" variant="secondary-mini" [disabled]="!selectedLogoFile()" (click)="clearSelectedLogoFile()">
                   Limpar
@@ -71,15 +81,17 @@
                 </ow-btn>
               </div>
 
-              <div class="flex justify-end">
-                <ow-btn type="button" variant="danger" [disabled]="!canRemoveTeamLogo()" (click)="onRemoveTeamLogo()">
-                  @if (removingLogo()) {
-                    Removendo...
-                  } @else {
-                    Remover logo atual
-                  }
-                </ow-btn>
-              </div>
+              @if (isAdmin()) {
+                <div class="flex justify-end">
+                  <ow-btn type="button" variant="danger" [disabled]="!canRemoveTeamLogo()" (click)="onRemoveTeamLogo()">
+                    @if (removingLogo()) {
+                      Removendo...
+                    } @else {
+                      Remover logo atual
+                    }
+                  </ow-btn>
+                </div>
+              }
             </form>
           }
 

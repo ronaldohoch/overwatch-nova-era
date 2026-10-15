@@ -29,6 +29,7 @@ const TEAM_LOGO_FOLDER = 'times/logos';
 
 const TEAM_LOGO_MAX_BYTES = 2 * 1024 * 1024;
 const TEAM_LOGO_MIME_TYPES = new Set(['image/png', 'image/webp']);
+const CAPTAIN_LOGO_COOLDOWN_MS = 7 * 24 * 60 * 60 * 1000;
 
 
 function fail(message: string, statusCode: number): never {
@@ -243,6 +244,35 @@ export class TimesService {
     if (actorRole !== UserRole.ADMIN) {
       fail('Apenas admin pode alterar logo do time.', 403);
     }
+  }
+
+  private resolveTeamManager(
+    teamData: Record<string, unknown>,
+    actorUid: string,
+    actorRole: ActorRole,
+    deniedMessage: string,
+  ): 'admin' | 'captain' {
+    if (actorRole === UserRole.ADMIN) return 'admin';
+    if (teamData['captainUid'] === actorUid) return 'captain';
+    fail(deniedMessage, 403);
+  }
+
+  private assertCaptainLogoCooldown(teamData: Record<string, unknown>) {
+    const lastChange = this.normalizeOptionalString(teamData['captainLogoUpdatedAt']);
+    if (!lastChange) return;
+
+    const lastChangeMs = new Date(lastChange).getTime();
+    if (!Number.isFinite(lastChangeMs)) return;
+
+    const nextAllowedMs = lastChangeMs + CAPTAIN_LOGO_COOLDOWN_MS;
+    if (Date.now() >= nextAllowedMs) return;
+
+    const nextAllowedLabel = new Date(nextAllowedMs).toLocaleString('pt-BR', {
+      timeZone: 'America/Sao_Paulo',
+      dateStyle: 'short',
+      timeStyle: 'short',
+    });
+    fail(`O capitao so pode trocar a logo 1 vez por semana. Proxima troca liberada em ${nextAllowedLabel}.`, 429);
   }
 
   private ensureRecord(value: unknown, fieldName: string): Record<string, unknown> {
@@ -685,12 +715,8 @@ export class TimesService {
 
   async updateTeamData(teamId: string, actor: TeamActor, body: UpdateTeamDto) {
     const normalizedTeamId = this.parseUid(teamId, 'teamId');
-    this.parseUid(actor.uid, 'uid');
-
+    const actorUid = this.parseUid(actor.uid, 'uid');
     const actorRole = this.parseRole(actor.role);
-    if (actorRole !== UserRole.ADMIN) {
-      fail('Apenas admin pode alterar dados do time.', 403);
-    }
 
     const hasName = this.hasOwnField(body, 'name');
     const hasDescription = this.hasOwnField(body, 'description');
@@ -724,6 +750,13 @@ export class TimesService {
         fail('Time nao encontrado.', 404);
       }
 
+      this.resolveTeamManager(
+        (teamSnapshot.data() ?? {}) as Record<string, unknown>,
+        actorUid,
+        actorRole,
+        'Apenas o capitao ou admin pode alterar dados do time.',
+      );
+
       tx.update(teamRef, updates);
     });
 
@@ -736,10 +769,9 @@ export class TimesService {
 
   async updateTeamLogo(teamId: string, actor: TeamActor, body: unknown) {
     const normalizedTeamId = this.parseUid(teamId, 'teamId');
-    this.parseUid(actor.uid, 'uid');
-
+    const actorUid = this.parseUid(actor.uid, 'uid');
     const actorRole = this.parseRole(actor.role);
-    this.assertAdminRole(actorRole);
+    const logoDeniedMessage = 'Apenas o capitao ou admin pode alterar logo do time.';
 
     const payload = this.ensureRecord(body, 'body');
     const mimeType = this.parseLogoMimeType(payload['mimeType']);
@@ -756,6 +788,11 @@ export class TimesService {
     }
 
     const teamData = (teamSnapshot.data() ?? {}) as Record<string, unknown>;
+    const manager = this.resolveTeamManager(teamData, actorUid, actorRole, logoDeniedMessage);
+    if (manager === 'captain') {
+      this.assertCaptainLogoCooldown(teamData);
+    }
+
     const previousLogoPath = this.normalizeOptionalString(teamData['logoPath']);
     const previousLogoBucketName =
       this.normalizeOptionalString(teamData['logoBucketName']) ??
@@ -785,11 +822,23 @@ export class TimesService {
           fail('Time nao encontrado.', 404);
         }
 
+        const latestTeamData = (latestTeamSnapshot.data() ?? {}) as Record<string, unknown>;
+        const latestManager = this.resolveTeamManager(
+          latestTeamData,
+          actorUid,
+          actorRole,
+          logoDeniedMessage,
+        );
+        if (latestManager === 'captain') {
+          this.assertCaptainLogoCooldown(latestTeamData);
+        }
+
         tx.update(teamRef, {
           logoPath: nextLogoPath,
           logoBucketName: this.logosBucketName,
           logoMimeType: mimeType,
           logoUpdatedAt: nowIso,
+          ...(latestManager === 'captain' ? { captainLogoUpdatedAt: nowIso } : {}),
           updatedAt: FieldValue.serverTimestamp(),
         });
       });

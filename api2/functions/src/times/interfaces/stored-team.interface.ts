@@ -13,6 +13,7 @@ export interface StoredTeam {
   readonly logoBucketName?: string | null;
   readonly logoMimeType?: string | null;
   readonly logoUpdatedAt?: string | FirebaseFirestore.FieldValue | null;
+  readonly captainLogoUpdatedAt?: string | null;
   readonly createdAt: string;
   readonly updatedAt: string | FirebaseFirestore.FieldValue;
   readonly trophies: readonly unknown[];

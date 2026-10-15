@@ -12,6 +12,7 @@ type TeamCategory = 'formed' | 'random' | 'unknown';
 type ParticipationScope = 'participa' | 'participou';
 const TEAM_LOGO_MAX_BYTES = 2 * 1024 * 1024;
 const TEAM_LOGO_ALLOWED_MIME_TYPES = new Set(['image/png', 'image/webp']);
+const CAPTAIN_LOGO_COOLDOWN_MS = 7 * 24 * 60 * 60 * 1000;
 
 type TeamDetail = Readonly<{
   id: string;
@@ -28,6 +29,7 @@ type TeamDetail = Readonly<{
   logoUrl: string | null;
   logoMimeType: string | null;
   logoUpdatedAtLabel: string | null;
+  captainLogoUpdatedAt: string | null;
 }>;
 
 type TeamMemberItem = Readonly<{
@@ -154,17 +156,36 @@ export class TimesDetalheComponent {
     return uid === captainUid;
   });
   readonly isAdmin = computed(() => this.auth.userRole() === 'admin');
-  readonly canEditTeamData = computed(() => this.hasTeamId() && this.isAdmin());
+  readonly canEditTeamData = computed(
+    () => this.hasTeamId() && (this.isAdmin() || this.isCurrentUserCaptain()),
+  );
+  readonly captainLogoNextChangeAt = computed(() => {
+    if (this.isAdmin() || !this.isCurrentUserCaptain()) return null;
+
+    const lastChange = this.team()?.captainLogoUpdatedAt;
+    if (!lastChange) return null;
+
+    const lastChangeMs = new Date(lastChange).getTime();
+    if (!Number.isFinite(lastChangeMs)) return null;
+
+    const nextAllowedMs = lastChangeMs + CAPTAIN_LOGO_COOLDOWN_MS;
+    return nextAllowedMs > Date.now() ? new Date(nextAllowedMs).toISOString() : null;
+  });
+  readonly captainLogoNextChangeLabel = computed(() => {
+    const nextChangeAt = this.captainLogoNextChangeAt();
+    return nextChangeAt ? this.toDateTimeLabel(nextChangeAt) : null;
+  });
   readonly canUploadTeamLogo = computed(
     () =>
       this.canEditTeamData() &&
+      !this.captainLogoNextChangeAt() &&
       !this.uploadingLogo() &&
       !this.removingLogo() &&
       !!this.selectedLogoFile(),
   );
   readonly canRemoveTeamLogo = computed(
     () =>
-      this.canEditTeamData() &&
+      this.isAdmin() &&
       !this.uploadingLogo() &&
       !this.removingLogo() &&
       !!this.team()?.logoPath,
@@ -269,7 +290,14 @@ export class TimesDetalheComponent {
     }
 
     if (!this.canEditTeamData()) {
-      this.uploadLogoMessage.set('Apenas admin pode atualizar a logo do time.');
+      this.uploadLogoMessage.set('Apenas o capitão ou admin pode atualizar a logo do time.');
+      this.uploadLogoError.set(true);
+      return;
+    }
+
+    const nextChangeLabel = this.captainLogoNextChangeLabel();
+    if (nextChangeLabel) {
+      this.uploadLogoMessage.set(`Você poderá trocar a logo novamente em ${nextChangeLabel}.`);
       this.uploadLogoError.set(true);
       return;
     }
@@ -330,7 +358,7 @@ export class TimesDetalheComponent {
       return;
     }
 
-    if (!this.canEditTeamData()) {
+    if (!this.isAdmin()) {
       this.removeLogoMessage.set('Apenas admin pode remover a logo do time.');
       this.removeLogoError.set(true);
       return;
@@ -364,8 +392,8 @@ export class TimesDetalheComponent {
       return;
     }
 
-    if (!this.isAdmin()) {
-      this.updateTeamDataMessage.set('Apenas admin pode alterar dados do time.');
+    if (!this.canEditTeamData()) {
+      this.updateTeamDataMessage.set('Apenas o capitão ou admin pode alterar dados do time.');
       this.updateTeamDataError.set(true);
       return;
     }
@@ -891,6 +919,7 @@ export class TimesDetalheComponent {
         this.readString(value, 'logoMimeType') ??
         this.readString(value, 'logo_mime_type'),
       logoUpdatedAtLabel: logoUpdatedAt ? this.toDateTimeLabel(logoUpdatedAt) : null,
+      captainLogoUpdatedAt: this.readString(value, 'captainLogoUpdatedAt'),
     };
   }
 
