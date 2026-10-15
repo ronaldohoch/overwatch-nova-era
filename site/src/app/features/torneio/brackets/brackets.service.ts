@@ -27,6 +27,8 @@ export interface BracketMatch {
   readonly winnerId: string | null;
   readonly loserId: string | null;
   readonly walkover?: boolean;
+  /** Lado vazio: o time avançou sem jogar. */
+  readonly bye?: boolean;
   readonly status: MatchStatus;
 }
 
@@ -38,8 +40,10 @@ export interface BracketTeamInfo {
 export interface Bracket {
   readonly id: string;
   readonly tournamentId: string;
-  readonly type: 'double-elimination';
+  readonly type: 'double-elimination' | 'single-elimination';
   readonly teamCount: 4 | 8 | 16 | 32;
+  /** 'groups' quando a chave é o mata-mata de uma fase de grupos. */
+  readonly source?: 'groups';
   readonly status: BracketStatus;
   readonly seedMap: Record<number, string>;
   readonly winnerId: string | null;

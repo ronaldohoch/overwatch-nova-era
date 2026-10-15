@@ -13,6 +13,8 @@ type TournamentListItem = Readonly<{
   id: string;
   name: string;
   teamMode: string;
+  /** 'groups' ganha o atalho para a fase de grupos. */
+  format: string;
   status: string;
   startAtTimestamp: number;
   stageLabel: string;
@@ -106,6 +108,7 @@ export class ListagemTorneiosComponent {
       id,
       name,
       teamMode,
+      format: format ?? '',
       status,
       startAtTimestamp: this.toStartTimestamp(startAt),
       stageLabel: this.buildStageLabel(teamMode, format, maxTeams),
@@ -124,8 +127,12 @@ export class ListagemTorneiosComponent {
           ? 'Times fechados'
           : 'Modo desconhecido';
 
-    const teamsLabel = maxTeams && maxTeams > 0 ? `${maxTeams} times` : 'Times não informados';
-    const formatLabel = format ? format.replaceAll('_', ' ').toUpperCase() : 'FORMATO NAO INFORMADO';
+    const isGroups = format === 'groups';
+    const teamsLabel =
+      maxTeams && maxTeams > 0 ? `${isGroups ? 'até ' : ''}${maxTeams} times` : 'Times não informados';
+    const formatLabel = isGroups
+      ? 'FASE DE GRUPOS + MATA-MATA'
+      : format ? format.replaceAll('_', ' ').toUpperCase() : 'FORMATO NAO INFORMADO';
 
     return `${modeLabel} • ${teamsLabel} • ${formatLabel}`;
   }

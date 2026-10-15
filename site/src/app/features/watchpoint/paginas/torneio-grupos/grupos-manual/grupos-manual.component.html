@@ -1,0 +1,62 @@
+<section class="space-y-4">
+  <div class="flex flex-wrap items-center justify-between gap-3">
+    <span class="text-xs font-semibold text-(--ow-text-muted)">
+      {{ filledCount() }} / {{ totalSlots() }} posicionados
+    </span>
+
+    <button
+      type="button"
+      class="border border-(--ow-border-strong) px-3 py-1.5 text-[0.65rem] font-extrabold uppercase tracking-[0.1em] text-(--ow-text-muted) transition-colors hover:border-(--ow-orange) hover:text-(--ow-orange-text) disabled:cursor-not-allowed disabled:opacity-50"
+      [disabled]="disabled() || filledCount() === 0"
+      (click)="clearAll()"
+    >
+      Limpar tudo
+    </button>
+  </div>
+
+  <div class="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
+    @for (group of groups(); track group.letter) {
+      <div class="overflow-hidden border border-(--ow-border) bg-(--ow-surface) [clip-path:polygon(3%_0,100%_0,100%_92%,97%_100%,0_100%,0_8%)]">
+        <div class="flex items-center justify-between border-b border-(--ow-border) bg-(--ow-surface-raised) px-3 py-1.5">
+          <span class="text-[0.62rem] font-black uppercase tracking-widest text-(--ow-orange-text)">
+            Grupo {{ group.letter }}
+          </span>
+          <span class="text-[0.58rem] font-bold uppercase tracking-widest text-(--ow-text-subtle)">
+            {{ group.slots.length }} times
+          </span>
+        </div>
+
+        <div class="space-y-3 p-3">
+          @for (slot of group.slots; track slot; let i = $index) {
+            <div class="flex items-center gap-2.5">
+              <span class="w-7 shrink-0 text-[0.6rem] font-black text-(--ow-text-subtle)">
+                {{ group.letter }}{{ i + 1 }}
+              </span>
+              <ow-select
+                class="min-w-0 flex-1"
+                placeholder="Selecione o time"
+                [options]="optionsBySlot()[slot]"
+                [ngModel]="valueFor(slot)"
+                [disabled]="disabled()"
+                (ngModelChange)="onSlotChange(slot, $event)"
+              />
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </div>
+
+  <div class="flex flex-wrap items-center gap-2">
+    <span class="text-[0.6rem] font-black uppercase tracking-[0.16em] text-(--ow-text-muted)">
+      Sem grupo · {{ availableTeams().length }}
+    </span>
+    @for (team of availableTeams(); track team.id) {
+      <span class="border border-(--ow-border-strong) bg-(--ow-surface-raised) px-2.5 py-1 text-[0.7rem] font-bold text-(--ow-text-muted)">
+        {{ team.name }}
+      </span>
+    } @empty {
+      <span class="text-[0.7rem] font-bold italic text-(--ow-text-subtle)">Todos os times posicionados</span>
+    }
+  </div>
+</section>

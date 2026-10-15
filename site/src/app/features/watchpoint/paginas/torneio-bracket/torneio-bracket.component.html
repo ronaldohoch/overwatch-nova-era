@@ -27,6 +27,11 @@
           Ver página pública
         </ow-btn>
       }
+      @if (tournamentId && isGroupsTournament()) {
+        <ow-btn variant="ghost" size="sm" [routerLink]="['/watchpoint/torneios', tournamentId, 'grupos']">
+          Fase de grupos
+        </ow-btn>
+      }
       @if (state() === 'loaded' && canReorderSeeds()) {
         <ow-btn
           [variant]="editingSeeds() ? 'primary' : 'ghost'"
@@ -64,7 +69,24 @@
   <!-- ═══════════════════════════════════════════════════════
        GERAR CHAVE — vale para qualquer tipo de torneio
   ════════════════════════════════════════════════════════ -->
-  @if (state() === 'no-bracket' && isAdminOrStreamer()) {
+  @if (state() === 'no-bracket' && isGroupsTournament()) {
+    <ow-card>
+      <div class="space-y-3">
+        <h3 class="text-lg font-black uppercase tracking-wider text-(--ow-text)">Mata-mata ainda não gerado</h3>
+        <p class="text-sm text-(--ow-text)">
+          Este torneio começa pela fase de grupos. O mata-mata é gerado na tela de grupos,
+          com os 2 melhores de cada grupo, depois que todas as partidas tiverem resultado.
+        </p>
+        @if (tournamentId) {
+          <ow-btn variant="primary" size="sm" [routerLink]="['/watchpoint/torneios', tournamentId, 'grupos']">
+            Ir para a fase de grupos
+          </ow-btn>
+        }
+      </div>
+    </ow-card>
+  }
+
+  @if (state() === 'no-bracket' && isAdminOrStreamer() && !isGroupsTournament()) {
     <div class="space-y-6">
 
       <div>

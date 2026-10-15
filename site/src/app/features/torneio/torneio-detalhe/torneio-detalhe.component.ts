@@ -12,6 +12,8 @@ import { environment } from '../../../../environments/environment';
 import { DoubleEliminationComponent } from '../brackets/double-elimination/double-elimination.component';
 import { Bracket } from '../brackets/brackets.service';
 import { TeamDisplay } from '../components/match-card/match-card.component';
+import { FaseDeGruposComponent } from '../grupos/fase-de-grupos/fase-de-grupos.component';
+import { GroupStage } from '../grupos/grupos.service';
 
 type PageState = 'loading' | 'loaded' | 'no-bracket' | 'not-found' | 'error';
 type RawRecord = Readonly<Record<string, unknown>>;
@@ -35,7 +37,7 @@ const STATUS_LABELS: Record<string, string> = {
 @Component({
   selector: 'app-torneio-detalhe',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [DoubleEliminationComponent],
+  imports: [DoubleEliminationComponent, FaseDeGruposComponent],
   templateUrl: './torneio-detalhe.component.html',
 })
 export class TorneioDetalheComponent {
@@ -47,6 +49,7 @@ export class TorneioDetalheComponent {
   readonly state = signal<PageState>('loading');
   readonly tournament = signal<TournamentInfo | null>(null);
   readonly bracket = signal<Bracket | null>(null);
+  readonly groupStage = signal<GroupStage | null>(null);
   readonly teams = signal<Record<string, TeamDisplay>>({});
   readonly errorMessage = signal<string | null>(null);
 
@@ -80,6 +83,7 @@ export class TorneioDetalheComponent {
     const [tournamentOk] = await Promise.all([
       this.loadTournamentInfo(id),
       this.loadBracket(id),
+      this.loadGroupStage(id),
     ]);
 
     if (!tournamentOk) {
@@ -88,8 +92,8 @@ export class TorneioDetalheComponent {
     }
 
     const b = this.bracket();
-    if (b) {
-      this.buildTeamsFromBracket(b);
+    if (b) this.buildTeamsFromBracket(b);
+    if (b || this.groupStage()) {
       this.state.set('loaded');
     } else {
       this.state.set('no-bracket');
@@ -128,6 +132,18 @@ export class TorneioDetalheComponent {
         this.bracket.set(null); // sem chave — ok
       }
       // outros erros: ignora, o bracket fica null
+    }
+  }
+
+  /** Carrega a fase de grupos. 404 = torneio sem grupos (ou ainda não gerados). */
+  private async loadGroupStage(id: string): Promise<void> {
+    try {
+      const stage = await firstValueFrom(
+        this.http.get<GroupStage>(`${environment.apiURLGrupos}/${id}`),
+      );
+      this.groupStage.set(stage);
+    } catch {
+      this.groupStage.set(null);
     }
   }
 

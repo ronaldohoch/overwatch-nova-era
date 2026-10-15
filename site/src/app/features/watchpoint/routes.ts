@@ -90,6 +90,18 @@ export default [
           ),
       },
       {
+        path: 'torneios/:id/grupos',
+        title: 'Copa Overwatch Nova Era - Fase de Grupos',
+        canActivate: [routeAccessGuard],
+        data: {
+          access: ['admin', 'streamer'],
+        },
+        loadComponent: () =>
+          import('./paginas/torneio-grupos/torneio-grupos.component').then(
+            (m) => m.TorneioGruposComponent,
+          ),
+      },
+      {
         path: 'torneios',
         title: 'Copa Overwatch Nova Era - Torneios',
         loadComponent: () => import('./paginas/listagem-torneios/listagem-torneios.component').then((m) => m.ListagemTorneiosComponent),

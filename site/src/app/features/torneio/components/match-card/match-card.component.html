@@ -24,6 +24,10 @@
       >
         AO VIVO
       </span>
+    } @else if (isBye()) {
+      <span class="text-[0.7rem] font-extrabold uppercase tracking-widest text-(--ow-text-subtle)">
+        AVANÇA DIRETO
+      </span>
     } @else if (isFinished()) {
       <span class="text-[0.7rem] font-extrabold uppercase tracking-widest text-(--ow-text-subtle)">
         FINALIZADO
@@ -57,7 +61,7 @@
       }
 
       <span class="font-bold text-[0.95rem] text-(--ow-text)">
-        {{ team1()?.name ?? 'A definir' }}
+        {{ team1()?.name ?? emptyLabel() }}
       </span>
     </div>
 
@@ -87,7 +91,7 @@
       }
 
       <span class="font-bold text-[0.95rem] text-(--ow-text)">
-        {{ team2()?.name ?? 'A definir' }}
+        {{ team2()?.name ?? emptyLabel() }}
       </span>
     </div>
 

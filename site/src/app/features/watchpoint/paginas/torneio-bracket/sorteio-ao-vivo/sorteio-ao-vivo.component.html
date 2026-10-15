@@ -9,7 +9,7 @@
           Sorteio ao vivo
         </p>
         <h2 class="text-2xl font-black uppercase tracking-wider text-(--ow-text) sm:text-3xl">
-          Definição da chave
+          {{ heading() }}
         </h2>
       </div>
 
@@ -47,25 +47,26 @@
       <section class="space-y-3">
         <div class="flex items-center gap-2">
           <span class="shrink-0 text-[0.65rem] font-black uppercase tracking-[0.15em] text-(--ow-orange-text)">
-            Vencedores · R1
+            {{ sectionLabel() }}
           </span>
           <div class="h-px flex-1 bg-(--ow-orange) opacity-20"></div>
         </div>
 
         <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          @for (pair of pairs(); track pair.matchNumber) {
+          @for (box of layout(); track box.key) {
             <div class="overflow-hidden border border-(--ow-border) bg-(--ow-surface) [clip-path:polygon(3%_0,100%_0,100%_88%,97%_100%,0_100%,0_12%)]">
               <div class="border-b border-(--ow-border) bg-(--ow-surface-raised) px-3 py-1">
                 <span class="text-[0.58rem] font-black uppercase tracking-widest text-(--ow-text-subtle)">
-                  Jogo {{ pair.matchNumber }}
+                  {{ box.title }}
                 </span>
               </div>
 
-              @for (seed of [pair.seed1, pair.seed2]; track seed) {
+              @for (slot of box.slots; track slot.seed; let last = $last) {
+                @let seed = slot.seed;
                 <div
                   [attr.data-seed]="seed"
                   class="flex items-center gap-2.5 border-(--ow-border) px-3 py-2.5 transition-all duration-300"
-                  [class.border-b]="seed === pair.seed1"
+                  [class.border-b]="!last"
                   [class.bg-(--ow-orange-tint)]="!!teamAtSeed(seed)"
                   [class.ring-2]="justLandedSeed() === seed"
                   [class.ring-(--ow-orange)]="justLandedSeed() === seed"
@@ -94,7 +95,7 @@
                   }
 
                   <span class="shrink-0 text-[0.6rem] font-black text-(--ow-text-subtle)">
-                    S{{ seed }}
+                    {{ slot.label }}
                   </span>
                 </div>
               }
@@ -102,9 +103,11 @@
           }
         </div>
 
-        <p class="text-[0.65rem] italic text-(--ow-text-subtle)">
-          ↓ Demais rodadas serão definidas pelos resultados das partidas
-        </p>
+        @if (!boxes()) {
+          <p class="text-[0.65rem] italic text-(--ow-text-subtle)">
+            ↓ Demais rodadas serão definidas pelos resultados das partidas
+          </p>
+        }
       </section>
 
       <!-- ══════════ Roleta ══════════ -->
@@ -144,7 +147,7 @@
 
             @if (!reelSlots().length) {
               <p class="absolute inset-0 m-0 grid place-items-center px-4 text-center text-sm font-bold text-(--ow-text-muted)">
-                @if (finished()) { Chave completa } @else { Pressione iniciar para sortear }
+                @if (finished()) { Sorteio completo } @else { Pressione iniciar para sortear }
               </p>
             }
 
@@ -203,7 +206,7 @@
             </button>
           } @else {
             <ow-btn variant="primary" [disabled]="generating()" (click)="requestGenerate()">
-              {{ generating() ? 'Gerando chave...' : 'Gerar chave com este sorteio' }}
+              {{ generating() ? 'Gerando...' : generateLabel() }}
             </ow-btn>
           }
 
@@ -260,7 +263,7 @@
       <span class="min-w-0 flex-1 truncate text-sm font-black uppercase tracking-wide text-(--ow-text)">
         {{ state.team.name }}
       </span>
-      <span class="shrink-0 text-[0.6rem] font-black text-(--ow-orange-text)">S{{ state.seed }}</span>
+      <span class="shrink-0 text-[0.6rem] font-black text-(--ow-orange-text)">{{ slotLabel(state.seed) }}</span>
     </div>
   }
 </div>

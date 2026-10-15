@@ -10,7 +10,7 @@
       <span
         class="shrink-0 text-[0.7rem] font-black uppercase tracking-[0.15em] text-(--ow-orange-text)"
       >
-        Chave dos Vencedores
+        {{ isSingleElimination() ? 'Mata-mata' : 'Chave dos Vencedores' }}
       </span>
       <div class="h-px flex-1 bg-(--ow-orange) opacity-25"></div>
     </div>
@@ -27,7 +27,7 @@
     <!-- Colunas de partidas (altura controlada para alinhamento) -->
     <div class="flex gap-4" [style.height]="wbSectionHeightPx()" cdkDropListGroup>
       @for (rd of wbRounds(); track rd.round) {
-        <div class="flex w-72 shrink-0 flex-col gap-4">
+        <div class="flex w-72 shrink-0 flex-col">
           @for (match of rd.matches; track match.matchNumber) {
             <div class="flex items-center justify-center" [style.height]="rd.slotHeightPx">
 

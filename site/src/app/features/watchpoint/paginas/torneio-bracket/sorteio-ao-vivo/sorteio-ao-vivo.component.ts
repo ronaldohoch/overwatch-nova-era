@@ -29,6 +29,13 @@ export interface SorteioPair {
   readonly seed2: number;
 }
 
+/** Caixa de destino do sorteio: um jogo da chave ou um grupo. */
+export interface SorteioBox {
+  readonly key: string;
+  readonly title: string;
+  readonly slots: readonly { readonly seed: number; readonly label: string }[];
+}
+
 /** Estado do card que viaja da roleta até o slot da chave. */
 interface FlyState {
   readonly team: SorteioTeam;
@@ -70,6 +77,11 @@ export class SorteioAoVivoComponent implements OnInit {
   readonly maxTeams = input.required<number>();
   /** Bloqueia os controles enquanto a chave está sendo criada. */
   readonly generating = input(false);
+  /** Caixas de destino. Sem isso, usa os jogos da 1ª rodada da chave. */
+  readonly boxes = input<readonly SorteioBox[] | null>(null);
+  readonly heading = input('Definição da chave');
+  readonly sectionLabel = input('Vencedores · R1');
+  readonly generateLabel = input('Gerar chave com este sorteio');
 
   /** Emitido quando todos os seeds foram preenchidos. */
   readonly concluded = output<Record<number, string>>();
@@ -117,6 +129,20 @@ export class SorteioAoVivoComponent implements OnInit {
       seed2: i * 2 + 2,
     }));
   });
+
+  readonly layout = computed<readonly SorteioBox[]>(
+    () =>
+      this.boxes() ??
+      this.pairs().map((pair) => ({
+        key: `jogo-${pair.matchNumber}`,
+        title: `Jogo ${pair.matchNumber}`,
+        slots: [pair.seed1, pair.seed2].map((seed) => ({ seed, label: `S${seed}` })),
+      })),
+  );
+
+  private readonly labelBySeed = computed(
+    () => new Map(this.layout().flatMap((box) => box.slots.map((slot) => [slot.seed, slot.label] as const))),
+  );
 
   private timers: ReturnType<typeof setTimeout>[] = [];
   private started = false;
@@ -192,6 +218,10 @@ export class SorteioAoVivoComponent implements OnInit {
     const teamId = this.seedMap()[seed];
     if (!teamId) return null;
     return this.teams().find((t) => t.id === teamId) ?? null;
+  }
+
+  slotLabel(seed: number): string {
+    return this.labelBySeed().get(seed) ?? `S${seed}`;
   }
 
   initials(name: string): string {

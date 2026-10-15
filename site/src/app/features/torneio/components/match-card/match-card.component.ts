@@ -24,6 +24,9 @@ export class MatchCardComponent {
   readonly isLive = computed(() => this.match().status === 'running');
   readonly isFinished = computed(() => this.match().status === 'finished');
   readonly isWalkover = computed(() => this.match().walkover === true);
+  readonly isBye = computed(() => this.match().bye === true);
+  /** Nome do lado sem time: bye quando a vaga nunca será preenchida. */
+  readonly emptyLabel = computed(() => (this.isBye() ? 'Bye' : 'A definir'));
   readonly canTriggerReport = computed(() => {
     if (!this.canReport()) return false;
     const status = this.match().status;

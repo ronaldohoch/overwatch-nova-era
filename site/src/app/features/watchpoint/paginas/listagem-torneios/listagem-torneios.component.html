@@ -49,12 +49,21 @@
               </ow-btn>
             }
 
+            @if (canManageBracket() && tournament.format === 'groups') {
+              <ow-btn
+                variant="primary-mini"
+                [routerLink]="['/watchpoint/torneios', tournament.id, 'grupos']"
+              >
+                Grupos
+              </ow-btn>
+            }
+
             @if (canManageBracket()) {
               <ow-btn
                 variant="primary-mini"
                 [routerLink]="['/watchpoint/torneios', tournament.id, 'bracket']"
               >
-                Chave
+                {{ tournament.format === 'groups' ? 'Mata-mata' : 'Chave' }}
               </ow-btn>
             }
 

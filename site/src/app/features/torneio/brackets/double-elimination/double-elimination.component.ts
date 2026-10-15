@@ -10,8 +10,8 @@ interface RoundData {
   slotHeightPx: string;
 }
 
-// Altura base por slot (card ~142px + folga vertical)
-const BASE_SLOT_PX = 160;
+// Altura base por slot (card ~176px + folga vertical)
+const BASE_SLOT_PX = 192;
 
 @Component({
   selector: 'app-double-elimination',
@@ -78,6 +78,9 @@ export class DoubleEliminationComponent {
       slotHeightPx: `${sectionHeight / matches.length}px`,
     }));
   });
+
+  /** Eliminação simples: só a chave principal, sem perdedores nem grande final. */
+  readonly isSingleElimination = computed(() => this.bracket().type === 'single-elimination');
 
   readonly grandFinal = computed(() =>
     this.bracket().matches.find((m) => m.side === 'grand-final') ?? null,

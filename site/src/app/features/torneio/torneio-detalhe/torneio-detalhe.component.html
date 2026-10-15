@@ -58,6 +58,16 @@
     <!-- Divisor -->
     <div class="h-px w-full bg-(--ow-border)"></div>
 
+    <!-- Fase de grupos -->
+    @if (state() === 'loaded' && groupStage(); as stage) {
+      <div>
+        <p class="mb-4 text-[0.72rem] font-black uppercase tracking-[0.15em] text-(--ow-text-muted)">
+          Fase de grupos
+        </p>
+        <app-fase-de-grupos [stage]="stage" [canReport]="false" />
+      </div>
+    }
+
     <!-- Chave do torneio -->
     @if (state() === 'loaded' && bracket()) {
 
@@ -65,7 +75,7 @@
         <p
           class="mb-4 text-[0.72rem] font-black uppercase tracking-[0.15em] text-(--ow-text-muted)"
         >
-          Chaveamento
+          {{ groupStage() ? 'Fase final' : 'Chaveamento' }}
         </p>
 
         <app-double-elimination
@@ -75,6 +85,10 @@
         />
       </div>
 
+    } @else if (state() === 'loaded' && groupStage()) {
+      <p class="text-sm text-(--ow-text-subtle)">
+        O mata-mata será gerado com os 2 melhores de cada grupo ao fim da fase de grupos.
+      </p>
     } @else {
 
       <!-- Sem chave ainda -->

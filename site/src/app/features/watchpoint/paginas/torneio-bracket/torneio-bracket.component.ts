@@ -26,6 +26,7 @@ import {
 } from '../../../torneio/brackets/brackets.service';
 import { TeamDisplay } from '../../../torneio/components/match-card/match-card.component';
 import { BracketSeedingService, SeedPreview } from './bracket-seeding.service';
+import { DrawTeam, TournamentTeamsService } from './tournament-teams.service';
 import { ChaveManualComponent } from './chave-manual/chave-manual.component';
 import {
   SorteioAoVivoComponent,
@@ -34,14 +35,6 @@ import {
 
 type PageState = 'loading' | 'no-bracket' | 'loaded' | 'error';
 type RawRecord = Readonly<Record<string, unknown>>;
-type TeamCategory = 'formed' | 'random' | 'unknown';
-type SelectableTeam = Readonly<{
-  id: string;
-  name: string;
-  logoUrl: string | null;
-  category: TeamCategory;
-  tournamentIds: readonly string[];
-}>;
 
 type ValidTeamCount = 4 | 8 | 16 | 32;
 const VALID_TEAM_COUNTS: ReadonlySet<number> = new Set<number>([4, 8, 16, 32]);
@@ -70,6 +63,7 @@ export class TorneioBracketComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly bracketsService = inject(BracketsService);
   private readonly seeding = inject(BracketSeedingService);
+  private readonly tournamentTeams = inject(TournamentTeamsService);
   readonly auth = inject(AuthService);
 
   readonly tournamentId = this.readTournamentId();
@@ -81,9 +75,11 @@ export class TorneioBracketComponent {
   readonly teams = signal<Record<string, TeamDisplay>>({});
   readonly tournamentName = signal<string | null>(null);
   readonly tournamentTeamMode = signal<string | null>(null);
+  /** 'groups': a chave é o mata-mata gerado pela fase de grupos. */
+  readonly tournamentFormat = signal<string | null>(null);
   readonly maxTeams = signal<ValidTeamCount | null>(null);
   readonly loadingSelectableTeams = signal(false);
-  readonly selectableTeams = signal<readonly SelectableTeam[]>([]);
+  readonly selectableTeams = signal<readonly DrawTeam[]>([]);
   readonly selectableTeamsMessage = signal<string | null>(null);
   readonly pageError = signal<string | null>(null);
 
@@ -147,7 +143,12 @@ export class TorneioBracketComponent {
     return winnerId === match.team1Id || winnerId === match.team2Id;
   });
 
-  readonly canReorderSeeds = computed(() => this.isAdmin() && this.bracket()?.status === 'running');
+  /** Chave com bye não reordena: os byes já foram aplicados nas partidas. */
+  readonly canReorderSeeds = computed(() => {
+    const b = this.bracket();
+    if (!this.isAdmin() || b?.status !== 'running') return false;
+    return Object.keys(b.seedMap).length === b.teamCount;
+  });
   readonly editingSeeds = signal(false);
   readonly reorderingSeeds = signal(false);
   readonly reorderMessage = signal<{ text: string; ok: boolean } | null>(null);
@@ -167,6 +168,7 @@ export class TorneioBracketComponent {
   });
 
   readonly isRandomTournament = computed(() => this.tournamentTeamMode() === 'random');
+  readonly isGroupsTournament = computed(() => this.tournamentFormat() === 'groups');
 
   /** Número de times já alocados no preview. */
   readonly selectedCount = computed(() => Object.keys(this.seedPreview().seedMap).length);
@@ -342,11 +344,7 @@ export class TorneioBracketComponent {
       this.state.set('no-bracket');
       const n = this.maxTeams();
       if (n) this.seedPreview.set(this.seeding.createEmpty(n));
-      if (this.isRandomTournament()) {
-        await this.loadSelectableTeams();
-      } else {
-        await this.loadClosedTeams();
-      }
+      await this.loadDrawTeams();
     } catch (error: unknown) {
       alert(this.resolveError(error, 'Não foi possível excluir a chave.'));
     }
@@ -478,11 +476,7 @@ export class TorneioBracketComponent {
     } catch (error: unknown) {
       if (error instanceof HttpErrorResponse && error.status === 404) {
         this.state.set('no-bracket');
-        if (this.isRandomTournament()) {
-          await this.loadSelectableTeams();
-        } else {
-          await this.loadClosedTeams();
-        }
+        await this.loadDrawTeams();
       } else {
         this.pageError.set(this.resolveError(error, 'Não foi possível carregar a chave.'));
         this.state.set('error');
@@ -500,6 +494,7 @@ export class TorneioBracketComponent {
         const teamMode = (this.readString(response, 'teamMode') ?? '').toLowerCase();
         this.tournamentName.set(name);
         this.tournamentTeamMode.set(teamMode || null);
+        this.tournamentFormat.set(this.readString(response, 'format'));
 
         // Lê maxTeams para montar o preview da chave
         const raw = response['maxTeams'];
@@ -515,8 +510,9 @@ export class TorneioBracketComponent {
     }
   }
 
-  private async loadSelectableTeams(): Promise<void> {
-    if (!this.tournamentId || !this.isRandomTournament()) {
+  /** Times do sorteio. Torneio com grupos não monta a chave aqui. */
+  private async loadDrawTeams(): Promise<void> {
+    if (!this.tournamentId || this.isGroupsTournament()) {
       this.selectableTeams.set([]);
       this.selectableTeamsMessage.set(null);
       return;
@@ -524,109 +520,13 @@ export class TorneioBracketComponent {
 
     this.loadingSelectableTeams.set(true);
     this.selectableTeamsMessage.set(null);
-    // Reseta preview ao recarregar times
     const n = this.maxTeams();
     if (n) this.seedPreview.set(this.seeding.createEmpty(n));
 
-    try {
-      const response = await firstValueFrom(this.http.get<unknown>(environment.apiURLTimes));
-      const allTeams = this.extractArray(response).map((raw) => this.toSelectableTeam(raw));
-      const randomTeams = allTeams.filter((team) => team.category === 'random' && !!team.id);
-      const uniqueRandomTeams = [...new Map(randomTeams.map((team) => [team.id, team])).values()];
-      const teamsForTournament = uniqueRandomTeams.filter((team) =>
-        team.tournamentIds.includes(this.tournamentId!),
-      );
-      const scopedList = teamsForTournament.length > 0 ? teamsForTournament : uniqueRandomTeams;
-      const sorted = scopedList.sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'));
-
-      this.selectableTeams.set(sorted);
-      if (sorted.length === 0) {
-        this.selectableTeamsMessage.set('Nenhum time random disponível para seleção.');
-      }
-    } catch (error: unknown) {
-      this.selectableTeams.set([]);
-      this.selectableTeamsMessage.set(
-        this.resolveError(error, 'Não foi possível carregar os times para seleção.'),
-      );
-    } finally {
-      this.loadingSelectableTeams.set(false);
-    }
-  }
-
-  /**
-   * Times inscritos e com check-in confirmado em torneios de times formados.
-   * Alimenta o palco de sorteio ao vivo (o backend usa a mesma lista).
-   */
-  private async loadClosedTeams(): Promise<void> {
-    if (!this.tournamentId || this.isRandomTournament()) return;
-
-    this.loadingSelectableTeams.set(true);
-    this.selectableTeamsMessage.set(null);
-
-    const n = this.maxTeams();
-    if (n) this.seedPreview.set(this.seeding.createEmpty(n));
-
-    try {
-      const response = await firstValueFrom(
-        this.http.get<unknown>(`${environment.apiURLTorneios}/${this.tournamentId}/teams`),
-      );
-
-      const logos = await this.loadTeamLogos();
-      const rows = this.extractArray(response).filter((raw) => raw['checkedIn'] === true);
-
-      const teams: SelectableTeam[] = rows
-        .map((raw) => {
-          const id =
-            this.readString(raw, 'teamId') ?? this.readString(raw, 'id') ?? '';
-          const name = this.readString(raw, 'name') ?? 'Time sem nome';
-          return {
-            id,
-            name,
-            logoUrl: logos[id] ?? null,
-            category: 'formed' as TeamCategory,
-            tournamentIds: [this.tournamentId!],
-          };
-        })
-        .filter((team) => !!team.id);
-
-      const unique = [...new Map(teams.map((team) => [team.id, team])).values()].sort((a, b) =>
-        a.name.localeCompare(b.name, 'pt-BR'),
-      );
-
-      this.selectableTeams.set(unique);
-
-      if (unique.length === 0) {
-        this.selectableTeamsMessage.set('Nenhum time com check-in confirmado neste torneio.');
-      }
-    } catch (error: unknown) {
-      this.selectableTeams.set([]);
-      this.selectableTeamsMessage.set(
-        this.resolveError(error, 'Não foi possível carregar os times do torneio.'),
-      );
-    } finally {
-      this.loadingSelectableTeams.set(false);
-    }
-  }
-
-  /** Mapa teamId → logoUrl a partir da coleção global de times. */
-  private async loadTeamLogos(): Promise<Record<string, string | null>> {
-    try {
-      const response = await firstValueFrom(this.http.get<unknown>(environment.apiURLTimes));
-      const map: Record<string, string | null> = {};
-
-      for (const raw of this.extractArray(response)) {
-        const id =
-          this.readString(raw, 'id') ??
-          this.readString(raw, '_id') ??
-          this.readString(raw, 'teamId');
-        if (!id) continue;
-        map[id] = this.readString(raw, 'logoUrl') ?? this.readString(raw, 'logo_url');
-      }
-
-      return map;
-    } catch {
-      return {};
-    }
+    const result = await this.tournamentTeams.loadForDraw(this.tournamentId, this.tournamentTeamMode());
+    this.selectableTeams.set(result.teams);
+    this.selectableTeamsMessage.set(result.message);
+    this.loadingSelectableTeams.set(false);
   }
 
   private async loadTeams(bracket: Bracket): Promise<void> {
@@ -666,72 +566,6 @@ export class TorneioBracketComponent {
     if (typeof raw !== 'string') return null;
     const normalized = raw.trim();
     return normalized || null;
-  }
-
-  private toSelectableTeam(value: RawRecord): SelectableTeam {
-    const id =
-      this.readString(value, 'id') ??
-      this.readString(value, '_id') ??
-      this.readString(value, 'teamId') ??
-      '';
-    const name =
-      this.readString(value, 'name') ??
-      this.readString(value, 'teamName') ??
-      this.readString(value, 'title') ??
-      'Time sem nome';
-
-    const logoUrl =
-      this.readString(value, 'logoUrl') ?? this.readString(value, 'logo_url');
-
-    return {
-      id,
-      name,
-      logoUrl,
-      category: this.readTeamCategory(value),
-      tournamentIds: this.readTeamTournamentIds(value),
-    };
-  }
-
-  private readTeamCategory(value: RawRecord): TeamCategory {
-    const raw = (
-      this.readString(value, 'category') ??
-      this.readString(value, 'teamCategory') ??
-      ''
-    ).toLowerCase();
-    if (raw === 'formed') return 'formed';
-    if (raw === 'random') return 'random';
-    return 'unknown';
-  }
-
-  private readTeamTournamentIds(value: RawRecord): readonly string[] {
-    const tournamentIds = new Set<string>();
-
-    for (const field of ['tournamentId', 'currentTournamentId']) {
-      const id = this.readString(value, field);
-      if (id) tournamentIds.add(id);
-    }
-
-    for (const field of ['tournamentIds', 'registeredTournamentIds']) {
-      const list = value[field];
-      if (!Array.isArray(list)) continue;
-
-      for (const item of list) {
-        if (typeof item !== 'string') continue;
-        const normalized = item.trim();
-        if (normalized) tournamentIds.add(normalized);
-      }
-    }
-
-    const tournaments = value['tournaments'];
-    if (Array.isArray(tournaments)) {
-      for (const item of tournaments) {
-        if (!this.isRecord(item)) continue;
-        const id = this.readString(item, 'id') ?? this.readString(item, 'tournamentId');
-        if (id) tournamentIds.add(id);
-      }
-    }
-
-    return [...tournamentIds];
   }
 
   private parseOptionalScore(

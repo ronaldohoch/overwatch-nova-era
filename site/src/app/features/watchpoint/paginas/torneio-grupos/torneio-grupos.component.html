@@ -1,0 +1,321 @@
+<section class="my-8 space-y-8">
+
+  <!-- Cabeçalho -->
+  <div class="flex flex-wrap items-start justify-between gap-4">
+    <div>
+      <h2
+        class="relative mb-[12px] pb-[10px] text-[1.6rem] font-black uppercase tracking-[0.08em] text-(--ow-text) after:absolute after:bottom-0 after:left-0 after:block after:h-1 after:w-16 after:bg-(--ow-orange) after:content-[''] after:[clip-path:polygon(10%_0,90%_0,100%_100%,0_100%)]"
+      >
+        Fase de Grupos
+      </h2>
+      @if (tournamentName()) {
+        <p class="text-sm font-semibold uppercase tracking-wider text-(--ow-text)">{{ tournamentName() }}</p>
+      }
+      @if (isGroupsTournament()) {
+        <p class="mt-1 text-xs text-(--ow-text-muted)">
+          Mata-mata: <span class="font-bold text-(--ow-text)">{{ knockoutLabel() }}</span>
+        </p>
+      }
+    </div>
+
+    <div class="flex flex-wrap items-center gap-3">
+      @if (tournamentId) {
+        <ow-btn variant="ghost" size="sm" [routerLink]="['/torneios', tournamentId]">Ver página pública</ow-btn>
+      }
+      @if (tournamentId && stage()?.knockoutGenerated) {
+        <ow-btn variant="blue" size="sm" [routerLink]="['/watchpoint/torneios', tournamentId, 'bracket']">Ver mata-mata</ow-btn>
+      }
+      @if (state() === 'loaded' && isAdmin() && !stage()?.knockoutGenerated) {
+        <ow-btn variant="danger" size="sm" (click)="deleteStage()">Excluir grupos</ow-btn>
+      }
+      <ow-btn variant="ghost" size="sm" [routerLink]="['/watchpoint/torneios']">Voltar</ow-btn>
+    </div>
+  </div>
+
+  @if (state() === 'loading') {
+    <div class="py-16 text-center text-sm font-semibold uppercase tracking-wider text-(--ow-text-muted)">
+      Carregando fase de grupos...
+    </div>
+  }
+
+  @if (state() === 'error') {
+    <ow-card>
+      <p class="font-semibold text-(--ow-alert-error-text)">{{ pageError() }}</p>
+    </ow-card>
+  }
+
+  @if (pageMessage(); as msg) {
+    <div
+      class="rounded border p-4 text-sm font-semibold"
+      [class]="msg.ok
+        ? 'border-(--ow-green) bg-(--ow-alert-success-bg) text-(--ow-alert-success-text)'
+        : 'border-(--ow-red) bg-(--ow-alert-error-bg) text-(--ow-alert-error-text)'"
+      role="status"
+    >
+      {{ msg.text }}
+      <button type="button" class="ml-4 text-xs font-bold underline" (click)="pageMessage.set(null)">Fechar</button>
+    </div>
+  }
+
+  <!-- ═══════════════════════════════════════════════════════
+       GERAR GRUPOS
+  ════════════════════════════════════════════════════════ -->
+  @if (state() === 'no-stage' && isAdmin()) {
+    <div class="space-y-6">
+      <div>
+        <h3 class="text-lg font-black uppercase tracking-wider text-(--ow-text)">Gerar grupos</h3>
+        <p class="mt-1 text-sm text-(--ow-text)">
+          Grupos de 4 times, completando com grupos de 3 quando a conta não fecha.
+          Todos se enfrentam dentro do grupo e os 2 melhores avançam.
+        </p>
+      </div>
+
+      @if (loadingTeams()) {
+        <p class="text-sm font-semibold text-(--ow-text)">Carregando times...</p>
+      } @else {
+        <div class="flex flex-wrap items-center gap-x-6 gap-y-2 border border-(--ow-border) bg-(--ow-surface) px-4 py-3">
+          <p class="text-xs font-bold uppercase tracking-wider text-(--ow-text)">
+            Times: <span class="font-black text-(--ow-orange-text)">{{ drawTeams().length }}</span>
+            @if (maxTeams()) { <span class="text-(--ow-text-subtle)"> / máx. {{ maxTeams() }}</span> }
+          </p>
+          @if (plannedSizes().length) {
+            <p class="text-xs font-bold uppercase tracking-wider text-(--ow-text)">
+              {{ plannedSizes().length }} grupos
+              <span class="font-semibold normal-case tracking-normal text-(--ow-text-muted)">({{ plannedSizes().join(' + ') }})</span>
+            </p>
+            <p class="text-xs font-semibold text-(--ow-text-muted)">{{ knockoutSummary() }}</p>
+          }
+        </div>
+
+        @if (drawTeamsMessage() && drawTeams().length === 0) {
+          <p class="text-sm font-semibold text-(--ow-alert-error-text)">{{ drawTeamsMessage() }}</p>
+        }
+        @if (drawBlocker(); as blocker) {
+          <p class="text-sm font-semibold text-(--ow-alert-warning-text)">{{ blocker }}</p>
+        }
+
+        <div class="space-y-2">
+          <p class="text-xs font-bold uppercase tracking-wider text-(--ow-text)">Distribuição</p>
+          <ow-radio-group radioStyle="button" [ngModel]="drawMode()" (ngModelChange)="onDrawModeChange($event)">
+            <ow-radio-item value="random" label="Sorteio" description="Os times caem nos grupos por sorteio, na hora ou ao vivo com roleta" />
+            <ow-radio-item value="manual" label="Manual" description="Você escolhe o grupo de cada time" />
+          </ow-radio-group>
+        </div>
+
+        @if (drawMode() === 'manual' && drawTeams().length >= 6) {
+          <app-grupos-manual
+            [teams]="drawTeams()"
+            [disabled]="creating()"
+            (groupsChange)="manualGroups.set($event)"
+          />
+        }
+
+        @if (createMessage() && !createMessage()!.ok) {
+          <p class="text-sm font-semibold text-(--ow-alert-error-text)">{{ createMessage()!.text }}</p>
+        }
+
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+          @if (drawMode() === 'manual') {
+            <ow-btn variant="primary" [disabled]="!canCreate()" (click)="createManual()">
+              {{ creating() ? 'Gerando...' : 'Gerar grupos' }}
+            </ow-btn>
+          } @else {
+            <ow-btn variant="primary" [disabled]="!canCreate()" (click)="sortearAgora()">
+              {{ creating() ? 'Sorteando...' : 'Sortear agora' }}
+            </ow-btn>
+            <button
+              type="button"
+              class="border-2 border-(--ow-orange) bg-(--ow-orange-tint) px-4 py-2.5 text-sm font-black uppercase tracking-[0.08em] text-(--ow-orange-text) transition-colors hover:bg-(--ow-orange-tint-strong) disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-(--ow-orange)"
+              [disabled]="!canCreate()"
+              (click)="openSorteio()"
+            >
+              Sortear ao vivo
+            </button>
+          }
+        </div>
+      }
+    </div>
+  }
+
+  @if (state() === 'no-stage' && !isAdmin()) {
+    <ow-card>
+      <p class="text-sm font-semibold text-(--ow-text-muted)">Os grupos ainda não foram gerados.</p>
+    </ow-card>
+  }
+
+  <!-- ═══════════════════════════════════════════════════════
+       GRUPOS GERADOS
+  ════════════════════════════════════════════════════════ -->
+  @if (state() === 'loaded' && stage(); as s) {
+
+    <!-- Painel de andamento -->
+    <div class="flex flex-wrap items-center justify-between gap-4 border border-(--ow-border) bg-(--ow-surface) px-4 py-3">
+      <div class="flex flex-wrap items-center gap-x-6 gap-y-1">
+        <p class="text-xs font-bold uppercase tracking-wider text-(--ow-text)">
+          Partidas: <span class="font-black text-(--ow-orange-text)">{{ finishedCount() }}</span>
+          <span class="text-(--ow-text-subtle)"> / {{ s.matches.length }}</span>
+        </p>
+        <p class="text-xs font-semibold text-(--ow-text-muted)">{{ knockoutSummary() }}</p>
+      </div>
+
+      @if (s.knockoutGenerated) {
+        <span class="text-xs font-extrabold uppercase tracking-wider text-(--ow-green-text)">Mata-mata gerado</span>
+      } @else if (isAdmin()) {
+        <ow-btn variant="primary" size="sm" [disabled]="!canGenerateKnockout()" (click)="generateKnockout()">
+          {{ generatingKnockout() ? 'Gerando...' : 'Gerar mata-mata' }}
+        </ow-btn>
+      }
+    </div>
+
+    @if (!s.allMatchesFinished && !s.knockoutGenerated) {
+      <p class="text-xs text-(--ow-text-muted)">
+        O mata-mata é liberado quando todas as partidas tiverem resultado.
+        Resultados podem ser corrigidos até lá.
+      </p>
+    }
+
+    <!-- Empates sem desempate -->
+    @for (letter of s.blockingTieGroups; track letter) {
+      <ow-card>
+        <div class="space-y-3">
+          <div>
+            <h3 class="text-base font-black uppercase tracking-wider text-(--ow-text)">Empate no grupo {{ letter }}</h3>
+            <p class="mt-1 text-sm text-(--ow-text)">
+              Pontos, saldo de rounds, confronto direto e rounds vencidos não separaram os times.
+              Defina a ordem final{{ isAdmin() ? '' : ' (somente admin)' }}.
+            </p>
+          </div>
+
+          <ol class="space-y-2">
+            @for (teamId of tieOrderFor(letter); track teamId; let i = $index, first = $first, last = $last) {
+              <li class="flex items-center gap-3 border border-(--ow-border) bg-(--ow-surface-raised) px-3 py-2">
+                <span class="w-5 text-sm font-black text-(--ow-orange-text)">{{ i + 1 }}</span>
+                <span class="min-w-0 flex-1 truncate text-sm font-bold text-(--ow-text)">{{ teamName(teamId) }}</span>
+                @if (isAdmin()) {
+                  <button
+                    type="button"
+                    class="border border-(--ow-border-strong) px-2 py-1 text-xs font-black text-(--ow-text-muted) hover:border-(--ow-orange) hover:text-(--ow-orange-text) disabled:opacity-40"
+                    [disabled]="first"
+                    [attr.aria-label]="'Subir ' + teamName(teamId)"
+                    (click)="moveInTie(letter, i, -1)"
+                  >▲</button>
+                  <button
+                    type="button"
+                    class="border border-(--ow-border-strong) px-2 py-1 text-xs font-black text-(--ow-text-muted) hover:border-(--ow-orange) hover:text-(--ow-orange-text) disabled:opacity-40"
+                    [disabled]="last"
+                    [attr.aria-label]="'Descer ' + teamName(teamId)"
+                    (click)="moveInTie(letter, i, 1)"
+                  >▼</button>
+                }
+              </li>
+            }
+          </ol>
+
+          @if (isAdmin()) {
+            <ow-btn variant="primary" size="sm" [disabled]="savingOrder() === letter" (click)="saveTieOrder(letter)">
+              {{ savingOrder() === letter ? 'Salvando...' : 'Salvar ordem do grupo ' + letter }}
+            </ow-btn>
+          }
+        </div>
+      </ow-card>
+    }
+
+    <app-fase-de-grupos
+      [stage]="s"
+      [canReport]="isAdminOrStreamer()"
+      (reportRequested)="openReport($event)"
+    />
+
+    <!-- Modal de resultado -->
+    @if (reportingMatch(); as match) {
+      <div
+        class="fixed inset-0 z-50 flex items-center justify-center bg-(--ow-overlay) p-4 backdrop-blur-[1px]"
+        (click)="closeReport()"
+      >
+        <div
+          class="w-full max-w-xl rounded border border-(--ow-border) bg-(--ow-surface) p-6 shadow-2xl"
+          role="dialog"
+          aria-modal="true"
+          (click)="$event.stopPropagation()"
+        >
+          <p class="text-[0.72rem] font-black uppercase tracking-[0.12em] text-(--ow-text-muted)">
+            Grupo {{ match.group }} · Rodada {{ match.round }} · Jogo {{ match.matchNumber }}
+          </p>
+          <h3 class="mt-1 text-xl font-black uppercase tracking-[0.06em] text-(--ow-text)">
+            {{ teamName(match.team1Id) }}
+            <span class="mx-2 text-(--ow-text-subtle)">vs</span>
+            {{ teamName(match.team2Id) }}
+          </h3>
+
+          <div class="mt-6 space-y-4">
+            <ow-toggle
+              label="W.O. (desistência)"
+              [ngModel]="reportWalkover()"
+              (ngModelChange)="reportWalkover.set($event)"
+            ></ow-toggle>
+
+            @if (reportWalkover()) {
+              <ow-select
+                label="Vencedor por W.O."
+                placeholder="Selecione o vencedor"
+                [required]="true"
+                [options]="reportWinnerOptions()"
+                [ngModel]="reportWinnerId()"
+                (ngModelChange)="reportWinnerId.set($event)"
+              ></ow-select>
+              <p class="text-xs text-(--ow-text-muted)">
+                Fica registrado 2x0. Quem venceu leva 3 pontos e quem não compareceu, 0.
+              </p>
+            } @else {
+              <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <ow-input
+                  type="number"
+                  [label]="'Rounds de ' + teamName(match.team1Id)"
+                  placeholder="0"
+                  [ngModel]="reportScore1()"
+                  (ngModelChange)="reportScore1.set($event)"
+                ></ow-input>
+                <ow-input
+                  type="number"
+                  [label]="'Rounds de ' + teamName(match.team2Id)"
+                  placeholder="0"
+                  [ngModel]="reportScore2()"
+                  (ngModelChange)="reportScore2.set($event)"
+                ></ow-input>
+              </div>
+              <p class="text-xs text-(--ow-text-muted)">
+                Placar obrigatório: ele define o vencedor e o saldo de rounds usado no desempate.
+              </p>
+            }
+
+            @if (reportError()) {
+              <p class="text-sm font-semibold text-(--ow-alert-error-text)">{{ reportError() }}</p>
+            }
+          </div>
+
+          <div class="mt-6 flex justify-end gap-3">
+            <ow-btn variant="ghost-mini" [disabled]="reportSubmitting()" (click)="closeReport()">Cancelar</ow-btn>
+            <ow-btn variant="primary-mini" [disabled]="reportSubmitting()" (click)="submitReport()">
+              {{ reportSubmitting() ? 'Salvando...' : 'Salvar resultado' }}
+            </ow-btn>
+          </div>
+        </div>
+      </div>
+    }
+  }
+</section>
+
+<!-- Palco de sorteio ao vivo -->
+@if (sorteioOpen()) {
+  <app-sorteio-ao-vivo
+    [teams]="drawTeams()"
+    [maxTeams]="drawTeams().length"
+    [boxes]="sorteioBoxes()"
+    heading="Definição dos grupos"
+    sectionLabel="Fase de grupos"
+    generateLabel="Gerar grupos com este sorteio"
+    [generating]="creating()"
+    (generateRequested)="onSorteioGenerate($event)"
+    (closed)="sorteioOpen.set(false)"
+  />
+}

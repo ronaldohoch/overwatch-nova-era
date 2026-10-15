@@ -12,6 +12,8 @@ const TOURNAMENT_FIELDS = [
   'name',
   'description',
   'teamMode',
+  'format',
+  'knockoutFormat',
   'maxTeams',
   'startAt',
   'checkinDeadlineAt',
@@ -21,6 +23,12 @@ const TOURNAMENT_FIELDS = [
 ] as const;
 
 type TeamMode = 'random' | 'closed';
+type TournamentFormat = 'double_elimination' | 'groups';
+type KnockoutFormat = 'double_elimination' | 'single_elimination';
+
+/** Fase de grupos: mínimo de 2 grupos de 3, máximo de 16 grupos de 4. */
+const GROUPS_MIN_TEAMS = 6;
+const GROUPS_MAX_TEAMS = 64;
 type SubmitStatus = 'success' | 'error';
 type TournamentField = (typeof TOURNAMENT_FIELDS)[number];
 type RawRecord = Readonly<Record<string, unknown>>;
@@ -29,6 +37,8 @@ type TournamentFormValue = Readonly<{
   name: string;
   description: string;
   teamMode: TeamMode;
+  format: TournamentFormat;
+  knockoutFormat: KnockoutFormat;
   maxTeams: string;
   startAt: string;
   checkinDeadlineAt: string;
@@ -43,6 +53,8 @@ type SaveTournamentPayload = Readonly<{
   name: string;
   description: string | null;
   teamMode: TeamMode;
+  format: TournamentFormat;
+  knockoutFormat?: KnockoutFormat;
   maxTeams: number;
   startAt: string;
   checkinDeadlineAt: string;
@@ -93,6 +105,8 @@ export class TorneiosComponent {
     name: '',
     description: '',
     teamMode: 'random',
+    format: 'double_elimination',
+    knockoutFormat: 'double_elimination',
     maxTeams: '8',
     startAt: '',
     checkinDeadlineAt: '',
@@ -105,6 +119,8 @@ export class TorneiosComponent {
     name: false,
     description: false,
     teamMode: false,
+    format: false,
+    knockoutFormat: false,
     maxTeams: false,
     startAt: false,
     checkinDeadlineAt: false,
@@ -127,6 +143,7 @@ export class TorneiosComponent {
       : 'Crie um torneio seguindo as mesmas regras da API de torneios.',
   );
   readonly isRandomMode = computed(() => this.form().teamMode === 'random');
+  readonly isGroupsFormat = computed(() => this.form().format === 'groups');
   /** Modo de times e numero de times sao definidos na criacao e nao mudam depois. */
   readonly canEditSetupFields = computed(() => !this.editing());
   /** Datas e vagas por role so podem mudar enquanto o torneio esta em rascunho. */
@@ -280,6 +297,9 @@ export class TorneiosComponent {
     const rawTeamMode = (this.readString(value, 'teamMode') ?? 'random').toLowerCase();
     const teamMode: TeamMode = rawTeamMode === 'closed' ? 'closed' : 'random';
     const maxTeams = this.readInteger(value['maxTeams']) ?? 8;
+    const format: TournamentFormat = this.readString(value, 'format') === 'groups' ? 'groups' : 'double_elimination';
+    const knockoutFormat: KnockoutFormat =
+      this.readString(value, 'knockoutFormat') === 'single_elimination' ? 'single_elimination' : 'double_elimination';
 
     const roleSlotsRaw = this.readRecord(value['roleSlotsPerTeam']);
     const tank = this.readInteger(roleSlotsRaw?.['tank']) ?? 2;
@@ -290,6 +310,8 @@ export class TorneiosComponent {
       name: this.readString(value, 'name') ?? '',
       description: this.readString(value, 'description') ?? '',
       teamMode,
+      format,
+      knockoutFormat,
       maxTeams: String(maxTeams),
       startAt: this.toDateTimeLocalInput(this.readString(value, 'startAt')),
       checkinDeadlineAt: this.toDateTimeLocalInput(this.readString(value, 'checkinDeadlineAt')),
@@ -318,6 +340,8 @@ export class TorneiosComponent {
       name: '',
       description: '',
       teamMode: 'random',
+      format: 'double_elimination',
+      knockoutFormat: 'double_elimination',
       maxTeams: '8',
       startAt: '',
       checkinDeadlineAt: '',
@@ -335,6 +359,8 @@ export class TorneiosComponent {
       name: false,
       description: false,
       teamMode: false,
+      format: false,
+      knockoutFormat: false,
       maxTeams: false,
       startAt: false,
       checkinDeadlineAt: false,
@@ -350,6 +376,8 @@ export class TorneiosComponent {
       name: value.name.trim(),
       description: value.description.trim() ? value.description.trim() : null,
       teamMode: value.teamMode,
+      format: value.format,
+      ...(value.format === 'groups' ? { knockoutFormat: value.knockoutFormat } : {}),
       maxTeams,
       startAt: this.toIsoDate(value.startAt),
       checkinDeadlineAt: this.toIsoDate(value.checkinDeadlineAt),
@@ -426,9 +454,26 @@ export class TorneiosComponent {
       teamModeErrors.push('Modo de times inválido.');
     }
 
+    const formatErrors: string[] = [];
+    if (value.format !== 'double_elimination' && value.format !== 'groups') {
+      formatErrors.push('Formato inválido.');
+    }
+    const knockoutFormatErrors: string[] = [];
+    if (
+      value.format === 'groups' &&
+      value.knockoutFormat !== 'double_elimination' &&
+      value.knockoutFormat !== 'single_elimination'
+    ) {
+      knockoutFormatErrors.push('Escolha o formato do mata-mata.');
+    }
+
     const maxTeams = Number.parseInt(value.maxTeams, 10);
     if (!Number.isInteger(maxTeams) || maxTeams <= 0) {
       maxTeamsErrors.push('maxTeams deve ser um inteiro maior que zero.');
+    } else if (value.format === 'groups') {
+      if (maxTeams < GROUPS_MIN_TEAMS || maxTeams > GROUPS_MAX_TEAMS) {
+        maxTeamsErrors.push(`Na fase de grupos, use entre ${GROUPS_MIN_TEAMS} e ${GROUPS_MAX_TEAMS} times.`);
+      }
     } else {
       if (maxTeams % 2 !== 0) {
         maxTeamsErrors.push('maxTeams deve ser par (4, 8, 16...).');
@@ -477,6 +522,8 @@ export class TorneiosComponent {
       name: nameErrors,
       description: descriptionErrors,
       teamMode: teamModeErrors,
+      format: formatErrors,
+      knockoutFormat: knockoutFormatErrors,
       maxTeams: maxTeamsErrors,
       startAt: startAtErrors,
       checkinDeadlineAt: checkinDeadlineAtErrors,

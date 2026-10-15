@@ -59,6 +59,58 @@
 
     <div class="grid gap-4 md:grid-cols-2">
       <div class="space-y-1.5">
+        <label for="torneio-format" class="text-sm font-semibold text-(--ow-text)">
+          Formato
+        </label>
+        <select
+          id="torneio-format"
+          class="w-full rounded-md border border-(--ow-border-strong) bg-(--ow-surface) px-3 py-2.5 text-(--ow-text) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
+          [value]="form().format"
+          (change)="updateField('format', $any($event.target).value)"
+          (blur)="markTouched('format')"
+          [disabled]="!canEditSetupFields()"
+        >
+          <option value="double_elimination">Dupla eliminação</option>
+          <option value="groups">Fase de grupos + mata-mata</option>
+        </select>
+        @if (fieldError('format'); as error) {
+          <p class="text-sm font-medium text-(--ow-alert-error-text)">{{ error }}</p>
+        }
+      </div>
+
+      @if (isGroupsFormat()) {
+        <div class="space-y-1.5">
+          <label for="torneio-knockoutFormat" class="text-sm font-semibold text-(--ow-text)">
+            Mata-mata após os grupos
+          </label>
+          <select
+            id="torneio-knockoutFormat"
+            class="w-full rounded-md border border-(--ow-border-strong) bg-(--ow-surface) px-3 py-2.5 text-(--ow-text) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
+            [value]="form().knockoutFormat"
+            (change)="updateField('knockoutFormat', $any($event.target).value)"
+            (blur)="markTouched('knockoutFormat')"
+            [disabled]="!canEditSetupFields()"
+          >
+            <option value="double_elimination">Dupla eliminação</option>
+            <option value="single_elimination">Eliminação simples</option>
+          </select>
+          @if (fieldError('knockoutFormat'); as error) {
+            <p class="text-sm font-medium text-(--ow-alert-error-text)">{{ error }}</p>
+          }
+        </div>
+      }
+    </div>
+
+    @if (isGroupsFormat()) {
+      <p class="text-sm text-(--ow-text-muted)">
+        Grupos de 4 times (completando com grupos de 3), todos contra todos.
+        Vitória vale 3 pontos e derrota vale 1. Desempate pelo saldo de rounds.
+        Os 2 melhores de cada grupo vão para o mata-mata. O número máximo de times é só o teto de inscrições.
+      </p>
+    }
+
+    <div class="grid gap-4 md:grid-cols-2">
+      <div class="space-y-1.5">
         <label for="torneio-mode" class="text-sm font-semibold text-(--ow-text)">
           Modo de times
         </label>
