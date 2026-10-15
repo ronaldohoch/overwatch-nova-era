@@ -78,8 +78,32 @@ describe('TimesCadastroComponent', () => {
     expect(component.status()).toBe('success');
   });
 
-  it('should remove creator from team after creation when skip captain option is selected', async () => {
-    authMock.role.set('streamer');
+  it('should keep non-admin creator as captain even if skip captain flag is set', async () => {
+    authMock.role.set('competidor');
+    createComponent();
+
+    component.updateField('name', 'Time do Competidor');
+    component.updateSkipCreatorAsCaptain(true);
+
+    const submitPromise = component.onSubmit(new Event('submit'));
+
+    const createRequest = httpController.expectOne(environment.apiURLTimes);
+    expect(createRequest.request.method).toBe('POST');
+    expect(createRequest.request.body).toEqual({
+      name: 'Time do Competidor',
+      category: 'formed',
+    });
+    createRequest.flush({ id: 'team-competidor-1' });
+
+    await submitPromise;
+
+    httpController.expectNone(`${environment.apiURLTimes}/team-competidor-1/members/me`);
+    expect(routerMock.navigateByUrl).toHaveBeenCalledWith('/watchpoint/times');
+    expect(component.status()).toBe('success');
+  });
+
+  it('should remove creator from team after creation when admin selects skip captain option', async () => {
+    authMock.role.set('admin');
     createComponent();
 
     component.updateField('name', 'Time Sem Capitão');

@@ -70,6 +70,8 @@ export class TimesCadastroComponent {
     return role === 'admin' || role === 'streamer';
   });
 
+  readonly canSkipCreatorAsCaptain = computed(() => this.auth.userRole() === 'admin');
+
   readonly effectiveCategory = computed<TeamCategory>(() => {
     if (!this.canChooseRandomCategory()) return 'formed';
     return this.form().category;
@@ -164,7 +166,7 @@ export class TimesCadastroComponent {
   }
 
   private shouldSkipCreatorAsCaptain(): boolean {
-    if (!this.canChooseRandomCategory()) return false;
+    if (!this.canSkipCreatorAsCaptain()) return false;
     return this.skipCreatorAsCaptain();
   }
 

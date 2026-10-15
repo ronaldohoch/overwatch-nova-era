@@ -63,34 +63,28 @@
       }
     </div>
 
-    <div class="space-y-1.5">
-      <label for="time-category" class="text-sm font-semibold text-(--ow-text)">
-        Categoria
-      </label>
-      <select
-        id="time-category"
-        class="w-full rounded-md border border-(--ow-border-strong) bg-(--ow-surface) px-3 py-2.5 text-(--ow-text) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light) disabled:cursor-not-allowed disabled:bg-(--ow-surface-sunken)"
-        [disabled]="!canChooseRandomCategory()"
-        [value]="form().category"
-        (change)="updateField('category', $any($event.target).value)"
-        (blur)="markTouched('category')"
-      >
-        <option value="formed">Time com participantes selecionados</option>
-        @if (canChooseRandomCategory()) {
-          <option value="random">Time com participantes sorteados</option>
-        }
-      </select>
-      @if (!canChooseRandomCategory()) {
-        <p class="text-xs font-medium text-(--ow-text)">
-          Para membro, a categoria permanece travada em time com participantes selecionados.
-        </p>
-      }
-      @if (fieldError('category'); as error) {
-        <p class="text-sm font-medium text-(--ow-alert-error-text)">{{ error }}</p>
-      }
-    </div>
-
     @if (canChooseRandomCategory()) {
+      <div class="space-y-1.5">
+        <label for="time-category" class="text-sm font-semibold text-(--ow-text)">
+          Categoria
+        </label>
+        <select
+          id="time-category"
+          class="w-full rounded-md border border-(--ow-border-strong) bg-(--ow-surface) px-3 py-2.5 text-(--ow-text) outline-none transition-colors focus:border-(--ow-orange) focus:ring-2 focus:ring-(--ow-orange-light)"
+          [value]="form().category"
+          (change)="updateField('category', $any($event.target).value)"
+          (blur)="markTouched('category')"
+        >
+          <option value="formed">Time com participantes selecionados</option>
+          <option value="random">Time com participantes sorteados</option>
+        </select>
+        @if (fieldError('category'); as error) {
+          <p class="text-sm font-medium text-(--ow-alert-error-text)">{{ error }}</p>
+        }
+      </div>
+    }
+
+    @if (canSkipCreatorAsCaptain()) {
       <div class="space-y-1.5">
         <label class="flex items-start gap-2 text-sm font-semibold text-(--ow-text)">
           <input
@@ -105,6 +99,10 @@
           Ao marcar esta opção, o time será criado sem você na lista de membros.
         </p>
       </div>
+    } @else {
+      <p class="text-xs font-medium text-(--ow-text-muted)">
+        Você será o capitão deste time e poderá convidar os outros membros.
+      </p>
     }
 
     <div class="flex flex-row-reverse">
