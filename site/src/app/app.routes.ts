@@ -1,5 +1,6 @@
 import { inject } from '@angular/core';
 import { Router, Routes } from '@angular/router';
+import { environment } from '../environments/environment';
 import { routeAccessGuard } from './core/auth/route-access.guard';
 import { USER_ROLES } from './core/auth/user-role';
 
@@ -42,9 +43,10 @@ export const routes: Routes = [
     redirectTo: () => inject(Router).parseUrl('/quem-e-nova-era?tab=regras'),
   },
   {
+    // /torneio sozinho leva direto para o torneio atual.
     path: 'torneio',
-    title: 'Copa Overwatch Nova Era - Chaveamento',
-    loadComponent: () => import('./features/torneio/torneio.component').then(m=>m.TorneioComponent)
+    pathMatch: 'full',
+    redirectTo: `/torneios/${environment.TOURNAMENT_ID}`,
   },
   {
     path: 'torneios/:id',
