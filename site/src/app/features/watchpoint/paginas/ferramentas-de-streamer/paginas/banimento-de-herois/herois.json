@@ -1,5 +1,11 @@
 [
   {
+    "name": "D.Mon",
+    "avatar": "https://overwatch.blizzard.com/media/dmon.png",
+    "role": "Tank",
+    "subrole": "Stalwart"
+  },
+  {
     "name": "D.Va",
     "avatar": "https://overwatch.blizzard.com/media/dva.png",
     "role": "Tank",
@@ -162,6 +168,18 @@
     "subrole": "Flanker"
   },
   {
+    "name": "Shion",
+    "avatar": "https://overwatch.blizzard.com/media/shion.png",
+    "role": "Damage",
+    "subrole": "Flanker"
+  },
+  {
+    "name": "Sierra",
+    "avatar": "https://overwatch.blizzard.com/media/sierra.png",
+    "role": "Damage",
+    "subrole": "Recon"
+  },
+  {
     "name": "Sojourn",
     "avatar": "https://overwatch.blizzard.com/media/sojourn.png",
     "role": "Damage",
@@ -230,6 +248,12 @@
   {
     "name": "Brigitte",
     "avatar": "https://overwatch.blizzard.com/media/brigitte.png",
+    "role": "Support",
+    "subrole": "Survivor"
+  },
+  {
+    "name": "Doctrine",
+    "avatar": "https://overwatch.blizzard.com/media/doctrine.png",
     "role": "Support",
     "subrole": "Survivor"
   },
