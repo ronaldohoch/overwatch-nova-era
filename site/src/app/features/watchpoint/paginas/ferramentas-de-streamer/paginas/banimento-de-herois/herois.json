@@ -27,7 +27,7 @@
     "name": "Hazard",
     "avatar": "https://overwatch.blizzard.com/media/hazard.png",
     "role": "Tank",
-    "subrole": "Stalwart"
+    "subrole": "Initiator"
   },
   {
     "name": "Junker Queen",
@@ -192,12 +192,6 @@
     "subrole": "Specialist"
   },
   {
-    "name": "Sombra",
-    "avatar": "https://overwatch.blizzard.com/media/sombra.png",
-    "role": "Damage",
-    "subrole": "Recon"
-  },
-  {
     "name": "Symmetra",
     "avatar": "https://overwatch.blizzard.com/media/symmetra.png",
     "role": "Damage",
@@ -243,7 +237,7 @@
     "name": "Baptiste",
     "avatar": "https://overwatch.blizzard.com/media/baptiste.png",
     "role": "Support",
-    "subrole": "Medic"
+    "subrole": "Tactician"
   },
   {
     "name": "Brigitte",
@@ -267,7 +261,7 @@
     "name": "Jetpack Cat",
     "avatar": "https://overwatch.blizzard.com/media/jetpack-cat.png",
     "role": "Support",
-    "subrole": "Medic"
+    "subrole": "Tactician"
   },
   {
     "name": "Juno",
@@ -279,25 +273,25 @@
     "name": "Kiriko",
     "avatar": "https://overwatch.blizzard.com/media/kiriko.png",
     "role": "Support",
-    "subrole": "Tactician"
+    "subrole": "Medic"
   },
   {
     "name": "Lifeweaver",
     "avatar": "https://overwatch.blizzard.com/media/lifeweaver.png",
     "role": "Support",
-    "subrole": "Tactician"
+    "subrole": "Medic"
   },
   {
     "name": "Lúcio",
     "avatar": "https://overwatch.blizzard.com/media/lucio.png",
     "role": "Support",
-    "subrole": "Medic"
+    "subrole": "Tactician"
   },
   {
     "name": "Mercy",
     "avatar": "https://overwatch.blizzard.com/media/mercy.png",
     "role": "Support",
-    "subrole": "Tactician"
+    "subrole": "Medic"
   },
   {
     "name": "Mizuki",
@@ -310,6 +304,12 @@
     "avatar": "https://overwatch.blizzard.com/media/moira.png",
     "role": "Support",
     "subrole": "Medic"
+  },
+  {
+    "name": "Sombra",
+    "avatar": "https://overwatch.blizzard.com/media/sombra.png",
+    "role": "Support",
+    "subrole": "Tactician"
   },
   {
     "name": "Wuyang",
