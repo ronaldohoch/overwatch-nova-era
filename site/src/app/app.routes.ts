@@ -49,6 +49,12 @@ export const routes: Routes = [
     redirectTo: `/torneios/${environment.TOURNAMENT_ID}`,
   },
   {
+    // /torneios sem id tambem leva para o torneio atual.
+    path: 'torneios',
+    pathMatch: 'full',
+    redirectTo: `/torneios/${environment.TOURNAMENT_ID}`,
+  },
+  {
     path: 'torneios/:id',
     title: 'Copa Overwatch Nova Era - Torneio',
     loadComponent: () =>
